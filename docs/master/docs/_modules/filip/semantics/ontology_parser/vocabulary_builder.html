@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.ontology_parser.vocabulary_builder &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.semantics.ontology_parser.vocabulary_builder &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -78,42 +78,42 @@
   <h1>Source code for filip.semantics.ontology_parser.vocabulary_builder</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Wrapper module to provide manipulation functions for vocabulary that</span>
 <span class="sd">    should later be hidden from the user&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
 
 
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">LogLevel</span>
-<span class="kn">from</span> <span class="nn">filip.semantics.vocabulary</span> <span class="kn">import</span> <span class="o">*</span>
-
-
-<div class="viewcode-block" id="IdType"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType">[docs]</a><span class="k">class</span> <span class="nc">IdType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-    <span class="n">class_</span> <span class="o">=</span> <span class="s1">&#39;Class&#39;</span>
-    <span class="n">object_property</span> <span class="o">=</span> <span class="s1">&#39;Object Property&#39;</span>
-    <span class="n">data_property</span> <span class="o">=</span> <span class="s1">&#39;Data Property&#39;</span>
-    <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;Datatype&#39;</span>
-    <span class="n">relation</span> <span class="o">=</span> <span class="s1">&#39;Relation&#39;</span>
-    <span class="n">combined_relation</span> <span class="o">=</span> <span class="s1">&#39;Combined Relation&#39;</span>
-    <span class="n">individual</span> <span class="o">=</span> <span class="s1">&#39;Individual&#39;</span>
-    <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;Source&#39;</span></div>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogLevel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 
-<div class="viewcode-block" id="VocabularyBuilder"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder">[docs]</a><span class="k">class</span> <span class="nc">VocabularyBuilder</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="IdType"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">IdType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">class_</span> <span class="o">=</span> <span class="s2">&quot;Class&quot;</span>
+    <span class="n">object_property</span> <span class="o">=</span> <span class="s2">&quot;Object Property&quot;</span>
+    <span class="n">data_property</span> <span class="o">=</span> <span class="s2">&quot;Data Property&quot;</span>
+    <span class="n">datatype</span> <span class="o">=</span> <span class="s2">&quot;Datatype&quot;</span>
+    <span class="n">relation</span> <span class="o">=</span> <span class="s2">&quot;Relation&quot;</span>
+    <span class="n">combined_relation</span> <span class="o">=</span> <span class="s2">&quot;Combined Relation&quot;</span>
+    <span class="n">individual</span> <span class="o">=</span> <span class="s2">&quot;Individual&quot;</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;Source&quot;</span></div>
+
+
+<div class="viewcode-block" id="VocabularyBuilder"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">VocabularyBuilder</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper class to provide manipulation functions for vocabulary that</span>
 <span class="sd">    should later be hidden from the user&quot;&quot;&quot;</span>
 
-    <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Vocabulary to manipulate&quot;</span>
-    <span class="p">)</span>
+    <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Vocabulary to manipulate&quot;</span><span class="p">)</span>
 
     <span class="n">current_source</span><span class="p">:</span> <span class="n">Source</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Current source to which entities are added,&quot;</span>
-                    <span class="s2">&quot;needed while parsing&quot;</span><span class="p">)</span>
+        <span class="s2">&quot;needed while parsing&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
-<div class="viewcode-block" id="VocabularyBuilder.clear"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.clear"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.clear">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all objects form the vocabulary</span>
 
 <span class="sd">        Returns:</span>
@@ -131,7 +131,7 @@
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">source</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_class">[docs]</a>    <span class="k">def</span> <span class="nf">add_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_</span><span class="p">:</span> <span class="n">Class</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_class">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_</span><span class="p">:</span> <span class="n">Class</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a class to the vocabulary</span>
 
 <span class="sd">        Args:</span>
@@ -140,11 +140,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span><span class="n">class_</span><span class="p">,</span>
-                                   <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span>
-                                   <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span><span class="n">class_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_object_property"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_object_property">[docs]</a>    <span class="k">def</span> <span class="nf">add_object_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_prop</span><span class="p">:</span> <span class="n">ObjectProperty</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_object_property"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_object_property">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_object_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_prop</span><span class="p">:</span> <span class="n">ObjectProperty</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an ObjectProperty to the vocabulary</span>
 
 <span class="sd">        Args:</span>
@@ -154,9 +152,10 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span>
-            <span class="n">obj_prop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">)</span></div>
+            <span class="n">obj_prop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_data_property"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_data_property">[docs]</a>    <span class="k">def</span> <span class="nf">add_data_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_prop</span><span class="p">:</span> <span class="n">DataProperty</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_data_property"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_data_property">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_data_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_prop</span><span class="p">:</span> <span class="n">DataProperty</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an DataProperty to the vocabulary</span>
 
 <span class="sd">        Args:</span>
@@ -166,9 +165,10 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span>
-            <span class="n">data_prop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">)</span></div>
+            <span class="n">data_prop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_datatype"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_datatype">[docs]</a>    <span class="k">def</span> <span class="nf">add_datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">:</span> <span class="n">Datatype</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_datatype"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_datatype">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">:</span> <span class="n">Datatype</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a DataType to the vocabulary</span>
 
 <span class="sd">        Args:</span>
@@ -177,10 +177,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span>
-            <span class="n">datatype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span><span class="n">datatype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_predefined_datatype"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_predefined_datatype">[docs]</a>    <span class="k">def</span> <span class="nf">add_predefined_datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">:</span> <span class="n">Datatype</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_predefined_datatype"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_predefined_datatype">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_predefined_datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">:</span> <span class="n">Datatype</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a DataType to the vocabulary, that belongs to the source:</span>
 <span class="sd">            Predefined</span>
 
@@ -195,7 +194,7 @@
         <span class="n">datatype</span><span class="o">.</span><span class="n">predefined</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">datatype</span><span class="o">.</span><span class="n">source_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;PREDEFINED&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_individual"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_individual">[docs]</a>    <span class="k">def</span> <span class="nf">add_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">individual</span><span class="p">:</span> <span class="n">Individual</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_individual"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_individual">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">individual</span><span class="p">:</span> <span class="n">Individual</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an Individual to the vocabulary</span>
 
 <span class="sd">        Args:</span>
@@ -204,11 +203,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span><span class="n">individual</span><span class="p">,</span>
-                                   <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
-                                   <span class="n">IdType</span><span class="o">.</span><span class="n">individual</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_and_merge_entity</span><span class="p">(</span>
+            <span class="n">individual</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">individual</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_relation_for_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_relation_for_class">[docs]</a>    <span class="k">def</span> <span class="nf">add_relation_for_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rel</span><span class="p">:</span> <span class="n">Relation</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_relation_for_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_relation_for_class">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_relation_for_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rel</span><span class="p">:</span> <span class="n">Relation</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a relation object to a class</span>
 
 <span class="sd">        Args:</span>
@@ -230,8 +229,9 @@
         <span class="n">class_</span><span class="o">.</span><span class="n">relation_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rel</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">rel</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">IdType</span><span class="o">.</span><span class="n">relation</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_combined_object_relation_for_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_object_relation_for_class">[docs]</a>    <span class="k">def</span> <span class="nf">add_combined_object_relation_for_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                               <span class="n">crel</span><span class="p">:</span> <span class="n">CombinedObjectRelation</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_combined_object_relation_for_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_object_relation_for_class">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_combined_object_relation_for_class</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">crel</span><span class="p">:</span> <span class="n">CombinedObjectRelation</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a combined object relation object to a class</span>
 
 <span class="sd">        Args:</span>
@@ -242,12 +242,14 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">combined_object_relations</span><span class="p">[</span><span class="n">crel</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">crel</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">class_iri</span><span class="p">)</span><span class="o">.</span>\
-            <span class="n">combined_object_relation_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">crel</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">class_iri</span><span class="p">)</span><span class="o">.</span><span class="n">combined_object_relation_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">crel</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">crel</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">IdType</span><span class="o">.</span><span class="n">combined_relation</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_combined_data_relation_for_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_data_relation_for_class">[docs]</a>    <span class="k">def</span> <span class="nf">add_combined_data_relation_for_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                             <span class="n">cdata</span><span class="p">:</span> <span class="n">CombinedDataRelation</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_combined_data_relation_for_class"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_data_relation_for_class">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_combined_data_relation_for_class</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cdata</span><span class="p">:</span> <span class="n">CombinedDataRelation</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a combined data relation object to a class</span>
 
 <span class="sd">        Args:</span>
@@ -258,11 +260,12 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">combined_data_relations</span><span class="p">[</span><span class="n">cdata</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdata</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">class_iri</span><span class="p">)</span><span class="o">.</span>\
-            <span class="n">combined_data_relation_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cdata</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">class_iri</span><span class="p">)</span><span class="o">.</span><span class="n">combined_data_relation_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">cdata</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">cdata</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">IdType</span><span class="o">.</span><span class="n">combined_relation</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.add_source"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_source">[docs]</a>    <span class="k">def</span> <span class="nf">add_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.add_source"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_source">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a source to the vocabulary</span>
 
 <span class="sd">        Args:</span>
@@ -280,7 +283,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">source</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span> <span class="o">=</span> <span class="n">source</span></div>
 
-<div class="viewcode-block" id="VocabularyBuilder.set_current_source"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.set_current_source">[docs]</a>    <span class="k">def</span> <span class="nf">set_current_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="VocabularyBuilder.set_current_source"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.set_current_source">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_current_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the source of the vocabulary to which new added objects belong</span>
 
 <span class="sd">        Args:</span>
@@ -292,10 +295,9 @@
         <span class="k">assert</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">_add_and_merge_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                              <span class="n">entity</span><span class="p">:</span> <span class="n">Entity</span><span class="p">,</span>
-                              <span class="n">entity_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Entity</span><span class="p">],</span>
-                              <span class="n">id_type</span><span class="p">:</span> <span class="n">IdType</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_and_merge_entity</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">Entity</span><span class="p">,</span> <span class="n">entity_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Entity</span><span class="p">],</span> <span class="n">id_type</span><span class="p">:</span> <span class="n">IdType</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds an entity to the vocabulary. If an entity with teh same iri</span>
 <span class="sd">        already exists the label and comment are &quot;merged&quot; and both sources</span>
 <span class="sd">        are noted</span>
@@ -315,17 +317,20 @@
         <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">iri</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">id_type</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span><span class="o">.</span><span class="n">add_parsing_log_entry</span><span class="p">(</span>
-                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">id_type</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span>
+                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                    <span class="n">id_type</span><span class="p">,</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="si">}</span><span class="s2"> from source &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_source</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;exists multiple times in different catagories. It was &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;only added for the category &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
                 <span class="k">return</span>
 
             <span class="n">old_entity</span> <span class="o">=</span> <span class="n">entity_dict</span><span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">]</span>
 
-            <span class="k">def</span> <span class="nf">select_from</span><span class="p">(</span><span class="n">old</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">select_from</span><span class="p">(</span><span class="n">old</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                Given two strings, one from the old_entity , one form the new</span>
 <span class="sd">                one. It is selected which one to use.</span>
@@ -336,21 +341,23 @@
                     <span class="k">return</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span><span class="o">.</span><span class="n">add_parsing_log_entry</span><span class="p">(</span>
-                        <span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span> <span class="n">id_type</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span>
+                        <span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+                        <span class="n">id_type</span><span class="p">,</span>
+                        <span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">property</span><span class="si">}</span><span class="s2"> from source &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old_entity</span><span class="o">.</span><span class="n">get_source_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;was overwritten&quot;</span><span class="p">)</span>
+                        <span class="sa">f</span><span class="s2">&quot;was overwritten&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="k">return</span> <span class="n">new</span>
 
             <span class="n">entity</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">select_from</span><span class="p">(</span><span class="n">old_entity</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">)</span>
-            <span class="n">entity</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">select_from</span><span class="p">(</span><span class="n">old_entity</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span>
-                                         <span class="s2">&quot;comment&quot;</span><span class="p">)</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">select_from</span><span class="p">(</span><span class="n">old_entity</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="s2">&quot;comment&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">id_types</span><span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_type</span>
         <span class="n">entity</span><span class="o">.</span><span class="n">source_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_source</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="n">entity_dict</span><span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">iri</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity</span>
 
-<div class="viewcode-block" id="VocabularyBuilder.entity_is_known"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.entity_is_known">[docs]</a>    <span class="k">def</span> <span class="nf">entity_is_known</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="VocabularyBuilder.entity_is_known"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.entity_is_known">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">entity_is_known</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if the given iri is in vocabulary, if not it belongs to a</span>
 <span class="sd">        dependency which is not yet loaded</span>
 
@@ -370,7 +377,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contribute as a user &mdash; FiLiP 0.6.0 documentation</title>
+  <title>Contribute as a user &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -54,6 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#style-guides">Style guides</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#coding-style-guide">Coding style guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#committing-style-guide">Committing style guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pre-commit-hooks">Pre-commit Hooks</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
@@ -117,6 +118,29 @@ Once review is finished, you can merge.</p>
 <h3>Committing style guide<a class="headerlink" href="#committing-style-guide" title="Permalink to this heading"></a></h3>
 <p>For committing style guide please use Conventional Commits 1.0.0. For more details how to structure your commits please visit this <a class="reference external" href="https://www.conventionalcommits.org/en/v1.0.0/">page</a>.</p>
 </section>
+<section id="pre-commit-hooks">
+<h3>Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Permalink to this heading"></a></h3>
+<p>In order to make the development easy and uniform, use of pre-commit is highly recommended. The pre-commit hooks run before every commit to ensure the code is compliant with the project style.</p>
+<p>Check if pre-commit is installed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>--version
+</pre></div>
+</div>
+<p>Install pre-commit via pip if it’s not already installed.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pre-commit~<span class="o">=</span><span class="m">4</span>.0.1
+</pre></div>
+</div>
+<p>Install the git hook scripts:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>This will run pre-commit automatically on every git commit. Checkout <a class="reference external" href=".pre-commit-config.yaml">pre-commit-config.yaml</a> file to find out which hooks are currently configured.</p>
+<blockquote>
+<div><p><strong>Note:</strong> Currently we are using the pre-commit to perform black formatter. You can perform a formatting to all files by running the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>run<span class="w"> </span>black<span class="w"> </span>--all-files
+</pre></div>
+</div>
+</div></blockquote>
+</section>
 </section>
 <section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h2>
@@ -125,9 +149,9 @@ Try to follow the structure already present.
 If possible, write a little doctest example into the docstring to make clear to the user what the desired output of your function is.
 All non-self-explanatory lines of code should include a comment.
 Although you will notice that not all docstring are already in this style, we use the google-style for docstrings, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 
-<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">dummy</span><span class="p">:</span> <span class="nb">str</span> <span class="p">,</span> <span class="n">dummy2</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="n">dummy</span><span class="p">:</span> <span class="nb">str</span> <span class="p">,</span> <span class="n">dummy2</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Describe what the function does in here.</span>
 <span class="sd">    The blank line below is necessary for the doc to render nicely.</span>
@@ -178,7 +202,7 @@ If the corresponding module does not exist, then you should create a new module 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

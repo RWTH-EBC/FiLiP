@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.vocabulary_configurator &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.semantics.vocabulary_configurator &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -79,58 +79,84 @@
 <span></span><span class="sd">&quot;&quot;&quot;Module providing an interface to manipulate the sources of a vocabulary,</span>
 <span class="sd">and to ability to export it to models&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">keyword</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">ascii_letters</span><span class="p">,</span> <span class="n">digits</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">keyword</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">string</span><span class="w"> </span><span class="kn">import</span> <span class="n">ascii_letters</span><span class="p">,</span> <span class="n">digits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Set</span>
 
-<span class="kn">import</span> <span class="nn">pathlib</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">wget</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wget</span>
 
-<span class="kn">from</span> <span class="nn">filip.semantics.ontology_parser.post_processer</span> <span class="kn">import</span> <span class="n">PostProcessor</span>
-<span class="kn">from</span> <span class="nn">filip.semantics.ontology_parser.rdfparser</span> <span class="kn">import</span> <span class="n">RdfParser</span>
-<span class="kn">from</span> <span class="nn">filip.semantics.vocabulary</span> <span class="kn">import</span> \
-    <span class="n">LabelSummary</span><span class="p">,</span> \
-    <span class="n">Vocabulary</span><span class="p">,</span> \
-    <span class="n">Source</span><span class="p">,</span> \
-    <span class="n">Entity</span><span class="p">,</span> \
-    <span class="n">RestrictionType</span><span class="p">,</span> \
-    <span class="n">Class</span><span class="p">,</span> \
-    <span class="n">ParsingError</span><span class="p">,</span> \
-    <span class="n">CombinedRelation</span><span class="p">,</span> \
-    <span class="n">DataFieldType</span><span class="p">,</span> \
-    <span class="n">DependencyStatement</span><span class="p">,</span> \
-    <span class="n">VocabularySettings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.ontology_parser.post_processer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostProcessor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.ontology_parser.rdfparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">RdfParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LabelSummary</span><span class="p">,</span>
+    <span class="n">Vocabulary</span><span class="p">,</span>
+    <span class="n">Source</span><span class="p">,</span>
+    <span class="n">Entity</span><span class="p">,</span>
+    <span class="n">RestrictionType</span><span class="p">,</span>
+    <span class="n">Class</span><span class="p">,</span>
+    <span class="n">ParsingError</span><span class="p">,</span>
+    <span class="n">CombinedRelation</span><span class="p">,</span>
+    <span class="n">DataFieldType</span><span class="p">,</span>
+    <span class="n">DependencyStatement</span><span class="p">,</span>
+    <span class="n">VocabularySettings</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># Blacklist containing all labels that are forbidden for entities to have</span>
 <span class="n">label_blacklist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">keyword</span><span class="o">.</span><span class="n">kwlist</span><span class="p">)</span>
 <span class="n">label_blacklist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;referencedBy&quot;</span><span class="p">,</span> <span class="s2">&quot;deviceSettings&quot;</span><span class="p">])</span>
-<span class="n">label_blacklist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;references&quot;</span><span class="p">,</span> <span class="s2">&quot;device_settings&quot;</span><span class="p">,</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;old_state&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;semantic_manager&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+<span class="n">label_blacklist</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;device_settings&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;header&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;old_state&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;semantic_manager&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;delete&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>
 <span class="n">label_blacklist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">])</span>
-<span class="n">label_blacklist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="s2">&quot;complex&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;tuple&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;range&quot;</span><span class="p">,</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="s2">&quot;frozenset&quot;</span><span class="p">,</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;bytes&quot;</span><span class="p">,</span> <span class="s2">&quot;bytearray&quot;</span><span class="p">,</span> <span class="s2">&quot;memoryview&quot;</span><span class="p">])</span>
+<span class="n">label_blacklist</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;complex&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tuple&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;range&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;frozenset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bytearray&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;memoryview&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>
 
 <span class="c1"># Whitelist containing all chars that an entity label can consist of</span>
 <span class="n">label_char_whitelist</span> <span class="o">=</span> <span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">digits</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span>
 
 
-<div class="viewcode-block" id="VocabularyConfigurator"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator">[docs]</a><span class="k">class</span> <span class="nc">VocabularyConfigurator</span><span class="p">:</span>
+<div class="viewcode-block" id="VocabularyConfigurator"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">VocabularyConfigurator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class that provides static interfaces to manipulate the sources of a</span>
 <span class="sd">    vocabulary, validate and save it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VocabularyConfigurator.create_vocabulary"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.create_vocabulary">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_vocabulary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
-                          <span class="n">settings</span><span class="p">:</span> <span class="n">VocabularySettings</span> <span class="o">=</span> <span class="n">VocabularySettings</span><span class="p">())</span> \
-            <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_vocabulary</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">VocabularySettings</span> <span class="o">=</span> <span class="n">VocabularySettings</span><span class="p">()</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a new blank vocabulary with given settings</span>
 
@@ -144,8 +170,9 @@
         <span class="k">return</span> <span class="n">Vocabulary</span><span class="p">(</span><span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.delete_source_from_vocabulary"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.delete_source_from_vocabulary">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">delete_source_from_vocabulary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-                                      <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_source_from_vocabulary</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a source from the vocabulary</span>
 
@@ -166,28 +193,28 @@
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">source_id</span> <span class="o">==</span> <span class="n">source</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
                 <span class="n">parser</span><span class="o">.</span><span class="n">parse_source_into_vocabulary</span><span class="p">(</span>
-                    <span class="n">source</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="p">),</span> <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">)</span>
+                    <span class="n">source</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="p">),</span> <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">PostProcessor</span><span class="o">.</span><span class="n">post_process_vocabulary</span><span class="p">(</span>
-            <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">)</span>
+            <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Source with source_id </span><span class="si">{</span><span class="n">source_id</span><span class="si">}</span><span class="s2"> not in vocabulary&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source with source_id </span><span class="si">{</span><span class="n">source_id</span><span class="si">}</span><span class="s2"> not in vocabulary&quot;</span><span class="p">)</span>
 
         <span class="n">PostProcessor</span><span class="o">.</span><span class="n">transfer_settings</span><span class="p">(</span>
-            <span class="n">new_vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">)</span>
+            <span class="n">new_vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_vocabulary</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.add_ontology_to_vocabulary_as_link"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.add_ontology_to_vocabulary_as_link">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">add_ontology_to_vocabulary_as_link</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span>
-            <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-            <span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ontology_to_vocabulary_as_link</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a source to the vocabulary with via a weblink. Source name will</span>
 <span class="sd">        be extracted from link, if no name is given</span>
@@ -211,18 +238,19 @@
         <span class="k">if</span> <span class="n">source_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">source_name</span> <span class="o">=</span> <span class="n">wget</span><span class="o">.</span><span class="n">filename_from_url</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
 
-        <span class="n">file_str</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">file_str</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_ontology_to_vocabulary_as_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span>
-                                                        <span class="n">source_name</span><span class="o">=</span><span class="n">source_name</span><span class="p">,</span>
-                                                        <span class="n">source_content</span><span class="o">=</span><span class="n">file_str</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">add_ontology_to_vocabulary_as_string</span><span class="p">(</span>
+            <span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">source_name</span><span class="o">=</span><span class="n">source_name</span><span class="p">,</span> <span class="n">source_content</span><span class="o">=</span><span class="n">file_str</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.add_ontology_to_vocabulary_as_file"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.add_ontology_to_vocabulary_as_file">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">add_ontology_to_vocabulary_as_file</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span>
-            <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-            <span class="n">path_to_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ontology_to_vocabulary_as_file</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
+        <span class="n">path_to_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a source to the vocabulary with via a file path. Source name will</span>
 <span class="sd">        be extracted from path, if no name is given</span>
@@ -241,23 +269,22 @@
 <span class="sd">            New Vocabulary with the given source added to it</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">source_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">source_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">source_name</span><span class="o">=</span><span class="n">source_name</span><span class="p">,</span>
-                        <span class="n">content</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-                        <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">source_name</span><span class="o">=</span><span class="n">source_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
 
         <span class="k">return</span> <span class="n">VocabularyConfigurator</span><span class="o">.</span><span class="n">_parse_sources_into_vocabulary</span><span class="p">(</span>
-            <span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">source</span><span class="p">])</span></div>
+            <span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.add_ontology_to_vocabulary_as_string"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.add_ontology_to_vocabulary_as_string">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">add_ontology_to_vocabulary_as_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-                                             <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                             <span class="n">source_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ontology_to_vocabulary_as_string</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_content</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a source to the vocabulary by giving the source content as string.</span>
 <span class="sd">        Source name needs to be given</span>
@@ -275,16 +302,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            New Vocabulary with the given source added to it</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">source_name</span><span class="o">=</span><span class="n">source_name</span><span class="p">,</span>
-                        <span class="n">content</span><span class="o">=</span><span class="n">source_content</span><span class="p">,</span>
-                        <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span>
+            <span class="n">source_name</span><span class="o">=</span><span class="n">source_name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">source_content</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">VocabularyConfigurator</span><span class="o">.</span><span class="n">_parse_sources_into_vocabulary</span><span class="p">(</span>
-            <span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">source</span><span class="p">])</span></div>
+            <span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
+        <span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_sources_into_vocabulary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-                                       <span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Source</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_sources_into_vocabulary</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Source</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vocabulary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse the given source objects into the vocabulary</span>
 
@@ -307,23 +336,26 @@
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">source_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
             <span class="n">source_copy</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">parse_source_into_vocabulary</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">source_copy</span><span class="p">,</span>
-                                                <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">)</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">parse_source_into_vocabulary</span><span class="p">(</span>
+                <span class="n">source</span><span class="o">=</span><span class="n">source_copy</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span>
+            <span class="p">)</span>
 
         <span class="c1"># try to parse in the new sources and post_process</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-                <span class="n">parser</span><span class="o">.</span><span class="n">parse_source_into_vocabulary</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
-                                                    <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">)</span>
+                <span class="n">parser</span><span class="o">.</span><span class="n">parse_source_into_vocabulary</span><span class="p">(</span>
+                    <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span>
+                <span class="p">)</span>
             <span class="n">PostProcessor</span><span class="o">.</span><span class="n">post_process_vocabulary</span><span class="p">(</span>
-                <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">)</span>
+                <span class="n">vocabulary</span><span class="o">=</span><span class="n">new_vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span>
+            <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ParsingException</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_vocabulary</span>
 
 <div class="viewcode-block" id="VocabularyConfigurator.is_label_blacklisted"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.is_label_blacklisted">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">is_label_blacklisted</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_label_blacklisted</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the given label is forbidden for an entity to possess</span>
 
 <span class="sd">        Args:</span>
@@ -335,7 +367,7 @@
         <span class="k">return</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">label_blacklist</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.is_label_illegal"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.is_label_illegal">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">is_label_illegal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_label_illegal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the given label contains a forbidden char</span>
 
 <span class="sd">        Args:</span>
@@ -350,8 +382,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.get_label_conflicts_in_vocabulary"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.get_label_conflicts_in_vocabulary">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_label_conflicts_in_vocabulary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> \
-            <span class="n">LabelSummary</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_label_conflicts_in_vocabulary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LabelSummary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute a summary for all labels present in the vocabulary.</span>
 <span class="sd">        The summary contains all naming clashes and illegal labels.</span>
@@ -363,7 +394,7 @@
 <span class="sd">            LabelSummary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">get_conflicts_in_group</span><span class="p">(</span><span class="n">entities_to_check</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_conflicts_in_group</span><span class="p">(</span><span class="n">entities_to_check</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
             <span class="c1"># maps label to list of entities with that label</span>
             <span class="n">used_labels</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">duplicate_labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -389,7 +420,7 @@
 
             <span class="k">return</span> <span class="n">result</span>
 
-        <span class="k">def</span> <span class="nf">get_blacklisted_labels</span><span class="p">(</span><span class="n">entities_to_check</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_blacklisted_labels</span><span class="p">(</span><span class="n">entities_to_check</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
             <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">entity_list</span> <span class="ow">in</span> <span class="n">entities_to_check</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entity_list</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -399,7 +430,7 @@
 
             <span class="k">return</span> <span class="n">result</span>
 
-        <span class="k">def</span> <span class="nf">get_illegal_labels</span><span class="p">(</span><span class="n">entities_to_check</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_illegal_labels</span><span class="p">(</span><span class="n">entities_to_check</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
             <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Entity</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">entity_list</span> <span class="ow">in</span> <span class="n">entities_to_check</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entity_list</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -411,27 +442,39 @@
 
         <span class="n">summary</span> <span class="o">=</span> <span class="n">LabelSummary</span><span class="p">(</span>
             <span class="n">class_label_duplicates</span><span class="o">=</span><span class="n">get_conflicts_in_group</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
-                 <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_enum_dataytypes</span><span class="p">()]),</span>
+                <span class="p">[</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_enum_dataytypes</span><span class="p">(),</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
             <span class="n">field_label_duplicates</span><span class="o">=</span><span class="n">get_conflicts_in_group</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span><span class="p">]),</span>
-            <span class="n">datatype_label_duplicates</span><span class="o">=</span><span class="n">get_conflicts_in_group</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span><span class="p">]),</span>
-            <span class="n">blacklisted_labels</span><span class="o">=</span><span class="n">get_blacklisted_labels</span><span class="p">([</span>
-                <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
-                <span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span>
-            <span class="p">]),</span>
-            <span class="n">labels_with_illegal_chars</span><span class="o">=</span><span class="n">get_illegal_labels</span><span class="p">([</span>
-                <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
-                <span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span><span class="p">,</span>
-                <span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span>
-            <span class="p">]),</span>
+                <span class="p">[</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span><span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">datatype_label_duplicates</span><span class="o">=</span><span class="n">get_conflicts_in_group</span><span class="p">([</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span><span class="p">]),</span>
+            <span class="n">blacklisted_labels</span><span class="o">=</span><span class="n">get_blacklisted_labels</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">labels_with_illegal_chars</span><span class="o">=</span><span class="n">get_illegal_labels</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span><span class="p">,</span>
+                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">summary</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.is_vocabulary_valid"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.is_vocabulary_valid">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">is_vocabulary_valid</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_vocabulary_valid</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Test if the given vocabulary is valid -&gt; all labels are unique and</span>
 <span class="sd">        correct</span>
@@ -443,11 +486,13 @@
 <span class="sd">            bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">VocabularyConfigurator</span><span class="o">.</span><span class="n">get_label_conflicts_in_vocabulary</span><span class="p">(</span>
-            <span class="n">vocabulary</span><span class="p">)</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span></div>
+            <span class="n">vocabulary</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.get_missing_dependency_statements"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.get_missing_dependency_statements">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_missing_dependency_statements</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> \
-            <span class="n">List</span><span class="p">[</span><span class="n">DependencyStatement</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_missing_dependency_statements</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencyStatement</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a list of all Dependencies that are currently missing in the</span>
 <span class="sd">        vocabulary in form of DependencyStatements</span>
@@ -466,7 +511,7 @@
         <span class="k">return</span> <span class="n">missing_dependencies</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.get_missing_dependencies"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.get_missing_dependencies">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_missing_dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_missing_dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a list of all Dependencies that are currently missing in the</span>
 <span class="sd">        vocabulary in form of iris</span>
@@ -486,7 +531,7 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">missing_dependencies</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.get_parsing_logs"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.get_parsing_logs">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_parsing_logs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ParsingError</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_parsing_logs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ParsingError</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the parsing logs of a vocabulary</span>
 
@@ -502,13 +547,13 @@
         <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="VocabularyConfigurator.generate_vocabulary_models"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator.generate_vocabulary_models">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">generate_vocabulary_models</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span>
-            <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-            <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">alternative_manager_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span>  \
-            <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_vocabulary_models</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">alternative_manager_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Export the given vocabulary as python model file.</span>
 <span class="sd">        All vocabulary classes will be converted to python classes,</span>
@@ -539,9 +584,9 @@
                 <span class="s2">&quot;prevented the generation of models. Check for conflicts with: &quot;</span>
                 <span class="s2">&quot;VocabularyConfigurator.&quot;</span>
                 <span class="s2">&quot;get_label_conflicts_in_vocabulary(vocabulary)&quot;</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">split_string_into_lines</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">split_string_into_lines</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Helper methode, takes a long string and splits it into</span>
 <span class="sd">            multiple parts that each represent one line</span>
 
@@ -559,9 +604,9 @@
             <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">char</span> <span class="o">==</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
                     <span class="n">last_space_index</span> <span class="o">=</span> <span class="n">current_index</span>
-                <span class="k">if</span> <span class="n">current_index</span><span class="o">-</span><span class="n">last_split_index</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="n">last_split_index</span><span class="p">:</span> <span class="n">last_space_index</span><span class="p">])</span>
-                    <span class="n">last_split_index</span> <span class="o">=</span> <span class="n">last_space_index</span><span class="o">+</span><span class="mi">1</span>
+                <span class="k">if</span> <span class="n">current_index</span> <span class="o">-</span> <span class="n">last_split_index</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="n">last_split_index</span><span class="p">:</span><span class="n">last_space_index</span><span class="p">])</span>
+                    <span class="n">last_split_index</span> <span class="o">=</span> <span class="n">last_space_index</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="n">current_index</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="c1"># add the remaining part, if the last character of the string was</span>
@@ -570,29 +615,35 @@
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="n">last_split_index</span><span class="p">:</span><span class="n">current_index</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">result</span>
 
-        <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&quot;&quot;</span><span class="se">\n</span><span class="s1">Autogenerated Models for the vocabulary &#39;</span> \
-                       <span class="s1">&#39;described &#39;</span> \
-                       <span class="s1">&#39;by the ontologies:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;&quot;&quot;&quot;</span><span class="se">\n</span><span class="s1">Autogenerated Models for the vocabulary &#39;</span>
+            <span class="s2">&quot;described &quot;</span>
+            <span class="s2">&quot;by the ontologies:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="n">predefined</span><span class="p">:</span>
-                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">ontology_iri</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">source_name</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">ontology_iri</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">source_name</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">content</span> <span class="o">+=</span> <span class="s1">&#39;&quot;&quot;&quot;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
 
         <span class="c1"># imports</span>
         <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;from enum import Enum</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;from typing import Dict, Union, List</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;from filip.semantics.semantics_models import</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticClass,</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticIndividual,</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">RelationField,</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">DataField,</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticDeviceClass,</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">DeviceAttributeField,</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">CommandField&quot;</span>
+        <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;from filip.semantics.semantics_models import</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticClass,</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticIndividual,</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">RelationField,</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">DataField,</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticDeviceClass,</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">DeviceAttributeField,</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">CommandField&quot;</span>
+        <span class="p">)</span>
         <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;from filip.semantics.semantics_manager import</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticsManager,</span><span class="se">\\</span><span class="s2">&quot;</span> \
-                   <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">InstanceRegistry&quot;</span>
+        <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;from filip.semantics.semantics_manager import</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">SemanticsManager,</span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">InstanceRegistry&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span>
         <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;semantic_manager: SemanticsManager = SemanticsManager(&quot;</span>
@@ -648,9 +699,9 @@
                 <span class="n">child</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="n">child_iri</span><span class="p">]</span>
 
                 <span class="c1"># all parents added, add child to queue</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">parent_class_iris</span>
-                        <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">added_class_iris</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-                        <span class="n">child</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">parent_class_iris</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">added_class_iris</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="p">):</span>
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">child_iri</span> <span class="ow">in</span> <span class="n">added_class_iris</span><span class="p">:</span>
                         <span class="n">iri_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child_iri</span><span class="p">)</span>
@@ -660,21 +711,20 @@
             <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span>
             <span class="c1"># Parent Classes</span>
             <span class="n">parent_class_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="n">parents</span> <span class="o">=</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_parent_classes</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">,</span>
-                                                <span class="n">remove_redundancy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">parents</span> <span class="o">=</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_parent_classes</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">remove_redundancy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="c1"># Device Class, only add if this is a device class and it was not</span>
             <span class="c1"># added for a parent</span>
             <span class="k">if</span> <span class="n">class_</span><span class="o">.</span><span class="n">is_iot_class</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">):</span>
-                <span class="k">if</span> <span class="kc">True</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">is_iot_class</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span>
-                                <span class="n">parents</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="kc">True</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">is_iot_class</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">]:</span>
                     <span class="n">parent_class_string</span> <span class="o">=</span> <span class="s2">&quot; ,SemanticDeviceClass&quot;</span>
 
             <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">:</span>
                 <span class="n">parent_class_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, </span><span class="si">{</span><span class="n">parent</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
 
             <span class="n">parent_class_string</span> <span class="o">=</span> <span class="n">parent_class_string</span><span class="p">[</span>
-                                  <span class="mi">2</span><span class="p">:]</span>  <span class="c1"># remove first comma and space</span>
+                <span class="mi">2</span><span class="p">:</span>
+            <span class="p">]</span>  <span class="c1"># remove first comma and space</span>
             <span class="k">if</span> <span class="n">parent_class_string</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                 <span class="n">parent_class_string</span> <span class="o">=</span> <span class="s2">&quot;SemanticClass&quot;</span>
 
@@ -690,8 +740,10 @@
             <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Source(s): </span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
 
             <span class="k">for</span> <span class="n">source_id</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">source_ids</span><span class="p">:</span>
-                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">ontology_iri</span><span class="si">}</span><span class="s2"> &quot;</span> \
-                           <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">source_name</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">ontology_iri</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">source_id</span><span class="p">]</span><span class="o">.</span><span class="n">source_name</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
             <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&quot;&quot;&quot;&#39;</span>
 
             <span class="c1"># ------Constructors------</span>
@@ -727,26 +779,31 @@
             <span class="k">for</span> <span class="n">cdr</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_combined_data_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">):</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">cdr</span><span class="o">.</span><span class="n">is_device_relation</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">):</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t\t</span><span class="s2">&quot;</span>
-                    <span class="n">content</span> <span class="o">+=</span> \
-                        <span class="sa">f</span><span class="s2">&quot;self.&quot;</span> \
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cdr</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">._rules = &quot;</span> \
+                    <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;self.&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cdr</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">._rules = &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cdr</span><span class="o">.</span><span class="n">export_rule</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">,</span><span class="w"> </span><span class="n">stringify_fields</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">get_combined_object_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">for</span> <span class="n">cor</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_combined_object_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">):</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t\t</span><span class="s2">&quot;</span>
-                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;self.&quot;</span> \
-                           <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">._rules = &quot;</span> \
-                           <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">export_rule</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">,</span><span class="w"> </span><span class="n">stringify_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;self.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">._rules = &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">export_rule</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">,</span><span class="w"> </span><span class="n">stringify_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">get_combined_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_combined_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">):</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t\t</span><span class="s2">&quot;</span>
-                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;self.</span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> \
-                           <span class="sa">f</span><span class="s2">&quot;._instance_identifier = &quot;</span> \
-                           <span class="sa">f</span><span class="s2">&quot;self.get_identifier()&quot;</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;self.</span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;._instance_identifier = &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;self.get_identifier()&quot;</span>
+                <span class="p">)</span>
 
             <span class="c1"># ------Add preset Values------</span>
             <span class="k">for</span> <span class="n">cdr</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_combined_data_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">):</span>
@@ -760,11 +817,12 @@
                             <span class="c1"># changed them</span>
                             <span class="k">if</span> <span class="n">rel</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">==</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t\t</span><span class="s2">&quot;</span>
-                                <span class="n">content</span> <span class="o">+=</span> \
-                                    <span class="sa">f</span><span class="s2">&quot;self.&quot;</span> \
-                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cdr</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> \
-                                    <span class="sa">f</span><span class="s2">&quot;.add(&quot;</span> \
+                                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;self.&quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cdr</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;.add(&quot;</span>
                                     <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">rel</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">target_data_value</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+                                <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">get_combined_object_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -774,14 +832,14 @@
                 <span class="c1"># Only add the statement on the uppermost occurring class</span>
                 <span class="k">for</span> <span class="n">rel</span> <span class="ow">in</span> <span class="n">cor</span><span class="o">.</span><span class="n">get_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">rel</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">relation_ids</span><span class="p">:</span>
-                        <span class="n">i</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span> \
-                            <span class="n">get_label_for_entity_iri</span><span class="p">(</span>
-                            <span class="n">rel</span><span class="o">.</span><span class="n">get_targets</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">i</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_label_for_entity_iri</span><span class="p">(</span><span class="n">rel</span><span class="o">.</span><span class="n">get_targets</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
                         <span class="k">if</span> <span class="n">rel</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">==</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                             <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t\t</span><span class="s2">&quot;</span>
-                            <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;self.&quot;</span> \
-                                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> \
-                                       <span class="sa">f</span><span class="s2">&quot;.add(</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">())&quot;</span>
+                            <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;self.&quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;.add(</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">())&quot;</span>
+                            <span class="p">)</span>
 
             <span class="c1"># if no content was added af the not initialised if, removed it</span>
             <span class="c1"># again, and its preceding \n</span>
@@ -792,13 +850,13 @@
             <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]:</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="k">def</span> <span class="nf">build_field_comment</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">CombinedRelation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">build_field_comment</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">CombinedRelation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
                 <span class="n">comment</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_entity_by_iri</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">property_iri</span><span class="p">)</span><span class="o">.</span><span class="n">comment</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">comment</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                     <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&quot;&quot;&quot;&#39;</span>
                     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">split_string_into_lines</span><span class="p">(</span><span class="n">comment</span><span class="p">,</span> <span class="mi">75</span><span class="p">):</span>
-                        <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n\t</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s1">&#39;</span>
+                        <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&quot;&quot;&quot;&#39;</span>
                 <span class="k">return</span> <span class="n">res</span>
 
@@ -815,9 +873,10 @@
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;name=&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&#39;,&quot;</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
-                    <span class="n">content</span> <span class="o">+=</span> \
-                        <span class="sa">f</span><span class="s2">&quot;rule=&#39;&quot;</span> \
+                    <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;rule=&#39;&quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cdr</span><span class="o">.</span><span class="n">get_all_targetstatements_as_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;,&quot;</span>
+                    <span class="p">)</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;semantic_manager=semantic_manager)&quot;</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="n">build_field_comment</span><span class="p">(</span><span class="n">cdr</span><span class="p">)</span>
@@ -835,8 +894,9 @@
                 <span class="k">elif</span> <span class="n">cdr_type</span> <span class="o">==</span> <span class="n">DataFieldType</span><span class="o">.</span><span class="n">device_attribute</span><span class="p">:</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n\t</span><span class="s2">&quot;</span>
                     <span class="n">label</span> <span class="o">=</span> <span class="n">cdr</span><span class="o">.</span><span class="n">get_property_label</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
-                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: DeviceAttributeField &quot;</span> \
-                               <span class="sa">f</span><span class="s2">&quot;= DeviceAttributeField(&quot;</span>
+                    <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: DeviceAttributeField &quot;</span> <span class="sa">f</span><span class="s2">&quot;= DeviceAttributeField(&quot;</span>
+                    <span class="p">)</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;name=&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&#39;,&quot;</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
@@ -854,8 +914,9 @@
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;name=&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&#39;,&quot;</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
-                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;rule=&#39;&quot;</span> \
-                           <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">get_all_targetstatements_as_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;,&quot;</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;rule=&#39;&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cor</span><span class="o">.</span><span class="n">get_all_targetstatements_as_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;,&quot;</span>
+                <span class="p">)</span>
                 <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">cor</span><span class="o">.</span><span class="n">get_inverse_of_labels</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;inverse_of=&quot;</span>
@@ -937,19 +998,19 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">)</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">text_file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">text_file</span><span class="p">:</span>
                 <span class="n">text_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ParsingException"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.ParsingException">[docs]</a><span class="k">class</span> <span class="nc">ParsingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ParsingException"><a class="viewcode-back" href="../../../code/filip.semantics.html#filip.semantics.vocabulary_configurator.ParsingException">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ParsingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Error Class that is raised if parsing of an ontology was unsuccessful&quot;&quot;&quot;</span>
 
     <span class="c1"># Constructor or Initializer</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="c1"># __str__ is to print() the value</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 </pre></div>
 
@@ -960,7 +1021,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

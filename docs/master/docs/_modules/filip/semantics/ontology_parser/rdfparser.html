@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.ontology_parser.rdfparser &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.semantics.ontology_parser.rdfparser &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -79,45 +79,60 @@
 <span></span><span class="sd">&quot;&quot;&quot;Module contains the RDFParser that can create a Vocabulary object out of a</span>
 <span class="sd">given ontology&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">rdflib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
 
-<span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">LogLevel</span>
-<span class="kn">from</span> <span class="nn">filip.semantics.ontology_parser.vocabulary_builder</span> <span class="kn">import</span> <span class="n">VocabularyBuilder</span>
-<span class="kn">from</span> <span class="nn">filip.semantics.vocabulary</span> <span class="kn">import</span> <span class="n">Source</span><span class="p">,</span> <span class="n">IdType</span><span class="p">,</span> \
-    <span class="n">Vocabulary</span><span class="p">,</span><span class="n">RestrictionType</span><span class="p">,</span> <span class="n">ObjectProperty</span><span class="p">,</span> <span class="n">DataProperty</span><span class="p">,</span> <span class="n">Relation</span><span class="p">,</span> \
-    <span class="n">TargetStatement</span><span class="p">,</span> <span class="n">StatementType</span><span class="p">,</span> <span class="n">DatatypeType</span><span class="p">,</span> <span class="n">Datatype</span><span class="p">,</span> <span class="n">Class</span><span class="p">,</span> <span class="n">Individual</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogLevel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.ontology_parser.vocabulary_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">VocabularyBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Source</span><span class="p">,</span>
+    <span class="n">IdType</span><span class="p">,</span>
+    <span class="n">Vocabulary</span><span class="p">,</span>
+    <span class="n">RestrictionType</span><span class="p">,</span>
+    <span class="n">ObjectProperty</span><span class="p">,</span>
+    <span class="n">DataProperty</span><span class="p">,</span>
+    <span class="n">Relation</span><span class="p">,</span>
+    <span class="n">TargetStatement</span><span class="p">,</span>
+    <span class="n">StatementType</span><span class="p">,</span>
+    <span class="n">DatatypeType</span><span class="p">,</span>
+    <span class="n">Datatype</span><span class="p">,</span>
+    <span class="n">Class</span><span class="p">,</span>
+    <span class="n">Individual</span><span class="p">,</span>
+<span class="p">)</span>
 
 
-<span class="n">specifier_base_iris</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;http://www.w3.org/2002/07/owl&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;http://www.w3.org/XML/1998/namespace&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema&quot;</span><span class="p">]</span>
+<span class="n">specifier_base_iris</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;http://www.w3.org/2002/07/owl&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://www.w3.org/XML/1998/namespace&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Defines a set of base iris, that describe elements that belong to the </span>
 <span class="sd">description language not the ontology itself</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Tags"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.Tags">[docs]</a><span class="k">class</span> <span class="nc">Tags</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Tags"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.Tags">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Tags</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Collection of tags used as structures in ontologies, that were used more</span>
 <span class="sd">    than once in the rdfparser code</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">rdf_type</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&#39;</span><span class="p">,</span>
-    <span class="n">owl_intersection</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/2002/07/owl#intersectionOf&#39;</span><span class="p">,</span>
-    <span class="n">owl_union</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/2002/07/owl#unionOf&#39;</span><span class="p">,</span>
-    <span class="n">owl_one_of</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/2002/07/owl#oneOf&#39;</span><span class="p">,</span>
-    <span class="n">owl_individual</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/2002/07/owl#NamedIndividual&#39;</span><span class="p">,</span>
-    <span class="n">owl_on_class</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/2002/07/owl#onClass&#39;</span><span class="p">,</span>
-    <span class="n">owl_on_data_range</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/2002/07/owl#onDataRange&#39;</span></div>
+
+    <span class="n">rdf_type</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&quot;</span><span class="p">,)</span>
+    <span class="n">owl_intersection</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#intersectionOf&quot;</span><span class="p">,)</span>
+    <span class="n">owl_union</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#unionOf&quot;</span><span class="p">,)</span>
+    <span class="n">owl_one_of</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#oneOf&quot;</span><span class="p">,)</span>
+    <span class="n">owl_individual</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#NamedIndividual&quot;</span><span class="p">,)</span>
+    <span class="n">owl_on_class</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#onClass&quot;</span><span class="p">,)</span>
+    <span class="n">owl_on_data_range</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#onDataRange&quot;</span></div>
 
 
-<div class="viewcode-block" id="get_iri_from_uriref"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.get_iri_from_uriref">[docs]</a><span class="k">def</span> <span class="nf">get_iri_from_uriref</span><span class="p">(</span><span class="n">uriref</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_iri_from_uriref"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.get_iri_from_uriref">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_iri_from_uriref</span><span class="p">(</span><span class="n">uriref</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Give an Uriref object, returns an iri</span>
 
 <span class="sd">    Args:</span>
@@ -129,15 +144,15 @@
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">uriref</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_base_out_of_iri"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.get_base_out_of_iri">[docs]</a><span class="k">def</span> <span class="nf">get_base_out_of_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_base_out_of_iri"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.get_base_out_of_iri">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_base_out_of_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Give an iri, returns an the ontology base name</span>
 
-<span class="sd">       Args:</span>
-<span class="sd">           iri</span>
+<span class="sd">    Args:</span>
+<span class="sd">        iri</span>
 
-<span class="sd">       Returns:</span>
-<span class="sd">           str</span>
-<span class="sd">       &quot;&quot;&quot;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;#&quot;</span> <span class="ow">in</span> <span class="n">iri</span><span class="p">:</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">iri</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">iri</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span>
@@ -148,19 +163,20 @@
         <span class="k">return</span> <span class="n">iri</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="RdfParser"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.RdfParser">[docs]</a><span class="k">class</span> <span class="nc">RdfParser</span><span class="p">:</span>
+<div class="viewcode-block" id="RdfParser"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.RdfParser">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">RdfParser</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class that parses a given source into a vocabulary.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Current source which is parsed, used for Log entries&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_class_iri</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iri of class which is currently parsed, used for Log entries&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_add_logging_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="n">LogLevel</span><span class="p">,</span>
-                                 <span class="n">entity_type</span><span class="p">:</span> <span class="n">IdType</span><span class="p">,</span> <span class="n">entity_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                 <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_logging_information</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="n">LogLevel</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="n">IdType</span><span class="p">,</span> <span class="n">entity_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an entry to the parsing log</span>
 
 <span class="sd">        Args:</span>
@@ -173,12 +189,14 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span><span class="o">.</span><span class="n">add_parsing_log_entry</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">,</span>
-                                                      <span class="n">entity_iri</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_source</span><span class="o">.</span><span class="n">add_parsing_log_entry</span><span class="p">(</span>
+                <span class="n">level</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">,</span> <span class="n">entity_iri</span><span class="p">,</span> <span class="n">msg</span>
+            <span class="p">)</span>
 
-<div class="viewcode-block" id="RdfParser.parse_source_into_vocabulary"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.RdfParser.parse_source_into_vocabulary">[docs]</a>    <span class="k">def</span> <span class="nf">parse_source_into_vocabulary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">,</span>
-                                     <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Parse a Source into the given vocabulary</span>
+<div class="viewcode-block" id="RdfParser.parse_source_into_vocabulary"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.rdfparser.RdfParser.parse_source_into_vocabulary">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">parse_source_into_vocabulary</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a Source into the given vocabulary</span>
 <span class="sd">        Args:</span>
 <span class="sd">            source (Source)</span>
 <span class="sd">            vocabulary (Vocabulary)</span>
@@ -201,9 +219,12 @@
 
         <span class="n">g</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;turtle&quot;</span><span class="p">)</span>
 
-        <span class="n">ontology_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-            <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#Ontology&quot;</span><span class="p">),</span>
-            <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>
+        <span class="n">ontology_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
+                <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#Ontology&quot;</span><span class="p">),</span>
+                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># a source may have no ontology iri defined</span>
         <span class="c1"># if wanted on this place more info about the ontology can be extracted</span>
@@ -216,9 +237,10 @@
 
         <span class="k">return</span> <span class="kc">True</span></div>
 
-    <span class="k">def</span> <span class="nf">_is_object_defined_by_other_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="p">,</span>
-                                           <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test if the term is defined outside the current source</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_object_defined_by_other_source</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if the term is defined outside the current source</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            a (rdflib.term): Term to check</span>
@@ -230,13 +252,17 @@
 
         <span class="c1"># if an object is defined by an other source it carries the predicate</span>
         <span class="c1"># (&quot;isDefinedBy&quot;). Then don&#39;t parse the object</span>
-        <span class="n">defined_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-            <span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#isDefinedBy&quot;</span><span class="p">)))</span>
+        <span class="n">defined_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
+                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
+                    <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#isDefinedBy&quot;</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">defined_tags</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">_parse_to_vocabulary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
-                             <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_to_vocabulary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse an graph that was extracted from a TTL file into the vocabulary</span>
 
 <span class="sd">        Args:</span>
@@ -250,9 +276,9 @@
 
         <span class="c1"># OWLClasses</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-                <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                    <span class="s2">&quot;http://www.w3.org/2002/07/owl#Class&quot;</span><span class="p">),</span>
-                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
+            <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#Class&quot;</span><span class="p">),</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="p">):</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">):</span>
                 <span class="k">pass</span>
@@ -271,8 +297,10 @@
         <span class="c1"># Class properties</span>
         <span class="n">found_class_iris</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">class_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                    <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#subClassOf&quot;</span><span class="p">)):</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
+                <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#subClassOf&quot;</span>
+            <span class="p">)</span>
+        <span class="p">):</span>
 
             <span class="n">class_iri</span> <span class="o">=</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">class_node</span><span class="p">)</span>
             <span class="n">found_class_iris</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">class_iri</span><span class="p">)</span>
@@ -280,26 +308,29 @@
         <span class="k">for</span> <span class="n">class_iri</span> <span class="ow">in</span> <span class="n">found_class_iris</span><span class="p">:</span>
             <span class="c1"># parent class / relation parsing</span>
             <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                    <span class="n">subject</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">class_iri</span><span class="p">),</span>
-                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span>
-                        <span class="p">(</span><span class="s1">&#39;http://www.w3.org/2000/01/rdf-schema#subClassOf&#39;</span><span class="p">)):</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">class_iri</span><span class="p">),</span>
+                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
+                    <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#subClassOf&quot;</span>
+                <span class="p">),</span>
+            <span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_class_iri</span> <span class="o">=</span> <span class="n">class_iri</span>  <span class="c1"># used only for logging</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_subclass_term</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
-                                          <span class="n">voc_builder</span><span class="o">=</span><span class="n">voc_builder</span><span class="p">,</span>
-                                          <span class="n">node</span><span class="o">=</span><span class="n">sub</span><span class="p">,</span>
-                                          <span class="n">class_iri</span><span class="o">=</span><span class="n">class_iri</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_subclass_term</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">voc_builder</span><span class="o">=</span><span class="n">voc_builder</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">sub</span><span class="p">,</span> <span class="n">class_iri</span><span class="o">=</span><span class="n">class_iri</span>
+                <span class="p">)</span>
 
         <span class="c1"># OWlObjectProperties</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-                <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                    <span class="s2">&quot;http://www.w3.org/2002/07/owl#ObjectProperty&quot;</span><span class="p">),</span>
-                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
+            <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#ObjectProperty&quot;</span><span class="p">),</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="p">):</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
-                                              <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">,</span>
-                                              <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-                                              <span class="s2">&quot;Found unparseable statement&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
+                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+                    <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">,</span>
+                    <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Found unparseable statement&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># defined in other source -&gt; ignore</span>
@@ -312,27 +343,36 @@
                 <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_object_property</span><span class="p">(</span><span class="n">obj_prop</span><span class="p">)</span>
                 <span class="c1"># extract inverse properties, it can be multiple but only</span>
                 <span class="c1"># URIRefs allowed no union/intersection</span>
-                <span class="k">for</span> <span class="n">inverse_iri_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
-                        <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                        <span class="s1">&#39;http://www.w3.org/2002/07/owl#inverseOf&#39;</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">inverse_iri_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                    <span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
+                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
+                        <span class="s2">&quot;http://www.w3.org/2002/07/owl#inverseOf&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inverse_iri_node</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">):</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
-                            <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">,</span> <span class="n">iri</span><span class="p">,</span>
-                            <span class="s2">&quot;Complex inverseProperty statements aren&#39;t allowed&quot;</span><span class="p">)</span>
+                            <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                            <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">,</span>
+                            <span class="n">iri</span><span class="p">,</span>
+                            <span class="s2">&quot;Complex inverseProperty statements aren&#39;t allowed&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">inverse_iri</span> <span class="o">=</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">inverse_iri_node</span><span class="p">)</span>
                         <span class="n">obj_prop</span><span class="o">.</span><span class="n">add_inverse_property_iri</span><span class="p">(</span><span class="n">inverse_iri</span><span class="p">)</span>
 
         <span class="c1"># OWlDataProperties</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-                <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                    <span class="s2">&quot;http://www.w3.org/2002/07/owl#DatatypeProperty&quot;</span><span class="p">),</span>
-                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
+            <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#DatatypeProperty&quot;</span><span class="p">),</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="p">):</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
-                                              <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-                                             <span class="s2">&quot;Found unparseable statement&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
+                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+                    <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">,</span>
+                    <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Found unparseable statement&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># defined in other source -&gt; ignore</span>
@@ -349,16 +389,16 @@
         <span class="c1"># the predefined are automatically added at the start</span>
         <span class="c1"># of post processing</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-                <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                    <span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#Datatype&quot;</span><span class="p">),</span>
-                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
+            <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#Datatype&quot;</span><span class="p">),</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="p">):</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">):</span>
                 <span class="c1"># self._add_logging_information(LogLevel.WARNING,</span>
                 <span class="c1">#                              IdType.datatype, &quot;unknown&quot;,</span>
                 <span class="c1">#                              &quot;Found unparseable statement&quot;)</span>
                 <span class="k">pass</span>
-                <span class="c1">#e.g: :</span>
+                <span class="c1"># e.g: :</span>
                 <span class="c1"># customDataType4 rdf:type rdfs:Datatype ;</span>
                 <span class="c1"># owl:equivalentClass [ rdf:type rdfs:Datatype ;....</span>
                 <span class="c1"># the second Datatype triggers this if condition,</span>
@@ -385,19 +425,24 @@
 
                 <span class="n">enum_values</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">equivalent_class</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                        <span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
-                        <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                            <span class="s2">&quot;http://www.w3.org/2002/07/owl#equivalentClass&quot;</span><span class="p">)):</span>
+                    <span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
+                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
+                        <span class="s2">&quot;http://www.w3.org/2002/07/owl#equivalentClass&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">):</span>
 
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">equivalent_class</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">):</span>
                         <span class="c1"># points to an other defined datatype, ignore</span>
                         <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># is a bNode and points to owl:oneOf</span>
-                        <span class="n">enum_literals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span>\
-                            <span class="n">_extract_objects_out_of_single_combination</span><span class="p">(</span>
-                                <span class="n">graph</span><span class="p">,</span> <span class="n">equivalent_class</span><span class="p">,</span> <span class="n">accept_and</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                <span class="n">accept_or</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">accept_one_of</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">enum_literals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_objects_out_of_single_combination</span><span class="p">(</span>
+                            <span class="n">graph</span><span class="p">,</span>
+                            <span class="n">equivalent_class</span><span class="p">,</span>
+                            <span class="n">accept_and</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">accept_or</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">accept_one_of</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="p">)</span>
                         <span class="k">for</span> <span class="n">literal</span> <span class="ow">in</span> <span class="n">enum_literals</span><span class="p">:</span>
                             <span class="n">enum_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">literal</span><span class="p">))</span>
                 <span class="n">datatype</span><span class="o">.</span><span class="n">enum_values</span> <span class="o">=</span> <span class="n">enum_values</span>
@@ -409,13 +454,17 @@
         <span class="c1"># OWLIndividuals</span>
 
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-                <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_individual</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
-                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
+            <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_individual</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="p">):</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
-                                              <span class="n">IdType</span><span class="o">.</span><span class="n">individual</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-                                             <span class="s2">&quot;Found unparseable statement&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
+                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+                    <span class="n">IdType</span><span class="o">.</span><span class="n">individual</span><span class="p">,</span>
+                    <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Found unparseable statement&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># defined in other source -&gt; ignore</span>
@@ -423,22 +472,22 @@
                     <span class="k">continue</span>
 
                 <span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_annotations</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-                <span class="n">objects</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
-                                        <span class="n">predicate</span><span class="o">=</span>
-                                        <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+                <span class="n">objects</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                    <span class="n">subject</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="p">)</span>
                 <span class="c1"># superclasses = types</span>
                 <span class="n">types</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="nb">object</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">object</span> <span class="o">==</span> \
-                           <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_individual</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
-                        <span class="n">types</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span>
-                            <span class="n">_extract_objects_out_of_layered_combination</span><span class="p">(</span>
-                                        <span class="n">graph</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">object</span> <span class="o">==</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_individual</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+                        <span class="n">types</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_extract_objects_out_of_layered_combination</span><span class="p">(</span>
+                                <span class="n">graph</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
 
                 <span class="n">individual</span> <span class="o">=</span> <span class="n">Individual</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
                 <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
-                    <span class="n">individual</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>
+                    <span class="n">individual</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>
                 <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_individual</span><span class="p">(</span><span class="n">individual</span><span class="o">=</span><span class="n">individual</span><span class="p">)</span>
 
         <span class="c1"># As seen for example in the bricks ontology an individual can be</span>
@@ -448,11 +497,10 @@
         <span class="c1"># as we may not have loaded all dependencies we can not simply look it</span>
         <span class="c1"># up in vocabulary</span>
         <span class="c1"># -&gt; getbase uri of statement and filter all known specifier uris</span>
-        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span>
-                <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">sub</span><span class="p">,</span>
-                                     <span class="n">predicate</span><span class="o">=</span>
-                                     <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">sub</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="p">):</span>
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">):</span>
                     <span class="k">continue</span>
@@ -460,20 +508,17 @@
 
                 <span class="n">obj_base_iri</span> <span class="o">=</span> <span class="n">get_base_out_of_iri</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="n">obj_iri</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">obj_base_iri</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">specifier_base_iris</span><span class="p">:</span>
-                    <span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> \
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_extract_annotations</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
+                    <span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_annotations</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">voc_builder</span><span class="o">.</span><span class="n">entity_is_known</span><span class="p">(</span><span class="n">iri</span><span class="p">):</span>
-                        <span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> \
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_extract_annotations</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
-                        <span class="n">individual</span> <span class="o">=</span> <span class="n">Individual</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="n">iri</span><span class="p">,</span>
-                                                <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
-                                                <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+                        <span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_annotations</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
+                        <span class="n">individual</span> <span class="o">=</span> <span class="n">Individual</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
                         <span class="n">individual</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj_iri</span><span class="p">)</span>
                         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_individual</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_extract_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
-                             <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Extract out of a node term the owl annotations (iri, label, comment)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract out of a node term the owl annotations (iri, label, comment)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            graph (rdflib.graph): Graph describing ontology</span>
@@ -488,9 +533,13 @@
 
         <span class="k">return</span> <span class="n">iri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">comment</span>
 
-    <span class="k">def</span> <span class="nf">_parse_subclass_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
-                             <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">,</span>
-                             <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_subclass_term</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+        <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">,</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="p">,</span>
+        <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a subclass term of the given node and class_iri</span>
 
 <span class="sd">        Args:</span>
@@ -539,21 +588,31 @@
             <span class="c1"># Combination of statements</span>
             <span class="k">if</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_intersection</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
                 <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_objects_out_of_single_combination</span><span class="p">(</span>
-                    <span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span>
+                <span class="p">)</span>
                 <span class="k">for</span> <span class="nb">object</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_subclass_term</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
-                                              <span class="n">voc_builder</span><span class="o">=</span><span class="n">voc_builder</span><span class="p">,</span>
-                                              <span class="n">node</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">class_iri</span><span class="o">=</span><span class="n">class_iri</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_subclass_term</span><span class="p">(</span>
+                        <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
+                        <span class="n">voc_builder</span><span class="o">=</span><span class="n">voc_builder</span><span class="p">,</span>
+                        <span class="n">node</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span>
+                        <span class="n">class_iri</span><span class="o">=</span><span class="n">class_iri</span><span class="p">,</span>
+                    <span class="p">)</span>
 
             <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_union</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
-                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">,</span>
-                    <span class="s2">&quot;Relation statements combined with or&quot;</span><span class="p">)</span>
+                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                    <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
+                    <span class="n">class_iri</span><span class="p">,</span>
+                    <span class="s2">&quot;Relation statements combined with or&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_one_of</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
-                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">,</span>
-                    <span class="s2">&quot;Relation statements combined with oneOf&quot;</span><span class="p">)</span>
+                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                    <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
+                    <span class="n">class_iri</span><span class="p">,</span>
+                    <span class="s2">&quot;Relation statements combined with oneOf&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="c1"># Relation statement</span>
             <span class="k">else</span><span class="p">:</span>
@@ -566,23 +625,31 @@
                     <span class="k">if</span> <span class="n">predicates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">rdf_type</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
                         <span class="n">rdf_type</span> <span class="o">=</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                     <span class="k">elif</span> <span class="n">predicates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                            <span class="s2">&quot;http://www.w3.org/2002/07/owl#onProperty&quot;</span><span class="p">):</span>
+                        <span class="s2">&quot;http://www.w3.org/2002/07/owl#onProperty&quot;</span>
+                    <span class="p">):</span>
                         <span class="n">owl_on_property</span> <span class="o">=</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">additional_statements</span><span class="p">[</span>
-                            <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">predicates</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">additional_statements</span><span class="p">[</span><span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">predicates</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">objects</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="p">)</span>
 
                 <span class="n">relation_is_ok</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">rdf_type</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#Restriction&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
-                        <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">,</span>
-                        <span class="s2">&quot;Class has an unknown subClass statement&quot;</span><span class="p">)</span>
+                        <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                        <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
+                        <span class="n">class_iri</span><span class="p">,</span>
+                        <span class="s2">&quot;Class has an unknown subClass statement&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">relation_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="k">if</span> <span class="n">owl_on_property</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
-                        <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">,</span>
-                        <span class="s2">&quot;Class has a relation without a property&quot;</span><span class="p">)</span>
+                        <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                        <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
+                        <span class="n">class_iri</span><span class="p">,</span>
+                        <span class="s2">&quot;Class has a relation without a property&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">relation_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="c1"># object or data relation?</span>
@@ -598,34 +665,38 @@
 
                     <span class="c1"># go through the additional statement to figure out the</span>
                     <span class="c1"># targetIRI and the restrictionType/cardinality</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_relation_type</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span>
-                                              <span class="n">additional_statements</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_relation_type</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">additional_statements</span><span class="p">)</span>
 
         <span class="c1"># parent-class statement or empty list element</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># owlThing is the root object, but it is not declared as a class</span>
             <span class="c1"># in the file to prevent None pointer when looking up parents,</span>
             <span class="c1"># a class that has a parent owlThing simply has no parents</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> \
-                   <span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#nil&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#nil&quot;</span>
+            <span class="p">):</span>
                 <span class="c1"># ignore empty lists</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> \
-                       <span class="s2">&quot;http://www.w3.org/2002/07/owl#Thing&quot;</span><span class="p">:</span>
-                    <span class="n">voc_builder</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span>\
-                        <span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">class_iri</span><span class="p">)</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="o">.</span>\
-                        <span class="n">append</span><span class="p">(</span><span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="ow">not</span> <span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                    <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#Thing&quot;</span>
+                <span class="p">):</span>
+                    <span class="n">voc_builder</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span>
+                        <span class="n">class_iri</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_iri_from_uriref</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_parse_relation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
-                             <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">statements</span><span class="p">:</span> <span class="p">{}):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_relation_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">statements</span><span class="p">:</span> <span class="p">{}</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse the relation type and depending on the result the</span>
 <span class="sd">        cardinality or value of relation</span>
-<span class="sd">        </span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            graph: underlying ontology graph</span>
 <span class="sd">            relation: Relation object into which the information are saved</span>
 <span class="sd">            statements: Ontology statements concerning the relation</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -633,57 +704,65 @@
         <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="n">statements</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#someValuesFrom&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">some</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_relation_values</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span>
-                                            <span class="n">statements</span><span class="p">[</span><span class="n">statement</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_relation_values</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statements</span><span class="p">[</span><span class="n">statement</span><span class="p">])</span>
             <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#allValuesFrom&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">only</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_relation_values</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span>
-                                            <span class="n">statements</span><span class="p">[</span><span class="n">statement</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_relation_values</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statements</span><span class="p">[</span><span class="n">statement</span><span class="p">])</span>
             <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#hasValue&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">value</span>
                 <span class="c1"># has Value can only point to a single value</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_has_value</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span>
-                                      <span class="n">statements</span><span class="p">[</span><span class="n">statement</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_has_value</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statements</span><span class="p">[</span><span class="n">statement</span><span class="p">])</span>
             <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#maxCardinality&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">max</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span>
-                                        <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span>
+                <span class="p">)</span>
             <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#minCardinality&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">min</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span>
-                                        <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span>
+                <span class="p">)</span>
             <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#cardinality&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">exactly</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span>  <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span>
-                                        <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> \
-                    <span class="s2">&quot;http://www.w3.org/2002/07/owl#maxQualifiedCardinality&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#maxQualifiedCardinality&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">max</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span>
-                                        <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> \
-                    <span class="s2">&quot;http://www.w3.org/2002/07/owl#minQualifiedCardinality&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#minQualifiedCardinality&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">min</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span>
-                                        <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> \
-                    <span class="s2">&quot;http://www.w3.org/2002/07/owl#qualifiedCardinality&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">statement</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#qualifiedCardinality&quot;</span><span class="p">:</span>
                 <span class="n">relation</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">=</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">exactly</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span>
-                                        <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cardinality</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">statements</span><span class="p">,</span> <span class="n">treated_statements</span>
+                <span class="p">)</span>
 
             <span class="n">treated_statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="n">statements</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">treated_statements</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
-                  <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_class_iri</span><span class="p">,</span>
-                  <span class="s2">&quot;Relation with property </span><span class="si">{}</span><span class="s2"> has an untreated restriction &quot;</span>
-                  <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">relation</span><span class="o">.</span><span class="n">property_iri</span><span class="p">,</span> <span class="n">statement</span><span class="p">))</span>
+                    <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                    <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_class_iri</span><span class="p">,</span>
+                    <span class="s2">&quot;Relation with property </span><span class="si">{}</span><span class="s2"> has an untreated restriction &quot;</span>
+                    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">relation</span><span class="o">.</span><span class="n">property_iri</span><span class="p">,</span> <span class="n">statement</span><span class="p">),</span>
+                <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_parse_cardinality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
-                           <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">statements</span><span class="p">,</span>
-                           <span class="n">treated_statements</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_cardinality</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+        <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span>
+        <span class="n">statement</span><span class="p">,</span>
+        <span class="n">statements</span><span class="p">,</span>
+        <span class="n">treated_statements</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the cardinality of a relation</span>
 
 <span class="sd">        Args:</span>
@@ -719,19 +798,21 @@
 
             <span class="n">relation</span><span class="o">.</span><span class="n">restriction_cardinality</span> <span class="o">=</span> <span class="n">statements</span><span class="p">[</span><span class="n">statement</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
             <span class="n">datatype</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span>
-            <span class="n">target_statement</span> <span class="o">=</span> <span class="n">TargetStatement</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">StatementType</span><span class="o">.</span><span class="n">LEAF</span><span class="p">,</span>
-                                               <span class="n">target_iri</span><span class="o">=</span><span class="n">datatype</span><span class="p">)</span>
+            <span class="n">target_statement</span> <span class="o">=</span> <span class="n">TargetStatement</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">StatementType</span><span class="o">.</span><span class="n">LEAF</span><span class="p">,</span> <span class="n">target_iri</span><span class="o">=</span><span class="n">datatype</span>
+            <span class="p">)</span>
             <span class="n">relation</span><span class="o">.</span><span class="n">target_statement</span> <span class="o">=</span> <span class="n">target_statement</span>
 
-    <span class="k">def</span> <span class="nf">_parse_has_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span>
-                         <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_has_value</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the value of a relation</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">           graph: underlying ontology graph</span>
 <span class="sd">           relation: Relation object into which the information are saved</span>
 <span class="sd">           node: (complex) Graph node containing the value</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">           None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -743,10 +824,12 @@
                 <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_class_iri</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">&quot;In hasValue relation with property </span><span class="si">{</span><span class="n">relation</span><span class="o">.</span><span class="n">property_iri</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;target is a complex expression&quot;</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;target is a complex expression&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_parse_relation_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
-                               <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_relation_values</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse the value of a relation out of a node that can be complex;</span>
 <span class="sd">        consisting out of a combination of multiple other nodes</span>
@@ -770,23 +853,27 @@
 
                 <span class="n">current_statement</span><span class="o">.</span><span class="n">set_target</span><span class="p">(</span><span class="n">target_iri</span><span class="o">=</span><span class="n">target_iri</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_intersection</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> \
-                        <span class="n">graph</span><span class="o">.</span><span class="n">predicates</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">current_term</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_intersection</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">predicates</span><span class="p">(</span>
+                    <span class="n">subject</span><span class="o">=</span><span class="n">current_term</span>
+                <span class="p">):</span>
 
                     <span class="n">current_statement</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">StatementType</span><span class="o">.</span><span class="n">AND</span>
-                <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_union</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> \
-                        <span class="n">graph</span><span class="o">.</span><span class="n">predicates</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">current_term</span><span class="p">):</span>
+                <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_union</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">predicates</span><span class="p">(</span>
+                    <span class="n">subject</span><span class="o">=</span><span class="n">current_term</span>
+                <span class="p">):</span>
 
                     <span class="n">current_statement</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">StatementType</span><span class="o">.</span><span class="n">OR</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">current_statement</span><span class="o">.</span><span class="n">set_target</span><span class="p">(</span>
                         <span class="n">target_iri</span><span class="o">=</span><span class="s2">&quot;Target statement has no iri&quot;</span><span class="p">,</span>
-                        <span class="n">target_data_value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">current_term</span><span class="p">))</span>
+                        <span class="n">target_data_value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">current_term</span><span class="p">),</span>
+                    <span class="p">)</span>
 
                     <span class="k">continue</span>
 
                 <span class="n">child_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_objects_out_of_single_combination</span><span class="p">(</span>
-                    <span class="n">graph</span><span class="p">,</span> <span class="n">current_term</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="n">current_term</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">)</span>
                 <span class="k">for</span> <span class="n">child_node</span> <span class="ow">in</span> <span class="n">child_nodes</span><span class="p">:</span>
                     <span class="n">new_statement</span> <span class="o">=</span> <span class="n">TargetStatement</span><span class="p">()</span>
                     <span class="n">current_statement</span><span class="o">.</span><span class="n">target_statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_statement</span><span class="p">)</span>
@@ -799,11 +886,14 @@
     <span class="c1"># this methode extracts all objects of a single layered intersection,</span>
     <span class="c1"># if the intersection contains further intersections these are contained in</span>
     <span class="c1"># the result list as BNode</span>
-    <span class="k">def</span> <span class="nf">_extract_objects_out_of_single_combination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
-                                                   <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">,</span>
-                                                   <span class="n">accept_and</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-                                                   <span class="n">accept_or</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-                                                   <span class="n">accept_one_of</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_objects_out_of_single_combination</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">,</span>
+        <span class="n">accept_and</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">accept_or</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">accept_one_of</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An intersection/union is a basic list, it consits out of a chain of</span>
 <span class="sd">        bnode,where each bnode has the &quot;first&quot;and &quot;rest&quot; predicate,</span>
@@ -831,28 +921,36 @@
         <span class="c1"># the passed startnode needs to contain an intersection or a union</span>
         <span class="c1"># both at the same time should not be possible</span>
         <span class="n">start_node</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_intersection</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> \
-                <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_intersection</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">accept_and</span><span class="p">:</span>
-                <span class="n">start_node</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                    <span class="n">subject</span><span class="o">=</span><span class="n">node</span><span class="p">,</span>
-                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_intersection</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>
-        <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_union</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> \
-                <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
+                <span class="n">start_node</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                        <span class="n">subject</span><span class="o">=</span><span class="n">node</span><span class="p">,</span>
+                        <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_intersection</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_union</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">accept_or</span><span class="p">:</span>
-                <span class="n">start_node</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                    <span class="n">subject</span><span class="o">=</span><span class="n">node</span><span class="p">,</span>
-                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_union</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>
-        <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_one_of</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> \
-                <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
+                <span class="n">start_node</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                        <span class="n">subject</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_union</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_one_of</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">accept_one_of</span><span class="p">:</span>
-                <span class="n">start_node</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                    <span class="n">subject</span><span class="o">=</span><span class="n">node</span><span class="p">,</span>
-                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_one_of</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>
+                <span class="n">start_node</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                        <span class="n">subject</span><span class="o">=</span><span class="n">node</span><span class="p">,</span>
+                        <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">Tags</span><span class="o">.</span><span class="n">owl_one_of</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_logging_information</span><span class="p">(</span>
-                <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_class_iri</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Intern Error - invalid </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2"> passed to list extraction&quot;</span><span class="p">)</span>
+                <span class="n">LogLevel</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_class_iri</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Intern Error - invalid </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2"> passed to list extraction&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="n">start_node</span>
@@ -860,21 +958,36 @@
             <span class="k">return</span> <span class="p">[]</span>
 
         <span class="k">while</span> <span class="ow">not</span> <span class="n">rest</span> <span class="o">==</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                <span class="s1">&#39;http://www.w3.org/1999/02/22-rdf-syntax-ns#nil&#39;</span><span class="p">):</span>
+            <span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#nil&quot;</span>
+        <span class="p">):</span>
 
-            <span class="n">first</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                <span class="s1">&#39;http://www.w3.org/1999/02/22-rdf-syntax-ns#first&#39;</span><span class="p">),</span>
-                <span class="n">subject</span><span class="o">=</span><span class="n">rest</span><span class="p">))</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
+                        <span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#first&quot;</span>
+                    <span class="p">),</span>
+                    <span class="n">subject</span><span class="o">=</span><span class="n">rest</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
-            <span class="n">rest</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
-                        <span class="s1">&#39;http://www.w3.org/1999/02/22-rdf-syntax-ns#rest&#39;</span><span class="p">),</span>
-                                      <span class="n">subject</span><span class="o">=</span><span class="n">rest</span><span class="p">))</span>
+            <span class="n">rest</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                    <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span>
+                        <span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#rest&quot;</span>
+                    <span class="p">),</span>
+                    <span class="n">subject</span><span class="o">=</span><span class="n">rest</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_extract_objects_out_of_layered_combination</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">,</span>
-            <span class="n">accept_and</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">accept_or</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_objects_out_of_layered_combination</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+        <span class="n">node</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">BNode</span><span class="p">,</span>
+        <span class="n">accept_and</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">accept_or</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract all nodes out of a complex combination</span>
 
 <span class="sd">        Args:</span>
@@ -896,10 +1009,12 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span><span class="p">):</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">queue</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extract_objects_out_of_single_combination</span>
-                             <span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">accept_and</span><span class="p">,</span> <span class="n">accept_or</span><span class="p">))</span>
+                <span class="n">queue</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_extract_objects_out_of_single_combination</span><span class="p">(</span>
+                        <span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">accept_and</span><span class="p">,</span> <span class="n">accept_or</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span></div>
-
 </pre></div>
 
            </div>
@@ -909,7 +1024,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

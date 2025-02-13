@@ -28,9 +28,9 @@
 
         
         <h2>Score</h2>
-        8.89 / 10
+        9.07 / 10
             
-            (previous score: 8.89 / 10)
+            (previous score: 9.07 / 10)
             
         
 
@@ -49,7 +49,7 @@
             </tr>
             
             <tr>
-                <td>9</td>
+                <td>10</td>
                 <td>0</td>
                 <td>convention</td>
                 <td><code>wrong-import-order</code></td>
@@ -59,7 +59,7 @@
             </tr>
             
             <tr>
-                <td>10</td>
+                <td>11</td>
                 <td>0</td>
                 <td>convention</td>
                 <td><code>wrong-import-order</code></td>
@@ -871,7 +871,7 @@
             </tr>
             
             <tr>
-                <td>7</td>
+                <td>8</td>
                 <td>0</td>
                 <td>convention</td>
                 <td><code>wrong-import-order</code></td>
@@ -881,7 +881,7 @@
             </tr>
             
             <tr>
-                <td>8</td>
+                <td>9</td>
                 <td>0</td>
                 <td>convention</td>
                 <td><code>wrong-import-order</code></td>
@@ -890,14 +890,28 @@
                 <td><pre>third party import &#34;from pydantic import AnyHttpUrl&#34; should be placed before &#34;from filip.config import Settings&#34;</pre></td>
             </tr>
             
+        </table>
+        
+        <h3>Module <code>tests.test_logging</code> (<code>tests/test_logging.py</code>)</h3>
+        <table>
             <tr>
-                <td>36</td>
+                <th>Line</th>
+                <th>Col.</th>
+                <th>Type</th>
+                <th>Symbol</th>
+                <th>ID</th>
+                <th>Obj</th>
+                <th>Message</th>
+            </tr>
+            
+            <tr>
+                <td>49</td>
                 <td>0</td>
-                <td>convention</td>
-                <td><code>line-too-long</code></td>
-                <td>C0301</td>
+                <td>warning</td>
+                <td><code>implicit-str-concat</code></td>
+                <td>W1404</td>
                 <td></td>
-                <td><pre>Line too long (101/100)</pre></td>
+                <td><pre>Implicit string concatenation found in call</pre></td>
             </tr>
             
         </table>
@@ -922,50 +936,20 @@
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.config:[46:53]
-==tests.config:[62:68]
-    LD_MQTT_BROKER_URL: AnyUrl = Field(default=&#34;mqtt://127.0.0.1:1884&#34;,
-                                       validation_alias=AliasChoices(
-                                           &#39;LD_MQTT_BROKER_URL&#39;,
-                                           &#39;LD_MQTT_URL&#39;,
-                                           &#39;LD_MQTT_BROKER&#39;))
+==filip.config:[45:56]
+==tests.config:[50:62]
+    )
 
-# create settings object</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.config:[41:46]
-==tests.config:[51:57]
-    MQTT_BROKER_URL: AnyUrl = Field(default=&#34;mqtt://127.0.0.1:1883&#34;,
-                                    validation_alias=AliasChoices(
-                                        &#39;MQTT_BROKER_URL&#39;,
-                                        &#39;MQTT_URL&#39;,
-                                        &#39;MQTT_BROKER&#39;))
+    QL_URL: AnyHttpUrl = Field(
+        default=&#34;http://127.0.0.1:8668&#34;,
+        validation_alias=AliasChoices(&#34;QUANTUMLEAP_URL&#34;, &#34;QL_URL&#34;),
+    )
+
+    MQTT_BROKER_URL: AnyUrl = Field(
+        default=&#34;mqtt://127.0.0.1:1883&#34;,
+        validation_alias=AliasChoices(&#34;MQTT_BROKER_URL&#34;, &#34;MQTT_URL&#34;, &#34;MQTT_BROKER&#34;),
+    )
 </pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.config:[29:35]
-==tests.config:[34:39]
-                                  validation_alias=AliasChoices(&#39;LD_ORION_URL&#39;,
-                                                                &#39;LD_CB_URL&#39;,
-                                                                &#39;ORION_LD_URL&#39;,
-                                                                &#39;SCORPIO_URL&#39;,
-                                                                &#39;STELLIO_URL&#39;))</pre></td>
             </tr>
             
         </table>
@@ -983,17 +967,17 @@
             
             <tr>
                 <td>refactor</td>
-                <td>70</td>
+                <td>68</td>
             </tr>
             
             <tr>
                 <td>warning</td>
-                <td>6</td>
+                <td>7</td>
             </tr>
             
             <tr>
                 <td>convention</td>
-                <td>8</td>
+                <td>7</td>
             </tr>
             
         </table>
@@ -1032,13 +1016,13 @@
             </tr>
             
             <tr>
-                <td>line-too-long</td>
+                <td>implicit-str-concat</td>
                 <td>1</td>
             </tr>
             
             <tr>
                 <td>duplicate-code</td>
-                <td>3</td>
+                <td>1</td>
             </tr>
             
         </table>
@@ -1068,12 +1052,17 @@
             
             <tr>
                 <td>tests.test_config</td>
-                <td>3</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>tests.test_logging</td>
+                <td>1</td>
             </tr>
             
             <tr>
                 <td>tutorials.__init__</td>
-                <td>3</td>
+                <td>1</td>
             </tr>
             
         </table>
@@ -1103,12 +1092,17 @@
             
             <tr>
                 <td>tests/test_config.py</td>
-                <td>3</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>tests/test_logging.py</td>
+                <td>1</td>
             </tr>
             
             <tr>
                 <td>tutorials/__init__.py</td>
-                <td>3</td>
+                <td>1</td>
             </tr>
             
         </table>

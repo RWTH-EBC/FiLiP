@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.utils.validators &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.utils.validators &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -79,40 +79,45 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Helper functions to prohibit boiler plate code</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">aenum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">validate_call</span>
-<span class="kn">from</span> <span class="nn">pydantic_core</span> <span class="kn">import</span> <span class="n">PydanticCustomError</span>
-<span class="kn">from</span> <span class="nn">filip.custom_types</span> <span class="kn">import</span> <span class="n">AnyMqttUrl</span>
-<span class="kn">from</span> <span class="nn">pyjexl.jexl</span> <span class="kn">import</span> <span class="n">JEXL</span>
-<span class="kn">from</span> <span class="nn">pyjexl.parser</span> <span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span> <span class="nn">pyjexl.exceptions</span> <span class="kn">import</span> <span class="n">ParseError</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">validate_call</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticCustomError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.custom_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMqttUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyjexl.jexl</span><span class="w"> </span><span class="kn">import</span> <span class="n">JEXL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyjexl.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyjexl.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParseError</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="FiwareRegex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.FiwareRegex">[docs]</a><span class="k">class</span> <span class="nc">FiwareRegex</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="FiwareRegex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.FiwareRegex">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">FiwareRegex</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Collection of Regex expression used to check if the value of a Pydantic</span>
 <span class="sd">    field, can be used in the related Fiware field.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_init_</span> <span class="o">=</span> <span class="s1">&#39;value __doc__&#39;</span>
 
-    <span class="n">standard</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(^((?![?&amp;#/</span><span class="se">\&quot;</span><span class="s2">&#39; ])[\x00-\x7F])*$)&quot;</span><span class="p">,</span> \
-               <span class="s2">&quot;Prevents any string that contains at least one of the &quot;</span> \
-               <span class="s2">&quot;symbols: ? &amp; # / &#39; </span><span class="se">\&quot;</span><span class="s2"> or a whitespace&quot;</span>
-    <span class="n">string_protect</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(?!^id$)(?!^type$)(?!^geo:location$)&quot;</span> \
-                     <span class="sa">r</span><span class="s2">&quot;(^((?![?&amp;#/</span><span class="se">\&quot;</span><span class="s2">&#39; ])[\x00-\x7F])*$)&quot;</span><span class="p">,</span>\
-                     <span class="s2">&quot;Prevents any string that contains at least one of &quot;</span> \
-                     <span class="s2">&quot;the symbols: ? &amp; # / &#39; </span><span class="se">\&quot;</span><span class="s2"> or a whitespace.&quot;</span> \
-                     <span class="s2">&quot;AND the strings: id, type, geo:location&quot;</span></div>
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+
+    <span class="n">standard</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;(^((?![?&amp;#/</span><span class="se">\&quot;</span><span class="s2">&#39; ])[\x00-\x7F])*$)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Prevents any string that contains at least one of the &quot;</span>
+        <span class="s2">&quot;symbols: ? &amp; # / &#39; </span><span class="se">\&quot;</span><span class="s2"> or a whitespace&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">string_protect</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;(?!^id$)(?!^type$)(?!^geo:location$)&quot;</span> <span class="sa">r</span><span class="s2">&quot;(^((?![?&amp;#/</span><span class="se">\&quot;</span><span class="s2">&#39; ])[\x00-\x7F])*$)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Prevents any string that contains at least one of &quot;</span>
+        <span class="s2">&quot;the symbols: ? &amp; # / &#39; </span><span class="se">\&quot;</span><span class="s2"> or a whitespace.&quot;</span>
+        <span class="s2">&quot;AND the strings: id, type, geo:location&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_http_url"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_http_url">[docs]</a><span class="nd">@validate_call</span>
-<span class="k">def</span> <span class="nf">validate_http_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_http_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function checks whether the host has &quot;http&quot; added in case of http as</span>
 <span class="sd">    protocol.</span>
@@ -123,11 +128,15 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        validated url</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="n">url</span></div>
+    <span class="n">url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="n">url</span>
+    <span class="k">if</span> <span class="n">url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+        <span class="c1"># add trailing slash</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/&quot;</span>
+    <span class="k">return</span> <span class="n">url</span></div>
 
 
 <div class="viewcode-block" id="validate_mqtt_url"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_mqtt_url">[docs]</a><span class="nd">@validate_call</span>
-<span class="k">def</span> <span class="nf">validate_mqtt_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyMqttUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_mqtt_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyMqttUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function that checks whether a url is valid mqtt endpoint</span>
 
@@ -140,7 +149,7 @@
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="n">url</span></div>
 
 
-<div class="viewcode-block" id="validate_escape_character_free"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_escape_character_free">[docs]</a><span class="k">def</span> <span class="nf">validate_escape_character_free</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<div class="viewcode-block" id="validate_escape_character_free"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_escape_character_free">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_escape_character_free</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function that checks whether a value contains a string part that starts</span>
 <span class="sd">    or end with &#39; or &quot;.</span>
@@ -175,49 +184,49 @@
             <span class="c1"># if a value here is not a string, it will also not contain &#39; or &quot;</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">if</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">or</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;the forbidden char </span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains &quot;</span> <span class="sa">f</span><span class="s1">&#39;the forbidden char &quot;&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">or</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;the forbidden char &#39;&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains &quot;</span> <span class="sa">f</span><span class="s2">&quot;the forbidden char &#39;&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">values</span></div>
 
 
-<div class="viewcode-block" id="match_regex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.match_regex">[docs]</a><span class="k">def</span> <span class="nf">match_regex</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="match_regex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.match_regex">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">match_regex</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">PydanticCustomError</span><span class="p">(</span>
-            <span class="s1">&#39;string_pattern_mismatch&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
             <span class="s2">&quot;String should match pattern &#39;</span><span class="si">{pattern}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
-            <span class="p">{</span><span class="s1">&#39;pattern&#39;</span><span class="p">:</span> <span class="n">pattern</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;pattern&quot;</span><span class="p">:</span> <span class="n">pattern</span><span class="p">},</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">value</span></div>
 
 
-<div class="viewcode-block" id="ignore_none_input"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.ignore_none_input">[docs]</a><span class="k">def</span> <span class="nf">ignore_none_input</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+<div class="viewcode-block" id="ignore_none_input"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.ignore_none_input">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">ignore_none_input</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">arg</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
-<div class="viewcode-block" id="validate_fiware_standard_regex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_standard_regex">[docs]</a><span class="k">def</span> <span class="nf">validate_fiware_standard_regex</span><span class="p">(</span><span class="n">vale</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_fiware_standard_regex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_standard_regex">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_standard_regex</span><span class="p">(</span><span class="n">vale</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">vale</span><span class="p">,</span> <span class="n">FiwareRegex</span><span class="o">.</span><span class="n">standard</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="validate_fiware_string_protect_regex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_string_protect_regex">[docs]</a><span class="k">def</span> <span class="nf">validate_fiware_string_protect_regex</span><span class="p">(</span><span class="n">vale</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_fiware_string_protect_regex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_string_protect_regex">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_string_protect_regex</span><span class="p">(</span><span class="n">vale</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">vale</span><span class="p">,</span> <span class="n">FiwareRegex</span><span class="o">.</span><span class="n">string_protect</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_mqtt_topic"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_mqtt_topic">[docs]</a><span class="nd">@ignore_none_input</span>
-<span class="k">def</span> <span class="nf">validate_mqtt_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;^((?![</span><span class="se">\&#39;</span><span class="s1">\&quot;#+,])[\x00-\x7F])*$&#39;</span><span class="p">)</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_mqtt_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;^((?![\&#39;</span><span class="se">\&quot;</span><span class="s2">#+,])[\x00-\x7F])*$&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_fiware_datatype_standard"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_datatype_standard">[docs]</a><span class="nd">@ignore_none_input</span>
-<span class="k">def</span> <span class="nf">validate_fiware_datatype_standard</span><span class="p">(</span><span class="n">_type</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">DataType</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_datatype_standard</span><span class="p">(</span><span class="n">_type</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="n">DataType</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_type</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -227,8 +236,9 @@
 
 
 <div class="viewcode-block" id="validate_fiware_datatype_string_protect"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_datatype_string_protect">[docs]</a><span class="nd">@ignore_none_input</span>
-<span class="k">def</span> <span class="nf">validate_fiware_datatype_string_protect</span><span class="p">(</span><span class="n">_type</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">DataType</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_datatype_string_protect</span><span class="p">(</span><span class="n">_type</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="n">DataType</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_type</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -238,15 +248,13 @@
 
 
 <div class="viewcode-block" id="validate_fiware_service_path"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_service_path">[docs]</a><span class="nd">@ignore_none_input</span>
-<span class="k">def</span> <span class="nf">validate_fiware_service_path</span><span class="p">(</span><span class="n">service_path</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service_path</span><span class="p">,</span>
-                       <span class="sa">r</span><span class="s1">&#39;^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$&#39;</span><span class="p">)</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_service_path</span><span class="p">(</span><span class="n">service_path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service_path</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_fiware_service"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_service">[docs]</a><span class="nd">@ignore_none_input</span>
-<span class="k">def</span> <span class="nf">validate_fiware_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service</span><span class="p">,</span>
-                       <span class="sa">r</span><span class="s2">&quot;\w*$&quot;</span><span class="p">)</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\w*$&quot;</span><span class="p">)</span></div>
 
 
 <span class="n">jexl_transformation_functions</span> <span class="o">=</span> <span class="p">{</span>
@@ -280,11 +288,11 @@
     <span class="s2">&quot;addset&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr, x) =&gt; list(set(arr).add(x))&quot;</span><span class="p">,</span>
     <span class="s2">&quot;removeset&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr, x) =&gt; list(set(arr).remove(x))&quot;</span><span class="p">,</span>
     <span class="s2">&quot;touppercase&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; str(val).upper()&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tolowercase&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; str(val).lower()&quot;</span>
+    <span class="s2">&quot;tolowercase&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; str(val).lower()&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="validate_jexl_expression"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_jexl_expression">[docs]</a><span class="k">def</span> <span class="nf">validate_jexl_expression</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="n">device_id</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_jexl_expression"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_jexl_expression">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_jexl_expression</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="n">device_id</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">jexl_expression</span> <span class="o">=</span> <span class="n">JEXL</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">jexl_expression</span><span class="p">,</span> <span class="n">Transform</span><span class="p">):</span>
@@ -292,16 +300,18 @@
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jexl_expression</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> might not supported&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ParseError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid JEXL expression &#39;</span><span class="si">{</span><span class="n">expression</span><span class="si">}</span><span class="s2">&#39; inside the attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; of Device &#39;</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="k">if</span> <span class="s1">&#39;|&#39;</span> <span class="ow">in</span> <span class="n">expression</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;|&quot;</span> <span class="ow">in</span> <span class="n">expression</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; If the expression contains the transform operator &#39;|&#39; you need to remove the spaces around it.&quot;</span>
         <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">expression</span></div>
 
 
-<div class="viewcode-block" id="validate_expression_language"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_expression_language">[docs]</a><span class="k">def</span> <span class="nf">validate_expression_language</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expressionLanguage</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_expression_language"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_expression_language">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_expression_language</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expressionLanguage</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">expressionLanguage</span> <span class="o">==</span> <span class="s2">&quot;legacy&quot;</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using &#39;LEGACY&#39; expression language inside </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is &quot;</span>
-                      <span class="sa">f</span><span class="s2">&quot;deprecated. Use &#39;JEXL&#39; instead.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Using &#39;LEGACY&#39; expression language inside </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;deprecated. Use &#39;JEXL&#39; instead.&quot;</span>
+        <span class="p">)</span>
     <span class="k">elif</span> <span class="n">expressionLanguage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">expressionLanguage</span> <span class="o">=</span> <span class="s2">&quot;jexl&quot;</span>
     <span class="k">return</span> <span class="n">expressionLanguage</span></div>
@@ -314,7 +324,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

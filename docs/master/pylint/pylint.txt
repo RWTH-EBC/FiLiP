@@ -72,46 +72,35 @@ pylintrc:1:0: W0012: Unknown option value for '--disable', expected a valid pyli
 pylintrc:1:0: W0012: Unknown option value for '--disable', expected a valid pylint message and got 'non-ascii-bytes-literal' (unknown-option-value)
 pylintrc:1:0: W0012: Unknown option value for '--disable', expected a valid pylint message and got 'eq-without-hash' (unknown-option-value)
 ************* Module filip.config
-filip/config.py:9:0: C0411: standard import "from pathlib import Path" should be placed before "from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl" (wrong-import-order)
-filip/config.py:10:0: C0411: standard import "import os" should be placed before "from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl" (wrong-import-order)
+filip/config.py:10:0: C0411: standard import "from pathlib import Path" should be placed before "from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl" (wrong-import-order)
+filip/config.py:11:0: C0411: standard import "import os" should be placed before "from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl" (wrong-import-order)
 ************* Module tests.config
 tests/config.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 tests/config.py:6:0: C0411: third party import "from pydantic_settings import BaseSettings, SettingsConfigDict" should be placed before "from filip.models.base import FiwareHeader, LogLevel" (wrong-import-order)
 tests/config.py:7:0: C0411: standard import "from typing import Union, Optional" should be placed before "from dotenv import find_dotenv" (wrong-import-order)
 tests/config.py:7:0: W0611: Unused Union imported from typing (unused-import)
 ************* Module tests.test_config
-tests/test_config.py:36:0: C0301: Line too long (101/100) (line-too-long)
-tests/test_config.py:7:0: C0411: standard import "import json" should be placed before "from filip.config import Settings" (wrong-import-order)
-tests/test_config.py:8:0: C0411: third party import "from pydantic import AnyHttpUrl" should be placed before "from filip.config import Settings" (wrong-import-order)
+tests/test_config.py:8:0: C0411: standard import "import json" should be placed before "from filip.config import Settings" (wrong-import-order)
+tests/test_config.py:9:0: C0411: third party import "from pydantic import AnyHttpUrl" should be placed before "from filip.config import Settings" (wrong-import-order)
+************* Module tests.test_logging
+tests/test_logging.py:49:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
 ************* Module tutorials.__init__
 tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.config:[46:53]
-==tests.config:[62:68]
-    LD_MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1884",
-                                       validation_alias=AliasChoices(
-                                             'LD_MQTT_BROKER_URL',
-                                             'LD_MQTT_URL',
-                                             'LD_MQTT_BROKER'))
- (duplicate-code)
-tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.config:[41:46]
-==tests.config:[51:57]
-    MQTT_BROKER_URL: AnyUrl = Field(default="mqtt://127.0.0.1:1883",
-                                    validation_alias=AliasChoices(
-                                        'MQTT_BROKER_URL',
-                                        'MQTT_URL',
-                                        'MQTT_BROKER'))
- (duplicate-code)
-tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.config:[29:35]
-==tests.config:[34:39]
-                                  validation_alias=AliasChoices('LD_ORION_URL',
-                                                                'LD_CB_URL',
-                                                                'ORION_LD_URL',
-                                                                'SCORPIO_URL',
-                                                                'STELLIO_URL'))
+==filip.config:[45:56]
+==tests.config:[50:62]
+    )
+
+    QL_URL: AnyHttpUrl = Field(
+        default="http://127.0.0.1:8668",
+        validation_alias=AliasChoices("QUANTUMLEAP_URL", "QL_URL"),
+    )
+
+    MQTT_BROKER_URL: AnyUrl = Field(
+        default="mqtt://127.0.0.1:1883",
+        validation_alias=AliasChoices("MQTT_BROKER_URL", "MQTT_URL", "MQTT_BROKER"),
+    )
  (duplicate-code)
 
 -----------------------------------
-Your code has been rated at 8.89/10
+Your code has been rated at 9.07/10
 

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.vocabulary.combined_relations &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.semantics.vocabulary.combined_relations &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -77,18 +77,19 @@
              
   <h1>Source code for filip.semantics.vocabulary.combined_relations</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Vocabulary Models for CombinedRelations&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">aenum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
-<span class="kn">from</span> <span class="nn">filip.semantics.vocabulary</span> <span class="kn">import</span> <span class="n">DataFieldType</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Set</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Relation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFieldType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Relation</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Vocabulary</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vocabulary</span>
 
 
-<div class="viewcode-block" id="CombinedRelation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation">[docs]</a><span class="k">class</span> <span class="nc">CombinedRelation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="CombinedRelation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">CombinedRelation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Combines all relations of a class that share the same Property</span>
 <span class="sd">    Represents one Field of a class. SHORT: CR</span>
@@ -101,20 +102,23 @@
     <span class="n">relation_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of all relations of the class that are &quot;</span>
-                    <span class="s2">&quot;bundled; have the same property&quot;</span><span class="p">)</span>
-    <span class="n">property_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;IRI of the property, under which &quot;</span>
-                                          <span class="s2">&quot;the relations are bundled&quot;</span><span class="p">)</span>
-    <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;IRI of the class the relations and &quot;</span>
-                                       <span class="s2">&quot;this CR belongs to&quot;</span><span class="p">)</span>
+        <span class="s2">&quot;bundled; have the same property&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">property_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;IRI of the property, under which &quot;</span> <span class="s2">&quot;the relations are bundled&quot;</span>
+    <span class="p">)</span>
+    <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;IRI of the class the relations and &quot;</span> <span class="s2">&quot;this CR belongs to&quot;</span>
+    <span class="p">)</span>
 
-<div class="viewcode-block" id="CombinedRelation.get_relations"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_relations">[docs]</a>    <span class="k">def</span> <span class="nf">get_relations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Relation</span><span class="p">]:</span>
+<div class="viewcode-block" id="CombinedRelation.get_relations"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_relations">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_relations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Relation</span><span class="p">]:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation_ids</span><span class="p">:</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_relation_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="CombinedRelation.get_property_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_property_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="CombinedRelation.get_property_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_property_label">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_property_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the label of the Property. Overwritten by children</span>
 
 <span class="sd">        Args:</span>
@@ -125,8 +129,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="CombinedRelation.get_all_targetstatements_as_string"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_targetstatements_as_string">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_targetstatements_as_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="CombinedRelation.get_all_targetstatements_as_string"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_targetstatements_as_string">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_targetstatements_as_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a string stating all conditions(target statement) that need to</span>
 <span class="sd">        be fulfilled, so that this CR is fulfilled</span>
@@ -143,7 +146,7 @@
 
         <span class="k">return</span> <span class="n">res</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="CombinedRelation.get_all_target_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_target_iris">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_target_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="CombinedRelation.get_all_target_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_target_iris">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_target_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all iris of referenced targets</span>
 
 <span class="sd">        Args:</span>
@@ -159,8 +162,8 @@
             <span class="n">iris</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">relation</span><span class="o">.</span><span class="n">get_all_target_iris</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">iris</span></div>
 
-<div class="viewcode-block" id="CombinedRelation.get_all_target_labels"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_target_labels">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_target_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get all labels of referenced targets</span>
+<div class="viewcode-block" id="CombinedRelation.get_all_target_labels"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_target_labels">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_target_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all labels of referenced targets</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vocabulary (Vocabulary): Vocabulary of the project</span>
@@ -168,11 +171,12 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            set(str)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_label_for_entity_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">iri</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_target_iris</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)}</span></div>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_label_for_entity_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">iri</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_target_iris</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
+        <span class="p">}</span></div>
 
-<div class="viewcode-block" id="CombinedRelation.export_rule"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.export_rule">[docs]</a>    <span class="k">def</span> <span class="nf">export_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">,</span>
-                    <span class="n">stringify_fields</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="CombinedRelation.export_rule"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.export_rule">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">,</span> <span class="n">stringify_fields</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the rule as string</span>
 
 <span class="sd">        Args:</span>
@@ -184,21 +188,23 @@
 <span class="sd">           str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">rules</span> <span class="o">=</span> <span class="p">[</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_relation_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">export_rule</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
-                 <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation_ids</span><span class="p">]</span>
+        <span class="n">rules</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_relation_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">export_rule</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
+            <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relation_ids</span>
+        <span class="p">]</span>
         <span class="k">if</span> <span class="n">stringify_fields</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="CombinedDataRelation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation">[docs]</a><span class="k">class</span> <span class="nc">CombinedDataRelation</span><span class="p">(</span><span class="n">CombinedRelation</span><span class="p">):</span>
+<div class="viewcode-block" id="CombinedDataRelation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">CombinedDataRelation</span><span class="p">(</span><span class="n">CombinedRelation</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Combines all data relations of a class that share the same DataProperty</span>
 <span class="sd">    Represents one Data Field of a class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="CombinedDataRelation.get_property_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_property_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="CombinedDataRelation.get_property_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_property_label">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_property_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the label of the DataProperty</span>
 
 <span class="sd">        Args:</span>
@@ -209,8 +215,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_data_property</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">)</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CombinedDataRelation.get_possible_enum_target_values"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_possible_enum_target_values">[docs]</a>    <span class="k">def</span> <span class="nf">get_possible_enum_target_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="CombinedDataRelation.get_possible_enum_target_values"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_possible_enum_target_values">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_possible_enum_target_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all enum values that are allowed as values for this Data field</span>
 
 <span class="sd">        Args:</span>
@@ -228,7 +233,7 @@
 
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">enum_values</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="CombinedDataRelation.get_field_type"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_field_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_field_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFieldType</span><span class="p">:</span>
+<div class="viewcode-block" id="CombinedDataRelation.get_field_type"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_field_type">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_field_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFieldType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get type of CDR (command, devicedata , simple)</span>
 
 <span class="sd">         Args:</span>
@@ -240,7 +245,7 @@
         <span class="nb">property</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_data_property</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">property</span><span class="o">.</span><span class="n">field_type</span></div>
 
-<div class="viewcode-block" id="CombinedDataRelation.is_device_relation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.is_device_relation">[docs]</a>    <span class="k">def</span> <span class="nf">is_device_relation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="CombinedDataRelation.is_device_relation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.is_device_relation">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_device_relation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if the CDR is a device property(command, or readings)</span>
 
 <span class="sd">        Args:</span>
@@ -252,13 +257,13 @@
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_field_type</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataFieldType</span><span class="o">.</span><span class="n">simple</span></div></div>
 
 
-<div class="viewcode-block" id="CombinedObjectRelation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation">[docs]</a><span class="k">class</span> <span class="nc">CombinedObjectRelation</span><span class="p">(</span><span class="n">CombinedRelation</span><span class="p">):</span>
+<div class="viewcode-block" id="CombinedObjectRelation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">CombinedObjectRelation</span><span class="p">(</span><span class="n">CombinedRelation</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Combines all object relations of a class that share the same ObjectProperty</span>
 <span class="sd">    Represents one Relation Field of a class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="CombinedObjectRelation.get_all_possible_target_class_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_all_possible_target_class_iris">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_possible_target_class_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="CombinedObjectRelation.get_all_possible_target_class_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_all_possible_target_class_iris">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_possible_target_class_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all iris that are valid values for this cor</span>
 
 <span class="sd">        Args:</span>
@@ -267,18 +272,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            List[str]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Vocabulary</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vocabulary</span>
+
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">Vocabulary</span><span class="p">)</span>
 
         <span class="n">relations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
         <span class="n">result_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">relation</span> <span class="ow">in</span> <span class="n">relations</span><span class="p">:</span>
-            <span class="n">result_set</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">relation</span><span class="o">.</span>
-                              <span class="n">get_all_possible_target_class_iris</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span>
+            <span class="n">result_set</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">relation</span><span class="o">.</span><span class="n">get_all_possible_target_class_iris</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result_set</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CombinedObjectRelation.get_property_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_property_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="CombinedObjectRelation.get_property_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_property_label">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_property_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the label of the ObjectProperty</span>
 
 <span class="sd">        Args:</span>
@@ -289,18 +294,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_object_property</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">)</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CombinedObjectRelation.get_inverse_of_labels"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_inverse_of_labels">[docs]</a>    <span class="k">def</span> <span class="nf">get_inverse_of_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="CombinedObjectRelation.get_inverse_of_labels"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_inverse_of_labels">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_inverse_of_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the labels of the inverse_of properties of this COR</span>
 
-<span class="sd">         Args:</span>
-<span class="sd">             vocabulary (Vocabulary): Vocabulary of the project</span>
+<span class="sd">        Args:</span>
+<span class="sd">            vocabulary (Vocabulary): Vocabulary of the project</span>
 
-<span class="sd">         Returns:</span>
-<span class="sd">             List[str]</span>
-<span class="sd">         &quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">property</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_object_property</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_entity_by_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span><span class="o">.</span><span class="n">label</span>
-                <span class="k">for</span> <span class="n">iri</span> <span class="ow">in</span> <span class="nb">property</span><span class="o">.</span><span class="n">inverse_property_iris</span><span class="p">]</span></div></div>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_entity_by_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span><span class="o">.</span><span class="n">label</span>
+            <span class="k">for</span> <span class="n">iri</span> <span class="ow">in</span> <span class="nb">property</span><span class="o">.</span><span class="n">inverse_property_iris</span>
+        <span class="p">]</span></div></div>
 </pre></div>
 
            </div>
@@ -310,7 +317,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

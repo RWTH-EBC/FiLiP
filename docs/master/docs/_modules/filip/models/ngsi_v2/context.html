@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2.context &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.models.ngsi_v2.context &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -79,29 +79,36 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">NGSIv2 models for context broker interaction</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">aenum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> \
-    <span class="n">model_validator</span>
-<span class="kn">from</span> <span class="nn">pydantic_core.core_schema</span> <span class="kn">import</span> <span class="n">ValidationInfo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">field_validator</span><span class="p">,</span>
+    <span class="n">ConfigDict</span><span class="p">,</span>
+    <span class="n">BaseModel</span><span class="p">,</span>
+    <span class="n">Field</span><span class="p">,</span>
+    <span class="n">model_validator</span><span class="p">,</span>
+    <span class="n">SerializeAsAny</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core.core_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">OnErrorOmit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">EntityPattern</span><span class="p">,</span>
     <span class="n">Expression</span><span class="p">,</span>
     <span class="n">BaseAttribute</span><span class="p">,</span>
     <span class="n">BaseValueAttribute</span><span class="p">,</span>
     <span class="n">BaseNameAttribute</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">filip.models.base</span> <span class="kn">import</span> <span class="n">DataType</span>
-<span class="kn">from</span> <span class="nn">filip.utils.validators</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">validate_fiware_datatype_standard</span><span class="p">,</span>
     <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span>
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="GetEntitiesOptions"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.GetEntitiesOptions">[docs]</a><span class="k">class</span> <span class="nc">GetEntitiesOptions</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="GetEntitiesOptions"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.GetEntitiesOptions">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">GetEntitiesOptions</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Options for queries&quot;&quot;&quot;</span>
 
     <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
@@ -141,7 +148,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PropertyFormat"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.PropertyFormat">[docs]</a><span class="k">class</span> <span class="nc">PropertyFormat</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="PropertyFormat"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.PropertyFormat">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PropertyFormat</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format to decide if properties of ContextEntity class are returned as</span>
 <span class="sd">    List of NamedContextAttributes or as Dict of ContextAttributes.</span>
@@ -151,7 +158,7 @@
     <span class="n">DICT</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span></div>
 
 
-<div class="viewcode-block" id="ContextAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextAttribute">[docs]</a><span class="k">class</span> <span class="nc">ContextAttribute</span><span class="p">(</span><span class="n">BaseAttribute</span><span class="p">,</span> <span class="n">BaseValueAttribute</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextAttribute</span><span class="p">(</span><span class="n">BaseAttribute</span><span class="p">,</span> <span class="n">BaseValueAttribute</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model for an attribute is represented by a JSON object with the following</span>
 <span class="sd">    syntax:</span>
@@ -179,17 +186,18 @@
 <span class="sd">        &gt;&gt;&gt; attr = ContextAttribute(**data)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="c1"># although `type` is a required field in the NGSIv2 specification, it is</span>
     <span class="c1"># set to optional here to allow for the possibility of setting</span>
     <span class="c1"># default-types in child classes. Pydantic will raise the correct error</span>
     <span class="c1"># and also exports the correct json-schema.</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
             <span class="nb">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="NamedContextAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.NamedContextAttribute">[docs]</a><span class="k">class</span> <span class="nc">NamedContextAttribute</span><span class="p">(</span><span class="n">ContextAttribute</span><span class="p">,</span> <span class="n">BaseNameAttribute</span><span class="p">):</span>
+<div class="viewcode-block" id="NamedContextAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.NamedContextAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedContextAttribute</span><span class="p">(</span><span class="n">ContextAttribute</span><span class="p">,</span> <span class="n">BaseNameAttribute</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context attributes are properties of context entities. For example, the</span>
 <span class="sd">    current speed of a car could be modeled as attribute current_speed of entity</span>
@@ -202,7 +210,7 @@
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="ContextEntityKeyValues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues">[docs]</a><span class="k">class</span> <span class="nc">ContextEntityKeyValues</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextEntityKeyValues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityKeyValues</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base Model for an entity is represented by a JSON object with the following</span>
 <span class="sd">    syntax.</span>
@@ -222,10 +230,10 @@
         <span class="o">...</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Entity Id&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of an entity in an NGSI context broker. Allowed &quot;</span>
-                    <span class="s2">&quot;characters are the ones in the plain ASCII set, except &quot;</span>
-                    <span class="s2">&quot;the following ones: control characters, &quot;</span>
-                    <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
-        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span><span class="s2">&quot;Bcn-Welt&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;characters are the ones in the plain ASCII set, except &quot;</span>
+        <span class="s2">&quot;the following ones: control characters, &quot;</span>
+        <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;Bcn-Welt&quot;</span><span class="p">},</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -235,10 +243,10 @@
         <span class="o">...</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Entity Type&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of an entity in an NGSI context broker. &quot;</span>
-                    <span class="s2">&quot;Allowed characters are the ones in the plain ASCII set, &quot;</span>
-                    <span class="s2">&quot;except the following ones: control characters, &quot;</span>
-                    <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
-        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span><span class="s2">&quot;Room&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;Allowed characters are the ones in the plain ASCII set, &quot;</span>
+        <span class="s2">&quot;except the following ones: control characters, &quot;</span>
+        <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;Room&quot;</span><span class="p">},</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -249,7 +257,7 @@
     <span class="c1"># set to optional here to allow for the possibility of setting</span>
     <span class="c1"># default-types in child classes. Pydantic will raise the correct error</span>
     <span class="c1"># and also exports the correct json-schema.</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
         <span class="c1"># this allows to set the type of the entity in child classes</span>
         <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -261,7 +269,7 @@
         <span class="c1"># This will result in usual behavior</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ContextEntityKeyValues.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues.get_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">get_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextEntityKeyValues.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues.get_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the attribute of the entity with the given name in</span>
 <span class="sd">        dict format</span>
@@ -272,7 +280,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">})</span></div></div>
 
 
-<div class="viewcode-block" id="ContextEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity">[docs]</a><span class="k">class</span> <span class="nc">ContextEntity</span><span class="p">(</span><span class="n">ContextEntityKeyValues</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntity</span><span class="p">(</span><span class="n">ContextEntityKeyValues</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context entities, or simply entities, are the center of gravity in the</span>
 <span class="sd">    FIWARE NGSI information model. An entity represents a thing, i.e., any</span>
@@ -309,11 +317,12 @@
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
         <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
+
     <span class="c1"># although `type` is a required field in the NGSIv2 specification, it is</span>
     <span class="c1"># set to optional here to allow for the possibility of setting</span>
     <span class="c1"># default-types in child classes. Pydantic will raise the correct error</span>
     <span class="c1"># and also exports the correct json-schema.</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
         <span class="c1"># There is currently no validation for extra fields</span>
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validate_attributes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="c1"># case where type is None to raise correct error message</span>
@@ -324,7 +333,7 @@
 
     <span class="c1"># Validation of attributes</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_validate_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate attributes of the entity if the attribute is not a model</span>
 <span class="sd">        field and the type is not already a subtype of ContextAttribute</span>
@@ -337,40 +346,46 @@
 
         <span class="k">return</span> <span class="n">attrs</span>
 
-<div class="viewcode-block" id="ContextEntity.check_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.check_attributes">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="ContextEntity.check_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.check_attributes">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">check_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check whether all model fields are of subtype of ContextAttribute to</span>
 <span class="sd">        ensure full functionality.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]:</span>
-             <span class="k">return</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">value</span>
 
         <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">)</span>
-                    <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> must be a of &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;type or subtype ContextAttribute&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> must be a of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;type or subtype ContextAttribute&quot;</span>
+                <span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span></div>
 
 <div class="viewcode-block" id="ContextEntity.check_attributes_after"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.check_attributes_after">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">check_attributes_after</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_attributes_after</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">model_extra</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">),</span> <span class="n">ContextAttribute</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> must be a of type or &quot;</span>
-                                     <span class="sa">f</span><span class="s2">&quot;subtype ContextAttribute. You most &quot;</span>
-                                     <span class="sa">f</span><span class="s2">&quot;likely tried to directly assign an &quot;</span>
-                                     <span class="sa">f</span><span class="s2">&quot;attribute without converting it to a &quot;</span>
-                                     <span class="sa">f</span><span class="s2">&quot;proper Attribute-Type!&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> must be a of type or &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;subtype ContextAttribute. You most &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;likely tried to directly assign an &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;attribute without converting it to a &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;proper Attribute-Type!&quot;</span>
+                    <span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">values</span></div>
 
     <span class="c1"># API for attributes and commands</span>
-<div class="viewcode-block" id="ContextEntity.add_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.add_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_attributes</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.add_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.add_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -391,7 +406,7 @@
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextEntity.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">get_attributes</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">whitelisted_attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DataType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">blacklisted_attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DataType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -465,7 +480,7 @@
                     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
                 <span class="p">]</span></div>
 
-<div class="viewcode-block" id="ContextEntity.update_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.update_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">update_attribute</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.update_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.update_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_attribute</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -493,7 +508,7 @@
                 <span class="k">raise</span> <span class="ne">NameError</span>
             <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextEntity.get_attribute_names"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attribute_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_attribute_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="ContextEntity.get_attribute_names"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attribute_names">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attribute_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a set with all attribute names of this entity</span>
 
@@ -505,7 +520,7 @@
             <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="ContextEntity.delete_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.delete_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">delete_attributes</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.delete_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.delete_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
             <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
@@ -535,7 +550,7 @@
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
             <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextEntity.get_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">get_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedContextAttribute</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextEntity.get_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedContextAttribute</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the attribute of the entity with the given name</span>
 
@@ -553,7 +568,7 @@
                 <span class="k">return</span> <span class="n">attr</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; not in entity&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextEntity.get_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_properties</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.get_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_properties">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_properties</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -591,7 +606,7 @@
                 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">property_attributes</span>
             <span class="p">}</span></div>
 
-<div class="viewcode-block" id="ContextEntity.get_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_relationships">[docs]</a>    <span class="k">def</span> <span class="nf">get_relationships</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.get_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_relationships</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -611,7 +626,7 @@
             <span class="n">response_format</span><span class="o">=</span><span class="n">response_format</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextEntity.get_commands"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_commands">[docs]</a>    <span class="k">def</span> <span class="nf">get_commands</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.get_commands"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_commands">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_commands</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -662,7 +677,7 @@
                 <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">commands</span>
             <span class="p">}</span></div>
 
-<div class="viewcode-block" id="ContextEntity.get_command_triple"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_command_triple">[docs]</a>    <span class="k">def</span> <span class="nf">get_command_triple</span><span class="p">(</span>
+<div class="viewcode-block" id="ContextEntity.get_command_triple"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_command_triple">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_command_triple</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">command_attribute_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">,</span> <span class="n">NamedContextAttribute</span><span class="p">,</span> <span class="n">NamedContextAttribute</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -694,7 +709,23 @@
         <span class="k">return</span> <span class="n">command</span><span class="p">,</span> <span class="n">command_status</span><span class="p">,</span> <span class="n">command_info</span></div></div>
 
 
-<div class="viewcode-block" id="Query"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Query">[docs]</a><span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextEntityList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityList</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of context entities</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OnErrorOmit</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="ContextEntityKeyValuesList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValuesList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityKeyValuesList</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of context entities in key-values format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OnErrorOmit</span><span class="p">[</span><span class="n">ContextEntityKeyValues</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="Query"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Query">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model for queries</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -710,8 +741,7 @@
     <span class="p">)</span>
     <span class="n">expression</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An expression composed of q, mq, georel, geometry and &quot;</span>
-                    <span class="s2">&quot;coords&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An expression composed of q, mq, georel, geometry and &quot;</span> <span class="s2">&quot;coords&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -721,7 +751,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ActionType"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ActionType">[docs]</a><span class="k">class</span> <span class="nc">ActionType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="ActionType"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ActionType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ActionType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Options for queries</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -751,7 +781,7 @@
     <span class="n">REPLACE</span> <span class="o">=</span> <span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="s2">&quot;maps to PUT /v2/entities/&lt;id&gt;/attrs&quot;</span></div>
 
 
-<div class="viewcode-block" id="Update"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Update">[docs]</a><span class="k">class</span> <span class="nc">Update</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="Update"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Update">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Update</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model for update action</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -761,14 +791,16 @@
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;actionType, to specify the kind of update action to do: &quot;</span>
         <span class="s2">&quot;either append, appendStrict, update, delete, or replace. &quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;an array of entities, each entity specified using the &quot;</span>
-        <span class="s2">&quot;JSON entity representation format &quot;</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">SerializeAsAny</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;an array of entities, each entity specified using the &quot;</span>
+            <span class="s2">&quot;JSON entity representation format &quot;</span>
+        <span class="p">)</span>
     <span class="p">)</span>
 
 <div class="viewcode-block" id="Update.check_action_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Update.check_action_type">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;action_type&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">check_action_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_action_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        validates action_type</span>
 <span class="sd">        Args:</span>
@@ -779,7 +811,7 @@
         <span class="k">return</span> <span class="n">ActionType</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Command"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Command">[docs]</a><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="Command"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Command">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Command</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for sending commands to IoT Devices.</span>
 <span class="sd">    Note that the command must be registered via an IoT-Agent. Internally</span>
@@ -799,7 +831,7 @@
 
 <div class="viewcode-block" id="Command.check_value"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Command.check_value">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">check_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if value is json serializable</span>
 <span class="sd">        Args:</span>
@@ -814,7 +846,7 @@
         <span class="k">return</span> <span class="n">value</span></div></div>
 
 
-<div class="viewcode-block" id="NamedCommand"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.NamedCommand">[docs]</a><span class="k">class</span> <span class="nc">NamedCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
+<div class="viewcode-block" id="NamedCommand"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.NamedCommand">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for sending command to IoT-Device.</span>
 <span class="sd">    Extend :class: Command with command Name</span>
@@ -835,7 +867,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

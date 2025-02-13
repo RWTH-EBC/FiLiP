@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.utils.iot &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.utils.iot &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -79,15 +79,19 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Helper functions to handle the devices related with the IoT Agent</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">filip.models.ngsi_v2.iot</span> <span class="kn">import</span> <span class="n">Device</span>
-<span class="kn">from</span> <span class="nn">filip.utils.filter</span> <span class="kn">import</span> <span class="n">filter_device_list</span> <span class="k">as</span> <span class="n">filter_device_list_new</span>
 
-<div class="viewcode-block" id="filter_device_list"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.iot.filter_device_list">[docs]</a><span class="k">def</span> <span class="nf">filter_device_list</span><span class="p">(</span><span class="n">devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">],</span>
-                       <span class="n">device_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                       <span class="n">entity_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                       <span class="n">entity_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">]:</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.iot</span><span class="w"> </span><span class="kn">import</span> <span class="n">Device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.filter</span><span class="w"> </span><span class="kn">import</span> <span class="n">filter_device_list</span> <span class="k">as</span> <span class="n">filter_device_list_new</span>
+
+
+<div class="viewcode-block" id="filter_device_list"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.iot.filter_device_list">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">filter_device_list</span><span class="p">(</span>
+    <span class="n">devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">],</span>
+    <span class="n">device_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">entity_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">entity_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Filter the given device list based on conditions</span>
 
@@ -100,14 +104,18 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        List of matching devices</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This function has been moved to &#39;filip.utils.filter&#39; &quot;</span>
-                  <span class="s2">&quot;and will be removed from this module in future releases!&quot;</span><span class="p">,</span>
-                  <span class="ne">DeprecationWarning</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;This function has been moved to &#39;filip.utils.filter&#39; &quot;</span>
+        <span class="s2">&quot;and will be removed from this module in future releases!&quot;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">filter_device_list_new</span><span class="p">(</span><span class="n">devices</span><span class="o">=</span><span class="n">devices</span><span class="p">,</span>
-                                  <span class="n">device_ids</span><span class="o">=</span><span class="n">device_ids</span><span class="p">,</span>
-                                  <span class="n">entity_names</span><span class="o">=</span><span class="n">entity_names</span><span class="p">,</span>
-                                  <span class="n">entity_types</span><span class="o">=</span><span class="n">entity_types</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">filter_device_list_new</span><span class="p">(</span>
+        <span class="n">devices</span><span class="o">=</span><span class="n">devices</span><span class="p">,</span>
+        <span class="n">device_ids</span><span class="o">=</span><span class="n">device_ids</span><span class="p">,</span>
+        <span class="n">entity_names</span><span class="o">=</span><span class="n">entity_names</span><span class="p">,</span>
+        <span class="n">entity_types</span><span class="o">=</span><span class="n">entity_types</span><span class="p">,</span>
+    <span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -117,7 +125,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

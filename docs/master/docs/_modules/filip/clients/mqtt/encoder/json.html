@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.clients.mqtt.encoder.json &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.clients.mqtt.encoder.json &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
@@ -79,31 +79,29 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Json encoder class for all IoTA-JSON MQTT message encoders</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">filip.clients.mqtt.encoder</span> <span class="kn">import</span> <span class="n">BaseEncoder</span>
-<span class="kn">from</span> <span class="nn">filip.models.mqtt</span> <span class="kn">import</span> <span class="n">IoTAMQTTMessageType</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt.encoder</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEncoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.mqtt</span><span class="w"> </span><span class="kn">import</span> <span class="n">IoTAMQTTMessageType</span>
 
 
-<div class="viewcode-block" id="Json"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json">[docs]</a><span class="k">class</span> <span class="nc">Json</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">):</span>
+<div class="viewcode-block" id="Json"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Json</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Json encoder class for all IoTA-JSON MQTT message encoders</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;/json&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;/json&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Json.decode_message"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.decode_message">[docs]</a>    <span class="k">def</span> <span class="nf">decode_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
-        <span class="n">apikey</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">decode_message</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span>
-                                                            <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span>
+<div class="viewcode-block" id="Json.decode_message"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.decode_message">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">decode_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+        <span class="n">apikey</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">decode_message</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">apikey</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span></div>
 
-<div class="viewcode-block" id="Json.encode_msg"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.encode_msg">[docs]</a>    <span class="k">def</span> <span class="nf">encode_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                   <span class="n">device_id</span><span class="p">,</span>
-                   <span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-                   <span class="n">msg_type</span><span class="p">:</span> <span class="n">IoTAMQTTMessageType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="Json.encode_msg"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.encode_msg">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">msg_type</span><span class="p">:</span> <span class="n">IoTAMQTTMessageType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">payload</span>
         <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">IoTAMQTTMessageType</span><span class="o">.</span><span class="n">MULTI</span><span class="p">:</span>
@@ -121,7 +119,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

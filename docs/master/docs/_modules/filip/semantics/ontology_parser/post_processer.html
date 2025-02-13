@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.ontology_parser.post_processer &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.semantics.ontology_parser.post_processer &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -84,25 +84,35 @@
 <span class="sd">information as: duplicate labels or sort relations</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">stringcase</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stringcase</span>
 
-<span class="kn">from</span> <span class="nn">filip.semantics.ontology_parser.vocabulary_builder</span> <span class="kn">import</span> <span class="n">VocabularyBuilder</span>
-<span class="kn">from</span> <span class="nn">filip.semantics.vocabulary</span> <span class="kn">import</span> <span class="n">Source</span><span class="p">,</span> <span class="n">IdType</span><span class="p">,</span> <span class="n">Vocabulary</span><span class="p">,</span> \
-    <span class="n">DatatypeType</span><span class="p">,</span> <span class="n">Datatype</span><span class="p">,</span> <span class="n">Class</span>
-<span class="kn">from</span> <span class="nn">filip.semantics.vocabulary</span> <span class="kn">import</span> <span class="n">CombinedDataRelation</span><span class="p">,</span> \
-    <span class="n">CombinedObjectRelation</span><span class="p">,</span> <span class="n">CombinedRelation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.ontology_parser.vocabulary_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">VocabularyBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Source</span><span class="p">,</span>
+    <span class="n">IdType</span><span class="p">,</span>
+    <span class="n">Vocabulary</span><span class="p">,</span>
+    <span class="n">DatatypeType</span><span class="p">,</span>
+    <span class="n">Datatype</span><span class="p">,</span>
+    <span class="n">Class</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CombinedDataRelation</span><span class="p">,</span>
+    <span class="n">CombinedObjectRelation</span><span class="p">,</span>
+    <span class="n">CombinedRelation</span><span class="p">,</span>
+<span class="p">)</span>
 
 
-<div class="viewcode-block" id="PostProcessor"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.post_processer.PostProcessor">[docs]</a><span class="k">class</span> <span class="nc">PostProcessor</span><span class="p">:</span>
+<div class="viewcode-block" id="PostProcessor"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.post_processer.PostProcessor">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PostProcessor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class offering postprocessing as cls-methods for a vocabulary&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PostProcessor.post_process_vocabulary"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.post_processer.PostProcessor.post_process_vocabulary">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">post_process_vocabulary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-                                <span class="n">old_vocabulary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Vocabulary</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_process_vocabulary</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Vocabulary</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Main methode to be called for post processing</span>
 
 <span class="sd">        Args:</span>
@@ -130,8 +140,9 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_combine_relations</span><span class="p">(</span><span class="n">voc_builder</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">old_vocabulary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">transfer_settings</span><span class="p">(</span><span class="n">new_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span>
-                                  <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">old_vocabulary</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">transfer_settings</span><span class="p">(</span>
+                <span class="n">new_vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="o">=</span><span class="n">old_vocabulary</span>
+            <span class="p">)</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_apply_vocabulary_settings</span><span class="p">(</span><span class="n">voc_builder</span><span class="p">)</span>
 
         <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_parent_class</span><span class="p">(</span><span class="n">voc_builder</span><span class="p">)</span>
@@ -142,8 +153,8 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_save_initial_label_summary</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_set_labels</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; If entities have no label, extract their label from the iri</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_labels</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If entities have no label, extract their label from the iri</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            voc_builder: Builder object for Vocabulary</span>
@@ -155,8 +166,8 @@
             <span class="n">entity</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">get_original_label</span><span class="p">()</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_add_predefined_source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Add a special source to the vocabulary: PREDEFINED</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_predefined_source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a special source to the vocabulary: PREDEFINED</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            voc_builder: Builder object for Vocabulary</span>
@@ -165,12 +176,15 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;PREDEFINED&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">voc_builder</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
-            <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">source_name</span><span class="o">=</span><span class="s2">&quot;Predefined&quot;</span><span class="p">,</span>
-                            <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">predefined</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span>
+                <span class="n">source_name</span><span class="o">=</span><span class="s2">&quot;Predefined&quot;</span><span class="p">,</span>
+                <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+                <span class="n">predefined</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;PREDEFINED&quot;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_log_and_clear_dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_and_clear_dependencies</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        remove all references to entities that are not in the vocabulary to</span>
 <span class="sd">        prevent program errrors as we remove information we need to reparse</span>
@@ -188,7 +202,7 @@
             <span class="n">ontology</span><span class="o">.</span><span class="n">treat_dependency_statements</span><span class="p">(</span><span class="n">voc_builder</span><span class="o">.</span><span class="n">vocabulary</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_add_predefined_datatypes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_predefined_datatypes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add predefinded datatype_catalogue to the PREDEFINED source; they</span>
 <span class="sd">        are not included in an OWL file</span>
@@ -200,206 +214,312 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Test if datatype_catalogue were already added, if yes skip</span>
-        <span class="k">if</span> <span class="s1">&#39;http://www.w3.org/2002/07/owl#rational&#39;</span> <span class="ow">in</span> \
-                <span class="n">voc_builder</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;http://www.w3.org/2002/07/owl#rational&quot;</span>
+            <span class="ow">in</span> <span class="n">voc_builder</span><span class="o">.</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">):</span>
             <span class="k">return</span>
 
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#rational&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All numbers allowed&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#rational&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All numbers allowed&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#real&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All whole numbers allowed&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#real&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All whole numbers allowed&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
             <span class="n">Datatype</span><span class="p">(</span>
                 <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral&quot;</span><span class="p">,</span>
                 <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All strings allowed&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
             <span class="n">Datatype</span><span class="p">(</span>
                 <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral&quot;</span><span class="p">,</span>
                 <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;XML Syntax required&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#Literal&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All strings allowed&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#Literal&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All strings allowed&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#anyURI&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Needs to start with http://&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#anyURI&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Needs to start with http://&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#base64Binary&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Base64Binary&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#base64Binary&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Base64Binary&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#boolean&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;True or False&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">enum</span><span class="p">,</span>
-                     <span class="n">enum_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">]))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#boolean&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;True or False&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">enum</span><span class="p">,</span>
+                <span class="n">enum_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#byte&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Byte Number&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">128</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">127</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#byte&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Byte Number&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">128</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">127</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Date with possible timezone&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">date</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Date with possible timezone&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">date</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#dateTimeStamp&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">date</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#dateTimeStamp&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">date</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#decimal&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All decimal numbers&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#decimal&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All decimal numbers&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#double&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;64 bit decimal&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#double&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;64 bit decimal&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#float&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;32 bit decimal&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#float&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;32 bit decimal&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#hexBinary&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Hexadecimal&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
-                     <span class="n">allowed_chars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">,</span>
-                                    <span class="s2">&quot;9&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">]))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#hexBinary&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Hexadecimal&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+                <span class="n">allowed_chars</span><span class="o">=</span><span class="p">[</span>
+                    <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;4&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;5&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;6&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;7&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;8&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;9&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;F&quot;</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#int&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Signed 32 bit number&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">2147483648</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">2147483647</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#int&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Signed 32 bit number&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">2147483648</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">2147483647</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#integer&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All whole numbers&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#integer&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All whole numbers&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#language&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Language code, e.g: en, en-US, fr, or fr-FR&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#language&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Language code, e.g: en, en-US, fr, or fr-FR&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#long&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Signed 64 bit integer&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">9223372036854775808</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">9223372036854775807</span><span class="p">,</span>
-                     <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#long&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Signed 64 bit integer&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">9223372036854775808</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">9223372036854775807</span><span class="p">,</span>
+                <span class="n">number_decimal_allowed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#Name&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Name string (dont start with number)&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#Name&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Name string (dont start with number)&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#NCName&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Name string : forbidden&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
-                     <span class="n">forbidden_chars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;:&quot;</span><span class="p">]))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#NCName&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Name string : forbidden&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+                <span class="n">forbidden_chars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;:&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#negativeInteger&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All negative whole numbers&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=-</span><span class="mi">1</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#negativeInteger&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All negative whole numbers&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#NMTOKEN&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Token string&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#NMTOKEN&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Token string&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All positive whole numbers&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All positive whole numbers&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#nonPositiveInteger&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All negative whole numbers&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=-</span><span class="mi">1</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#nonPositiveInteger&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All negative whole numbers&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#normalizedString&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;normalized String&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#normalizedString&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;normalized String&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#positiveInteger&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All positive whole numbers&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#positiveInteger&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;All positive whole numbers&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#short&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;signed 16 bit number&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">32768</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">32767</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#short&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;signed 16 bit number&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=-</span><span class="mi">32768</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">32767</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#string&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#token&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#token&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedByte&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 8 bit number&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">255</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedByte&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 8 bit number&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedInt&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 32 bit number&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">4294967295</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedInt&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 32 bit number&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">4294967295</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedLong&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 64 bit number&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">18446744073709551615</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedLong&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 64 bit number&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">18446744073709551615</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_predefined_datatype</span><span class="p">(</span>
-            <span class="n">Datatype</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedShort&quot;</span><span class="p">,</span>
-                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 16 bit number&quot;</span><span class="p">,</span>
-                     <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                     <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                     <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                     <span class="n">number_range_max</span><span class="o">=</span><span class="mi">65535</span>
-                     <span class="p">))</span>
+            <span class="n">Datatype</span><span class="p">(</span>
+                <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#unsignedShort&quot;</span><span class="p">,</span>
+                <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;unsigned 16 bit number&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">DatatypeType</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="n">number_has_range</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">number_range_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">number_range_max</span><span class="o">=</span><span class="mi">65535</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_add_owl_thing</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_owl_thing</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add owl_thing class to the vocabulary in the predefined source</span>
 
 <span class="sd">        By definition each class is a subclass of owl:thing and owl:thing can be</span>
@@ -411,10 +531,12 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">root_class</span> <span class="o">=</span> <span class="n">Class</span><span class="p">(</span><span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#Thing&quot;</span><span class="p">,</span>
-                           <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Predefined root_class&quot;</span><span class="p">,</span>
-                           <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Thing&quot;</span><span class="p">,</span>
-                           <span class="n">predefined</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">root_class</span> <span class="o">=</span> <span class="n">Class</span><span class="p">(</span>
+            <span class="n">iri</span><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#Thing&quot;</span><span class="p">,</span>
+            <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Predefined root_class&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Thing&quot;</span><span class="p">,</span>
+            <span class="n">predefined</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># as it is the root object it is only a parent of classes which have no</span>
         <span class="c1"># parents yet</span>
@@ -427,7 +549,7 @@
             <span class="n">root_class</span><span class="o">.</span><span class="n">source_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;PREDEFINED&quot;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_remove_duplicate_parents</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_duplicate_parents</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Prevent that a class_ has the same parent iri multiple times</span>
 
 <span class="sd">        Args:</span>
@@ -439,7 +561,7 @@
             <span class="n">class_</span><span class="o">.</span><span class="n">parent_class_iris</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_ensure_parent_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_parent_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;If a class has a parent class, which was provided by an other</span>
 <span class="sd">        ontology. And that ontology is not given, it will have no parents.</span>
 <span class="sd">        In that case give him Thing as direct parent</span>
@@ -454,10 +576,11 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">class_</span><span class="o">.</span><span class="n">iri</span> <span class="o">==</span> <span class="s2">&quot;http://www.w3.org/2002/07/owl#Thing&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">class_</span><span class="o">.</span><span class="n">parent_class_iris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="s2">&quot;http://www.w3.org/2002/07/owl#Thing&quot;</span><span class="p">)</span>
+                        <span class="s2">&quot;http://www.w3.org/2002/07/owl#Thing&quot;</span>
+                    <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_apply_vocabulary_settings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_vocabulary_settings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make the labels of all entities FIWARE safe, so that they can be used</span>
 <span class="sd">        as field keys</span>
@@ -470,17 +593,21 @@
         <span class="n">vocabulary</span> <span class="o">=</span> <span class="n">voc_builder</span><span class="o">.</span><span class="n">vocabulary</span>
         <span class="n">settings</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">settings</span>
 
-        <span class="k">def</span> <span class="nf">to_pascal_case</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">stringcase</span><span class="o">.</span><span class="n">pascalcase</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span>\
-                <span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">to_pascal_case</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">stringcase</span><span class="o">.</span><span class="n">pascalcase</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">to_camel_case</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">to_camel_case</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">camel_string</span> <span class="o">=</span> <span class="n">stringcase</span><span class="o">.</span><span class="n">camelcase</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">camel_string</span>
 
-        <span class="k">def</span> <span class="nf">to_snake_case</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">to_snake_case</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">camel_string</span> <span class="o">=</span> <span class="n">to_pascal_case</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(?&lt;!^)(?=[A-Z])&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">camel_string</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?&lt;!^)(?=[A-Z])&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">camel_string</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
         <span class="c1"># replace all whitespaces</span>
         <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_all_entities</span><span class="p">():</span>
@@ -516,7 +643,7 @@
                 <span class="n">datatype</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">to_pascal_case</span><span class="p">(</span><span class="n">datatype</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_save_initial_label_summary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_initial_label_summary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the label_summary existing after parsing, before the user</span>
 <span class="sd">        changed labels</span>
@@ -527,14 +654,16 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">filip.semantics.vocabulary_configurator</span> <span class="kn">import</span> \
-            <span class="n">VocabularyConfigurator</span>
-        <span class="n">vocabulary</span><span class="o">.</span><span class="n">original_label_summary</span> <span class="o">=</span> \
+        <span class="kn">from</span><span class="w"> </span><span class="nn">filip.semantics.vocabulary_configurator</span><span class="w"> </span><span class="kn">import</span> <span class="n">VocabularyConfigurator</span>
+
+        <span class="n">vocabulary</span><span class="o">.</span><span class="n">original_label_summary</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">VocabularyConfigurator</span><span class="o">.</span><span class="n">get_label_conflicts_in_vocabulary</span><span class="p">(</span>
-                <span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span><span class="p">)</span>
+                <span class="n">vocabulary</span><span class="o">=</span><span class="n">vocabulary</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_compute_ancestor_classes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_ancestor_classes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute all ancestor classes of classes</span>
 
 <span class="sd">        Args:</span>
@@ -558,8 +687,7 @@
                     <span class="k">continue</span>
 
                 <span class="n">class_</span><span class="o">.</span><span class="n">ancestor_class_iris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-                <span class="n">grand_parents</span> <span class="o">=</span> \
-                    <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">parent_class_iris</span>
+                <span class="n">grand_parents</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">parent_class_iris</span>
 
                 <span class="k">for</span> <span class="n">grand_parent</span> <span class="ow">in</span> <span class="n">grand_parents</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">grand_parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">ancestor_class_iris</span><span class="p">:</span>
@@ -567,7 +695,7 @@
                         <span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grand_parent</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_compute_child_classes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_child_classes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute all child classes of classes</span>
 
 <span class="sd">        Args:</span>
@@ -590,7 +718,7 @@
                 <span class="n">parent_class</span><span class="o">.</span><span class="n">child_class_iris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_combine_relations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_combine_relations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute all CombinedRelations</span>
 
 <span class="sd">        Args:</span>
@@ -642,29 +770,34 @@
                 <span class="c1"># property are going to get ignored, maybe a not should be</span>
                 <span class="c1"># displayed</span>
                 <span class="k">if</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">is_id_of_type</span><span class="p">(</span><span class="n">property_iri</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">):</span>
-                    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;combined-data-relation|</span><span class="si">{}</span><span class="s2">|</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span>
-                                                               <span class="n">property_iri</span><span class="p">)</span>
-                    <span class="n">combi</span> <span class="o">=</span> <span class="n">CombinedDataRelation</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
-                                                 <span class="n">property_iri</span><span class="o">=</span><span class="n">property_iri</span><span class="p">,</span>
-                                                 <span class="n">relation_ids</span><span class="o">=</span><span class="n">rel_list</span><span class="p">,</span>
-                                                 <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">)</span>
+                    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;combined-data-relation|</span><span class="si">{}</span><span class="s2">|</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span> <span class="n">property_iri</span><span class="p">)</span>
+                    <span class="n">combi</span> <span class="o">=</span> <span class="n">CombinedDataRelation</span><span class="p">(</span>
+                        <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+                        <span class="n">property_iri</span><span class="o">=</span><span class="n">property_iri</span><span class="p">,</span>
+                        <span class="n">relation_ids</span><span class="o">=</span><span class="n">rel_list</span><span class="p">,</span>
+                        <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_combined_data_relation_for_class</span><span class="p">(</span>
-                        <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span> <span class="n">cdata</span><span class="o">=</span><span class="n">combi</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">is_id_of_type</span><span class="p">(</span><span class="n">property_iri</span><span class="p">,</span>
-                                              <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">):</span>
+                        <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span> <span class="n">cdata</span><span class="o">=</span><span class="n">combi</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">is_id_of_type</span><span class="p">(</span><span class="n">property_iri</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">):</span>
                     <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;combined-object-relation|</span><span class="si">{}</span><span class="s2">|</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span> <span class="n">property_iri</span><span class="p">)</span>
-                    <span class="n">combi</span> <span class="o">=</span> <span class="n">CombinedObjectRelation</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
-                                                   <span class="n">property_iri</span><span class="o">=</span><span class="n">property_iri</span><span class="p">,</span>
-                                                   <span class="n">relation_ids</span><span class="o">=</span><span class="n">rel_list</span><span class="p">,</span>
-                                                   <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">)</span>
+                        <span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span> <span class="n">property_iri</span>
+                    <span class="p">)</span>
+                    <span class="n">combi</span> <span class="o">=</span> <span class="n">CombinedObjectRelation</span><span class="p">(</span>
+                        <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+                        <span class="n">property_iri</span><span class="o">=</span><span class="n">property_iri</span><span class="p">,</span>
+                        <span class="n">relation_ids</span><span class="o">=</span><span class="n">rel_list</span><span class="p">,</span>
+                        <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">voc_builder</span><span class="o">.</span><span class="n">add_combined_object_relation_for_class</span><span class="p">(</span>
-                        <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span> <span class="n">crel</span><span class="o">=</span><span class="n">combi</span><span class="p">)</span>
+                        <span class="n">class_iri</span><span class="o">=</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">,</span> <span class="n">crel</span><span class="o">=</span><span class="n">combi</span>
+                    <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">pass</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_sort_relations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sort_relations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;sort relations alphabetically according to their labels</span>
 
 <span class="sd">        Args:</span>
@@ -676,18 +809,19 @@
 
         <span class="k">for</span> <span class="n">class_</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_classes</span><span class="p">():</span>
             <span class="n">cors</span> <span class="o">=</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_combined_object_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
-            <span class="n">class_</span><span class="o">.</span><span class="n">combined_object_relation_ids</span> <span class="o">=</span> \
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_sort_list_of_combined_relations</span><span class="p">(</span><span class="n">cors</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">)</span>
+            <span class="n">class_</span><span class="o">.</span><span class="n">combined_object_relation_ids</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_sort_list_of_combined_relations</span><span class="p">(</span>
+                <span class="n">cors</span><span class="p">,</span> <span class="n">vocabulary</span>
+            <span class="p">)</span>
 
             <span class="n">cdrs</span> <span class="o">=</span> <span class="n">class_</span><span class="o">.</span><span class="n">get_combined_data_relations</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
-            <span class="n">class_</span><span class="o">.</span><span class="n">combined_data_relation_ids</span> <span class="o">=</span> \
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_sort_list_of_combined_relations</span><span class="p">(</span><span class="n">cdrs</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">)</span>
+            <span class="n">class_</span><span class="o">.</span><span class="n">combined_data_relation_ids</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_sort_list_of_combined_relations</span><span class="p">(</span>
+                <span class="n">cdrs</span><span class="p">,</span> <span class="n">vocabulary</span>
+            <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_sort_list_of_combined_relations</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span>
-            <span class="n">combined_relations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CombinedRelation</span><span class="p">],</span>
-            <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sort_list_of_combined_relations</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">combined_relations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CombinedRelation</span><span class="p">],</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;sort given CombinedRelations according to their labels</span>
 
 <span class="sd">        Args:</span>
@@ -713,7 +847,7 @@
         <span class="k">return</span> <span class="n">sorted_cor_ids</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_mirror_object_property_inverses</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mirror_object_property_inverses</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">voc_builder</span><span class="p">:</span> <span class="n">VocabularyBuilder</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        inverses could only be given for 1 obj_prop of the pair and needs to</span>
 <span class="sd">        be derived for the other also we could have the inverse inside an other</span>
@@ -737,8 +871,7 @@
                 <span class="n">inverse_prop</span><span class="o">.</span><span class="n">add_inverse_property_iri</span><span class="p">(</span><span class="n">obj_prop_iri</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PostProcessor.transfer_settings"><a class="viewcode-back" href="../../../../code/filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.post_processer.PostProcessor.transfer_settings">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">transfer_settings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">new_vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span>
-                          <span class="n">old_vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transfer_settings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">new_vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">old_vocabulary</span><span class="p">:</span> <span class="n">Vocabulary</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transfer all the user made settings (labels, ..)</span>
 <span class="sd">        from an old vocabulary to a new vocabulary</span>
@@ -764,7 +897,6 @@
             <span class="k">if</span> <span class="n">iri</span> <span class="ow">in</span> <span class="n">new_vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">:</span>
                 <span class="n">new_data_property</span> <span class="o">=</span> <span class="n">new_vocabulary</span><span class="o">.</span><span class="n">data_properties</span><span class="p">[</span><span class="n">iri</span><span class="p">]</span>
                 <span class="n">new_data_property</span><span class="o">.</span><span class="n">field_type</span> <span class="o">=</span> <span class="n">data_property</span><span class="o">.</span><span class="n">field_type</span></div></div>
-
 </pre></div>
 
            </div>
@@ -774,7 +906,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

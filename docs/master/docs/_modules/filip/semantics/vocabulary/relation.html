@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.vocabulary.relation &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.semantics.vocabulary.relation &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -78,33 +78,34 @@
   <h1>Source code for filip.semantics.vocabulary.relation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Vocabulary Models for Relations&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Vocabulary</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vocabulary</span>
 
-<span class="kn">from</span> <span class="nn">aenum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 
-<span class="kn">from</span> <span class="nn">.source</span> <span class="kn">import</span> <span class="n">DependencyStatement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyStatement</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">IdType</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">IdType</span>
 
 
-<div class="viewcode-block" id="StatementType"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.StatementType">[docs]</a><span class="k">class</span> <span class="nc">StatementType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="StatementType"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.StatementType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StatementType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A statement is either a leaf and holds an iri/label or it is a combination</span>
 <span class="sd">    of leafs with or / and</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">OR</span> <span class="o">=</span> <span class="s1">&#39;or&#39;</span>
-    <span class="n">AND</span> <span class="o">=</span> <span class="s1">&#39;and&#39;</span>
-    <span class="n">LEAF</span> <span class="o">=</span> <span class="s1">&#39;leaf&#39;</span></div>
+
+    <span class="n">OR</span> <span class="o">=</span> <span class="s2">&quot;or&quot;</span>
+    <span class="n">AND</span> <span class="o">=</span> <span class="s2">&quot;and&quot;</span>
+    <span class="n">LEAF</span> <span class="o">=</span> <span class="s2">&quot;leaf&quot;</span></div>
 
 
-<div class="viewcode-block" id="TargetStatement"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement">[docs]</a><span class="k">class</span> <span class="nc">TargetStatement</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="TargetStatement"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TargetStatement</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A target statement is the statement the sits in a relation statement behind</span>
 <span class="sd">    the restrictionType:</span>
@@ -121,20 +122,20 @@
 
     <span class="n">target_data_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Holds the value if the relation is a hasValue (LEAF only)&quot;</span><span class="p">)</span>
-    <span class="n">target_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The IRI of the target (LEAF only)&quot;</span><span class="p">)</span>
-    <span class="n">target_statements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;TargetStatement&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Holds the value if the relation is a hasValue (LEAF only)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The IRI of the target (LEAF only)&quot;</span><span class="p">)</span>
+    <span class="n">target_statements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;TargetStatement&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The targetstatements that are combined with this &quot;</span>
-                    <span class="s2">&quot;targetstatement (and/or only)&quot;</span>
+        <span class="s2">&quot;targetstatement (and/or only)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">StatementType</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">StatementType</span><span class="o">.</span><span class="n">LEAF</span><span class="p">,</span>
-                                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Statement types&quot;</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">StatementType</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">StatementType</span><span class="o">.</span><span class="n">LEAF</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Statement types&quot;</span>
+    <span class="p">)</span>
 
-<div class="viewcode-block" id="TargetStatement.set_target"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.set_target">[docs]</a>    <span class="k">def</span> <span class="nf">set_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_data_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Set target for this statement and make it a LEAF statement</span>
+<div class="viewcode-block" id="TargetStatement.set_target"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.set_target">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_data_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set target for this statement and make it a LEAF statement</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            target_iri (str): iri of the target (class or datatype iri)</span>
@@ -148,7 +149,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span> <span class="o">=</span> <span class="n">target_iri</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_data_value</span> <span class="o">=</span> <span class="n">target_data_value</span></div>
 
-<div class="viewcode-block" id="TargetStatement.get_all_targets"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.get_all_targets">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<div class="viewcode-block" id="TargetStatement.get_all_targets"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.get_all_targets">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract possible targets out of statements</span>
 <span class="sd">        interpretation: [[a,b], [c]]-&gt; (a and b) or c -&gt; the target needs to</span>
 <span class="sd">        have ancestors(or be): (both a anb b) or c</span>
@@ -214,7 +215,7 @@
                                     <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="TargetStatement.to_string"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="TargetStatement.to_string"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.to_string">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a string representation of the targetstatment</span>
 
 <span class="sd">        Args:</span>
@@ -237,8 +238,7 @@
 
             <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="TargetStatement.is_fulfilled_by_iri_value"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.is_fulfilled_by_iri_value">[docs]</a>    <span class="k">def</span> <span class="nf">is_fulfilled_by_iri_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ancestor_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> \
-            <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="TargetStatement.is_fulfilled_by_iri_value"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.is_fulfilled_by_iri_value">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_fulfilled_by_iri_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ancestor_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Test if a set of values fulfills the targetstatement;</span>
 <span class="sd">        Only for objectRelations</span>
@@ -268,8 +268,7 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="TargetStatement.is_fulfilled_by_data_value"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.is_fulfilled_by_data_value">[docs]</a>    <span class="k">def</span> <span class="nf">is_fulfilled_by_data_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="TargetStatement.is_fulfilled_by_data_value"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.is_fulfilled_by_data_value">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_fulfilled_by_data_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Test if a set of values fulfills the targetstatement;</span>
 <span class="sd">        Only for dataRelations</span>
@@ -285,14 +284,15 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_data_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_data_value</span>
 
-        <span class="kn">from</span> <span class="nn">.vocabulary</span> <span class="kn">import</span> <span class="n">IdType</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="n">IdType</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">is_id_of_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">datatype</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">datatype</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_datatype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">datatype</span><span class="o">.</span><span class="n">value_is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TargetStatement.retrieve_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.retrieve_label">[docs]</a>    <span class="k">def</span> <span class="nf">retrieve_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="TargetStatement.retrieve_label"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.retrieve_label">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the label of the target_iri. Only logical for Leaf statements</span>
 
 <span class="sd">        Args:</span>
@@ -308,11 +308,9 @@
                 <span class="k">return</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_label_for_entity_iri</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="TargetStatement.get_dependency_statements"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.get_dependency_statements">[docs]</a>    <span class="k">def</span> <span class="nf">get_dependency_statements</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">,</span>
-            <span class="n">ontology_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencyStatement</span><span class="p">]:</span>
+<div class="viewcode-block" id="TargetStatement.get_dependency_statements"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.get_dependency_statements">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dependency_statements</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">,</span> <span class="n">ontology_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencyStatement</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a list of all pointers/iris that are not contained in the</span>
 <span class="sd">        vocabulary. Purging is done in class</span>
@@ -333,21 +331,26 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_data_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># check if predefined datatype</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">iri_is_predefined_datatype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span><span class="p">):</span>
-                    <span class="n">found</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span> <span class="ow">or</span> \
-                            <span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span> <span class="ow">or</span> \
-                            <span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span>
+                    <span class="n">found</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span>
+                        <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span>
+                        <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span>
+                    <span class="p">)</span>
                     <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="n">DependencyStatement</span><span class="p">(</span>
                             <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Relation Target&quot;</span><span class="p">,</span>
                             <span class="n">class_iri</span><span class="o">=</span><span class="n">class_iri</span><span class="p">,</span>
                             <span class="n">dependency_iri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_iri</span><span class="p">,</span>
-                            <span class="n">fulfilled</span><span class="o">=</span><span class="n">found</span><span class="p">)</span>
+                            <span class="n">fulfilled</span><span class="o">=</span><span class="n">found</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">target_statement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statements</span><span class="p">:</span>
                 <span class="n">statements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
                     <span class="n">target_statement</span><span class="o">.</span><span class="n">get_dependency_statements</span><span class="p">(</span>
-                        <span class="n">vocabulary</span><span class="p">,</span> <span class="n">ontology_iri</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">))</span>
+                        <span class="n">vocabulary</span><span class="p">,</span> <span class="n">ontology_iri</span><span class="p">,</span> <span class="n">class_iri</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
         <span class="k">return</span> <span class="n">statements</span></div></div>
 
 
@@ -357,19 +360,20 @@
 <span class="n">TargetStatement</span><span class="o">.</span><span class="n">model_rebuild</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="RestrictionType"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType">[docs]</a><span class="k">class</span> <span class="nc">RestrictionType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="RestrictionType"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">RestrictionType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;RestrictionTypes, as defined for OWL&quot;&quot;&quot;</span>
-    <span class="n">_init_</span> <span class="o">=</span> <span class="s1">&#39;value __doc__&#39;</span>
 
-    <span class="n">some</span> <span class="o">=</span> <span class="s1">&#39;some&#39;</span><span class="p">,</span> <span class="s1">&#39;at least 1 value of that target&#39;</span>
-    <span class="n">only</span> <span class="o">=</span> <span class="s1">&#39;only&#39;</span><span class="p">,</span> <span class="s1">&#39;only value of that target&#39;</span>
-    <span class="nb">min</span> <span class="o">=</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;min n values of that target&#39;</span>
-    <span class="nb">max</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;max n values of that target&#39;</span>
-    <span class="n">exactly</span> <span class="o">=</span> <span class="s1">&#39;exactly&#39;</span><span class="p">,</span> <span class="s1">&#39;exactly n values of that target&#39;</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;predefined value&#39;</span></div>
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+
+    <span class="n">some</span> <span class="o">=</span> <span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;at least 1 value of that target&quot;</span>
+    <span class="n">only</span> <span class="o">=</span> <span class="s2">&quot;only&quot;</span><span class="p">,</span> <span class="s2">&quot;only value of that target&quot;</span>
+    <span class="nb">min</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;min n values of that target&quot;</span>
+    <span class="nb">max</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;max n values of that target&quot;</span>
+    <span class="n">exactly</span> <span class="o">=</span> <span class="s2">&quot;exactly&quot;</span><span class="p">,</span> <span class="s2">&quot;exactly n values of that target&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;predefined value&quot;</span></div>
 
 
-<div class="viewcode-block" id="Relation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation">[docs]</a><span class="k">class</span> <span class="nc">Relation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="Relation"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Relation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Relation is defined in the source for a class.</span>
 <span class="sd">    It has the form: RestrictionType property target_statement</span>
@@ -381,23 +385,23 @@
 <span class="sd">    inherit it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Unique generated Relation ID, &quot;</span>
-                                <span class="s2">&quot;for internal use&quot;</span><span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Unique generated Relation ID, &quot;</span> <span class="s2">&quot;for internal use&quot;</span><span class="p">)</span>
     <span class="n">restriction_type</span><span class="p">:</span> <span class="n">RestrictionType</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Restriction type of this relation&quot;</span><span class="p">)</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Restriction type of this relation&quot;</span>
+    <span class="p">)</span>
     <span class="n">restriction_cardinality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Only needed for min, max, equaly states the &#39;n&#39;&quot;</span><span class="p">)</span>
+        <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Only needed for min, max, equaly states the &#39;n&#39;&quot;</span>
+    <span class="p">)</span>
     <span class="n">property_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;IRI of the property (data- or object-)&quot;</span><span class="p">)</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;IRI of the property (data- or object-)&quot;</span>
+    <span class="p">)</span>
     <span class="n">target_statement</span><span class="p">:</span> <span class="n">TargetStatement</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Complex statement which classes/datatype_catalogue &quot;</span>
-                    <span class="s2">&quot;are allowed/required&quot;</span><span class="p">)</span>
+        <span class="s2">&quot;are allowed/required&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
-<div class="viewcode-block" id="Relation.get_targets"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_targets">[docs]</a>    <span class="k">def</span> <span class="nf">get_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<div class="viewcode-block" id="Relation.get_targets"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_targets">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all targets specified in the target statement in AND-OR Notation</span>
 
 <span class="sd">        Returns:</span>
@@ -405,8 +409,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">get_all_targets</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Relation.to_string"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get a string representation of the relation</span>
+<div class="viewcode-block" id="Relation.to_string"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.to_string">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a string representation of the relation</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vocabulary (Vocabulary): Vocabulary of this project</span>
@@ -416,15 +420,21 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span>
-                                  <span class="n">to_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> \
-                   <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> \
-                   <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
+            <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Relation.is_restriction_fulfilled"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_restriction_fulfilled">[docs]</a>    <span class="k">def</span> <span class="nf">is_restriction_fulfilled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_fulfilling_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                                 <span class="n">total_number_of_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="Relation.is_restriction_fulfilled"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_restriction_fulfilled">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_restriction_fulfilled</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">number_of_fulfilling_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total_number_of_values</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if the restriction type is fulfilled by comparing the number of</span>
 <span class="sd">        fulfilling values against the total</span>
 <span class="sd">        number of values given</span>
@@ -444,21 +454,18 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">==</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">only</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">==</span> <span class="n">total_number_of_values</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">==</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">&gt;=</span> \
-                   <span class="p">(</span><span class="nb">int</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="nb">int</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">==</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">&lt;=</span> \
-                   <span class="p">(</span><span class="nb">int</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="nb">int</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">==</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">exactly</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">==</span> \
-                   <span class="p">(</span><span class="nb">int</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">==</span> <span class="p">(</span><span class="nb">int</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span> <span class="o">==</span> <span class="n">RestrictionType</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">number_of_fulfilling_values</span> <span class="o">&gt;=</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="Relation.get_dependency_statements"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_dependency_statements">[docs]</a>    <span class="k">def</span> <span class="nf">get_dependency_statements</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">,</span> <span class="n">ontology_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencyStatement</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get a list of all pointers/iris that are not contained in the</span>
+<div class="viewcode-block" id="Relation.get_dependency_statements"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_dependency_statements">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dependency_statements</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">,</span> <span class="n">ontology_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencyStatement</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of all pointers/iris that are not contained in the</span>
 <span class="sd">            vocabulary</span>
 <span class="sd">            Purging is done in class</span>
 
@@ -473,22 +480,34 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">statements</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">found</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span> <span class="ow">or</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span>
+        <span class="p">)</span>
 
-        <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DependencyStatement</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Relation Property&quot;</span><span class="p">,</span>
-                                              <span class="n">class_iri</span><span class="o">=</span><span class="n">class_iri</span><span class="p">,</span>
-                                              <span class="n">dependency_iri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">,</span>
-                                              <span class="n">fulfilled</span><span class="o">=</span><span class="n">found</span><span class="p">))</span>
+        <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">DependencyStatement</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Relation Property&quot;</span><span class="p">,</span>
+                <span class="n">class_iri</span><span class="o">=</span><span class="n">class_iri</span><span class="p">,</span>
+                <span class="n">dependency_iri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">,</span>
+                <span class="n">fulfilled</span><span class="o">=</span><span class="n">found</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
-        <span class="n">statements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">get_dependency_statements</span><span class="p">(</span>
-            <span class="n">vocabulary</span><span class="p">,</span> <span class="n">ontology_iri</span><span class="p">,</span> <span class="n">class_iri</span><span class="p">))</span>
+        <span class="n">statements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">get_dependency_statements</span><span class="p">(</span>
+                <span class="n">vocabulary</span><span class="p">,</span> <span class="n">ontology_iri</span><span class="p">,</span> <span class="n">class_iri</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">statements</span></div>
 
-<div class="viewcode-block" id="Relation.is_fulfilled_with_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_fulfilled_with_iris">[docs]</a>    <span class="k">def</span> <span class="nf">is_fulfilled_with_iris</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">ancestor_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="Relation.is_fulfilled_with_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_fulfilled_with_iris">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_fulfilled_with_iris</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">ancestor_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if a set of values fulfills the rules of the relation</span>
 
 <span class="sd">        Args:</span>
@@ -502,14 +521,15 @@
         <span class="n">number_of_fulfilling_values</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">is_fulfilled_by_iri_value</span><span class="p">(</span>
-                    <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ancestor_values</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ancestor_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">):</span>
                 <span class="n">number_of_fulfilling_values</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_restriction_fulfilled</span><span class="p">(</span><span class="n">number_of_fulfilling_values</span><span class="p">,</span>
-                                             <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_restriction_fulfilled</span><span class="p">(</span><span class="n">number_of_fulfilling_values</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Relation.is_fulfilled_with_values"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_fulfilled_with_values">[docs]</a>    <span class="k">def</span> <span class="nf">is_fulfilled_with_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">,</span>
-                                 <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="Relation.is_fulfilled_with_values"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_fulfilled_with_values">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_fulfilled_with_values</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if a set of values fulfills the rules of the relation.</span>
 <span class="sd">        Used if property is a data property</span>
 
@@ -523,15 +543,12 @@
         <span class="n">number_of_fulfilling_values</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">is_fulfilled_by_data_value</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                                                <span class="n">vocabulary</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">is_fulfilled_by_data_value</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">vocabulary</span><span class="p">):</span>
                 <span class="n">number_of_fulfilling_values</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_restriction_fulfilled</span><span class="p">(</span><span class="n">number_of_fulfilling_values</span><span class="p">,</span>
-                                             <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_restriction_fulfilled</span><span class="p">(</span><span class="n">number_of_fulfilling_values</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Relation.get_all_possible_target_class_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_all_possible_target_class_iris">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_possible_target_class_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="Relation.get_all_possible_target_class_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_all_possible_target_class_iris">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_possible_target_class_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a set of class iris that are possible values for an</span>
 <span class="sd">        objectRelation</span>
 
@@ -554,14 +571,12 @@
             <span class="k">for</span> <span class="n">class_</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_classes</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">class_</span><span class="o">.</span><span class="n">is_child_of_all_classes</span><span class="p">(</span><span class="n">target_list</span><span class="p">):</span>
                     <span class="n">possible_class_iris</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">)</span>
-                    <span class="n">children</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">)</span><span class="o">.</span> \
-                        <span class="n">child_class_iris</span>
+                    <span class="n">children</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span><span class="p">(</span><span class="n">class_</span><span class="o">.</span><span class="n">iri</span><span class="p">)</span><span class="o">.</span><span class="n">child_class_iris</span>
                     <span class="n">possible_class_iris</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">children</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">possible_class_iris</span></div>
 
-<div class="viewcode-block" id="Relation.get_possible_enum_target_values"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_possible_enum_target_values">[docs]</a>    <span class="k">def</span> <span class="nf">get_possible_enum_target_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> \
-            <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="Relation.get_possible_enum_target_values"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_possible_enum_target_values">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_possible_enum_target_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all allowed enum target values for a data relation</span>
 
 <span class="sd">        Args:</span>
@@ -572,10 +587,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">targets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_statement</span><span class="o">.</span><span class="n">get_all_targets</span><span class="p">()</span>
 
-        <span class="kn">from</span> <span class="nn">.vocabulary</span> <span class="kn">import</span> <span class="n">IdType</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.vocabulary</span><span class="w"> </span><span class="kn">import</span> <span class="n">IdType</span>
+
         <span class="c1"># methode only makes sense for data relations</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">is_id_of_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">,</span>
-                                        <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">is_id_of_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">property_iri</span><span class="p">,</span> <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[]</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
@@ -590,7 +605,7 @@
 
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="Relation.get_all_target_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_all_target_iris">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_target_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="Relation.get_all_target_iris"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_all_target_iris">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_target_iris</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all iris of targets</span>
 
 <span class="sd">        Returns:</span>
@@ -610,7 +625,7 @@
 
         <span class="k">return</span> <span class="n">iris</span></div>
 
-<div class="viewcode-block" id="Relation.export_rule"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.export_rule">[docs]</a>    <span class="k">def</span> <span class="nf">export_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s1">&#39;Vocabulary&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="Relation.export_rule"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.export_rule">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">export_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the rule as string</span>
 
 <span class="sd">        Args:</span>
@@ -627,11 +642,12 @@
                 <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vocabulary</span><span class="o">.</span><span class="n">get_label_for_entity_iri</span><span class="p">(</span><span class="n">iri</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nb">int</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">|&#39;</span> \
-                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="n">targets</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">|&#39;</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_cardinality</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+                <span class="n">targets</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">restriction_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="n">targets</span></div></div>
-
 </pre></div>
 
            </div>
@@ -641,7 +657,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

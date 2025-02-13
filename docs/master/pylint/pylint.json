@@ -796,7 +796,7 @@
             "type": "convention",
             "module": "filip.config",
             "obj": "",
-            "line": 9,
+            "line": 10,
             "column": 0,
             "path": "filip/config.py",
             "symbol": "wrong-import-order",
@@ -807,7 +807,7 @@
             "type": "convention",
             "module": "filip.config",
             "obj": "",
-            "line": 10,
+            "line": 11,
             "column": 0,
             "path": "filip/config.py",
             "symbol": "wrong-import-order",
@@ -862,18 +862,7 @@
             "type": "convention",
             "module": "tests.test_config",
             "obj": "",
-            "line": 36,
-            "column": 0,
-            "path": "tests/test_config.py",
-            "symbol": "line-too-long",
-            "message": "Line too long (101/100)",
-            "message-id": "C0301"
-        },
-        {
-            "type": "convention",
-            "module": "tests.test_config",
-            "obj": "",
-            "line": 7,
+            "line": 8,
             "column": 0,
             "path": "tests/test_config.py",
             "symbol": "wrong-import-order",
@@ -884,7 +873,7 @@
             "type": "convention",
             "module": "tests.test_config",
             "obj": "",
-            "line": 8,
+            "line": 9,
             "column": 0,
             "path": "tests/test_config.py",
             "symbol": "wrong-import-order",
@@ -892,15 +881,15 @@
             "message-id": "C0411"
         },
         {
-            "type": "refactor",
-            "module": "tutorials.__init__",
+            "type": "warning",
+            "module": "tests.test_logging",
             "obj": "",
-            "line": 1,
+            "line": 49,
             "column": 0,
-            "path": "tutorials/__init__.py",
-            "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.config:[46:53]\n==tests.config:[62:68]\n    LD_MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1884\",\n                                       validation_alias=AliasChoices(\n                                           'LD_MQTT_BROKER_URL',\n                                           'LD_MQTT_URL',\n                                           'LD_MQTT_BROKER'))\n\n# create settings object",
-            "message-id": "R0801"
+            "path": "tests/test_logging.py",
+            "symbol": "implicit-str-concat",
+            "message": "Implicit string concatenation found in call",
+            "message-id": "W1404"
         },
         {
             "type": "refactor",
@@ -910,18 +899,7 @@
             "column": 0,
             "path": "tutorials/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.config:[41:46]\n==tests.config:[51:57]\n    MQTT_BROKER_URL: AnyUrl = Field(default=\"mqtt://127.0.0.1:1883\",\n                                    validation_alias=AliasChoices(\n                                        'MQTT_BROKER_URL',\n                                        'MQTT_URL',\n                                        'MQTT_BROKER'))\n",
-            "message-id": "R0801"
-        },
-        {
-            "type": "refactor",
-            "module": "tutorials.__init__",
-            "obj": "",
-            "line": 1,
-            "column": 0,
-            "path": "tutorials/__init__.py",
-            "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.config:[29:35]\n==tests.config:[34:39]\n                                  validation_alias=AliasChoices('LD_ORION_URL',\n                                                                'LD_CB_URL',\n                                                                'ORION_LD_URL',\n                                                                'SCORPIO_URL',\n                                                                'STELLIO_URL'))",
+            "message": "Similar lines in 2 files\n==filip.config:[45:56]\n==tests.config:[50:62]\n    )\n\n    QL_URL: AnyHttpUrl = Field(\n        default=\"http://127.0.0.1:8668\",\n        validation_alias=AliasChoices(\"QUANTUMLEAP_URL\", \"QL_URL\"),\n    )\n\n    MQTT_BROKER_URL: AnyUrl = Field(\n        default=\"mqtt://127.0.0.1:1883\",\n        validation_alias=AliasChoices(\"MQTT_BROKER_URL\", \"MQTT_URL\", \"MQTT_BROKER\"),\n    )\n",
             "message-id": "R0801"
         }
     ],
@@ -988,7 +966,7 @@
                 "warning": 1
             },
             "tests.test_config": {
-                "convention": 3,
+                "convention": 2,
                 "error": 0,
                 "fatal": 0,
                 "info": 0,
@@ -1003,14 +981,14 @@
                 "info": 0,
                 "refactor": 0,
                 "statement": 31,
-                "warning": 0
+                "warning": 1
             },
             "tutorials.__init__": {
                 "convention": 0,
                 "error": 0,
                 "fatal": 0,
                 "info": 0,
-                "refactor": 3,
+                "refactor": 1,
                 "statement": 0,
                 "warning": 0
             }
@@ -1019,8 +997,8 @@
             "wrong-import-order": 6,
             "missing-module-docstring": 1,
             "unused-import": 1,
-            "line-too-long": 1,
-            "duplicate-code": 3
+            "implicit-str-concat": 1,
+            "duplicate-code": 1
         },
         "code_type_count": {
             "code": 0,
@@ -1038,10 +1016,10 @@
                 "filip"
             ],
             "pydantic": [
-                "tests.config",
                 "filip.custom_types",
-                "filip.config",
-                "tests.test_config"
+                "tests.config",
+                "tests.test_config",
+                "filip.config"
             ],
             "pydantic_settings": [
                 "tests.config",
@@ -1077,16 +1055,16 @@
             "method": 0,
             "module": 1
         },
-        "convention": 8,
+        "convention": 7,
         "error": 0,
         "fatal": 0,
         "info": 0,
-        "refactor": 3,
+        "refactor": 1,
         "statement": 108,
-        "warning": 1,
+        "warning": 2,
         "global_note": 0,
-        "nb_duplicated_lines": 15,
-        "percent_duplicated_lines": 4.716981132075472
+        "nb_duplicated_lines": 9,
+        "percent_duplicated_lines": 2.4930747922437675
     },
     "previous": {
         "bad_names": {
@@ -1151,7 +1129,7 @@
                 "warning": 1
             },
             "tests.test_config": {
-                "convention": 3,
+                "convention": 2,
                 "error": 0,
                 "fatal": 0,
                 "info": 0,
@@ -1166,14 +1144,14 @@
                 "info": 0,
                 "refactor": 0,
                 "statement": 31,
-                "warning": 0
+                "warning": 1
             },
             "tutorials.__init__": {
                 "convention": 0,
                 "error": 0,
                 "fatal": 0,
                 "info": 0,
-                "refactor": 3,
+                "refactor": 1,
                 "statement": 0,
                 "warning": 0
             }
@@ -1182,8 +1160,8 @@
             "wrong-import-order": 6,
             "missing-module-docstring": 1,
             "unused-import": 1,
-            "line-too-long": 1,
-            "duplicate-code": 3
+            "implicit-str-concat": 1,
+            "duplicate-code": 1
         },
         "code_type_count": {
             "code": 0,
@@ -1201,10 +1179,10 @@
                 "filip"
             ],
             "pydantic": [
-                "tests.config",
                 "filip.custom_types",
-                "filip.config",
-                "tests.test_config"
+                "tests.config",
+                "tests.test_config",
+                "filip.config"
             ],
             "pydantic_settings": [
                 "tests.config",
@@ -1240,15 +1218,15 @@
             "method": 0,
             "module": 1
         },
-        "convention": 8,
+        "convention": 7,
         "error": 0,
         "fatal": 0,
         "info": 0,
-        "refactor": 3,
+        "refactor": 1,
         "statement": 108,
-        "warning": 1,
-        "global_note": 8.88888888888889,
-        "nb_duplicated_lines": 15,
-        "percent_duplicated_lines": 4.716981132075472
+        "warning": 2,
+        "global_note": 9.074074074074074,
+        "nb_duplicated_lines": 9,
+        "percent_duplicated_lines": 2.4930747922437675
     }
 }

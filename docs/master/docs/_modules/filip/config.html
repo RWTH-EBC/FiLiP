@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.config &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.config &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -82,51 +82,63 @@
 <span class="sd">`*.env` belongs to best practices in containerized applications. Pydantic</span>
 <span class="sd">provides a convenient and clean way to manage environments.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">AliasChoices</span><span class="p">,</span> <span class="n">AnyUrl</span>
-<span class="kn">from</span> <span class="nn">pydantic_settings</span> <span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">find_dotenv</span>
-<span class="n">ROOT_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">AliasChoices</span><span class="p">,</span> <span class="n">AnyUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_dotenv</span>
+
+<span class="n">ROOT_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="Settings"><a class="viewcode-back" href="../../code/filip.html#filip.config.Settings">[docs]</a><span class="k">class</span> <span class="nc">Settings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<div class="viewcode-block" id="Settings"><a class="viewcode-back" href="../../code/filip.html#filip.config.Settings">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Settings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Settings class that reads environment variables from a local `.env.filip`</span>
 <span class="sd">    file or environment variables. The `.env.filip` can be located anywhere</span>
 <span class="sd">    in the FiLiP repository.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span><span class="n">env_file</span><span class="o">=</span><span class="n">find_dotenv</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">ROOT_DIR</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;.env.filip&#39;</span><span class="p">),</span>
-                                      <span class="n">env_file_encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>
-                                      <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
-    <span class="n">CB_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:1026&quot;</span><span class="p">,</span>
-                               <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
-                                   <span class="s1">&#39;ORION_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;CB_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;CB_HOST&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;CONTEXTBROKER_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;OCB_URL&#39;</span><span class="p">))</span>
-    <span class="n">LD_CB_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:1027&quot;</span><span class="p">,</span>
-                                  <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;LD_ORION_URL&#39;</span><span class="p">,</span>
-                                                                <span class="s1">&#39;LD_CB_URL&#39;</span><span class="p">,</span>
-                                                                <span class="s1">&#39;ORION_LD_URL&#39;</span><span class="p">,</span>
-                                                                <span class="s1">&#39;SCORPIO_URL&#39;</span><span class="p">,</span>
-                                                                <span class="s1">&#39;STELLIO_URL&#39;</span><span class="p">))</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span>
+        <span class="n">env_file</span><span class="o">=</span><span class="n">find_dotenv</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">ROOT_DIR</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;.env.filip&quot;</span><span class="p">),</span>
+        <span class="n">env_file_encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+        <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="n">IOTA_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:4041&quot;</span><span class="p">,</span>
-                                 <span class="n">validation_alias</span><span class="o">=</span><span class="s1">&#39;IOTA_URL&#39;</span><span class="p">)</span>
+    <span class="n">CB_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:1026&quot;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
+            <span class="s2">&quot;ORION_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;CB_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;CB_HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;CONTEXTBROKER_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;OCB_URL&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">LD_CB_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:1027&quot;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
+            <span class="s2">&quot;LD_ORION_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;LD_CB_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;ORION_LD_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;SCORPIO_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;STELLIO_URL&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
 
-    <span class="n">QL_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8668&quot;</span><span class="p">,</span>
-                               <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;QUANTUMLEAP_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;QL_URL&#39;</span><span class="p">))</span>
+    <span class="n">IOTA_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:4041&quot;</span><span class="p">,</span> <span class="n">validation_alias</span><span class="o">=</span><span class="s2">&quot;IOTA_URL&quot;</span>
+    <span class="p">)</span>
 
-    <span class="n">MQTT_BROKER_URL</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;mqtt://127.0.0.1:1883&quot;</span><span class="p">,</span>
-                                    <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
-                                        <span class="s1">&#39;MQTT_BROKER_URL&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;MQTT_URL&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;MQTT_BROKER&#39;</span><span class="p">))</span>
-    <span class="n">LD_MQTT_BROKER_URL</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;mqtt://127.0.0.1:1884&quot;</span><span class="p">,</span>
-                                       <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
-                                           <span class="s1">&#39;LD_MQTT_BROKER_URL&#39;</span><span class="p">,</span>
-                                           <span class="s1">&#39;LD_MQTT_URL&#39;</span><span class="p">,</span>
-                                           <span class="s1">&#39;LD_MQTT_BROKER&#39;</span><span class="p">))</span></div>
+    <span class="n">QL_URL</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8668&quot;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s2">&quot;QUANTUMLEAP_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;QL_URL&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">MQTT_BROKER_URL</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;mqtt://127.0.0.1:1883&quot;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s2">&quot;MQTT_BROKER_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;MQTT_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;MQTT_BROKER&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">LD_MQTT_BROKER_URL</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;mqtt://127.0.0.1:1884&quot;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span>
+            <span class="s2">&quot;LD_MQTT_BROKER_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;LD_MQTT_URL&quot;</span><span class="p">,</span> <span class="s2">&quot;LD_MQTT_BROKER&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
 
 <span class="c1"># create settings object</span>
 <span class="n">settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
@@ -139,7 +151,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

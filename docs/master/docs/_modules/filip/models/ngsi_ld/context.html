@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_ld.context &mdash; FiLiP 0.6.0 documentation</title>
+  <title>filip.models.ngsi_ld.context &mdash; FiLiP 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -79,31 +79,45 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">NGSI LD models for context broker interaction</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">geojson_pydantic</span> <span class="kn">import</span> <span class="n">Point</span><span class="p">,</span> <span class="n">MultiPoint</span><span class="p">,</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">MultiLineString</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> \
-    <span class="n">MultiPolygon</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Self</span>
-<span class="kn">from</span> <span class="nn">aenum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">model_validator</span>
-<span class="kn">from</span> <span class="nn">filip.models.ngsi_v2</span> <span class="kn">import</span> <span class="n">ContextEntity</span>
-<span class="kn">from</span> <span class="nn">filip.utils.validators</span> <span class="kn">import</span> <span class="n">FiwareRegex</span><span class="p">,</span> \
-    <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span> <span class="n">validate_fiware_standard_regex</span>
-<span class="kn">from</span> <span class="nn">pydantic_core</span> <span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojson_pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Point</span><span class="p">,</span>
+    <span class="n">MultiPoint</span><span class="p">,</span>
+    <span class="n">LineString</span><span class="p">,</span>
+    <span class="n">MultiLineString</span><span class="p">,</span>
+    <span class="n">Polygon</span><span class="p">,</span>
+    <span class="n">MultiPolygon</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">model_validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextEntity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FiwareRegex</span><span class="p">,</span>
+    <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span>
+    <span class="n">validate_fiware_standard_regex</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
 
 
-<div class="viewcode-block" id="DataTypeLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.DataTypeLD">[docs]</a><span class="k">class</span> <span class="nc">DataTypeLD</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="DataTypeLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.DataTypeLD">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DataTypeLD</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    In NGSI-LD the data types on context entities are only divided into properties and relationships.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_init_</span> <span class="o">=</span> <span class="s1">&#39;value __doc__&#39;</span>
+
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
     <span class="n">GEOPROPERTY</span> <span class="o">=</span> <span class="s2">&quot;GeoProperty&quot;</span><span class="p">,</span> <span class="s2">&quot;A property that represents a geometry value&quot;</span>
     <span class="n">PROPERTY</span> <span class="o">=</span> <span class="s2">&quot;Property&quot;</span><span class="p">,</span> <span class="s2">&quot;All attributes that do not represent a relationship&quot;</span>
-    <span class="n">RELATIONSHIP</span> <span class="o">=</span> <span class="s2">&quot;Relationship&quot;</span><span class="p">,</span> <span class="s2">&quot;Reference to another context entity, which can be identified with a URN.&quot;</span></div>
+    <span class="n">RELATIONSHIP</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Relationship&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Reference to another context entity, which can be identified with a URN.&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <span class="c1"># NGSI-LD entity models</span>
-<div class="viewcode-block" id="ContextProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty">[docs]</a><span class="k">class</span> <span class="nc">ContextProperty</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextProperty</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The model for a property is represented by a JSON object with the following syntax:</span>
 
@@ -118,59 +132,60 @@
 <span class="sd">        &gt;&gt;&gt; attr = ContextProperty(**data)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;allow&#39;</span><span class="p">)</span>            <span class="c1"># In order to allow nested properties</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Property&quot;</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
-    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
-                          <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span>
-                                     <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Property value&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual data&quot;</span>
-    <span class="p">)</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">)</span>  <span class="c1"># In order to allow nested properties</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;Property&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Union</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+        <span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Property value&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual data&quot;</span><span class="p">)</span>
     <span class="n">observedAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing a timestamp for the &quot;</span>
-                    <span class="s2">&quot;incoming value of the property.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;incoming value of the property.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;observedAt&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">createdAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing a timestamp for the &quot;</span>
-                    <span class="s2">&quot;creation time of the property.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;creation time of the property.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">modifiedAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing a timestamp for the &quot;</span>
-                    <span class="s2">&quot;last modification of the property.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;last modification of the property.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;modifiedAt&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">UnitCode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Unit Code&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Unit Code&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing the unit of the value. &quot;</span>
-                    <span class="s2">&quot;Should be part of the defined units &quot;</span>
-                    <span class="s2">&quot;by the UN/ECE Recommendation No. 21&quot;</span>
-                    <span class="s2">&quot;https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Should be part of the defined units &quot;</span>
+        <span class="s2">&quot;by the UN/ECE Recommendation No. 21&quot;</span>
+        <span class="s2">&quot;https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf &quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;UnitCode&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">datasetId</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset Id&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset Id&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;It allows identifying a set or group of property values&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -178,17 +193,18 @@
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;datasetId&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ContextProperty.get_model_fields_set"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.get_model_fields_set">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_model_fields_set</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_fields_set</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get all names and aliases of the model fields.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">set</span><span class="p">([</span><span class="n">field</span><span class="o">.</span><span class="n">validation_alias</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span> <span class="o">+</span>
-                   <span class="p">[</span><span class="n">field_name</span> <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">validation_alias</span> <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="n">field_name</span> <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ContextProperty.check_property_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.check_property_type">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">check_property_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_property_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Force property type to be &quot;Property&quot;</span>
 <span class="sd">        Args:</span>
@@ -198,34 +214,37 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">valid_property_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Property&quot;</span><span class="p">,</span> <span class="s2">&quot;Relationship&quot;</span><span class="p">,</span> <span class="s2">&quot;TemporalProperty&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_property_types</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;NGSI_LD Properties must have type </span><span class="si">{</span><span class="n">valid_property_types</span><span class="si">}</span><span class="s1">, &#39;</span> \
-                  <span class="sa">f</span><span class="s1">&#39;not &quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;NGSI_LD Properties must have type </span><span class="si">{</span><span class="n">valid_property_types</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;not &quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="p">)</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span></div></div>
 
 
-<div class="viewcode-block" id="NamedContextProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextProperty">[docs]</a><span class="k">class</span> <span class="nc">NamedContextProperty</span><span class="p">(</span><span class="n">ContextProperty</span><span class="p">):</span>
+<div class="viewcode-block" id="NamedContextProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextProperty">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedContextProperty</span><span class="p">(</span><span class="n">ContextProperty</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context properties are properties of context entities. For example, the current speed of a car could be modeled</span>
 <span class="sd">    as the current_speed property of the car-104 entity.</span>
 
 <span class="sd">    In the NGSI-LD data model, properties have a name, the type &quot;property&quot; and a value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Property name&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The property name describes what kind of property the &quot;</span>
-                    <span class="s2">&quot;attribute value represents of the entity, for example &quot;</span>
-                    <span class="s2">&quot;current_speed. Allowed characters &quot;</span>
-                    <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
-                    <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attribute value represents of the entity, for example &quot;</span>
+        <span class="s2">&quot;current_speed. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ContextGeoPropertyValue"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoPropertyValue">[docs]</a><span class="k">class</span> <span class="nc">ContextGeoPropertyValue</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextGeoPropertyValue"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoPropertyValue">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextGeoPropertyValue</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The value for a Geo property is represented by a JSON object with the following syntax:</span>
 
@@ -243,15 +262,12 @@
 <span class="sd">    }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;allow&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ContextGeoPropertyValue.check_geoproperty_value"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoPropertyValue.check_geoproperty_value">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">check_geoproperty_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContextGeoPropertyValue.check_geoproperty_value"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoPropertyValue.check_geoproperty_value">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_geoproperty_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the value is a valid GeoProperty</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -271,7 +287,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;GeometryCollection is not supported&quot;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ContextGeoProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoProperty">[docs]</a><span class="k">class</span> <span class="nc">ContextGeoProperty</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextGeoProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoProperty">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextGeoProperty</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The model for a Geo property is represented by a JSON object with the following syntax:</span>
 
@@ -290,32 +306,33 @@
 <span class="sd">        }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;allow&#39;</span><span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;GeoProperty&quot;</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
-    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextGeoPropertyValue</span><span class="p">,</span>
-                          <span class="n">Point</span><span class="p">,</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span>
-                          <span class="n">MultiPoint</span><span class="p">,</span> <span class="n">MultiPolygon</span><span class="p">,</span>
-                          <span class="n">MultiLineString</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;GeoProperty value&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual data&quot;</span>
-    <span class="p">)</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;GeoProperty&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Union</span><span class="p">[</span>
+            <span class="n">ContextGeoPropertyValue</span><span class="p">,</span>
+            <span class="n">Point</span><span class="p">,</span>
+            <span class="n">LineString</span><span class="p">,</span>
+            <span class="n">Polygon</span><span class="p">,</span>
+            <span class="n">MultiPoint</span><span class="p">,</span>
+            <span class="n">MultiPolygon</span><span class="p">,</span>
+            <span class="n">MultiLineString</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;GeoProperty value&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual data&quot;</span><span class="p">)</span>
     <span class="n">observedAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing a timestamp for the &quot;</span>
-                    <span class="s2">&quot;incoming value of the property.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;incoming value of the property.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;observedAt&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">datasetId</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset Id&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset Id&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;It allows identifying a set or group of property values&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -323,26 +340,27 @@
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;datasetId&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="NamedContextGeoProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextGeoProperty">[docs]</a><span class="k">class</span> <span class="nc">NamedContextGeoProperty</span><span class="p">(</span><span class="n">ContextGeoProperty</span><span class="p">):</span>
+<div class="viewcode-block" id="NamedContextGeoProperty"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextGeoProperty">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedContextGeoProperty</span><span class="p">(</span><span class="n">ContextGeoProperty</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context GeoProperties are geo properties of context entities. For example, the coordinates of a building .</span>
 
 <span class="sd">    In the NGSI-LD data model, properties have a name, the type &quot;Geoproperty&quot; and a value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Property name&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The property name describes what kind of property the &quot;</span>
-                    <span class="s2">&quot;attribute value represents of the entity, for example &quot;</span>
-                    <span class="s2">&quot;current_speed. Allowed characters &quot;</span>
-                    <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
-                    <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attribute value represents of the entity, for example &quot;</span>
+        <span class="s2">&quot;current_speed. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ContextRelationship"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship">[docs]</a><span class="k">class</span> <span class="nc">ContextRelationship</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextRelationship"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextRelationship</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The model for a relationship is represented by a JSON object with the following syntax:</span>
 
@@ -358,22 +376,21 @@
 <span class="sd">        &gt;&gt;&gt; attr = ContextRelationship(**data)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;allow&#39;</span><span class="p">)</span>                <span class="c1"># In order to allow nested relationships</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Relationship&quot;</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
-    <span class="nb">object</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
-                           <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span>
-                                      <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Realtionship object&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual object id&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">)</span>  <span class="c1"># In order to allow nested relationships</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;Relationship&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">object</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Union</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+        <span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Realtionship object&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual object id&quot;</span>
     <span class="p">)</span>
 
     <span class="n">datasetId</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset Id&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset Id&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;It allows identifying a set or group of property values&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -381,9 +398,10 @@
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;datasetId&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">observedAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">titel</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">titel</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing a timestamp for the &quot;</span>
-                    <span class="s2">&quot;incoming value of the property.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;incoming value of the property.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
@@ -391,7 +409,7 @@
 
 <div class="viewcode-block" id="ContextRelationship.check_relationship_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship.check_relationship_type">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">check_relationship_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_relationship_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Force property type to be &quot;Relationship&quot;</span>
 <span class="sd">        Args:</span>
@@ -405,7 +423,7 @@
         <span class="k">return</span> <span class="n">value</span></div></div>
 
 
-<div class="viewcode-block" id="NamedContextRelationship"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextRelationship">[docs]</a><span class="k">class</span> <span class="nc">NamedContextRelationship</span><span class="p">(</span><span class="n">ContextRelationship</span><span class="p">):</span>
+<div class="viewcode-block" id="NamedContextRelationship"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextRelationship">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedContextRelationship</span><span class="p">(</span><span class="n">ContextRelationship</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context Relationship are relations of context entities to each other.</span>
 <span class="sd">    For example, the current_speed of the entity car-104 could be modeled.</span>
@@ -413,13 +431,14 @@
 
 <span class="sd">    In the NGSI-LD data model, relationships have a name, the type &quot;relationship&quot; and an object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Attribute name&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The attribute name describes what kind of property the &quot;</span>
-                    <span class="s2">&quot;attribute value represents of the entity, for example &quot;</span>
-                    <span class="s2">&quot;current_speed. Allowed characters &quot;</span>
-                    <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
-                    <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attribute value represents of the entity, for example &quot;</span>
+        <span class="s2">&quot;current_speed. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="c1"># pattern=FiwareRegex.string_protect.value,</span>
@@ -428,7 +447,7 @@
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ContextLDEntityKeyValues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues">[docs]</a><span class="k">class</span> <span class="nc">ContextLDEntityKeyValues</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextLDEntityKeyValues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextLDEntityKeyValues</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base Model for an entity is represented by a JSON object with the following</span>
 <span class="sd">    syntax.</span>
@@ -440,49 +459,52 @@
 <span class="sd">    is a string containing the entity&#39;s type name.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;allow&#39;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                              <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Entity Id&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of an entity in an NGSI context broker. Allowed &quot;</span>
-                    <span class="s2">&quot;characters are the ones in the plain ASCII set, except &quot;</span>
-                    <span class="s2">&quot;the following ones: control characters, &quot;</span>
-                    <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span>
-                    <span class="s2">&quot;the id should be structured according to the urn naming scheme.&quot;</span><span class="p">,</span>
-        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span><span class="s2">&quot;urn:ngsi-ld:Room:001&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;characters are the ones in the plain ASCII set, except &quot;</span>
+        <span class="s2">&quot;the following ones: control characters, &quot;</span>
+        <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span>
+        <span class="s2">&quot;the id should be structured according to the urn naming scheme.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ngsi-ld:Room:001&quot;</span><span class="p">},</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="c1"># pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)(</span><span class="n">validate_fiware_standard_regex</span><span class="p">)</span>
     <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Entity Type&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of an entity in an NGSI context broker. &quot;</span>
-                    <span class="s2">&quot;Allowed characters are the ones in the plain ASCII set, &quot;</span>
-                    <span class="s2">&quot;except the following ones: control characters, &quot;</span>
-                    <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
-        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span><span class="s2">&quot;Room&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;Allowed characters are the ones in the plain ASCII set, &quot;</span>
+        <span class="s2">&quot;except the following ones: control characters, &quot;</span>
+        <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;Room&quot;</span><span class="p">},</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="c1"># pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_standard_regex</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PropertyFormat"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.PropertyFormat">[docs]</a><span class="k">class</span> <span class="nc">PropertyFormat</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="PropertyFormat"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.PropertyFormat">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PropertyFormat</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format to decide if properties of ContextEntity class are returned as</span>
 <span class="sd">    List of NamedContextAttributes or as Dict of ContextAttributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">LIST</span> <span class="o">=</span> <span class="s1">&#39;list&#39;</span>
-    <span class="n">DICT</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span></div>
+
+    <span class="n">LIST</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span>
+    <span class="n">DICT</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span></div>
 
 
-<div class="viewcode-block" id="ContextLDEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity">[docs]</a><span class="k">class</span> <span class="nc">ContextLDEntity</span><span class="p">(</span><span class="n">ContextLDEntityKeyValues</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextLDEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextLDEntity</span><span class="p">(</span><span class="n">ContextLDEntityKeyValues</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context LD entities, or simply entities, are the center of gravity in the</span>
 <span class="sd">    FIWARE NGSI-LD information model. An entity represents a thing, i.e., any</span>
@@ -515,88 +537,93 @@
 <span class="sd">        &gt;&gt;&gt; entity = ContextLDEntity(**data)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;allow&#39;</span><span class="p">,</span>
-                              <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                              <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                              <span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span>
+        <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="n">observationSpace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContextGeoProperty</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Observation Space&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The geospatial Property representing &quot;</span>
-                    <span class="s2">&quot;the geographic location that is being &quot;</span>
-                    <span class="s2">&quot;observed, e.g. by a sensor. &quot;</span>
-                    <span class="s2">&quot;For example, in the case of a camera, &quot;</span>
-                    <span class="s2">&quot;the location of the camera and the &quot;</span>
-                    <span class="s2">&quot;observationspace are different and &quot;</span>
-                    <span class="s2">&quot;can be disjoint. &quot;</span>
+        <span class="s2">&quot;the geographic location that is being &quot;</span>
+        <span class="s2">&quot;observed, e.g. by a sensor. &quot;</span>
+        <span class="s2">&quot;For example, in the case of a camera, &quot;</span>
+        <span class="s2">&quot;the location of the camera and the &quot;</span>
+        <span class="s2">&quot;observationspace are different and &quot;</span>
+        <span class="s2">&quot;can be disjoint. &quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The @context in JSON-LD is used to expand terms, provided as short &quot;</span>
-                    <span class="s2">&quot;hand strings, to concepts, specified as URIs, and vice versa, &quot;</span>
-                    <span class="s2">&quot;to compact URIs into terms &quot;</span>
-                    <span class="s2">&quot;The main implication of NGSI-LD API is that if the @context is &quot;</span>
-                    <span class="s2">&quot;a compound one, i.e. an @context which references multiple &quot;</span>
-                    <span class="s2">&quot;individual @context, served by resources behind different URIs, &quot;</span>
-                    <span class="s2">&quot;then a wrapper @context has to be created and hosted.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hand strings, to concepts, specified as URIs, and vice versa, &quot;</span>
+        <span class="s2">&quot;to compact URIs into terms &quot;</span>
+        <span class="s2">&quot;The main implication of NGSI-LD API is that if the @context is &quot;</span>
+        <span class="s2">&quot;a compound one, i.e. an @context which references multiple &quot;</span>
+        <span class="s2">&quot;individual @context, served by resources behind different URIs, &quot;</span>
+        <span class="s2">&quot;then a wrapper @context has to be created and hosted.&quot;</span><span class="p">,</span>
         <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld&quot;</span><span class="p">],</span>
         <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
         <span class="n">validation_alias</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
 <div class="viewcode-block" id="ContextLDEntity.return_context"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.return_context">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">return_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">return_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">context</span></div>
 
     <span class="n">operationSpace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContextGeoProperty</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Operation Space&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The geospatial Property representing &quot;</span>
-                    <span class="s2">&quot;the geographic location in which an &quot;</span>
-                    <span class="s2">&quot;Entity,e.g. an actuator is active. &quot;</span>
-                    <span class="s2">&quot;For example, a crane can have a &quot;</span>
-                    <span class="s2">&quot;certain operation space.&quot;</span>
+        <span class="s2">&quot;the geographic location in which an &quot;</span>
+        <span class="s2">&quot;Entity,e.g. an actuator is active. &quot;</span>
+        <span class="s2">&quot;For example, a crane can have a &quot;</span>
+        <span class="s2">&quot;certain operation space.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">createdAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing a timestamp for the &quot;</span>
-                    <span class="s2">&quot;creation time of the property.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;creation time of the property.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">modifiedAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing a timestamp for the &quot;</span>
-                    <span class="s2">&quot;last modification of the property.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;last modification of the property.&quot;</span><span class="p">,</span>
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;modifiedAt&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
         <span class="c1"># There is currently no validation for extra fields</span>
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validate_attributes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ContextLDEntity.get_model_fields_set"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_model_fields_set">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_model_fields_set</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_fields_set</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get all names and aliases of the model fields.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">set</span><span class="p">([</span><span class="n">field</span><span class="o">.</span><span class="n">validation_alias</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span> <span class="o">+</span>
-                   <span class="p">[</span><span class="n">field_name</span> <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">validation_alias</span> <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="n">field_name</span> <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">]</span>
+        <span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_validate_single_property</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextProperty</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_single_property</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextProperty</span><span class="p">:</span>
         <span class="n">property_fields</span> <span class="o">=</span> <span class="n">ContextProperty</span><span class="o">.</span><span class="n">get_model_fields_set</span><span class="p">()</span>
         <span class="n">property_fields</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         <span class="c1"># subattrs = {}</span>
@@ -610,8 +637,7 @@
         <span class="k">elif</span> <span class="n">attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Property&quot;</span> <span class="ow">or</span> <span class="n">attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">attr_instance</span> <span class="o">=</span> <span class="n">ContextProperty</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
-                             <span class="s2">&quot;is not a valid type&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="s2">&quot;is not a valid type&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">subkey</span><span class="p">,</span> <span class="n">subattr</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subattr</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">subkey</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">property_fields</span><span class="p">:</span>
                 <span class="n">attr_instance</span><span class="o">.</span><span class="n">model_extra</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -620,7 +646,7 @@
         <span class="k">return</span> <span class="n">attr_instance</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_validate_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
         <span class="n">entity_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_model_fields_set</span><span class="p">()</span>
         <span class="n">entity_fields</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         <span class="c1"># Initialize the attribute dictionary</span>
@@ -632,27 +658,22 @@
                 <span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_single_property</span><span class="p">(</span><span class="n">attr</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">attrs</span>
 
-<div class="viewcode-block" id="ContextLDEntity.model_dump"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.model_dump">[docs]</a>    <span class="k">def</span> <span class="nf">model_dump</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-        <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">):</span>
+<div class="viewcode-block" id="ContextLDEntity.model_dump"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.model_dump">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">model_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_validate_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;urn:ngsi-ld:&quot;</span><span class="p">):</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;It is recommended that the entity id to be a URN,&#39;</span>
-                                <span class="s1">&#39;starting with the namespace &quot;urn:ngsi-ld:&quot;&#39;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;It is recommended that the entity id to be a URN,&quot;</span>
+                <span class="s1">&#39;starting with the namespace &quot;urn:ngsi-ld:&quot;&#39;</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="nb">id</span>
 
-<div class="viewcode-block" id="ContextLDEntity.get_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                       <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span>
-                       <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span><span class="p">)</span> <span class="o">-&gt;</span> \
-            <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextProperty</span><span class="p">],</span>
-                  <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextProperty</span><span class="p">]]:</span>
+<div class="viewcode-block" id="ContextLDEntity.get_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_properties">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextProperty</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextProperty</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get all properties of the entity.</span>
 <span class="sd">        Args:</span>
@@ -667,10 +688,10 @@
             <span class="n">final_dict</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextLDEntity</span><span class="o">.</span><span class="n">get_model_fields_set</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">GEOPROPERTY</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">GEOPROPERTY</span><span class="p">:</span>
                             <span class="n">final_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextGeoProperty</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
-                        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">PROPERTY</span><span class="p">:</span>
+                        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">PROPERTY</span><span class="p">:</span>
                             <span class="n">final_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextProperty</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>  <span class="c1"># named context property by default</span>
                             <span class="n">final_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextProperty</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
@@ -679,44 +700,16 @@
         <span class="n">final_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextLDEntity</span><span class="o">.</span><span class="n">get_model_fields_set</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">GEOPROPERTY</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">GEOPROPERTY</span><span class="p">:</span>
                         <span class="n">final_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NamedContextGeoProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">value</span><span class="p">))</span>
-                    <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">PROPERTY</span><span class="p">:</span>
+                    <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">PROPERTY</span><span class="p">:</span>
                         <span class="n">final_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NamedContextProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">value</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>  <span class="c1"># named context property by default</span>
                         <span class="n">final_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NamedContextProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">value</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">final_list</span></div>
 
-<div class="viewcode-block" id="ContextLDEntity.add_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Invalid in NGSI-LD</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;This method should not be used in NGSI-LD&quot;</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ContextLDEntity.get_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">get_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Invalid in NGSI-LD</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;This method should not be used in NGSI-LD&quot;</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ContextLDEntity.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">get_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Invalid in NGSI-LD</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;This method should not be used in NGSI-LD&quot;</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ContextLDEntity.delete_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.delete_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">delete_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Invalid in NGSI-LD</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;This method should not be used in NGSI-LD&quot;</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ContextLDEntity.delete_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.delete_relationships">[docs]</a>    <span class="k">def</span> <span class="nf">delete_relationships</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relationships</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<div class="viewcode-block" id="ContextLDEntity.delete_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.delete_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_relationships</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relationships</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete the given relationships from the entity</span>
 
@@ -726,16 +719,17 @@
 <span class="sd">        Returns:</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">all_relationships</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_relationships</span><span class="p">(</span><span class="n">response_format</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">)</span>
+        <span class="n">all_relationships</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_relationships</span><span class="p">(</span><span class="n">response_format</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">relationships</span><span class="p">:</span>
             <span class="c1"># check they are relationships</span>
             <span class="k">if</span> <span class="n">relationship</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_relationships</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Relationship </span><span class="si">{</span><span class="n">relationship</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
             <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relationship</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextLDEntity.delete_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.delete_properties">[docs]</a>    <span class="k">def</span> <span class="nf">delete_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextProperty</span><span class="p">],</span>
-                                             <span class="n">List</span><span class="p">[</span><span class="n">NamedContextProperty</span><span class="p">],</span>
-                                             <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
+<div class="viewcode-block" id="ContextLDEntity.delete_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.delete_properties">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">props</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextProperty</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextProperty</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete the given properties from the entity</span>
 
@@ -767,8 +761,9 @@
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
             <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextLDEntity.add_geo_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_geo_properties">[docs]</a>    <span class="k">def</span> <span class="nf">add_geo_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextGeoProperty</span><span class="p">],</span>
-                                              <span class="n">List</span><span class="p">[</span><span class="n">NamedContextGeoProperty</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextLDEntity.add_geo_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_geo_properties">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_geo_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextGeoProperty</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextGeoProperty</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add property to entity</span>
 <span class="sd">        Args:</span>
@@ -777,14 +772,18 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextGeoProperty</span><span class="p">(</span><span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">},</span>
-                                                                     <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-                     <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">}</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextGeoProperty</span><span class="p">(</span>
+                    <span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">},</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span>
+            <span class="p">}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextLDEntity.add_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_properties">[docs]</a>    <span class="k">def</span> <span class="nf">add_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextProperty</span><span class="p">],</span>
-                                          <span class="n">List</span><span class="p">[</span><span class="n">NamedContextProperty</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextLDEntity.add_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_properties">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextProperty</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextProperty</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add property to entity</span>
 <span class="sd">        Args:</span>
@@ -793,14 +792,21 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextProperty</span><span class="p">(</span><span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">},</span>
-                                                                  <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-                     <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">}</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextProperty</span><span class="p">(</span>
+                    <span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">},</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span>
+            <span class="p">}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextLDEntity.add_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_relationships">[docs]</a>    <span class="k">def</span> <span class="nf">add_relationships</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relationships</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">],</span>
-                                                     <span class="n">List</span><span class="p">[</span><span class="n">NamedContextRelationship</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextLDEntity.add_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_relationships</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">relationships</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextRelationship</span><span class="p">]</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add relationship to entity</span>
 <span class="sd">        Args:</span>
@@ -809,16 +815,16 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relationships</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">relationships</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextRelationship</span><span class="p">(</span><span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">}))</span>
-                             <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">relationships</span><span class="p">}</span>
+            <span class="n">relationships</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextRelationship</span><span class="p">(</span><span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">}))</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">relationships</span>
+            <span class="p">}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">relationships</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ContextLDEntity.get_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_relationships">[docs]</a>    <span class="k">def</span> <span class="nf">get_relationships</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                          <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span>
-                          <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextRelationship</span><span class="p">],</span>
-                     <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">]]:</span>
+<div class="viewcode-block" id="ContextLDEntity.get_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_relationships</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextRelationship</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get all relationships of the context entity</span>
 
@@ -835,9 +841,9 @@
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextLDEntity</span><span class="o">.</span><span class="n">get_model_fields_set</span><span class="p">():</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
                             <span class="n">final_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextRelationship</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
-                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>          <span class="c1"># if context attribute</span>
+                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># if context attribute</span>
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                             <span class="k">pass</span>
             <span class="k">return</span> <span class="n">final_dict</span>
@@ -845,11 +851,11 @@
         <span class="n">final_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextLDEntity</span><span class="o">.</span><span class="n">get_model_fields_set</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataTypeLD</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">:</span>
                     <span class="n">final_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NamedContextRelationship</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">value</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">final_list</span></div>
 
-<div class="viewcode-block" id="ContextLDEntity.get_context"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_context">[docs]</a>    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextLDEntity.get_context"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_context">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            response_format:</span>
@@ -865,7 +871,7 @@
             <span class="k">return</span> <span class="n">context</span></div></div>
 
 
-<div class="viewcode-block" id="ActionTypeLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD">[docs]</a><span class="k">class</span> <span class="nc">ActionTypeLD</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="ActionTypeLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ActionTypeLD</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Options for queries</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -876,13 +882,14 @@
     <span class="n">DELETE</span> <span class="o">=</span> <span class="s2">&quot;delete&quot;</span></div>
 
 
-<div class="viewcode-block" id="UpdateLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.UpdateLD">[docs]</a><span class="k">class</span> <span class="nc">UpdateLD</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="UpdateLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.UpdateLD">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">UpdateLD</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model for update action</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;an array of entities, each entity specified using the &quot;</span>
-                    <span class="s2">&quot;JSON entity representation format &quot;</span>
+        <span class="s2">&quot;JSON entity representation format &quot;</span>
     <span class="p">)</span></div>
 </pre></div>
 
@@ -893,7 +900,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
