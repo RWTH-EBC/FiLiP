@@ -219,7 +219,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 json=entity.model_dump(
-                    exclude_unset=True, exclude_defaults=True, exclude_none=True
+                    exclude_unset=False, exclude_defaults=False, exclude_none=True
                 ),
             )
             if res.ok:
