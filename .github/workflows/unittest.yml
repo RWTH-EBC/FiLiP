@@ -21,9 +21,7 @@ jobs:
       # Step 1: Checkout correct branch
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          ref: 315-Unittest-via-Github-actions  # Ensure correct branch
-
+        
       # Step 2: Debug - Verify directory structure
       - name: Debug - Verify Repository Structure
         run: |
