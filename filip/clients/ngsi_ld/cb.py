@@ -196,7 +196,10 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def post_entity(
-        self, entity: ContextLDEntity, append: bool = False, update: bool = False
+        self, 
+        entity: Union[ContextLDEntity,ContextLDEntityKeyValues], 
+        append: bool = False, 
+        update: bool = False
     ):
         """
         Function registers an Object with the NGSI-LD Context Broker,
@@ -236,7 +239,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def override_entities(self, entities: List[ContextLDEntity]):
+    def override_entities(self, entities: List[Union[ContextLDEntity,ContextLDEntityKeyValues]]):
         """
         Function to create or override existing entites with the NGSI-LD Context Broker.
         The batch operation with Upsert will be used.
@@ -423,7 +426,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def replace_existing_attributes_of_entity(
-        self, entity: ContextLDEntity, append: bool = False
+        self, entity: Union[ContextLDEntity,ContextLDEntityKeyValues], append: bool = False
     ):
         """
         The attributes previously existing in the entity are removed and
@@ -524,7 +527,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def append_entity_attributes(
-        self, entity: ContextLDEntity, options: Optional[str] = None
+        self, entity: Union[ContextLDEntity,ContextLDEntityKeyValues], options: Optional[str] = None
     ):
         """
         Append new Entity attributes to an existing Entity within an NGSI-LD system
@@ -851,7 +854,7 @@ class ContextBrokerLDClient(BaseHttpClient):
     def entity_batch_operation(
         self,
         *,
-        entities: List[ContextLDEntity],
+        entities: List[Union[ContextLDEntity,ContextLDEntityKeyValues]],
         action_type: Union[ActionTypeLD, str],
         options: Literal["noOverwrite", "replace", "update"] = None,
     ) -> None:
