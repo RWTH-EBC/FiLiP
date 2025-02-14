@@ -1,19 +1,42 @@
 # **CI Workflow for FiLiP**
 
-This repository uses **GitHub Actions** to automate the **Continuous Integration (CI)** process for FiLiP. The workflow ensures that the code is properly tested across multiple **Python versions** and validates the **FIWARE services**.
+This repository uses **GitHub Actions** to automate the **Continuous Integration (CI)** process for FiLiP. The workflow ensures that the code is properly tested across multiple **Python versions** and validates the interaction with **FIWARE APIs**.
+
+
+- [Workflow Overview](#workflow-overview)
+- [Workflow Triggers](#workflow-triggers)
+- [Workflow Configuration](#workflow-configuration)
+  - [GitHub Actions Workflow File](#github-actions-workflow-file)
+- [Workflow Steps](#workflow-steps)
+  - [Checkout Repository](#checkout-repository)
+  - [Debug - Verify Repository Structure](#debug---verify-repository-structure)
+  - [Set Up Python](#set-up-python)
+  - [Create and Store Environment Variables](#create-and-store-environment-variables)
+  - [Start FIWARE Services](#start-fiware-services)
+  - [Wait for FIWARE Services](#wait-for-fiware-services)
+  - [Install Dependencies](#install-dependencies)
+  - [Show Running Docker Containers](#show-running-docker-containers)
+  - [Navigate to Root Directory](#navigate-to-root-directory)
+  - [Run Tests](#run-tests)
+- [Workflow Features](#workflow-features)
+- [How to Use This Workflow](#how-to-use-this-workflow)
+  - [Store Environment Variables in GitHub](#store-environment-variables-in-github)
+  - [Push Code to Any Branch](#push-code-to-any-branch)
+  - [View Result](#view-result)
+
 
 ---
 
 ## **Workflow Overview**
-This **CI pipeline** performs the following tasks:
+This is the main features of this **CI pipeline**:
 1. **Checks out** the repository.
 2. **Sets up Python** (versions **3.8 - 3.12**).
-3. **Loads environment variables** dynamically from GitHub.
-4. **Starts FIWARE services** using `docker-compose`.
+3. **Loads environment variables** dynamically from [GitHub environment](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables).
+4. **Starts FIWARE services** using `docker compose`.
 5. **Waits for FIWARE services** to initialize.
 6. **Installs dependencies** via `setup.py`.
 7. **Runs unit tests** using `pytest`.
-8. **Ensures all Python versions execute, even if one fails**.
+8. **Ensures all Python versions execute, even if one fails** by setting `fail-fast: false`
 
 ---
 
@@ -57,7 +80,7 @@ jobs:
 - name: Checkout Code
   uses: actions/checkout@v3
   with:
-    ref: 315-Unittest-via-Github-actions  # Ensure correct branch
+    ref: ${{ github.ref }}  # check out the committed branch
 ```
 - Ensures the workflow pulls the correct **branch**.
 
@@ -133,14 +156,14 @@ jobs:
 - Install project dependencies.
 - Install dependencies from setup.py
 
-### ** Debug - Show Running Docker Containers**
+### **Show Running Docker Containers**
 ```yaml
 - name: Debug - Show Running Docker Containers
   run: docker ps -a
 ```
 - Verifies **running Docker containers**.
 
-### **Navigate to Rood Directory**
+### **Navigate to Root Directory**
 ```yaml
 - name: Navigate to Tests Folder
   run: |
