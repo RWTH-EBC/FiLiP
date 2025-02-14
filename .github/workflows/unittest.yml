@@ -21,7 +21,9 @@ jobs:
       # Step 1: Checkout correct branch
       - name: Checkout Code
         uses: actions/checkout@v3
-        
+        with:
+          ref: ${{ github.ref }}
+
       # Step 2: Debug - Verify directory structure
       - name: Debug - Verify Repository Structure
         run: |
