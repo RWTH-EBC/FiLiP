@@ -573,7 +573,8 @@ class TestContextBroker(unittest.TestCase):
         self.client.append_entity_attributes(self.entity)
         self.entity.add_properties({"test_value": attr_same})
         
-        self.client.append_entity_attributes(self.entity, options="noOverwrite")
+        with self.assertRaises(RequestException):
+            self.client.append_entity_attributes(self.entity, options="noOverwrite")
         entity = self.client.get_entity(entity_id=self.entity.id)
         self.assertEqual(first=entity.test_value.value, second=attr.value)
         self.assertNotEqual(first=entity.test_value.value, second=attr_same.value)
