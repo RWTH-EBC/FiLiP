@@ -194,6 +194,9 @@ class ContextEntityKeyValues(BaseModel):
         """
         return self.model_dump(exclude={"id", "type"})
 
+    def to_normalized(self):
+        return ContextEntity(**self.model_dump())
+
 
 class ContextEntity(ContextEntityKeyValues):
     """
@@ -622,6 +625,12 @@ class ContextEntity(ContextEntityKeyValues):
         command_info = self.get_attribute(f"{command_attribute_name}_info")
 
         return command, command_status, command_info
+
+    def to_keyvalues(self):
+        return ContextEntityKeyValues(**self.model_dump(exclude_unset=True))
+
+    def to_normalized(self):
+        raise AttributeError("This method is not available in ContextEntity")
 
 
 class Query(BaseModel):
