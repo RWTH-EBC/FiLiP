@@ -623,6 +623,12 @@ class TestContextModels(unittest.TestCase):
         self.assertNotEqual(entity.get_attributes(strict_data_type=True), attributes)
         self.assertNotEqual(entity.get_attributes(), attributes)
 
+    def test_context_conversion(self):
+        entity_normalized = ContextEntity(**self.entity_data)
+        entity_key_values = ContextEntityKeyValues(**self.entity_data)
+        self.assertEqual(entity_normalized, entity_key_values.to_normalized())
+        self.assertEqual(entity_key_values, entity_normalized.to_keyvalues())
+
     def tearDown(self) -> None:
         """
         Cleanup test server
