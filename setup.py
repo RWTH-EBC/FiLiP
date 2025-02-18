@@ -70,7 +70,7 @@ setuptools.setup(
     extras_require={
         "development": ["pre-commit~=4.0.1"],
         "semantics": ["igraph~=0.11.2"],
-        "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
+        "tutorials": ["plotly==6.0.0", "matplotlib~=3.4.3"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
         ":python_version >= '3.9'": ["pandas~=2.1.4"],
     },
