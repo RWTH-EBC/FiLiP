@@ -1697,7 +1697,7 @@ class ContextBrokerClient(BaseHttpClient):
         self, entities: List[ContextEntity]
     ) -> List[ContextEntity]:
         """
-        Validate all attributes in the givben entities. If the attribute value points to
+        Validate all attributes in the given entities. If the attribute value points to
         an existing entity, it is assumed that this attribute is a relationship, and it
         will be assigned with the attribute type "relationship"
 
