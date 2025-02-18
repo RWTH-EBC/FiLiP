@@ -17,7 +17,7 @@ import requests
 from requests import RequestException
 from pydantic import AnyHttpUrl
 from filip.clients.base_http_client import NgsiURLVersion, BaseHttpClient
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, DataType
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
@@ -1063,7 +1063,7 @@ class TestContextBroker(unittest.TestCase):
                 id=f"test:relationship:normal:00{i}",
                 type="Test",
                 relatedTo={
-                    "type": "Relationship",  # the relationship is correct
+                    "type": DataType.RELATIONSHIP.value,  # the relationship is correct
                     "value": entities_target[i].id,
                 },
             )
@@ -1081,7 +1081,7 @@ class TestContextBroker(unittest.TestCase):
         ]
         self.client.update(
             entities=entities_kv,
-            update_format="keyValues",
+            update_format=AttrsFormat.KEY_VALUES.value,
             action_type=ActionType.APPEND,
         )
 

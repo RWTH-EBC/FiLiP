@@ -18,7 +18,7 @@ from urllib.parse import urljoin
 import warnings
 from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
-from filip.models.base import FiwareHeader, PaginationMethod
+from filip.models.base import FiwareHeader, PaginationMethod, DataType
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.context import (
     ActionType,
@@ -1718,7 +1718,7 @@ class ContextBrokerClient(BaseHttpClient):
                             {
                                 attr_name: ContextAttribute(
                                     **{
-                                        "type": "Relationship",
+                                        "type": DataType.RELATIONSHIP,
                                         "value": attr_value.get("value"),
                                     }
                                 )
@@ -1750,11 +1750,12 @@ class ContextBrokerClient(BaseHttpClient):
                     if hard_remove:
                         entity.delete_attributes(attrs=[relationship])
                     else:
+                        # change the attribute type to "Text"
                         entity.update_attribute(
                             attrs=[
                                 NamedContextAttribute(
                                     name=relationship.name,
-                                    type="Text",
+                                    type=DataType.TEXT,
                                     value=relationship.value,
                                 )
                             ]
@@ -1783,7 +1784,8 @@ class ContextBrokerClient(BaseHttpClient):
             if destination_id is None:
                 raise ValueError(
                     "Invalid relationship dictionary format\n"
-                    'Expected format: {"type": "relationship", '
+                    "Expected format: {"
+                    f'"type": "{DataType.RELATIONSHIP.value}", '
                     '"value" "entity_id"}'
                 )
         else:
@@ -1909,7 +1911,7 @@ class ContextBrokerClient(BaseHttpClient):
             options.append("forcedUpdate")
         if update_format:
             assert (
-                update_format == "keyValues"
+                update_format == AttrsFormat.KEY_VALUES.value
             ), "Only 'keyValues' is allowed as update format"
             options.append("keyValues")
         if options:
