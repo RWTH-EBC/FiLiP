@@ -61,9 +61,6 @@ class TestContextv2IoTModels(unittest.TestCase):
         Returns:
             None
         """
-
-        from pydantic import ValidationError
-
         valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
         invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
 
@@ -72,7 +69,7 @@ class TestContextv2IoTModels(unittest.TestCase):
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
             self.assertRaises(
-                ValidationError,
+                ValueError,
                 IoTABaseAttribute,
                 name=string,
                 type="name",
@@ -80,7 +77,7 @@ class TestContextv2IoTModels(unittest.TestCase):
                 entity_type="name",
             )
             self.assertRaises(
-                ValidationError,
+                ValueError,
                 IoTABaseAttribute,
                 name="name",
                 type=string,
@@ -88,7 +85,7 @@ class TestContextv2IoTModels(unittest.TestCase):
                 entity_type="name",
             )
             self.assertRaises(
-                ValidationError,
+                ValueError,
                 IoTABaseAttribute,
                 name="name",
                 type="name",
@@ -96,7 +93,7 @@ class TestContextv2IoTModels(unittest.TestCase):
                 entity_type="name",
             )
             self.assertRaises(
-                ValidationError,
+                ValueError,
                 IoTABaseAttribute,
                 name="name",
                 type="name",
@@ -104,9 +101,9 @@ class TestContextv2IoTModels(unittest.TestCase):
                 entity_type=string,
             )
 
-            self.assertRaises(ValidationError, DeviceCommand, name=string, type="name")
+            self.assertRaises(ValueError, DeviceCommand, name=string, type="name")
             self.assertRaises(
-                ValidationError,
+                ValueError,
                 ServiceGroup,
                 entity_type=string,
                 resource="",
@@ -114,7 +111,7 @@ class TestContextv2IoTModels(unittest.TestCase):
             )
 
             self.assertRaises(
-                ValidationError,
+                ValueError,
                 Device,
                 device_id="",
                 entity_name=string,
@@ -122,7 +119,7 @@ class TestContextv2IoTModels(unittest.TestCase):
                 transport=TransportProtocol.HTTP,
             )
             self.assertRaises(
-                ValidationError,
+                ValueError,
                 Device,
                 device_id="",
                 entity_name="name",
@@ -146,15 +143,15 @@ class TestContextv2IoTModels(unittest.TestCase):
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
-            with self.assertRaises(ValidationError):
+            with self.assertRaises(ValueError):
                 IoTABaseAttribute(
                     name=string, type="name", entity_name="name", entity_type="name"
                 )
-            with self.assertRaises(ValidationError):
+            with self.assertRaises(ValueError):
                 IoTABaseAttribute(
                     name="name", type=string, entity_name="name", entity_type="name"
                 )
-            with self.assertRaises(ValidationError):
+            with self.assertRaises(ValueError):
                 DeviceCommand(name=string, type="name")
 
         # Test for the normal protected field if all strings are allowed
