@@ -5,13 +5,12 @@ Tests for filip.cb.client
 import unittest
 import logging
 from urllib.parse import urljoin
-
-
-from pydantic import AnyHttpUrl,BaseModel,fields
+from random import Random
+from pydantic import ValidationError
 from requests import RequestException, Session
 from requests.adapters import HTTPAdapter
+from requests.exceptions import HTTPError
 from urllib3.util.retry import Retry
-
 from filip.clients.base_http_client import NgsiURLVersion, BaseHttpClient
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import FiwareLDHeader, core_context
@@ -555,20 +554,6 @@ class TestContextBroker(unittest.TestCase):
         self.assertIn("my_value", prop_dict)
         self.assertEqual(prop_dict["my_value"], 45)
 
-from random import Random
-import unittest
-from requests.exceptions import HTTPError
-from requests import RequestException
-from pydantic import ValidationError
-
-from filip.models.base import FiwareLDHeader
-
-# FiwareLDHeader issue with pydantic
-from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
-from filip.models.ngsi_ld.context import ContextLDEntityKeyValues, ActionTypeLD
-from tests.config import settings
-from filip.utils.cleanup import clear_context_broker_ld
-
 
 class EntitiesBatchOperations(unittest.TestCase):
     """
@@ -773,15 +758,15 @@ class EntitiesBatchOperations(unittest.TestCase):
 
         for updated, entity, prev in zip(entities_update, entity_list, previous):
             self.assertEqual(
-                updated.model_dump().get("pressure").value,
+                updated.model_dump().get("pressure").get("value"),
                 entity.model_dump().get("pressure"),
             )
             self.assertNotEqual(
-                updated.model_dump().get("temperature").value,
+                updated.model_dump().get("temperature").get("value"),
                 entity.model_dump().get("temperature"),
             )
             self.assertEqual(
-                prev.model_dump().get("temperature").value,
+                prev.model_dump().get("temperature").get("value"),
                 entity.model_dump().get("temperature"),
             )
 
