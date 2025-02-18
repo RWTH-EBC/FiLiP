@@ -37,6 +37,7 @@ from filip.utils.validators import (
     validate_fiware_datatype_string_protect,
     validate_fiware_datatype_standard,
     validate_fiware_attribute_value_regex,
+    validate_fiware_attribute_name_regex,
 )
 
 
@@ -366,7 +367,7 @@ class BaseNameAttribute(BaseModel):
         min_length=1,
         # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
 
 
 class BaseValueAttribute(BaseModel):

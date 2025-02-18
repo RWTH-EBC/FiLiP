@@ -775,4 +775,4 @@ class NamedCommand(Command):
         max_length=256,
         min_length=1,
     )
-    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
