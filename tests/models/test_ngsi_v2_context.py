@@ -623,9 +623,14 @@ class TestContextModels(unittest.TestCase):
         self.assertNotEqual(entity.get_attributes(strict_data_type=True), attributes)
         self.assertNotEqual(entity.get_attributes(), attributes)
 
-    def test_context_conversion(self):
+    def test_format_conversion(self):
         entity_normalized = ContextEntity(**self.entity_data)
-        entity_key_values = ContextEntityKeyValues(**self.entity_data)
+        entity_data_kv = dict()
+        for attr, value in self.entity_data.items():
+            if isinstance(value, dict):
+                value = value.get("value")
+            entity_data_kv[attr] = value
+        entity_key_values = ContextEntityKeyValues(**entity_data_kv)
         self.assertEqual(entity_normalized, entity_key_values.to_normalized())
         self.assertEqual(entity_key_values, entity_normalized.to_keyvalues())
 
