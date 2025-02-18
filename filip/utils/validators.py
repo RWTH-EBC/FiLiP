@@ -33,13 +33,13 @@ class FiwareRegex(str, Enum):
         "symbols: ? & # / ' \" or a whitespace",
     )
     string_protect = (
-        r"(?!^id$)(?!^type$)(?!^geo:json$)" r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
+        r"(?!^id$)(?!^type$)(?!^geo:json$)(^((?![?&#/\"' ])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of "
         "the symbols: ? & # / ' \" or a whitespace."
         "AND the strings: id, type, geo:json",
     )
     attribute_name = (
-        r"(^((?![\"'<>()=; §&/#?])[\x00-\x7F])*$)",
+        r"(?!^id$)(?!^type$)(?!^geo:json$)(^((?![\"'<>()=; §&/#?])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of the "
         "symbols: ( ) < > \" ' = ; § & / # ?",
     )
