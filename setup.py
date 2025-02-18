@@ -68,7 +68,7 @@ setuptools.setup(
     setup_requires=SETUP_REQUIRES,
     # optional modules
     extras_require={
-        "development": ["pre-commit~=4.0.1"],
+        "development": ["pre-commit>=4.0.1,<4.2.0"],
         "semantics": ["igraph~=0.11.2"],
         "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
