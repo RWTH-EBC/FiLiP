@@ -10,6 +10,20 @@ updates:
     directory: "/" # location of the setup.py
     schedule:
       interval: "monthly"
+    allow:
+      # Allow updates on explicit dependency
+      - dependency-type: "direct"
+    ignore:
+      # Ignore updates for specific dependencies
+      - dependency-name: "sphinx"
+      - dependency-name: "autodoc-pydantic"
+      - dependency-name: "sphinx-autobuild"
+      - dependency-name: "m2r2"
+      - dependency-name: "sphinx-rtd-theme"
+      - dependency-name: "igraph"
+      - dependency-name: "plotly"
+      - dependency-name: "matplotlib"
+      - dependency-name: "pre-commit"
     commit-message:
       prefix: "[pip dependency]"
     open-pull-requests-limit: 5
