@@ -2,6 +2,7 @@
 Context Broker Module for API Client
 """
 
+import re
 import json
 import os
 from math import inf
@@ -227,7 +228,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                 return res.headers.get("Location")
             res.raise_for_status()
         except requests.RequestException as err:
-            if err.response.status_code == 409:
+            if err.response is not None and err.response.status_code == 409:
                 if append:  # 409 entity already exists
                     return self.append_entity_attributes(entity=entity)
                 elif update:
@@ -380,6 +381,11 @@ class ContextBrokerLDClient(BaseHttpClient):
         if attrs:
             params.update({"attrs": ",".join(attrs)})
         if q:
+            x = re.search(r"[=!<>~]{1}\'.*\'", q.replace(" ", ""))
+            if x is not None:
+                raise ValueError(
+                    f"String/Date/etc. value in {x.group()} must be " f"in double quote"
+                )
             params.update({"q": q})
         if georel:
             params.update({"georel": georel})
@@ -454,7 +460,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            if append and err.response.status_code == 207:
+            if err.response is not None and append and err.response.status_code == 207:
                 return self.append_entity_attributes(entity=entity)
             msg = f"Could not replace attribute of entity {entity.id} !"
             self.log_error(err=err, msg=msg)

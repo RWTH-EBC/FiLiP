@@ -9,8 +9,8 @@ import requests
 from pathlib import Path
 
 from filip.models.base import FiwareHeader
-from filip.clients.ngsi_v2.client import HttpClient
-
+from filip.clients.ngsi_v2.client import HttpClient, HttpClientConfig
+from filip.models.ngsi_v2 import ContextEntity
 from tests.config import settings, generate_servicepath
 
 
@@ -204,6 +204,29 @@ class TestClient(unittest.TestCase):
                 self.assertEqual(client.session, s)
                 self._test_connections(client=client)
                 self._test_change_of_headers(client=client)
+
+    def test_handling_ssl_error(self):
+        """
+        Test if the client can handle SSL errors correctly
+
+        Returns:
+            None
+        """
+        url_with_ssl_error = "https://self-signed.badssl.com/"
+        config = HttpClientConfig(
+            cb_url=url_with_ssl_error,
+            iota_url=url_with_ssl_error,
+            ql_url=url_with_ssl_error,
+        )
+        client = HttpClient(config=config, fiware_header=self.fh)
+        with self.assertRaises(requests.exceptions.SSLError):
+            client.cb.post_entity(entity=ContextEntity(id="test", type="test"))
+        with self.assertRaises(requests.exceptions.SSLError):
+            client.cb.patch_entity(entity=ContextEntity(id="test", type="test"))
+        with self.assertRaises(requests.exceptions.SSLError):
+            client.iota.does_device_exists(device_id="test")
+        with self.assertRaises(requests.exceptions.SSLError):
+            client.timeseries.get_version()
 
     def tearDown(self) -> None:
         """

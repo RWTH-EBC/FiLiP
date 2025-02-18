@@ -6,9 +6,16 @@ import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
 
 from aenum import Enum
-from pydantic import field_validator, ConfigDict, BaseModel, Field, model_validator
+from pydantic import (
+    field_validator,
+    ConfigDict,
+    BaseModel,
+    Field,
+    model_validator,
+    SerializeAsAny,
+)
 from pydantic_core.core_schema import ValidationInfo
-
+from pydantic.types import OnErrorOmit
 from filip.models.ngsi_v2.base import (
     EntityPattern,
     Expression,
@@ -624,6 +631,22 @@ class ContextEntity(ContextEntityKeyValues):
         return command, command_status, command_info
 
 
+class ContextEntityList(BaseModel):
+    """
+    Collection model for a list of context entities
+    """
+
+    entities: List[OnErrorOmit[ContextEntity]]
+
+
+class ContextEntityKeyValuesList(BaseModel):
+    """
+    Collection model for a list of context entities in key-values format
+    """
+
+    entities: List[OnErrorOmit[ContextEntityKeyValues]]
+
+
 class Query(BaseModel):
     """
     Model for queries
@@ -690,9 +713,11 @@ class Update(BaseModel):
         description="actionType, to specify the kind of update action to do: "
         "either append, appendStrict, update, delete, or replace. ",
     )
-    entities: List[Union[ContextEntity, ContextEntityKeyValues]] = Field(
-        description="an array of entities, each entity specified using the "
-        "JSON entity representation format "
+    entities: SerializeAsAny[List[Union[ContextEntity, ContextEntityKeyValues]]] = (
+        Field(
+            description="an array of entities, each entity specified using the "
+            "JSON entity representation format "
+        )
     )
 
     @field_validator("action_type")

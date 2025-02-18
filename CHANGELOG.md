@@ -1,8 +1,13 @@
 ### v0.6.x
-- add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#336](https://github.com/RWTH-EBC/FiLiP/pull/363))
+- add: New features to validate and update relationships for V2 entities ([#380](https://github.com/RWTH-EBC/FiLiP/pull/380))
+
+### v0.6.1
+- add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#363](https://github.com/RWTH-EBC/FiLiP/pull/363))
 - add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
-- add: New features to validate and update relationships for V2 entities ([#379](https://github.com/RWTH-EBC/FiLiP/pull/380))
+- add: Validation of quotation mark in ``q`` strings for NGSI-LD ``get_entities_list`` ([#383](https://github.com/RWTH-EBC/FiLiP/pull/383/files))
 - fix: Addition of trailing slash if missing from base url ([#371](https://github.com/RWTH-EBC/FiLiP/pull/371))
+- fix: Serialization error for custom datamodels during batch operation ([#376](https://github.com/RWTH-EBC/FiLiP/pull/376))
+- update: omit invalid entities in `get_entity_list` ([#375](https://github.com/RWTH-EBC/FiLiP/pull/375))
 
 ### v0.6.0
 - add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))

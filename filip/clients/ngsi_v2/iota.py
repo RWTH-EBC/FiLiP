@@ -734,7 +734,11 @@ class IoTAClient(BaseHttpClient):
             self.get_device(device_id=device_id)
             return True
         except requests.RequestException as err:
-            if not err.response.status_code == 404:
+            if err.response is None or not err.response.status_code == 404:
+                self.log_error(
+                    err=err,
+                    msg=f"Error while checking existence for device {device_id}",
+                )
                 raise
             return False
 
