@@ -96,7 +96,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.base_http_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHttpClient</span><span class="p">,</span> <span class="n">NgsiURLVersion</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiwareHeader</span><span class="p">,</span> <span class="n">PaginationMethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiwareHeader</span><span class="p">,</span> <span class="n">PaginationMethod</span><span class="p">,</span> <span class="n">DataType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.simple_ql</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueryString</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.context</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ActionType</span><span class="p">,</span>
@@ -1773,6 +1773,110 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
+<div class="viewcode-block" id="ContextBrokerClient.add_valid_relationships"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.add_valid_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_valid_relationships</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate all attributes in the given entities. If the attribute value points to</span>
+<span class="sd">        an existing entity, it is assumed that this attribute is a relationship, and it</span>
+<span class="sd">        will be assigned with the attribute type &quot;relationship&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entities: list of entities that need to be validated.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            updated entities</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">updated_entities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">[:]:</span>
+            <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+                <span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">}</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_relationship</span><span class="p">(</span><span class="n">attr_value</span><span class="p">):</span>
+                        <span class="n">entity</span><span class="o">.</span><span class="n">update_attribute</span><span class="p">(</span>
+                            <span class="p">{</span>
+                                <span class="n">attr_name</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="p">(</span>
+                                    <span class="o">**</span><span class="p">{</span>
+                                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">DataType</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">,</span>
+                                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">attr_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">),</span>
+                                    <span class="p">}</span>
+                                <span class="p">)</span>
+                            <span class="p">}</span>
+                        <span class="p">)</span>
+            <span class="n">updated_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">updated_entities</span></div>
+
+<div class="viewcode-block" id="ContextBrokerClient.remove_invalid_relationships"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.remove_invalid_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">remove_invalid_relationships</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">],</span> <span class="n">hard_remove</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes invalid relationships from the entities. An invalid relationship</span>
+<span class="sd">        is a relationship that has no destination entity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entities: list of entities that need to be validated.</span>
+<span class="sd">            hard_remove: If True, invalid relationships will be deleted.</span>
+<span class="sd">                        If False, invalid relationships will be changed to Text</span>
+<span class="sd">                        attributes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            updated entities</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">updated_entities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">[:]:</span>
+            <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">get_relationships</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_relationship</span><span class="p">(</span><span class="n">relationship</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">hard_remove</span><span class="p">:</span>
+                        <span class="n">entity</span><span class="o">.</span><span class="n">delete_attributes</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="n">relationship</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># change the attribute type to &quot;Text&quot;</span>
+                        <span class="n">entity</span><span class="o">.</span><span class="n">update_attribute</span><span class="p">(</span>
+                            <span class="n">attrs</span><span class="o">=</span><span class="p">[</span>
+                                <span class="n">NamedContextAttribute</span><span class="p">(</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="n">relationship</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                    <span class="nb">type</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">relationship</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="n">updated_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">updated_entities</span></div>
+
+<div class="viewcode-block" id="ContextBrokerClient.validate_relationship"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.validate_relationship">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_relationship</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">relationship</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates a relationship. A relationship is valid if it points to an existing</span>
+<span class="sd">        entity. Otherwise, it is considered invalid</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            relationship: relationship to validate</span>
+<span class="sd">        Returns</span>
+<span class="sd">            True if the relationship is valid, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relationship</span><span class="p">,</span> <span class="n">NamedContextAttribute</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">relationship</span><span class="p">,</span> <span class="n">ContextAttribute</span>
+        <span class="p">):</span>
+            <span class="n">destination_id</span> <span class="o">=</span> <span class="n">relationship</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relationship</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">destination_id</span> <span class="o">=</span> <span class="n">relationship</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">destination_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Invalid relationship dictionary format</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Expected format: {&quot;</span>
+                    <span class="sa">f</span><span class="s1">&#39;&quot;type&quot;: &quot;</span><span class="si">{</span><span class="n">DataType</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;, &#39;</span>
+                    <span class="s1">&#39;&quot;value&quot; &quot;entity_id&quot;}&#39;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid relationship type.&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">destination_entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_entity</span><span class="p">(</span><span class="n">entity_id</span><span class="o">=</span><span class="n">destination_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">destination_entity</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">destination_id</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span></div>
+
 <div class="viewcode-block" id="ContextBrokerClient.update_registration"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_registration">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registration</span><span class="p">:</span> <span class="n">Registration</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Only the fields included in the request are updated in the registration.</span>
@@ -1887,7 +1991,7 @@
             <span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;forcedUpdate&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">update_format</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">update_format</span> <span class="o">==</span> <span class="s2">&quot;keyValues&quot;</span>
+                <span class="n">update_format</span> <span class="o">==</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">KEY_VALUES</span><span class="o">.</span><span class="n">value</span>
             <span class="p">),</span> <span class="s2">&quot;Only &#39;keyValues&#39; is allowed as update format&quot;</span>
             <span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;keyValues&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">options</span><span class="p">:</span>

@@ -1016,8 +1016,8 @@
                 "filip"
             ],
             "pydantic": [
-                "filip.custom_types",
                 "tests.config",
+                "filip.custom_types",
                 "tests.test_config",
                 "filip.config"
             ],
@@ -1179,8 +1179,8 @@
                 "filip"
             ],
             "pydantic": [
-                "filip.custom_types",
                 "tests.config",
+                "filip.custom_types",
                 "tests.test_config",
                 "filip.config"
             ],

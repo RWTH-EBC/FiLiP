@@ -106,6 +106,7 @@
     <span class="n">validate_fiware_datatype_standard</span><span class="p">,</span>
     <span class="n">validate_jexl_expression</span><span class="p">,</span>
     <span class="n">validate_expression_language</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_name_regex</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
@@ -244,7 +245,7 @@
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
+    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_attribute_name_regex</span><span class="p">)</span>
     <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;name of the type of the attribute in the target entity. &quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>

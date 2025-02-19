@@ -105,6 +105,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">validate_fiware_datatype_standard</span><span class="p">,</span>
     <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_value_regex</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_name_regex</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -267,7 +269,20 @@
                 <span class="c1"># `type` was found and pydantic will raise the correct error</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
         <span class="c1"># This will result in usual behavior</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validate_attributes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Validation of attributes</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate attribute name and value of the entity in keyvalues format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">validate_fiware_attribute_value_regex</span><span class="p">(</span><span class="n">attr_value</span><span class="p">)</span>
+            <span class="n">validate_fiware_attribute_name_regex</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="ContextEntityKeyValues.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues.get_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -341,7 +356,13 @@
         <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="c1"># validate_fiware_attribute_value_regex(key) not in cls.model_fields</span>
+                <span class="n">validate_fiware_attribute_name_regex</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">)</span>
+                <span class="c1"># key not in cls.model_fields</span>
+                <span class="c1"># and not isinstance(attr, ContextAttribute)</span>
+            <span class="p">)</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">attrs</span>
@@ -857,7 +878,7 @@
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
+    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_attribute_name_regex</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

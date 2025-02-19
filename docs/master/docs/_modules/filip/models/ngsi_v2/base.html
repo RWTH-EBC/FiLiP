@@ -114,6 +114,8 @@
     <span class="n">validate_escape_character_free</span><span class="p">,</span>
     <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span>
     <span class="n">validate_fiware_datatype_standard</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_value_regex</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_name_regex</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -443,7 +445,7 @@
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="c1"># Make it FIWARE-Safe</span>
     <span class="p">)</span>
-    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
+    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_attribute_name_regex</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BaseValueAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseValueAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BaseValueAttribute</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -472,6 +474,16 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Attribute value&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual data&quot;</span>
     <span class="p">)</span>
 
+<div class="viewcode-block" id="BaseValueAttribute.validate_value_based_on_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_value_based_on_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate_fiware_attribute_value_regex</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">values</span></div>
+
 <div class="viewcode-block" id="BaseValueAttribute.validate_value_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -482,7 +494,6 @@
 <span class="sd">        original pydantic model will be dumped.</span>
 <span class="sd">        If the type is unknown it will check json-serializable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">type_</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
         <span class="n">value_</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
