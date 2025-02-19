@@ -136,7 +136,7 @@ def create_context_entity_model(
         if key not in ContextEntity.model_fields
     }
     model = create_model(
-        __model_name=name or "GeneratedContextEntity",
+        name or "GeneratedContextEntity",
         __base__=ContextEntity,
         __validators__=validators or {},
         **properties,
