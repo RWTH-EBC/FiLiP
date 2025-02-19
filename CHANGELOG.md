@@ -1,3 +1,6 @@
+### v0.6.x
+- add: New features to validate and update relationships for V2 entities ([#380](https://github.com/RWTH-EBC/FiLiP/pull/380))
+
 ### v0.6.1
 - add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#363](https://github.com/RWTH-EBC/FiLiP/pull/363))
 - add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
