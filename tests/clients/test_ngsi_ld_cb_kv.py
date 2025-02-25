@@ -12,10 +12,7 @@ from requests.exceptions import HTTPError
 from urllib3.util.retry import Retry
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models.base import FiwareLDHeader, core_context
-from filip.models.ngsi_ld.context import (
-    ActionTypeLD,
-    ContextLDEntityKeyValues
-)
+from filip.models.ngsi_ld.context import ActionTypeLD, ContextLDEntityKeyValues
 from tests.config import settings
 import requests
 from filip.utils.cleanup import clear_context_broker_ld
@@ -108,13 +105,13 @@ class TestContextBroker(unittest.TestCase):
         """
         # create entity
         self.client.post_entity(entity=self.entity)
-        entity_list = self.client.get_entity_list(entity_type=self.entity.type,options='keyValues')
+        entity_list = self.client.get_entity_list(
+            entity_type=self.entity.type, options="keyValues"
+        )
         self.assertEqual(len(entity_list), 1)
         self.assertEqual(entity_list[0].id, self.entity.id)
         self.assertEqual(entity_list[0].type, self.entity.type)
-        self.assertEqual(
-            entity_list[0].testtemperature, self.entity.testtemperature
-        )
+        self.assertEqual(entity_list[0].testtemperature, self.entity.testtemperature)
 
         # existed entity
         self.entity_identical = self.entity.model_copy()
@@ -124,8 +121,7 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(response.status_code, 409)
 
         entity_list = self.client.get_entity_list(
-            entity_type=self.entity_identical.type,
-            options='keyValues'
+            entity_type=self.entity_identical.type, options="keyValues"
         )
         self.assertEqual(len(entity_list), 1)
 
@@ -134,13 +130,11 @@ class TestContextBroker(unittest.TestCase):
         del self.entity_append.testtemperature
         self.entity_append.humidity = 50
         self.client.post_entity(entity=self.entity_append, append=True)
-        entity_append_res = self.client.get_entity(entity_id=self.entity_append.id,options='keyValues')
-        self.assertEqual(
-            entity_append_res.humidity, self.entity_append.humidity
+        entity_append_res = self.client.get_entity(
+            entity_id=self.entity_append.id, options="keyValues"
         )
-        self.assertEqual(
-            entity_append_res.testtemperature, self.entity.testtemperature
-        )
+        self.assertEqual(entity_append_res.humidity, self.entity_append.humidity)
+        self.assertEqual(entity_append_res.testtemperature, self.entity.testtemperature)
 
         # override existed entity
         new_attr = {"newattr": 999}
@@ -148,16 +142,16 @@ class TestContextBroker(unittest.TestCase):
             id=self.entity.id, type=self.entity.type, **new_attr
         )
         self.client.post_entity(entity=self.entity_override, update=True)
-        entity_override_res = self.client.get_entity(entity_id=self.entity.id,options='keyValues')
-        self.assertEqual(
-            entity_override_res.newattr, self.entity_override.newattr
+        entity_override_res = self.client.get_entity(
+            entity_id=self.entity.id, options="keyValues"
         )
+        self.assertEqual(entity_override_res.newattr, self.entity_override.newattr)
         self.assertNotIn("testtemperature", entity_override_res.model_dump())
 
         # post without entity type is not allowed
         with self.assertRaises(Exception):
             self.client.post_entity(ContextLDEntityKeyValues(id="room2"))
-        entity_list = self.client.get_entity_list(options='keyValues')
+        entity_list = self.client.get_entity_list(options="keyValues")
         self.assertNotIn("room2", entity_list)
 
         """delete"""
@@ -195,15 +189,15 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(entity_default.context, core_context)
         self.assertEqual(
             entity_default.id,
-            temperature_sensor_dict['id'],
+            temperature_sensor_dict["id"],
         )
         self.assertEqual(
             entity_default.type,
-            temperature_sensor_dict['type'],
+            temperature_sensor_dict["type"],
         )
         self.assertEqual(
             entity_default.temperature.value,
-            temperature_sensor_dict['temperature'],
+            temperature_sensor_dict["temperature"],
         )
         entity_custom_context = client_custom_context.get_entity(
             entity_id=temperature_sensor.id
@@ -211,15 +205,15 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(entity_custom_context.context, custom_context)
         self.assertEqual(
             entity_custom_context.id,
-            temperature_sensor_dict['id'],
+            temperature_sensor_dict["id"],
         )
         self.assertEqual(
             entity_custom_context.type,
-            temperature_sensor_dict['type'],
+            temperature_sensor_dict["type"],
         )
         self.assertEqual(
             entity_custom_context.temperature.value,
-            temperature_sensor_dict['temperature'],
+            temperature_sensor_dict["temperature"],
         )
         self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
 
@@ -232,15 +226,15 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(entity_custom.context, custom_context)
         self.assertEqual(
             entity_custom_context.id,
-            temperature_sensor_dict['id'],
+            temperature_sensor_dict["id"],
         )
         self.assertEqual(
             entity_custom_context.type,
-            temperature_sensor_dict['type'],
+            temperature_sensor_dict["type"],
         )
         self.assertEqual(
             entity_custom_context.temperature.value,
-            temperature_sensor_dict['temperature'],
+            temperature_sensor_dict["temperature"],
         )
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
         self.assertEqual(entity_default_context.context, core_context)
@@ -252,12 +246,16 @@ class TestContextBroker(unittest.TestCase):
 
         # custom context in entity
         temperature_sensor = ContextLDEntityKeyValues(
-            **dict({"@context":[
-                "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"
-            ]}),
-            **temperature_sensor_dict
+            **dict(
+                {
+                    "@context": [
+                        "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"
+                    ]
+                }
+            ),
+            **temperature_sensor_dict,
         )
-        
+
         self.client.post_entity(entity=temperature_sensor)
         entity_custom = client_custom_context.get_entity(
             entity_id=temperature_sensor.id
@@ -265,15 +263,15 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(entity_custom.context, custom_context)
         self.assertEqual(
             entity_custom_context.id,
-            temperature_sensor_dict['id'],
+            temperature_sensor_dict["id"],
         )
         self.assertEqual(
             entity_custom_context.type,
-            temperature_sensor_dict['type'],
+            temperature_sensor_dict["type"],
         )
         self.assertEqual(
             entity_custom_context.temperature.value,
-            temperature_sensor_dict['temperature'],
+            temperature_sensor_dict["temperature"],
         )
         entity_default_context = self.client.get_entity(entity_id=temperature_sensor.id)
         self.assertEqual(entity_default_context.context, core_context)
@@ -325,7 +323,7 @@ class TestContextBroker(unittest.TestCase):
         self.entity.test_value = 20
         self.client.append_entity_attributes(self.entity)
 
-        entity = self.client.get_entity(entity_id=self.entity.id,options='keyValues')
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         self.assertEqual(first=entity.test_value, second=self.entity.test_value)
         self.client.delete_entity_by_id(entity_id=entity.id)
 
@@ -341,10 +339,10 @@ class TestContextBroker(unittest.TestCase):
         self.entity.test_value = 20
         self.client.append_entity_attributes(self.entity)
         self.entity.test_value = 40
-        
+
         with self.assertRaises(RequestException):
             self.client.append_entity_attributes(self.entity, options="noOverwrite")
-        entity = self.client.get_entity(entity_id=self.entity.id,options='keyValues')
+        entity = self.client.get_entity(entity_id=self.entity.id, options="keyValues")
         self.assertEqual(first=entity.test_value, second=20)
         self.assertNotEqual(first=entity.test_value, second=40)
 
@@ -387,7 +385,7 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=self.entity.id, attribute_id="does_not_exist"
             )
 
-        entity_list = self.client.get_entity_list(options='keyValues')
+        entity_list = self.client.get_entity_list(options="keyValues")
 
         for entity in entity_list:
             self.client.delete_entity_by_id(entity_id=entity.id)
@@ -521,13 +519,17 @@ class EntitiesBatchOperations(unittest.TestCase):
         """
         """Test 1"""
         entities_a = [
-            ContextLDEntityKeyValues(id=f"urn:ngsi-ld:test:{str(i)}", type=f"filip:object:test")
+            ContextLDEntityKeyValues(
+                id=f"urn:ngsi-ld:test:{str(i)}", type=f"filip:object:test"
+            )
             for i in range(0, 10)
         ]
         self.cb_client.entity_batch_operation(
             entities=entities_a, action_type=ActionTypeLD.CREATE
         )
-        entity_list = self.cb_client.get_entity_list(entity_type=f"filip:object:test",options='keyValues')
+        entity_list = self.cb_client.get_entity_list(
+            entity_type=f"filip:object:test", options="keyValues"
+        )
         id_list = [entity.id for entity in entity_list]
         self.assertEqual(len(entities_a), len(entity_list))
         for entity in entities_a:
@@ -538,8 +540,12 @@ class EntitiesBatchOperations(unittest.TestCase):
 
         """Test 2"""
         entities_b = [
-            ContextLDEntityKeyValues(id=f"urn:ngsi-ld:test:eins", type=f"filip:object:test"),
-            ContextLDEntityKeyValues(id=f"urn:ngsi-ld:test:eins", type=f"filip:object:test"),
+            ContextLDEntityKeyValues(
+                id=f"urn:ngsi-ld:test:eins", type=f"filip:object:test"
+            ),
+            ContextLDEntityKeyValues(
+                id=f"urn:ngsi-ld:test:eins", type=f"filip:object:test"
+            ),
         ]
         entity_list_b = []
         try:
@@ -547,8 +553,7 @@ class EntitiesBatchOperations(unittest.TestCase):
                 entities=entities_b, action_type=ActionTypeLD.CREATE
             )
             entity_list_b = self.cb_client.get_entity_list(
-                entity_type=f"filip:object:test",
-                options='keyValues'
+                entity_type=f"filip:object:test", options="keyValues"
             )
             self.assertEqual(len(entity_list), 1)
         except:
@@ -592,9 +597,7 @@ class EntitiesBatchOperations(unittest.TestCase):
             ContextLDEntityKeyValues(
                 id=f"urn:ngsi-ld:test:{str(i)}",
                 type=f"filip:object:test",
-                **{
-                    "temperature": self.r.randint(20, 50)
-                },
+                **{"temperature": self.r.randint(20, 50)},
             )
             for i in range(0, 5)
         ]
@@ -607,16 +610,16 @@ class EntitiesBatchOperations(unittest.TestCase):
             ContextLDEntityKeyValues(
                 id=f"urn:ngsi-ld:test:{str(i)}",
                 type=f"filip:object:test",
-                **{
-                    "temperature": self.r.randint(0, 20)
-                },
+                **{"temperature": self.r.randint(0, 20)},
             )
             for i in range(3, 6)
         ]
         self.cb_client.entity_batch_operation(
             entities=entities_update, action_type=ActionTypeLD.UPDATE
         )
-        entity_list = self.cb_client.get_entity_list(entity_type=f"filip:object:test",options='keyValues')
+        entity_list = self.cb_client.get_entity_list(
+            entity_type=f"filip:object:test", options="keyValues"
+        )
         self.assertEqual(len(entity_list), 5)
         updated = [
             x.model_dump(exclude_unset=True, exclude={"@context"})
@@ -648,7 +651,7 @@ class EntitiesBatchOperations(unittest.TestCase):
                 type=f"filip:object:test",
                 **{
                     "temperature": self.r.randint(50, 100),
-                    "pressure":self.r.randint(1, 100),
+                    "pressure": self.r.randint(1, 100),
                 },
             )
             for i in range(0, 5)
@@ -663,7 +666,9 @@ class EntitiesBatchOperations(unittest.TestCase):
         previous = entity_list
         previous.sort(key=lambda x: int(x.id.split(":")[3]))
 
-        entity_list = self.cb_client.get_entity_list(entity_type=f"filip:object:test",options='keyValues')
+        entity_list = self.cb_client.get_entity_list(
+            entity_type=f"filip:object:test", options="keyValues"
+        )
         entity_list.sort(key=lambda x: int(x.id.split(":")[3]))
 
         self.assertEqual(len(entity_list), len(entities_update))
@@ -773,7 +778,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         # 2 should have temperature only
         # 3 should have both
         # can be made modular for variable size batches
-        entity_list = self.cb_client.get_entity_list(options='keyValues')
+        entity_list = self.cb_client.get_entity_list(options="keyValues")
         self.assertEqual(len(entity_list), 5)
         for _e in entity_list:
             _id = int(_e.id.split(":")[3])
@@ -862,7 +867,9 @@ class EntitiesBatchOperations(unittest.TestCase):
         """
         """Test 1"""
         entities_delete = [
-            ContextLDEntityKeyValues(id=f"urn:ngsi-ld:test:{str(i)}", type=f"filip:object:test")
+            ContextLDEntityKeyValues(
+                id=f"urn:ngsi-ld:test:{str(i)}", type=f"filip:object:test"
+            )
             for i in range(0, 1)
         ]
         with self.assertRaises(Exception):
@@ -874,7 +881,8 @@ class EntitiesBatchOperations(unittest.TestCase):
         entity_del_type = "filip:object:test"
         entities_ids_a = [f"urn:ngsi-ld:test:{str(i)}" for i in range(0, 4)]
         entities_a = [
-            ContextLDEntityKeyValues(id=id_a, type=entity_del_type) for id_a in entities_ids_a
+            ContextLDEntityKeyValues(id=id_a, type=entity_del_type)
+            for id_a in entities_ids_a
         ]
 
         self.cb_client.entity_batch_operation(
@@ -893,7 +901,9 @@ class EntitiesBatchOperations(unittest.TestCase):
         )
 
         # get list of entities which is still stored
-        entity_list = self.cb_client.get_entity_list(entity_type=entity_del_type,options='keyValues')
+        entity_list = self.cb_client.get_entity_list(
+            entity_type=entity_del_type, options="keyValues"
+        )
         entity_ids = [entity.id for entity in entity_list]
 
         self.assertEqual(len(entity_list), 1)  # all but one entity were deleted
@@ -905,5 +915,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
-        entity_list = self.cb_client.get_entity_list(entity_type=entity_del_type,options='keyValues')
+        entity_list = self.cb_client.get_entity_list(
+            entity_type=entity_del_type, options="keyValues"
+        )
         self.assertEqual(len(entity_list), 0)  # all entities were deleted
