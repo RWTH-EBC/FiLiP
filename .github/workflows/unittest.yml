@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - "**"
+    branches-ignore:
+      - gh-pages
   pull_request:
     branches:
       - main
@@ -52,6 +54,7 @@ jobs:
           LD_MQTT_BROKER_URL_INTERNAL=${{ vars.LD_MQTT_BROKER_URL_INTERNAL }}
           FIWARE_SERVICE=${{ vars.FIWARE_SERVICE }}
           FIWARE_SERVICEPATH=${{ vars.FIWARE_SERVICEPATH }}
+          STATIC_RECORDS=${{ vars.STATIC_RECORDS }}
           EOF
 
       # Step 5: Verify .env file
