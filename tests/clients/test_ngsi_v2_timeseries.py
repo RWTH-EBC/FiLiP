@@ -12,7 +12,7 @@ from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.subscriptions import Message
-from filip.utils.cleanup import clean_test, clear_all
+from filip.utils.cleanup import clean_test, clear_all, clear_quantumleap
 from tests.config import settings
 from packaging import version
 
@@ -40,16 +40,21 @@ def create_entities() -> List[ContextEntity]:
     ]
 
 
-def create_time_series_data(num_records: int = 50000):
+def recreate_time_series_data(num_records: int = 50000):
     """
-    creates large testing data sets that should remain on the server.
-    This is mainly to reduce time for testings
+    Recreates large testing data sets that should remain on the server.
+    Time series data will be cleared before the test.
+    Records will be created for two types of entities. Therefore, the total created
+    records number is num_records * 2.
+
     """
     fiware_header = FiwareHeader(
         service=settings.FIWARE_SERVICE, service_path="/static"
     )
 
     with QuantumLeapClient(url=settings.QL_URL, fiware_header=fiware_header) as client:
+        # Clear all data
+        clear_quantumleap(ql_client=client)
 
         for i in range(num_records):
             notification_message = Message(
@@ -78,6 +83,10 @@ class TestTimeSeries(unittest.TestCase):
         self.cb_client = ContextBrokerClient(
             url=settings.CB_URL, fiware_header=self.fiware_header
         )
+        self.static_records = settings.STATIC_RECORDS
+
+        recreate_time_series_data(num_records=self.static_records)
+        time.sleep(5)  # make sure data is persisted in TS database
 
     def test_meta_endpoints(self) -> None:
         """
@@ -169,19 +178,19 @@ class TestTimeSeries(unittest.TestCase):
 
                 attrs_values_id = client.get_entity_values_by_id(entity_id=entity.id)
                 logger.debug(attrs_values_id.to_pandas())
-                self.assertEqual(len(attrs_values_id.index), 10000)
+                self.assertEqual(len(attrs_values_id.index), self.static_records)
 
                 attr_id = client.get_entity_attr_by_id(
                     entity_id=entity.id, attr_name="temperature"
                 )
                 logger.debug(attr_id.to_pandas())
-                self.assertEqual(len(attr_id.index), 10000)
+                self.assertEqual(len(attr_id.index), self.static_records)
 
                 attr_values_id = client.get_entity_attr_values_by_id(
                     entity_id=entity.id, attr_name="temperature"
                 )
                 logger.debug(attr_values_id.to_pandas())
-                self.assertEqual(len(attrs_values_id.index), 10000)
+                self.assertEqual(len(attrs_values_id.index), self.static_records)
 
     def test_query_endpoints_by_type(self) -> None:
         """
@@ -203,47 +212,50 @@ class TestTimeSeries(unittest.TestCase):
                 # get by type
                 attrs_type = client.get_entity_by_type(
                     entity_type=entity.type,
-                    limit=10000,
+                    limit=self.static_records,
                 )
                 for entity_id in attrs_type:
                     logger.debug(entity_id.to_pandas())
 
-                # the limit 10000 will be shared by the two entities
+                # the limit will be shared by the two entities
                 self.assertEqual(
-                    sum([len(entity_id.index) for entity_id in attrs_type]), 10000
+                    sum([len(entity_id.index) for entity_id in attrs_type]),
+                    self.static_records,
                 )
 
                 attrs_values_type = client.get_entity_values_by_type(
                     entity_type=entity.type,
-                    limit=10000,
+                    limit=self.static_records,
                 )
                 for entity_id in attrs_values_type:
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(
                     sum([len(entity_id.index) for entity_id in attrs_values_type]),
-                    10000,
+                    self.static_records,
                 )
 
                 attr_type = client.get_entity_attr_by_type(
                     entity_type=entity.type,
                     attr_name="temperature",
-                    limit=10000,
+                    limit=self.static_records,
                 )
                 for entity_id in attr_type:
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(
-                    sum([len(entity_id.index) for entity_id in attr_type]), 10000
+                    sum([len(entity_id.index) for entity_id in attr_type]),
+                    self.static_records,
                 )
 
                 attr_values_type = client.get_entity_attr_values_by_type(
                     entity_type=entity.type,
                     attr_name="temperature",
-                    limit=10000,
+                    limit=self.static_records,
                 )
                 for entity_id in attr_values_type:
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(
-                    sum([len(entity_id.index) for entity_id in attr_values_type]), 10000
+                    sum([len(entity_id.index) for entity_id in attr_values_type]),
+                    self.static_records,
                 )
 
     def test_query_endpoints_by_id_pattern(self) -> None:
@@ -316,14 +328,18 @@ class TestTimeSeries(unittest.TestCase):
                 self.assertEqual(len(entities), expected_result)
 
                 attrs_type = client.get_entity_by_type(
-                    entity_type=entity.type, id_pattern=expression, limit=10000
+                    entity_type=entity.type,
+                    id_pattern=expression,
+                    limit=self.static_records,
                 )
                 for entity_id in attrs_type:
                     logger.debug(entity_id.to_pandas())
                 self.assertEqual(len(attrs_type), expected_result)
 
                 attrs_values_type = client.get_entity_values_by_type(
-                    entity_type=entity.type, id_pattern=expression, limit=10000
+                    entity_type=entity.type,
+                    id_pattern=expression,
+                    limit=self.static_records,
                 )
                 for entity_id in attrs_values_type:
                     logger.debug(entity_id.to_pandas())
@@ -333,7 +349,7 @@ class TestTimeSeries(unittest.TestCase):
                     entity_type=entity.type,
                     attr_name="temperature",
                     id_pattern=expression,
-                    limit=10000,
+                    limit=self.static_records,
                 )
                 for entity_id in attr_type:
                     logger.debug(entity_id.to_pandas())
@@ -343,7 +359,7 @@ class TestTimeSeries(unittest.TestCase):
                     entity_type=entity.type,
                     attr_name="temperature",
                     id_pattern=expression,
-                    limit=10000,
+                    limit=self.static_records,
                 )
                 for entity_id in attr_values_type:
                     logger.debug(entity_id.to_pandas())
@@ -366,7 +382,11 @@ class TestTimeSeries(unittest.TestCase):
 
             for entity in create_entities():
                 # test limit
-                for limit in range(5000, 25000, 5000):
+                for limit in range(
+                    self.static_records // 8,
+                    self.static_records // 2,
+                    self.static_records // 10,
+                ):
                     records = client.get_entity_by_id(
                         entity_id=entity.id, attrs="temperature,co2", limit=limit
                     )
@@ -376,7 +396,11 @@ class TestTimeSeries(unittest.TestCase):
                     self.assertEqual(len(records.index), limit)
 
                 # test last_n
-                for last_n in range(5000, 25000, 5000):
+                for last_n in range(
+                    self.static_records // 8,
+                    self.static_records // 2,
+                    self.static_records // 10,
+                ):
                     limit = 15000
                     last_n_records = client.get_entity_by_id(
                         entity_id=entity.id,
@@ -389,7 +413,11 @@ class TestTimeSeries(unittest.TestCase):
 
                 # test offset
                 old_records = None
-                for offset in range(5000, 25000, 5000):
+                for offset in range(
+                    self.static_records // 8,
+                    self.static_records // 2,
+                    self.static_records // 10,
+                ):
                     # with limit
                     records = client.get_entity_by_id(
                         entity_id=entity.id, attrs="temperature,co2", offset=offset
@@ -400,7 +428,11 @@ class TestTimeSeries(unittest.TestCase):
                     old_records = records
 
                 old_records = None
-                for offset in range(5000, 25000, 5000):
+                for offset in range(
+                    self.static_records // 8,
+                    self.static_records // 2,
+                    self.static_records // 10,
+                ):
                     # test with last_n
                     records = client.get_entity_by_id(
                         entity_id=entity.id,
@@ -420,7 +452,9 @@ class TestTimeSeries(unittest.TestCase):
         """
         with QuantumLeapClient(
             url=settings.QL_URL,
-            fiware_header=FiwareHeader(service="filip", service_path="/static"),
+            fiware_header=FiwareHeader(
+                service=settings.FIWARE_SERVICE, service_path="/static"
+            ),
         ) as client:
             attr_names = ["temperature", "humidity", "co2"]
             for attr_name in attr_names:
