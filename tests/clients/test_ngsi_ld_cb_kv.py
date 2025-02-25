@@ -119,7 +119,6 @@ class TestContextBroker(unittest.TestCase):
             self.client.post_entity(entity=self.entity_identical)
         response = contextmanager.exception.response
         self.assertEqual(response.status_code, 409)
-
         entity_list = self.client.get_entity_list(
             entity_type=self.entity_identical.type, options="keyValues"
         )
@@ -154,7 +153,7 @@ class TestContextBroker(unittest.TestCase):
         entity_list = self.client.get_entity_list(options="keyValues")
         self.assertNotIn("room2", entity_list)
 
-        """delete"""
+        # delete entity
         self.client.entity_batch_operation(
             entities=entity_list, action_type=ActionTypeLD.DELETE
         )
@@ -384,11 +383,7 @@ class TestContextBroker(unittest.TestCase):
             self.client.delete_attribute(
                 entity_id=self.entity.id, attribute_id="does_not_exist"
             )
-
-        entity_list = self.client.get_entity_list(options="keyValues")
-
-        for entity in entity_list:
-            self.client.delete_entity_by_id(entity_id=entity.id)
+        self.client.delete_entity_by_id(entity_id=self.entity.id)
 
         """Test 2"""
         self.entity.test_value = 20
@@ -396,7 +391,8 @@ class TestContextBroker(unittest.TestCase):
         self.client.delete_attribute(
             entity_id=self.entity.id, attribute_id="test_value"
         )
-
+        entity_response = self.client.get_entity(entity_id=self.entity.id)
+        self.assertNotIn("test_value", entity_response.model_dump())
         with self.assertRaises(requests.exceptions.HTTPError) as contextmanager:
             self.client.delete_attribute(
                 entity_id=self.entity.id, attribute_id="test_value"
@@ -520,7 +516,9 @@ class EntitiesBatchOperations(unittest.TestCase):
         """Test 1"""
         entities_a = [
             ContextLDEntityKeyValues(
-                id=f"urn:ngsi-ld:test:{str(i)}", type=f"filip:object:test"
+                id=f"urn:ngsi-ld:test:{str(i)}",
+                type=f"filip:object:test",
+                temperature=i,
             )
             for i in range(0, 10)
         ]
