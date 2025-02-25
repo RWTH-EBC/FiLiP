@@ -97,7 +97,7 @@ services:
     logging: *logging-high
 
   iot-agent-ul:
-    image: fiware/iotagent-ul:1.25.0
+    image: fiware/iotagent-ul:1.23.0
     hostname: iot-agent-ul
     networks:
       - filip
@@ -185,6 +185,7 @@ services:
         - filip
     depends_on:
         - mongo-db
+    command: -experimental
     environment:
       - ORIONLD_LOG_LEVEL=DEBUG
       - ORIONLD_TMP_TRACES=FALSE # Log level is buggy in 1.5.1 (TMP messages in logs for every request)
