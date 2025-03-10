@@ -1,3 +1,6 @@
+### v0.6.x
+- add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
+
 ### v0.6.2
 - add: New features to validate and update relationships for V2 entities ([#380](https://github.com/RWTH-EBC/FiLiP/pull/380))
 - add: ngsi-ld support for entity creation and update with keyvalues format ([#394](https://github.com/RWTH-EBC/FiLiP/pull/394))
