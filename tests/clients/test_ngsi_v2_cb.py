@@ -17,7 +17,7 @@ import requests
 from requests import RequestException
 from pydantic import AnyHttpUrl
 from filip.clients.base_http_client import NgsiURLVersion, BaseHttpClient
-from filip.models.base import FiwareHeader
+from filip.models.base import FiwareHeader, DataType
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
@@ -1085,6 +1085,85 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=entity1.id, attr_name="temperature"
             ),
         )
+
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+    )
+    def test_validate_relationships(self):
+        """
+        Test the features to validate the relationships based on the target entities.
+        """
+        # create entities with relationships
+        # create 10 entities as target
+        entities_target = [
+            ContextEntity(id=f"test:relationship:target:00{i}", type="Test")
+            for i in range(10)
+        ]
+        self.client.update(entities=entities_target, action_type=ActionType.APPEND)
+
+        # create 10 entities point to the target entities (5 normalized, and 5 keyValues)
+        entities_n = [
+            ContextEntity(
+                id=f"test:relationship:normal:00{i}",
+                type="Test",
+                relatedTo={
+                    "type": DataType.RELATIONSHIP.value,  # the relationship is correct
+                    "value": entities_target[i].id,
+                },
+            )
+            for i in range(5)
+        ]
+        self.client.update(entities=entities_n, action_type=ActionType.APPEND)
+
+        entities_kv = [
+            ContextEntityKeyValues(
+                id=f"test:relationship:kv:00{i}",
+                type="Test",
+                relatedTo=entities_target[i + 5].id,
+            )
+            for i in range(5)
+        ]
+        self.client.update(
+            entities=entities_kv,
+            update_format=AttrsFormat.KEY_VALUES.value,
+            action_type=ActionType.APPEND,
+        )
+
+        # test update valid relationships
+        entities_kv_cb = self.client.get_entity_list(
+            entity_ids=[e.id for e in entities_kv]
+        )
+        for entity in entities_kv_cb:  # before update no relationships are recognized
+            self.assertEqual(len(entity.get_relationships()), 0)
+
+        entities_kv_updated = self.client.add_valid_relationships(
+            entities=entities_kv_cb
+        )
+        for entity in entities_kv_updated:
+            self.assertEqual(len(entity.get_relationships()), 1)
+
+        # test remove invalid relationships
+        entities_n_cb = self.client.get_entity_list(
+            entity_ids=[e.id for e in entities_n]
+        )
+        for entity in entities_n_cb:
+            self.assertEqual(len(entity.get_relationships()), 1)
+        # delete all target entities to make the relationships invalid
+        self.client.delete_entities(entities_target)
+        entities_n_updated_hard = self.client.remove_invalid_relationships(
+            entities=entities_n_cb, hard_remove=True
+        )
+        for entity in entities_n_updated_hard:
+            self.assertEqual(len(entity.get_relationships()), 0)
+            self.assertEqual(len(entity.get_properties()), 0)
+        entities_n_updated_soft = self.client.remove_invalid_relationships(
+            entities=entities_n_cb, hard_remove=False
+        )
+        for entity in entities_n_updated_soft:
+            self.assertEqual(len(entity.get_relationships()), 0)
+            self.assertEqual(len(entity.get_properties()), 1)
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,

@@ -42,17 +42,17 @@ class TestModels(unittest.TestCase):
         self.assertEqual(
             json.loads(header.model_dump_json(by_alias=True)), self.fiware_header
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             FiwareHeader(service="jkgsadh ", service_path="/testing")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             FiwareHeader(service="%", service_path="/testing")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             FiwareHeader(service="filip", service_path="testing/")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             FiwareHeader(service="filip", service_path="/$testing")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             FiwareHeader(service="filip", service_path="/testing ")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             FiwareHeader(service="filip", service_path="#")
         headers = FiwareHeader.model_validate(self.fiware_header)
         with ContextBrokerClient(url=settings.CB_URL, fiware_header=headers) as client:

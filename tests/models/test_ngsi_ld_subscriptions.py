@@ -80,14 +80,14 @@ class TestLDSubscriptions(unittest.TestCase):
                 "notifierInfo": [{"key": "MQTT-Version", "value": "mqtt5.0"}],
             }
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             endpoint_https = Endpoint(
                 **{
                     "uri": "https://my.endpoint.org/notify",
                     "accept": "application/json",
                 }
             )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             endpoint_amqx = Endpoint(
                 **{"uri": "amqx://my.endpoint.org/notify", "accept": "application/json"}
             )
