@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_ld package &mdash; FiLiP 0.6.1 documentation</title>
+  <title>filip.models.ngsi_ld package &mdash; FiLiP 0.6.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -513,7 +513,7 @@ not allowed to be used as attribute names.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.model_dump">
 <span class="sig-name descname"><span class="pre">model_dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by_alias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntity.model_dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.model_dump" title="Permalink to this definition"></a></dt>
-<dd><p>Usage docs: <a class="reference external" href="https://docs.pydantic.dev/2.6/concepts/serialization/#modelmodel_dump">https://docs.pydantic.dev/2.6/concepts/serialization/#modelmodel_dump</a></p>
+<dd><p>Usage docs: <a class="reference external" href="https://docs.pydantic.dev/2.8/concepts/serialization/#modelmodel_dump">https://docs.pydantic.dev/2.8/concepts/serialization/#modelmodel_dump</a></p>
 <p>Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -521,14 +521,17 @@ not allowed to be used as attribute names.</p>
 <li><p><strong>mode</strong> – The mode in which <cite>to_python</cite> should run.
 If mode is ‘json’, the output will only contain JSON serializable types.
 If mode is ‘python’, the output may contain non-JSON-serializable Python objects.</p></li>
-<li><p><strong>include</strong> – A list of fields to include in the output.</p></li>
-<li><p><strong>exclude</strong> – A list of fields to exclude from the output.</p></li>
+<li><p><strong>include</strong> – A set of fields to include in the output.</p></li>
+<li><p><strong>exclude</strong> – A set of fields to exclude from the output.</p></li>
+<li><p><strong>context</strong> – Additional context to pass to the serializer.</p></li>
 <li><p><strong>by_alias</strong> – Whether to use the field’s alias in the dictionary key if defined.</p></li>
 <li><p><strong>exclude_unset</strong> – Whether to exclude fields that have not been explicitly set.</p></li>
 <li><p><strong>exclude_defaults</strong> – Whether to exclude fields that are set to their default value.</p></li>
 <li><p><strong>exclude_none</strong> – Whether to exclude fields that have a value of <cite>None</cite>.</p></li>
 <li><p><strong>round_trip</strong> – If True, dumped values should be valid as input for non-idempotent types such as Json[T].</p></li>
-<li><p><strong>warnings</strong> – Whether to log warnings when invalid fields are encountered.</p></li>
+<li><p><strong>warnings</strong> – How to handle serialization errors. False/”none” ignores them, True/”warn” logs errors,
+“error” raises a [<cite>PydanticSerializationError</cite>][pydantic_core.PydanticSerializationError].</p></li>
+<li><p><strong>serialize_as_any</strong> – Whether to serialize fields with duck-typing serialization behavior.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

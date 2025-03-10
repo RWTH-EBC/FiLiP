@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.clients.ngsi_ld.cb &mdash; FiLiP 0.6.1 documentation</title>
+  <title>filip.clients.ngsi_ld.cb &mdash; FiLiP 0.6.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -275,7 +275,10 @@
             <span class="k">raise</span></div>
 
 <div class="viewcode-block" id="ContextBrokerLDClient.post_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.post_entity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_entity</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">entity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span><span class="n">ContextLDEntityKeyValues</span><span class="p">],</span> 
+        <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+        <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function registers an Object with the NGSI-LD Context Broker,</span>
@@ -315,7 +318,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="ContextBrokerLDClient.override_entities"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.override_entities">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">override_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">]):</span>
+<div class="viewcode-block" id="ContextBrokerLDClient.override_entities"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.override_entities">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">override_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span><span class="n">ContextLDEntityKeyValues</span><span class="p">]]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function to create or override existing entites with the NGSI-LD Context Broker.</span>
 <span class="sd">        The batch operation with Upsert will be used.</span>
@@ -507,7 +510,7 @@
             <span class="k">raise</span></div>
 
 <div class="viewcode-block" id="ContextBrokerLDClient.replace_existing_attributes_of_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.replace_existing_attributes_of_entity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">replace_existing_attributes_of_entity</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span><span class="n">ContextLDEntityKeyValues</span><span class="p">],</span> <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The attributes previously existing in the entity are removed and</span>
@@ -608,7 +611,7 @@
             <span class="k">raise</span></div>
 
 <div class="viewcode-block" id="ContextBrokerLDClient.append_entity_attributes"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.append_entity_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">append_entity_attributes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span><span class="n">ContextLDEntityKeyValues</span><span class="p">],</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Append new Entity attributes to an existing Entity within an NGSI-LD system</span>
@@ -935,7 +938,7 @@
 <div class="viewcode-block" id="ContextBrokerLDClient.entity_batch_operation"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.entity_batch_operation">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">entity_batch_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">],</span>
+        <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span><span class="n">ContextLDEntityKeyValues</span><span class="p">]],</span>
         <span class="n">action_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ActionTypeLD</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">options</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;noOverwrite&quot;</span><span class="p">,</span> <span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
