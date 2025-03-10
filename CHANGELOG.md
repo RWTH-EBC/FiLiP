@@ -1,4 +1,7 @@
 ### v0.6.x
+- add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
+
+### v0.6.x
 - add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#336](https://github.com/RWTH-EBC/FiLiP/pull/363))
 - add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
 - fix: Addition of trailing slash if missing from base url ([#371](https://github.com/RWTH-EBC/FiLiP/pull/371))
