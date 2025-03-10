@@ -70,7 +70,9 @@ jobs:
         run: |
           for i in {1..30}; do
             curl -s http://localhost:1026/version && \
-            curl -s http://localhost:4041/iot/about && \
+            curl -s http://localhost:1027/version && \
+            curl -s http://localhost:4061/version && \
+            curl -s http://localhost:4041/version && \
             curl -s http://localhost:8668/version && break || sleep 5
           done
 
