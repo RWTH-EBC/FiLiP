@@ -624,15 +624,22 @@ class TestContextModels(unittest.TestCase):
         self.assertNotEqual(entity.get_attributes(), attributes)
 
     def test_format_conversion(self):
-        entity_normalized = ContextEntity(**self.entity_data)
-        entity_data_kv = dict()
-        for attr, value in self.entity_data.items():
+        format_attr = {"temperature": {"value": 20, "type": "Number"}}
+        format_entity_data = {"id": "MyId", "type": "MyType"}
+        format_entity_data.update(format_attr)
+        format_entity_normalized = ContextEntity(**format_entity_data)
+        format_entity_data_kv = dict()
+        for attr, value in format_entity_data.items():
             if isinstance(value, dict):
                 value = value.get("value")
-            entity_data_kv[attr] = value
-        entity_key_values = ContextEntityKeyValues(**entity_data_kv)
-        self.assertEqual(entity_normalized, entity_key_values.to_normalized())
-        self.assertEqual(entity_key_values, entity_normalized.to_keyvalues())
+            format_entity_data_kv[attr] = value
+        format_entity_key_values = ContextEntityKeyValues(**format_entity_data_kv)
+        self.assertEqual(
+            format_entity_normalized, format_entity_key_values.to_normalized()
+        )
+        self.assertEqual(
+            format_entity_key_values, format_entity_normalized.to_keyvalues()
+        )
 
     def tearDown(self) -> None:
         """

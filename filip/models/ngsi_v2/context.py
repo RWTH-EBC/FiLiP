@@ -195,7 +195,18 @@ class ContextEntityKeyValues(BaseModel):
         return self.model_dump(exclude={"id", "type"})
 
     def to_normalized(self):
-        return ContextEntity(**self.model_dump())
+        attrs = []
+        for key, value in self.get_attributes().items():
+            attr_type = (
+                DataType.NUMBER.value
+                if isinstance(value, int)
+                else DataType.OBJECT.value if isinstance(value, object) else None
+            )
+            attr = NamedContextAttribute(name=key, value=value, type=attr_type)
+            attrs.append(attr)
+        entity = ContextEntity(self.id, self.type)
+        entity.add_attributes(attrs)
+        return entity
 
 
 class ContextEntity(ContextEntityKeyValues):
@@ -627,7 +638,14 @@ class ContextEntity(ContextEntityKeyValues):
         return command, command_status, command_info
 
     def to_keyvalues(self):
-        return ContextEntityKeyValues(**self.model_dump(exclude_unset=True))
+        attrs = {
+            attr: value.value
+            for attr, value in self.get_attributes(
+                response_format=PropertyFormat.DICT
+            ).items()
+        }
+        entity = ContextEntityKeyValues(self.id, self.type, **attrs)
+        return entity
 
     def to_normalized(self):
         raise AttributeError("This method is not available in ContextEntity")
