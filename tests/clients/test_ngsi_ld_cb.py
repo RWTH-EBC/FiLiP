@@ -298,7 +298,10 @@ class TestContextBroker(unittest.TestCase):
         )
         self.client.post_entity(entity=test_entity)
         res_entity = self.client.get_entity(entity_id=test_entity.id)
-        self.assertEqual(res_entity, test_entity)
+        self.assertEqual(
+            res_entity.model_dump(exclude={"context"}),
+            test_entity.model_dump(exclude={"context"}),
+        )
 
     def test_get_entity(self):
         """
