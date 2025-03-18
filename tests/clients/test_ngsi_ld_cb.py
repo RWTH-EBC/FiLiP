@@ -2,6 +2,7 @@
 Tests for filip.cb.client
 """
 
+import time
 import unittest
 import logging
 from urllib.parse import urljoin
@@ -562,6 +563,7 @@ class TestContextBroker(unittest.TestCase):
         with self.assertRaises(Exception):
             self.entity.add_properties({"test_value": attr})
             self.client.append_entity_attributes(self.entity)
+        time.sleep(1)
 
         """Test 3"""
         self.client.post_entity(self.entity)

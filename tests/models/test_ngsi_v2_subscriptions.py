@@ -65,17 +65,17 @@ class TestSubscriptions(unittest.TestCase):
         Test notification models
         """
         # Test url field sub field validation
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             Http(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             HttpCustom(url="brokenScheme://test.de:80")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             Mqtt(url="brokenScheme://test.de:1883", topic="/testing")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             Mqtt(url="mqtt://test.de:1883", topic="/,t")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             HttpCustom(url="https://working-url.de:80", json={}, ngsi={})
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             HttpCustom(url="https://working-url.de:80", payload="", json={})
         httpCustom = HttpCustom(url=self.http_url)
         mqtt = Mqtt(url=self.mqtt_url, topic=self.mqtt_topic)
@@ -83,28 +83,28 @@ class TestSubscriptions(unittest.TestCase):
 
         # Test validator for conflicting fields
         notification = Notification.model_validate(self.notification)
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             notification.mqtt = httpCustom
         notification = Notification.model_validate(self.notification)
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             notification.mqtt = mqtt
         notification = Notification.model_validate(self.notification)
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             notification.mqtt = mqttCustom
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             HttpCustom(url=self.http_url, json={}, payload="")
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             MqttCustom(
                 url=self.mqtt_url, topic=self.mqtt_topic, ngsi=NgsiPayload(), payload=""
             )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             HttpCustom(url=self.http_url, ngsi=NgsiPayload(), json="")
 
         # Test validator for ngsi payload type
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             attr_dict = {"metadata": {}}
             NgsiPayloadAttr(**attr_dict)
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             attr_dict = {"id": "entityId", "type": "entityType", "k": "v"}
             NgsiPayload(NgsiPayloadAttr(**attr_dict), id="someId", type="someType")
 
@@ -112,13 +112,13 @@ class TestSubscriptions(unittest.TestCase):
         notification = Notification.model_validate(self.notification)
         notification.onlyChangedAttrs = True
         notification.onlyChangedAttrs = False
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             notification.onlyChangedAttrs = dict()
 
         # test covered
         notification = Notification.model_validate(self.notification)
         notification.covered = True
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             notification.attrs = []
 
     def test_substitution_models(self):
@@ -273,9 +273,9 @@ class TestSubscriptions(unittest.TestCase):
             )
 
         # test validation of throttling
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             sub.throttling = -1
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             sub.throttling = 0.1
 
     def test_query_string_serialization(self):

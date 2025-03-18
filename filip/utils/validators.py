@@ -20,21 +20,33 @@ logger = logging.getLogger(name=__name__)
 class FiwareRegex(str, Enum):
     """
     Collection of Regex expression used to check if the value of a Pydantic
-    field, can be used in the related Fiware field.
+    field, can be used in the related Fiware field. The regexes here are primarily
+    defined based on the identifiers syntax restriction:
+    https://fiware-orion.readthedocs.io/en/stable/orion-api.html#identifiers-syntax-restrictions
     """
 
     _init_ = "value __doc__"
-
+    #  Identifiers syntax restriction
     standard = (
         r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of the "
         "symbols: ? & # / ' \" or a whitespace",
     )
     string_protect = (
-        r"(?!^id$)(?!^type$)(?!^geo:location$)" r"(^((?![?&#/\"' ])[\x00-\x7F])*$)",
+        r"(?!^id$)(?!^type$)(?!^geo:json$)(^((?![?&#/\"' ])[\x00-\x7F])*$)",
         "Prevents any string that contains at least one of "
         "the symbols: ? & # / ' \" or a whitespace."
-        "AND the strings: id, type, geo:location",
+        "AND the strings: id, type, geo:json",
+    )
+    attribute_name = (
+        r"(?!^id$)(?!^type$)(?!^geo:json$)(^((?![\"'<>()=; §&/#?])[\x00-\x7F])*$)",
+        "Prevents any string that contains at least one of the "
+        "symbols: ( ) < > \" ' = ; § & / # ?",
+    )
+    attribute_value = (
+        r"(^((?![\"'<>()=;])[\x00-\x7F])*$)",
+        "Prevents any string that contains at least one of the "
+        "symbols: ( ) < > \" ' = ; ",
     )
 
 
@@ -117,8 +129,12 @@ def match_regex(value: str, pattern: str):
     if not regex.match(value):
         raise PydanticCustomError(
             "string_pattern_mismatch",
-            "String should match pattern '{pattern}'",
-            {"pattern": pattern},
+            "String should match pattern '{pattern}', [type='{error_type}', input_value='{value}']",
+            {
+                "pattern": pattern,
+                "error_type": "string_pattern_mismatch",
+                "value": value,
+            },
         )
     return value
 
@@ -138,6 +154,14 @@ def validate_fiware_standard_regex(vale: str):
 
 def validate_fiware_string_protect_regex(vale: str):
     return match_regex(vale, FiwareRegex.string_protect.value)
+
+
+def validate_fiware_attribute_value_regex(vale: str):
+    return match_regex(vale, FiwareRegex.attribute_value.value)
+
+
+def validate_fiware_attribute_name_regex(vale: str):
+    return match_regex(vale, FiwareRegex.attribute_name.value)
 
 
 @ignore_none_input

@@ -27,6 +27,8 @@ from filip.models.base import DataType
 from filip.utils.validators import (
     validate_fiware_datatype_standard,
     validate_fiware_datatype_string_protect,
+    validate_fiware_attribute_value_regex,
+    validate_fiware_attribute_name_regex,
 )
 
 
@@ -189,7 +191,20 @@ class ContextEntityKeyValues(BaseModel):
                 # `type` was found and pydantic will raise the correct error
                 super().__init__(id=id, **data)
         # This will result in usual behavior
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
+
+    # Validation of attributes
+    @classmethod
+    def _validate_attributes(cls, data: dict):
+        """
+        Validate attribute name and value of the entity in keyvalues format
+        """
+        for attr_name, attr_value in data.items():
+            if isinstance(attr_value, str):
+                validate_fiware_attribute_value_regex(attr_value)
+            validate_fiware_attribute_name_regex(attr_name)
+        return data
 
     def get_attributes(self) -> dict:
         """
@@ -263,7 +278,13 @@ class ContextEntity(ContextEntityKeyValues):
         attrs = {
             key: ContextAttribute.model_validate(attr)
             for key, attr in data.items()
-            if (key not in cls.model_fields and not isinstance(attr, ContextAttribute))
+            if (
+                # validate_fiware_attribute_value_regex(key) not in cls.model_fields
+                validate_fiware_attribute_name_regex(key) not in cls.model_fields
+                and not isinstance(attr, ContextAttribute)
+                # key not in cls.model_fields
+                # and not isinstance(attr, ContextAttribute)
+            )
         }
 
         return attrs
@@ -779,4 +800,4 @@ class NamedCommand(Command):
         max_length=256,
         min_length=1,
     )
-    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)

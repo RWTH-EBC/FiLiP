@@ -96,6 +96,10 @@ class TestSettings(BaseSettings):
         ),
     )
 
+    STATIC_RECORDS: int = Field(
+        default=1000, validation_alias=AliasChoices("STATIC_RECORDS")
+    )
+
     @model_validator(mode="after")
     def generate_multi_tenancy_setup(cls, values):
         """
