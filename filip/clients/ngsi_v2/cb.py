@@ -1782,8 +1782,9 @@ class ContextBrokerClient(BaseHttpClient):
         ):
             destination_id = relationship.value
         elif isinstance(relationship, dict):
-            destination_id = relationship.get("value")
-            if destination_id is None:
+            _sentinel = object()
+            destination_id = relationship.get("value", _sentinel)
+            if destination_id is _sentinel:
                 raise ValueError(
                     "Invalid relationship dictionary format\n"
                     "Expected format: {"
