@@ -221,8 +221,12 @@ class ContextEntityKeyValues(BaseModel):
         for key, value in self.get_attributes().items():
             attr_type = (
                 DataType.NUMBER.value
-                if isinstance(value, int)
-                else DataType.OBJECT.value if isinstance(value, object) else None
+                if isinstance(value, int) or isinstance(value, float)
+                else (
+                    DataType.TEXT.value
+                    if isinstance(value, str)
+                    else DataType.OBJECT.value
+                )
             )
             attr = NamedContextAttribute(name=key, value=value, type=attr_type)
             attrs.append(attr)

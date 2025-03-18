@@ -662,22 +662,57 @@ class TestContextModels(unittest.TestCase):
         self.assertNotEqual(entity.get_attributes(), attributes)
 
     def test_format_conversion(self):
-        format_attr = {"temperature": {"value": 20, "type": "Number"}}
-        format_entity_data = {"id": "MyId", "type": "MyType"}
-        format_entity_data.update(format_attr)
-        format_entity_normalized = ContextEntity(**format_entity_data)
-        format_entity_data_kv = dict()
-        for attr, value in format_entity_data.items():
-            if isinstance(value, dict):
-                value = value.get("value")
-            format_entity_data_kv[attr] = value
-        format_entity_key_values = ContextEntityKeyValues(**format_entity_data_kv)
-        self.assertEqual(
-            format_entity_normalized, format_entity_key_values.to_normalized()
-        )
-        self.assertEqual(
-            format_entity_key_values, format_entity_normalized.to_keyvalues()
-        )
+        entity_data = [
+            {
+                "id": "MyId1",
+                "type": "MyType",
+                "temperature": {"value": 20.2, "type": "Number"},
+            },
+            {
+                "id": "MyId2",
+                "type": "MyType",
+                "temperature": {"value": 20, "type": "Number"},
+            },
+            {
+                "id": "MyId3",
+                "type": "MyType",
+                "temperature": {"value": "20", "type": "Text"},
+            },
+            {
+                "id": "MyId4",
+                "type": "MyType",
+                "temperature": {"value": None, "type": "Number"},
+            },
+            {
+                "id": "MyId5",
+                "type": "MyType",
+                "relatedTo": {"value": "MyId1", "type": "Relationship"},
+            },
+        ]
+        for format_entity_data in entity_data:
+            format_entity_normalized = ContextEntity(**format_entity_data)
+            format_entity_data_kv = dict()
+            for attr, value in format_entity_data.items():
+                if isinstance(value, dict):
+                    value = value.get("value")
+                format_entity_data_kv[attr] = value
+            format_entity_key_values = ContextEntityKeyValues(**format_entity_data_kv)
+            entity_kv2normalized = format_entity_key_values.to_normalized()
+            self.assertEqual(format_entity_normalized.id, entity_kv2normalized.id)
+            self.assertEqual(format_entity_normalized.type, entity_kv2normalized.type)
+            # We cannot guarantee the type of the attribute is the same
+            for attr_name, attr in format_entity_normalized.get_attributes(
+                response_format="dict"
+            ).items():
+                self.assertEqual(
+                    entity_kv2normalized.get_attribute(attr_name).value, attr.value
+                )
+
+            entity_normalized2kv = format_entity_normalized.to_keyvalues()
+            for attr_name, value in format_entity_key_values.model_dump().items():
+                self.assertEqual(
+                    entity_normalized2kv.model_dump().get(attr_name), value
+                )
 
     def tearDown(self) -> None:
         """
