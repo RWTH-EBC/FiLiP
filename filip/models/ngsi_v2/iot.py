@@ -28,6 +28,7 @@ from filip.utils.validators import (
     validate_fiware_datatype_standard,
     validate_jexl_expression,
     validate_expression_language,
+    validate_fiware_attribute_name_regex,
 )
 
 logger = logging.getLogger()
@@ -166,7 +167,7 @@ class DeviceCommand(BaseModel):
         max_length=256,
         min_length=1,
     )
-    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
     type: Union[DataType, str] = Field(
         description="name of the type of the attribute in the target entity. ",
         default=DataType.COMMAND,

@@ -2,6 +2,7 @@
 Context Broker Module for API Client
 """
 
+import re
 import json
 import os
 from math import inf
@@ -196,7 +197,10 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def post_entity(
-        self, entity: ContextLDEntity, append: bool = False, update: bool = False
+        self, 
+        entity: Union[ContextLDEntity,ContextLDEntityKeyValues], 
+        append: bool = False, 
+        update: bool = False
     ):
         """
         Function registers an Object with the NGSI-LD Context Broker,
@@ -227,7 +231,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                 return res.headers.get("Location")
             res.raise_for_status()
         except requests.RequestException as err:
-            if err.response.status_code == 409:
+            if err.response is not None and err.response.status_code == 409:
                 if append:  # 409 entity already exists
                     return self.append_entity_attributes(entity=entity)
                 elif update:
@@ -236,7 +240,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def override_entities(self, entities: List[ContextLDEntity]):
+    def override_entities(self, entities: List[Union[ContextLDEntity,ContextLDEntityKeyValues]]):
         """
         Function to create or override existing entites with the NGSI-LD Context Broker.
         The batch operation with Upsert will be used.
@@ -380,6 +384,11 @@ class ContextBrokerLDClient(BaseHttpClient):
         if attrs:
             params.update({"attrs": ",".join(attrs)})
         if q:
+            x = re.search(r"[=!<>~]{1}\'.*\'", q.replace(" ", ""))
+            if x is not None:
+                raise ValueError(
+                    f"String/Date/etc. value in {x.group()} must be " f"in double quote"
+                )
             params.update({"q": q})
         if georel:
             params.update({"georel": georel})
@@ -423,7 +432,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def replace_existing_attributes_of_entity(
-        self, entity: ContextLDEntity, append: bool = False
+        self, entity: Union[ContextLDEntity,ContextLDEntityKeyValues], append: bool = False
     ):
         """
         The attributes previously existing in the entity are removed and
@@ -454,7 +463,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            if append and err.response.status_code == 207:
+            if err.response is not None and append and err.response.status_code == 207:
                 return self.append_entity_attributes(entity=entity)
             msg = f"Could not replace attribute of entity {entity.id} !"
             self.log_error(err=err, msg=msg)
@@ -524,7 +533,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def append_entity_attributes(
-        self, entity: ContextLDEntity, options: Optional[str] = None
+        self, entity: Union[ContextLDEntity,ContextLDEntityKeyValues], options: Optional[str] = None
     ):
         """
         Append new Entity attributes to an existing Entity within an NGSI-LD system
@@ -851,7 +860,7 @@ class ContextBrokerLDClient(BaseHttpClient):
     def entity_batch_operation(
         self,
         *,
-        entities: List[ContextLDEntity],
+        entities: List[Union[ContextLDEntity,ContextLDEntityKeyValues]],
         action_type: Union[ActionTypeLD, str],
         options: Literal["noOverwrite", "replace", "update"] = None,
     ) -> None:

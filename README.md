@@ -71,14 +71,14 @@ You can register for a testing account
 
 #### Supported Python Versions
 
-| Version   | Status     |
-|-----------|------------|
+| Version   | Status         |
+|-----------|----------------|
 | 3.7      | ❌ Deprecated   |
-| 3.8      | ✅ Tested   |
-| 3.9      | ✅ Tested   |
-| 3.10     | ✅ Tested   |
-| 3.11     | ✅ Tested   |
-| 3.12     | 🔄 Ongoing   |
+| 3.8      | ✅ Tested       |
+| 3.9      | ✅ Tested       |
+| 3.10     | ✅ Tested       |
+| 3.11     | ✅ Tested       |
+| 3.12     | ✅ Tested      |
 
 > ✅ Tested python versions have passed the unittests 
 
@@ -320,7 +320,7 @@ height="100"></a>
 
 We gratefully acknowledge the financial support of the Federal Ministry <br /> 
 for Economic Affairs and Climate Action (BMWK), promotional references 
-03ET1495A, 03ET1551A, 0350018A, 03ET1561B.
+03ET1495A, 03ET1551A, 0350018A, 03ET1561B, 03EN1030B.
 
 <a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWK" 
 src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/bmwi_logo_en.png" height="100"> </a>

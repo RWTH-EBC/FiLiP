@@ -53,16 +53,16 @@ class TestSubscriptions(unittest.TestCase):
 
         # incorrect usage
         # id & id pattern + type
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             entity_pattern = EntityPattern(id=_id, idPattern=_idPattern, type=_type)
         # id + type & type pattern
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             entity_pattern = EntityPattern(id=_id, type=_type, typePattern=_typePattern)
         # only type
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             entity_pattern = EntityPattern(type=_type)
         # only type pattern
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             entity_pattern = EntityPattern(typePattern=_typePattern)
 
     def tearDown(self) -> None:

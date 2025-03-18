@@ -631,30 +631,6 @@ class ContextLDEntity(ContextLDEntityKeyValues):
                         final_list.append(NamedContextProperty(name=key, **value))
         return final_list
 
-    def add_attributes(self, **kwargs):
-        """
-        Invalid in NGSI-LD
-        """
-        raise NotImplementedError("This method should not be used in NGSI-LD")
-
-    def get_attribute(self, **kwargs):
-        """
-        Invalid in NGSI-LD
-        """
-        raise NotImplementedError("This method should not be used in NGSI-LD")
-
-    def get_attributes(self, **kwargs):
-        """
-        Invalid in NGSI-LD
-        """
-        raise NotImplementedError("This method should not be used in NGSI-LD")
-
-    def delete_attributes(self, **kwargs):
-        """
-        Invalid in NGSI-LD
-        """
-        raise NotImplementedError("This method should not be used in NGSI-LD")
-
     def delete_relationships(self, relationships: List[str]):
         """
         Delete the given relationships from the entity

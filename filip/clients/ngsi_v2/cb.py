@@ -9,7 +9,7 @@ from copy import deepcopy
 from enum import Enum
 from math import inf
 from pkg_resources import parse_version
-from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl
+from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl, ValidationError
 from pydantic.type_adapter import TypeAdapter
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 import re
@@ -18,7 +18,7 @@ from urllib.parse import urljoin
 import warnings
 from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
-from filip.models.base import FiwareHeader, PaginationMethod
+from filip.models.base import FiwareHeader, PaginationMethod, DataType
 from filip.utils.simple_ql import QueryString
 from filip.models.ngsi_v2.context import (
     ActionType,
@@ -31,6 +31,8 @@ from filip.models.ngsi_v2.context import (
     Query,
     Update,
     PropertyFormat,
+    ContextEntityList,
+    ContextEntityKeyValuesList,
 )
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
@@ -261,15 +263,16 @@ class ContextBrokerClient(BaseHttpClient):
                 return res.headers.get("Location")
             res.raise_for_status()
         except requests.RequestException as err:
-            if update and err.response.status_code == 422:
-                return self.override_entity(entity=entity, key_values=key_values)
-            if patch and err.response.status_code == 422:
-                if not key_values:
-                    return self.patch_entity(
-                        entity=entity, override_attr_metadata=override_attr_metadata
-                    )
-                else:
-                    return self._patch_entity_key_values(entity=entity)
+            if err.response is not None:
+                if update and err.response.status_code == 422:
+                    return self.override_entity(entity=entity, key_values=key_values)
+                if patch and err.response.status_code == 422:
+                    if not key_values:
+                        return self.patch_entity(
+                            entity=entity, override_attr_metadata=override_attr_metadata
+                        )
+                    else:
+                        return self._patch_entity_key_values(entity=entity)
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
@@ -408,13 +411,12 @@ class ContextBrokerClient(BaseHttpClient):
                 headers=headers,
             )
             if AttrsFormat.NORMALIZED in response_format:
-                adapter = TypeAdapter(List[ContextEntity])
-                return adapter.validate_python(items)
-            if AttrsFormat.KEY_VALUES in response_format:
-                adapter = TypeAdapter(List[ContextEntityKeyValues])
-                return adapter.validate_python(items)
-            return items
-
+                return ContextEntityList.model_validate({"entities": items}).entities
+            elif AttrsFormat.KEY_VALUES in response_format:
+                return ContextEntityKeyValuesList.model_validate(
+                    {"entities": items}
+                ).entities
+            return items  # in case of VALUES as response_format
         except requests.RequestException as err:
             msg = "Could not load entities"
             self.log_error(err=err, msg=msg)
@@ -1693,6 +1695,110 @@ class ContextBrokerClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
+    def add_valid_relationships(
+        self, entities: List[ContextEntity]
+    ) -> List[ContextEntity]:
+        """
+        Validate all attributes in the given entities. If the attribute value points to
+        an existing entity, it is assumed that this attribute is a relationship, and it
+        will be assigned with the attribute type "relationship"
+
+        Args:
+            entities: list of entities that need to be validated.
+
+        Returns:
+            updated entities
+        """
+        updated_entities = []
+        for entity in entities[:]:
+            for attr_name, attr_value in entity.model_dump(
+                exclude={"id", "type"}
+            ).items():
+                if isinstance(attr_value, dict):
+                    if self.validate_relationship(attr_value):
+                        entity.update_attribute(
+                            {
+                                attr_name: ContextAttribute(
+                                    **{
+                                        "type": DataType.RELATIONSHIP,
+                                        "value": attr_value.get("value"),
+                                    }
+                                )
+                            }
+                        )
+            updated_entities.append(entity)
+        return updated_entities
+
+    def remove_invalid_relationships(
+        self, entities: List[ContextEntity], hard_remove: bool = True
+    ) -> List[ContextEntity]:
+        """
+        Removes invalid relationships from the entities. An invalid relationship
+        is a relationship that has no destination entity.
+
+        Args:
+            entities: list of entities that need to be validated.
+            hard_remove: If True, invalid relationships will be deleted.
+                        If False, invalid relationships will be changed to Text
+                        attributes.
+
+        Returns:
+            updated entities
+        """
+        updated_entities = []
+        for entity in entities[:]:
+            for relationship in entity.get_relationships():
+                if not self.validate_relationship(relationship):
+                    if hard_remove:
+                        entity.delete_attributes(attrs=[relationship])
+                    else:
+                        # change the attribute type to "Text"
+                        entity.update_attribute(
+                            attrs=[
+                                NamedContextAttribute(
+                                    name=relationship.name,
+                                    type=DataType.TEXT,
+                                    value=relationship.value,
+                                )
+                            ]
+                        )
+                    updated_entities.append(entity)
+        return updated_entities
+
+    def validate_relationship(
+        self, relationship: Union[NamedContextAttribute, ContextAttribute, Dict]
+    ) -> bool:
+        """
+        Validates a relationship. A relationship is valid if it points to an existing
+        entity. Otherwise, it is considered invalid
+
+        Args:
+            relationship: relationship to validate
+        Returns
+            True if the relationship is valid, False otherwise
+        """
+        if isinstance(relationship, NamedContextAttribute) or isinstance(
+            relationship, ContextAttribute
+        ):
+            destination_id = relationship.value
+        elif isinstance(relationship, dict):
+            destination_id = relationship.get("value")
+            if destination_id is None:
+                raise ValueError(
+                    "Invalid relationship dictionary format\n"
+                    "Expected format: {"
+                    f'"type": "{DataType.RELATIONSHIP.value}", '
+                    '"value" "entity_id"}'
+                )
+        else:
+            raise ValueError("Invalid relationship type.")
+        try:
+            destination_entity = self.get_entity(entity_id=destination_id)
+            return destination_entity.id == destination_id
+        except requests.RequestException as err:
+            if err.response.status_code == 404:
+                return False
+
     def update_registration(self, registration: Registration):
         """
         Only the fields included in the request are updated in the registration.
@@ -1807,7 +1913,7 @@ class ContextBrokerClient(BaseHttpClient):
             options.append("forcedUpdate")
         if update_format:
             assert (
-                update_format == "keyValues"
+                update_format == AttrsFormat.KEY_VALUES.value
             ), "Only 'keyValues' is allowed as update format"
             options.append("keyValues")
         if options:
@@ -1980,6 +2086,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             if err.response is None or not err.response.status_code == 404:
+                self.log_error(err=err, msg="Checking entity existence failed!")
                 raise
             return False
 
@@ -2076,9 +2183,20 @@ class ContextBrokerClient(BaseHttpClient):
                         attr_name=old_attr.name,
                     )
                 except requests.RequestException as err:
-                    # if the attribute is provided by a registration the
-                    # deletion will fail
-                    if not err.response.status_code == 404:
+                    msg = (
+                        f"Failed to delete attribute {old_attr.name} of "
+                        f"entity {new_entity.id}."
+                    )
+                    if err.response is not None and err.response.status_code == 404:
+                        # if the attribute is provided by a registration the
+                        # deletion will fail
+                        msg += (
+                            f" The attribute is probably provided "
+                            f"by a registration."
+                        )
+                        self.log_error(err=err, msg=msg)
+                    else:
+                        self.log_error(err=err, msg=msg)
                         raise
             else:
                 # Check if attributed changed in any way, if yes update
@@ -2092,10 +2210,19 @@ class ContextBrokerClient(BaseHttpClient):
                             override_metadata=override_attr_metadata,
                         )
                     except requests.RequestException as err:
-                        # if the attribute is provided by a registration the
-                        # update will fail
-                        if not err.response.status_code == 404:
-                            raise
+                        msg = (
+                            f"Failed to update attribute {old_attr.name} of "
+                            f"entity {new_entity.id}."
+                        )
+                        if err.response is not None and err.response.status_code == 404:
+                            # if the attribute is provided by a registration the
+                            # update will fail
+                            msg += (
+                                f" The attribute is probably provided "
+                                f"by a registration."
+                            )
+                        self.log_error(err=err, msg=msg)
+                        raise
 
         # Create new attributes
         update_entity = ContextEntity(id=entity.id, type=entity.type)

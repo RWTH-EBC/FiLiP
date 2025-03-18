@@ -6,9 +6,16 @@ import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
 
 from aenum import Enum
-from pydantic import field_validator, ConfigDict, BaseModel, Field, model_validator
+from pydantic import (
+    field_validator,
+    ConfigDict,
+    BaseModel,
+    Field,
+    model_validator,
+    SerializeAsAny,
+)
 from pydantic_core.core_schema import ValidationInfo
-
+from pydantic.types import OnErrorOmit
 from filip.models.ngsi_v2.base import (
     EntityPattern,
     Expression,
@@ -20,6 +27,8 @@ from filip.models.base import DataType
 from filip.utils.validators import (
     validate_fiware_datatype_standard,
     validate_fiware_datatype_string_protect,
+    validate_fiware_attribute_value_regex,
+    validate_fiware_attribute_name_regex,
 )
 
 
@@ -182,7 +191,20 @@ class ContextEntityKeyValues(BaseModel):
                 # `type` was found and pydantic will raise the correct error
                 super().__init__(id=id, **data)
         # This will result in usual behavior
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
+
+    # Validation of attributes
+    @classmethod
+    def _validate_attributes(cls, data: dict):
+        """
+        Validate attribute name and value of the entity in keyvalues format
+        """
+        for attr_name, attr_value in data.items():
+            if isinstance(attr_value, str):
+                validate_fiware_attribute_value_regex(attr_value)
+            validate_fiware_attribute_name_regex(attr_name)
+        return data
 
     def get_attributes(self) -> dict:
         """
@@ -270,7 +292,13 @@ class ContextEntity(ContextEntityKeyValues):
         attrs = {
             key: ContextAttribute.model_validate(attr)
             for key, attr in data.items()
-            if (key not in cls.model_fields and not isinstance(attr, ContextAttribute))
+            if (
+                # validate_fiware_attribute_value_regex(key) not in cls.model_fields
+                validate_fiware_attribute_name_regex(key) not in cls.model_fields
+                and not isinstance(attr, ContextAttribute)
+                # key not in cls.model_fields
+                # and not isinstance(attr, ContextAttribute)
+            )
         }
 
         return attrs
@@ -651,6 +679,22 @@ class ContextEntity(ContextEntityKeyValues):
         raise AttributeError("This method is not available in ContextEntity")
 
 
+class ContextEntityList(BaseModel):
+    """
+    Collection model for a list of context entities
+    """
+
+    entities: List[OnErrorOmit[ContextEntity]]
+
+
+class ContextEntityKeyValuesList(BaseModel):
+    """
+    Collection model for a list of context entities in key-values format
+    """
+
+    entities: List[OnErrorOmit[ContextEntityKeyValues]]
+
+
 class Query(BaseModel):
     """
     Model for queries
@@ -717,9 +761,11 @@ class Update(BaseModel):
         description="actionType, to specify the kind of update action to do: "
         "either append, appendStrict, update, delete, or replace. ",
     )
-    entities: List[Union[ContextEntity, ContextEntityKeyValues]] = Field(
-        description="an array of entities, each entity specified using the "
-        "JSON entity representation format "
+    entities: SerializeAsAny[List[Union[ContextEntity, ContextEntityKeyValues]]] = (
+        Field(
+            description="an array of entities, each entity specified using the "
+            "JSON entity representation format "
+        )
     )
 
     @field_validator("action_type")
@@ -781,4 +827,4 @@ class NamedCommand(Command):
         max_length=256,
         min_length=1,
     )
-    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)

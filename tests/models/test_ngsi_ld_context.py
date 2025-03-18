@@ -240,7 +240,7 @@ class TestLDContextModels(unittest.TestCase):
             type="GeoProperty",
             value=Polygon(**self.testpolygon_value),
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             test_GeometryCollection = NamedContextGeoProperty(
                 name="testgeometrycollection",
                 type="GeoProperty",

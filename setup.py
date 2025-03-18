@@ -13,7 +13,7 @@ INSTALL_REQUIRES = [
     "datamodel_code_generator[http]~=0.25.0",
     "paho-mqtt~=2.0.0",
     "pandas_datapackage_reader~=0.18.0",
-    "pydantic>=2.5.2,<2.7.0",
+    "pydantic>=2.6.0,<2.9.0",
     "pydantic-settings>=2.0.0,<2.3.0",
     "geojson_pydantic~=1.0.2",
     "stringcase>=1.2.0",
@@ -29,7 +29,7 @@ INSTALL_REQUIRES = [
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = "0.6.0"
+VERSION = "0.6.2"
 
 setuptools.setup(
     name="filip",
@@ -57,6 +57,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: BSD License",
     ],
     keywords=["iot", "fiware", "semantic"],
@@ -71,7 +72,7 @@ setuptools.setup(
         "semantics": ["igraph~=0.11.2"],
         "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
-        ":python_version >= '3.9'": ["pandas~=2.1.4"],
+        ":python_version >= '3.9'": ["pandas>=2.1.4,<2.3.0"],
     },
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.8",
