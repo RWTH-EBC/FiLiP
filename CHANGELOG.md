@@ -1,6 +1,7 @@
 ### v0.6.x
 - add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
 - add: Context conversion methods to_keyvalues() and to_normalized() ([#393](https://github.com/RWTH-EBC/FiLiP/pull/393))
+- fix: relationship validation can not handle empty attributes ([#411](https://github.com/RWTH-EBC/FiLiP/pull/411))
 
 ### v0.6.2
 - add: New features to validate and update relationships for V2 entities ([#380](https://github.com/RWTH-EBC/FiLiP/pull/380))
