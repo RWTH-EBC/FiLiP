@@ -7,8 +7,8 @@ import unittest
 import logging
 from urllib.parse import urljoin
 
-import pyld
-from pydantic import AnyHttpUrl
+
+from pydantic import AnyHttpUrl,BaseModel,fields
 from requests import RequestException, Session
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -19,6 +19,7 @@ from filip.models.base import FiwareLDHeader, core_context
 from filip.models.ngsi_ld.context import (
     ActionTypeLD,
     ContextLDEntity,
+    ContextLDEntityKeyValues,
     ContextProperty,
     NamedContextProperty,
     ContextRelationship,
@@ -217,6 +218,7 @@ class TestContextBroker(unittest.TestCase):
             - Post an entity -> Does it return 201?
             - Post an entity again -> Does it return 409?
             - Post an entity without requires args -> Does it return 422?
+            - Post entity from class with default value
         """
         # create entity
         self.client.post_entity(entity=self.entity)
@@ -272,8 +274,24 @@ class TestContextBroker(unittest.TestCase):
             self.client.post_entity(ContextLDEntity(id="room2"))
         entity_list = self.client.get_entity_list()
         self.assertNotIn("room2", entity_list)
+        
+        #check if default attribute set to default value
+        class Sensor(BaseModel):
+            temperature: float = fields.Field(default=20.0)
+        class SensorFIWARE(Sensor, ContextLDEntityKeyValues):
+            type: str = fields.FieldInfo.merge_field_infos(
+                ContextLDEntityKeyValues.model_fields["type"],
+                default="Sensor"
+            )
+            
+        t_sen = SensorFIWARE(id="urn:ngsi-ld:check-default")
+        self.client.post_entity(entity=t_sen, update=True)
+        entity = self.client.get_entity(entity_id="urn:ngsi-ld:check-default")
+        self.assertEqual(entity.temperature.value,20.0)
+        self.assertEqual(entity.type,"Sensor")
 
         """delete"""
+        entity_list = self.client.get_entity_list()
         self.client.entity_batch_operation(
             entities=entity_list, action_type=ActionTypeLD.DELETE
         )
@@ -583,7 +601,7 @@ class TestContextBroker(unittest.TestCase):
         self.entity.add_properties({"test_value": attr})
         self.client.append_entity_attributes(self.entity)
         self.entity.add_properties({"test_value": attr_same})
-        # noOverwrite will raise 400, because all attributes exist already.
+        
         with self.assertRaises(RequestException):
             self.client.append_entity_attributes(self.entity, options="noOverwrite")
         entity = self.client.get_entity(entity_id=self.entity.id)
