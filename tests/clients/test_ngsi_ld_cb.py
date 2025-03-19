@@ -22,6 +22,8 @@ from filip.models.ngsi_ld.context import (
     ContextLDEntityKeyValues,
     ContextProperty,
     NamedContextProperty,
+    ContextRelationship,
+    ContextGeoProperty,
 )
 from tests.config import settings
 import requests
@@ -292,6 +294,31 @@ class TestContextBroker(unittest.TestCase):
         entity_list = self.client.get_entity_list()
         self.client.entity_batch_operation(
             entities=entity_list, action_type=ActionTypeLD.DELETE
+        )
+
+    def test_post_entity_with_filip_model(self):
+        """
+        Post an entity with predefined FiLiP model, including ContextProperty,
+        ContextRelationship, ContextGeoProperty.
+        """
+        test_entity = ContextLDEntity(
+            id="urn:ngsi-ld:Building:3",
+            type="Building",
+            name=ContextProperty(
+                value="Main Building",
+            ),
+            location=ContextGeoProperty(
+                value={"type": "Point", "coordinates": (50, 6)}
+            ),
+            inDistrict=ContextRelationship(
+                object="urn:ngsi-ld:CityDistrict:51", type="Relationship"
+            ),
+        )
+        self.client.post_entity(entity=test_entity)
+        res_entity = self.client.get_entity(entity_id=test_entity.id)
+        self.assertEqual(
+            res_entity.model_dump(exclude={"context"}),
+            test_entity.model_dump(exclude={"context"}),
         )
 
     def test_get_entity(self):
