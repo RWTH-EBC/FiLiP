@@ -467,7 +467,7 @@ of the data provided.
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Expression.validate_expressions">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1139,6 +1139,16 @@ Dict -&gt; dict of {name: ContextAttribute}</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntity.to_keyvalues">
+<span class="sig-name descname"><span class="pre">to_keyvalues</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntity.to_keyvalues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntity.to_keyvalues" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntity.to_normalized">
+<span class="sig-name descname"><span class="pre">to_normalized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntity.to_normalized"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntity.to_normalized" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntity.update_attribute">
 <span class="sig-name descname"><span class="pre">update_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute" title="filip.models.ngsi_v2.context.ContextAttribute"><span class="pre">ContextAttribute</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute" title="filip.models.ngsi_v2.context.NamedContextAttribute"><span class="pre">NamedContextAttribute</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntity.update_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntity.update_attribute" title="Permalink to this definition"></a></dt>
 <dd><p>Update attributes of an entity. Overwrite the current held value
@@ -1240,6 +1250,11 @@ dict format</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntityKeyValues.to_normalized">
+<span class="sig-name descname"><span class="pre">to_normalized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntityKeyValues.to_normalized"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntityKeyValues.to_normalized" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

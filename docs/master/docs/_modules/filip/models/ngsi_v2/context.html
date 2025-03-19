@@ -292,7 +292,25 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">})</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="ContextEntityKeyValues.to_normalized"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues.to_normalized">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">attr_type</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">DataType</span><span class="o">.</span><span class="n">NUMBER</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+                <span class="k">else</span> <span class="p">(</span>
+                    <span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="o">.</span><span class="n">value</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="n">DataType</span><span class="o">.</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">value</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">NamedContextAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">attr_type</span><span class="p">)</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="n">entity</span> <span class="o">=</span> <span class="n">ContextEntity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="n">entity</span><span class="o">.</span><span class="n">add_attributes</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entity</span></div></div>
 
 
 <div class="viewcode-block" id="ContextEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntity</span><span class="p">(</span><span class="n">ContextEntityKeyValues</span><span class="p">):</span>
@@ -727,7 +745,20 @@
         <span class="n">command_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command_attribute_name</span><span class="si">}</span><span class="s2">_status&quot;</span><span class="p">)</span>
         <span class="n">command_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command_attribute_name</span><span class="si">}</span><span class="s2">_info&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">command</span><span class="p">,</span> <span class="n">command_status</span><span class="p">,</span> <span class="n">command_info</span></div></div>
+        <span class="k">return</span> <span class="n">command</span><span class="p">,</span> <span class="n">command_status</span><span class="p">,</span> <span class="n">command_info</span></div>
+
+<div class="viewcode-block" id="ContextEntity.to_keyvalues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.to_keyvalues">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_keyvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">attr</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">(</span>
+                <span class="n">response_format</span><span class="o">=</span><span class="n">PropertyFormat</span><span class="o">.</span><span class="n">DICT</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">entity</span> <span class="o">=</span> <span class="n">ContextEntityKeyValues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entity</span></div>
+
+<div class="viewcode-block" id="ContextEntity.to_normalized"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.to_normalized">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;This method is not available in ContextEntity&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ContextEntityList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityList</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
