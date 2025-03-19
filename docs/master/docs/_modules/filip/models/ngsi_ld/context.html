@@ -623,7 +623,12 @@
         <span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_single_property</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextProperty</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_single_property</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextProperty</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">,</span> <span class="n">ContextGeoProperty</span><span class="p">]:</span>
+        <span class="c1"># skip validation if pre-defined model is already used</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ContextProperty</span><span class="p">,</span> <span class="n">ContextRelationship</span><span class="p">,</span> <span class="n">ContextGeoProperty</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">attr</span>
         <span class="n">property_fields</span> <span class="o">=</span> <span class="n">ContextProperty</span><span class="o">.</span><span class="n">get_model_fields_set</span><span class="p">()</span>
         <span class="n">property_fields</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         <span class="c1"># subattrs = {}</span>
