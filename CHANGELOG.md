@@ -1,6 +1,7 @@
 ### v0.6.x
 - add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
 - add: Context conversion methods to_keyvalues() and to_normalized() ([#393](https://github.com/RWTH-EBC/FiLiP/pull/393))
+- fix: relationship validation can not handle empty attributes ([#411](https://github.com/RWTH-EBC/FiLiP/pull/411))
 - fix:relationship and properties cannot be created via predefined models ([#412](https://github.com/RWTH-EBC/FiLiP/pull/412))
 - fix: LD entity model ignore unset properties ([#402](https://github.com/RWTH-EBC/FiLiP/pull/402))
 
