@@ -197,10 +197,10 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def post_entity(
-        self, 
-        entity: Union[ContextLDEntity,ContextLDEntityKeyValues], 
-        append: bool = False, 
-        update: bool = False
+        self,
+        entity: Union[ContextLDEntity, ContextLDEntityKeyValues],
+        append: bool = False,
+        update: bool = False,
     ):
         """
         Function registers an Object with the NGSI-LD Context Broker,
@@ -240,7 +240,9 @@ class ContextBrokerLDClient(BaseHttpClient):
             self.log_error(err=err, msg=msg)
             raise
 
-    def override_entities(self, entities: List[Union[ContextLDEntity,ContextLDEntityKeyValues]]):
+    def override_entities(
+        self, entities: List[Union[ContextLDEntity, ContextLDEntityKeyValues]]
+    ):
         """
         Function to create or override existing entites with the NGSI-LD Context Broker.
         The batch operation with Upsert will be used.
@@ -432,7 +434,9 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def replace_existing_attributes_of_entity(
-        self, entity: Union[ContextLDEntity,ContextLDEntityKeyValues], append: bool = False
+        self,
+        entity: Union[ContextLDEntity, ContextLDEntityKeyValues],
+        append: bool = False,
     ):
         """
         The attributes previously existing in the entity are removed and
@@ -454,9 +458,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             res = self.patch(
                 url=url,
                 headers=headers,
-                json=entity.model_dump(
-                    exclude={"id", "type"}, exclude_unset=True, exclude_none=True
-                ),
+                json=entity.model_dump(exclude={"id", "type"}, exclude_none=True),
             )
             if res.ok:
                 self.logger.info(f"Entity {entity.id} successfully " "updated!")
@@ -510,9 +512,7 @@ class ContextBrokerLDClient(BaseHttpClient):
 
         jsonnn = {}
         if isinstance(attr, list) or isinstance(attr, NamedContextProperty):
-            jsonnn = attr.model_dump(
-                exclude={"name"}, exclude_unset=True, exclude_none=True
-            )
+            jsonnn = attr.model_dump(exclude={"name"}, exclude_none=True)
         else:
             prop = attr.model_dump()
             for key, value in prop.items():
@@ -533,7 +533,9 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise
 
     def append_entity_attributes(
-        self, entity: Union[ContextLDEntity,ContextLDEntityKeyValues], options: Optional[str] = None
+        self,
+        entity: Union[ContextLDEntity, ContextLDEntityKeyValues],
+        options: Optional[str] = None,
     ):
         """
         Append new Entity attributes to an existing Entity within an NGSI-LD system
@@ -563,9 +565,7 @@ class ContextBrokerLDClient(BaseHttpClient):
                 url=url,
                 headers=headers,
                 params=params,
-                json=entity.model_dump(
-                    exclude={"id", "type"}, exclude_unset=True, exclude_none=True
-                ),
+                json=entity.model_dump(exclude={"id", "type"}, exclude_none=True),
             )
             if res.ok:
                 self.logger.info(f"Entity {entity.id} successfully updated!")
@@ -774,8 +774,6 @@ class ContextBrokerLDClient(BaseHttpClient):
                 headers=headers,
                 data=subscription.model_dump_json(
                     exclude={"id"},
-                    exclude_unset=True,
-                    exclude_defaults=True,
                     exclude_none=True,
                 ),
             )
@@ -860,7 +858,7 @@ class ContextBrokerLDClient(BaseHttpClient):
     def entity_batch_operation(
         self,
         *,
-        entities: List[Union[ContextLDEntity,ContextLDEntityKeyValues]],
+        entities: List[Union[ContextLDEntity, ContextLDEntityKeyValues]],
         action_type: Union[ActionTypeLD, str],
         options: Literal["noOverwrite", "replace", "update"] = None,
     ) -> None:
@@ -923,7 +921,6 @@ class ContextBrokerLDClient(BaseHttpClient):
                     data=json.dumps(
                         update.model_dump(
                             by_alias=True,
-                            exclude_unset=True,
                             exclude_none=True,
                         ).get("entities")
                     ),
