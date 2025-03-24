@@ -1,9 +1,10 @@
 """
 Test module for context broker models
 """
+
 import unittest
 from typing import List
-from pydantic import ValidationError
+from pydantic_core import PydanticCustomError
 from geojson_pydantic import (
     Point,
     MultiPoint,
@@ -74,6 +75,8 @@ class TestContextModels(unittest.TestCase):
         self.assertIsInstance(attr.value, list)
         attr = ContextAttribute(**{"value": [20, 20], "type": "Array"})
         self.assertIsInstance(attr.value, list)
+        with self.assertRaises(ValueError) as context:
+            ContextAttribute(**{"value": "2<0", "type": "Text"})
 
     def test_geojson_attribute(self):
         """
@@ -441,6 +444,45 @@ class TestContextModels(unittest.TestCase):
         entity = generated_model.model_validate(self.entity_data)
         self.assertEqual(self.entity_data, entity.model_dump(exclude_unset=True))
 
+        # try to generate a entity with one of dissalowed character in attribute name
+        attribute_name = [
+            "<",
+            ">",
+            '"',
+            "'",
+            "=",
+            ";",
+            "(",
+            ")",
+            " ",
+            "§",
+            "&",
+            "/",
+            "#",
+            "?",
+        ]
+        for char in attribute_name:
+            with self.assertRaises(PydanticCustomError) as context:
+                ContextEntity(
+                    **{
+                        "id": "Room",
+                        "type": "Room",
+                        "temper" + char + "ature": {"value": "20", "type": "Text"},
+                    }
+                )
+
+        # try to generate a entity with with one of dissalowed character in attribute value
+        attribute_value = ["<", ">", '"', "'", "=", ";", "(", ")"]
+        for char in attribute_value:
+            with self.assertRaises(ValueError) as context:
+                ContextEntity(
+                    **{
+                        "id": "Room",
+                        "type": "Room",
+                        "temperature": {"value": "2" + char + "0", "type": "Text"},
+                    }
+                )
+
     def test_command(self):
         """
         Test command model
@@ -450,7 +492,7 @@ class TestContextModels(unittest.TestCase):
         cmd_data = {"type": "command", "value": [5]}
         Command(**cmd_data)
         Command(value=[0])
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
 
             class NotSerializableObject:
                 test: "test"
@@ -477,27 +519,24 @@ class TestContextModels(unittest.TestCase):
         Returns:
             None
         """
-
-        from pydantic.error_wrappers import ValidationError
-
         valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
         invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
-
-        special_strings: List[str] = ["id", "type", "geo:location"]
-
+        with self.assertRaises(ValueError):
+            NamedContextAttribute(name="type")
+        special_strings: List[str] = ["id", "type", "geo:json"]
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
-            self.assertRaises(ValidationError, Metadata, type=string)
-            self.assertRaises(ValidationError, NamedMetadata, name=string)
-            self.assertRaises(ValidationError, ContextAttribute, type=string)
-            self.assertRaises(ValidationError, NamedContextAttribute, name=string)
+            self.assertRaises(ValueError, Metadata, type=string)
+            self.assertRaises(ValueError, NamedMetadata, name=string)
+            self.assertRaises(ValueError, ContextAttribute, type=string)
+            self.assertRaises(ValueError, NamedContextAttribute, name=string)
             self.assertRaises(
-                ValidationError, ContextEntityKeyValues, id=string, type="name"
+                ValueError, ContextEntityKeyValues, id=string, type="name"
             )
             self.assertRaises(
-                ValidationError, ContextEntityKeyValues, id="name", type=string
+                ValueError, ContextEntityKeyValues, id="name", type=string
             )
-            self.assertRaises(ValidationError, NamedCommand, name=string)
+            self.assertRaises(ValueError, NamedCommand, name=string)
 
         # Test if all needed fields, do not trow wrong errors
         for string in valid_strings:
@@ -510,9 +549,9 @@ class TestContextModels(unittest.TestCase):
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
-            self.assertRaises(ValidationError, ContextAttribute, type=string)
-            self.assertRaises(ValidationError, NamedContextAttribute, name=string)
-            self.assertRaises(ValidationError, NamedCommand, name=string)
+            self.assertRaises(ValueError, ContextAttribute, type=string)
+            self.assertRaises(ValueError, NamedContextAttribute, name=string)
+            self.assertRaises(ValueError, NamedCommand, name=string)
         # Test for the normal protected field if all strings are allowed
         for string in special_strings:
             Metadata(type=string)
@@ -621,6 +660,59 @@ class TestContextModels(unittest.TestCase):
         self.assertEqual(entity.get_attributes(strict_data_type=False), attributes)
         self.assertNotEqual(entity.get_attributes(strict_data_type=True), attributes)
         self.assertNotEqual(entity.get_attributes(), attributes)
+
+    def test_format_conversion(self):
+        entity_data = [
+            {
+                "id": "MyId1",
+                "type": "MyType",
+                "temperature": {"value": 20.2, "type": "Number"},
+            },
+            {
+                "id": "MyId2",
+                "type": "MyType",
+                "temperature": {"value": 20, "type": "Number"},
+            },
+            {
+                "id": "MyId3",
+                "type": "MyType",
+                "temperature": {"value": "20", "type": "Text"},
+            },
+            {
+                "id": "MyId4",
+                "type": "MyType",
+                "temperature": {"value": None, "type": "Number"},
+            },
+            {
+                "id": "MyId5",
+                "type": "MyType",
+                "relatedTo": {"value": "MyId1", "type": "Relationship"},
+            },
+        ]
+        for format_entity_data in entity_data:
+            format_entity_normalized = ContextEntity(**format_entity_data)
+            format_entity_data_kv = dict()
+            for attr, value in format_entity_data.items():
+                if isinstance(value, dict):
+                    value = value.get("value")
+                format_entity_data_kv[attr] = value
+            format_entity_key_values = ContextEntityKeyValues(**format_entity_data_kv)
+            entity_kv2normalized = format_entity_key_values.to_normalized()
+            self.assertEqual(format_entity_normalized.id, entity_kv2normalized.id)
+            self.assertEqual(format_entity_normalized.type, entity_kv2normalized.type)
+            # We cannot guarantee the type of the attribute is the same
+            for attr_name, attr in format_entity_normalized.get_attributes(
+                response_format="dict"
+            ).items():
+                self.assertEqual(
+                    entity_kv2normalized.get_attribute(attr_name).value, attr.value
+                )
+
+            entity_normalized2kv = format_entity_normalized.to_keyvalues()
+            for attr_name, value in format_entity_key_values.model_dump().items():
+                self.assertEqual(
+                    entity_normalized2kv.model_dump().get(attr_name), value
+                )
 
     def tearDown(self) -> None:
         """

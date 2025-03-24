@@ -1,0 +1,101 @@
+name: CI for FiLiP
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    environment: unittests  # Environment for unit tests
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+      fail-fast: false  # Ensure all setups run even if one fails
+
+    steps:
+      # Step 1: Checkout correct branch
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      # Step 2: Debug - Verify directory structure
+      - name: Debug - Verify Repository Structure
+        run: |
+          pwd
+          ls -la
+
+      # Step 3: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Step 4: Create .env file
+      - name: Create .env file
+        run: |
+          cat <<EOF > .env
+          LOG_LEVEL="INFO"
+          CB_URL=${{ vars.CB_URL }} # Using stored environment variable
+          ORION_LD_URL=${{ vars.ORION_LD_URL }}
+          IOTA_JSON_URL=${{ vars.IOTA_JSON_URL }}
+          IOTA_UL_URL=${{ vars.IOTA_UL_URL }}
+          QL_URL=${{ vars.QL_URL }}
+          MQTT_BROKER_URL=${{ vars.MQTT_BROKER_URL }}
+          MQTT_BROKER_URL_INTERNAL=${{ vars.MQTT_BROKER_URL_INTERNAL }}
+          LD_MQTT_BROKER_URL=${{ vars.LD_MQTT_BROKER_URL }}
+          LD_MQTT_BROKER_URL_INTERNAL=${{ vars.LD_MQTT_BROKER_URL_INTERNAL }}
+          FIWARE_SERVICE=${{ vars.FIWARE_SERVICE }}
+          FIWARE_SERVICEPATH=${{ vars.FIWARE_SERVICEPATH }}
+          STATIC_RECORDS=${{ vars.STATIC_RECORDS }}
+          EOF
+
+      # Step 5: Verify .env file
+      - name: Verify .env file
+        run: cat .env
+
+      # Step 6: Start FIWARE services
+      - name: Start FIWARE Services
+        run: |
+          cd filip_unittest/docker
+          docker compose up -d
+
+      # Step 7: Wait for FIWARE Services
+      - name: Wait for FIWARE Services
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:1026/version && \
+            curl -s http://localhost:1027/version && \
+            curl -s http://localhost:4061/version && \
+            curl -s http://localhost:4041/version && \
+            curl -s http://localhost:8668/version && break || sleep 5
+          done
+
+      # Step 8: Install dependencies (if cache is empty)
+      - name: Install dependencies (if needed)
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel
+          pip install .
+          pip install pytest
+
+      # Step 9: Debug - Show Running Docker Containers
+      - name: Debug - Show Running Docker Containers
+        run: docker ps -a
+      
+      # Step 10: Navigate back to tests folder
+      - name: Navigate to Tests Folder
+        run: |
+          cd $GITHUB_WORKSPACE
+          ls -la
+
+      # Step 11: Run Tests
+      - name: Run tests with unittest and pytest
+        run: |
+          python -m unittest tests/clients/test_ngsi_v2_cb.py
+          python -m pytest tests

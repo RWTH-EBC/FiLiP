@@ -1,6 +1,7 @@
 """
 Simulation model to provide dynamic data throughout the tutorial
 """
+
 from math import cos
 import numpy as np
 
@@ -26,13 +27,16 @@ class SimulationModel:
         temp_min: minimal ambient temperature in °C
         temp_start: initial zone temperature in °C
     """
-    def __init__(self,
-                 t_start: int = 0,
-                 t_end: int = 24 * 60 * 60,
-                 dt: int = 1,
-                 temp_max: float = 10,
-                 temp_min: float = -5,
-                 temp_start: float = 20):
+
+    def __init__(
+        self,
+        t_start: int = 0,
+        t_end: int = 24 * 60 * 60,
+        dt: int = 1,
+        temp_max: float = 10,
+        temp_min: float = -5,
+        temp_start: float = 20,
+    ):
 
         self.t_start = t_start
         self.t_end = t_end
@@ -63,13 +67,20 @@ class SimulationModel:
             t_zone: zone temperature in °C
         """
         for t in range(self.t_sim, t_sim, self.dt):
-            self.t_zone = self.t_zone + \
-                          self.dt * (self.ua * (self.t_amb - self.t_zone) +
-                                     self.on_off * self.q_h) / self.c_p
+            self.t_zone = (
+                self.t_zone
+                + self.dt
+                * (self.ua * (self.t_amb - self.t_zone) + self.on_off * self.q_h)
+                / self.c_p
+            )
 
-            self.t_amb = -(self.temp_max - self.temp_min) / 2 * \
-                    cos(2 * np.pi * t /(24 * 60 * 60)) + \
-                    self.temp_min + (self.temp_max - self.temp_min) / 2
+            self.t_amb = (
+                -(self.temp_max - self.temp_min)
+                / 2
+                * cos(2 * np.pi * t / (24 * 60 * 60))
+                + self.temp_min
+                + (self.temp_max - self.temp_min) / 2
+            )
 
         self.t_sim = t_sim
 

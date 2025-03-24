@@ -1,5 +1,6 @@
 """Wrapper module to provide manipulation functions for vocabulary that
     should later be hidden from the user"""
+
 import uuid
 from enum import Enum
 
@@ -12,28 +13,27 @@ from filip.semantics.vocabulary import *
 
 
 class IdType(str, Enum):
-    class_ = 'Class'
-    object_property = 'Object Property'
-    data_property = 'Data Property'
-    datatype = 'Datatype'
-    relation = 'Relation'
-    combined_relation = 'Combined Relation'
-    individual = 'Individual'
-    source = 'Source'
+    class_ = "Class"
+    object_property = "Object Property"
+    data_property = "Data Property"
+    datatype = "Datatype"
+    relation = "Relation"
+    combined_relation = "Combined Relation"
+    individual = "Individual"
+    source = "Source"
 
 
 class VocabularyBuilder(BaseModel):
     """Wrapper class to provide manipulation functions for vocabulary that
     should later be hidden from the user"""
 
-    vocabulary: Vocabulary = Field(
-        description="Vocabulary to manipulate"
-    )
+    vocabulary: Vocabulary = Field(description="Vocabulary to manipulate")
 
     current_source: Source = Field(
         default=None,
         description="Current source to which entities are added,"
-                    "needed while parsing")
+        "needed while parsing",
+    )
 
     def clear(self):
         """Clear all objects form the vocabulary
@@ -62,9 +62,7 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-        self._add_and_merge_entity(class_,
-                                   self.vocabulary.classes,
-                                   IdType.class_)
+        self._add_and_merge_entity(class_, self.vocabulary.classes, IdType.class_)
 
     def add_object_property(self, obj_prop: ObjectProperty):
         """Add an ObjectProperty to the vocabulary
@@ -76,7 +74,8 @@ class VocabularyBuilder(BaseModel):
             None
         """
         self._add_and_merge_entity(
-            obj_prop, self.vocabulary.object_properties, IdType.object_property)
+            obj_prop, self.vocabulary.object_properties, IdType.object_property
+        )
 
     def add_data_property(self, data_prop: DataProperty):
         """Add an DataProperty to the vocabulary
@@ -88,7 +87,8 @@ class VocabularyBuilder(BaseModel):
             None
         """
         self._add_and_merge_entity(
-            data_prop, self.vocabulary.data_properties, IdType.data_property)
+            data_prop, self.vocabulary.data_properties, IdType.data_property
+        )
 
     def add_datatype(self, datatype: Datatype):
         """Add a DataType to the vocabulary
@@ -99,8 +99,7 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-        self._add_and_merge_entity(
-            datatype, self.vocabulary.datatypes, IdType.datatype)
+        self._add_and_merge_entity(datatype, self.vocabulary.datatypes, IdType.datatype)
 
     def add_predefined_datatype(self, datatype: Datatype):
         """Add a DataType to the vocabulary, that belongs to the source:
@@ -126,9 +125,9 @@ class VocabularyBuilder(BaseModel):
         Returns:
             None
         """
-        self._add_and_merge_entity(individual,
-                                   self.vocabulary.individuals,
-                                   IdType.individual)
+        self._add_and_merge_entity(
+            individual, self.vocabulary.individuals, IdType.individual
+        )
 
     def add_relation_for_class(self, class_iri: str, rel: Relation):
         """Add a relation object to a class
@@ -152,8 +151,9 @@ class VocabularyBuilder(BaseModel):
         class_.relation_ids.append(rel.id)
         self.vocabulary.id_types[rel.id] = IdType.relation
 
-    def add_combined_object_relation_for_class(self, class_iri: str,
-                                               crel: CombinedObjectRelation):
+    def add_combined_object_relation_for_class(
+        self, class_iri: str, crel: CombinedObjectRelation
+    ):
         """Add a combined object relation object to a class
 
         Args:
@@ -164,12 +164,14 @@ class VocabularyBuilder(BaseModel):
             None
         """
         self.vocabulary.combined_object_relations[crel.id] = crel
-        self.vocabulary.get_class_by_iri(class_iri).\
-            combined_object_relation_ids.append(crel.id)
+        self.vocabulary.get_class_by_iri(class_iri).combined_object_relation_ids.append(
+            crel.id
+        )
         self.vocabulary.id_types[crel.id] = IdType.combined_relation
 
-    def add_combined_data_relation_for_class(self, class_iri: str,
-                                             cdata: CombinedDataRelation):
+    def add_combined_data_relation_for_class(
+        self, class_iri: str, cdata: CombinedDataRelation
+    ):
         """Add a combined data relation object to a class
 
         Args:
@@ -180,8 +182,9 @@ class VocabularyBuilder(BaseModel):
             None
         """
         self.vocabulary.combined_data_relations[cdata.id] = cdata
-        self.vocabulary.get_class_by_iri(class_iri).\
-            combined_data_relation_ids.append(cdata.id)
+        self.vocabulary.get_class_by_iri(class_iri).combined_data_relation_ids.append(
+            cdata.id
+        )
         self.vocabulary.id_types[cdata.id] = IdType.combined_relation
 
     def add_source(self, source: Source, id: str = None):
@@ -214,10 +217,9 @@ class VocabularyBuilder(BaseModel):
         assert source_id in self.vocabulary.sources
         self.current_source = self.vocabulary.sources[source_id]
 
-    def _add_and_merge_entity(self,
-                              entity: Entity,
-                              entity_dict: Dict[str, Entity],
-                              id_type: IdType):
+    def _add_and_merge_entity(
+        self, entity: Entity, entity_dict: Dict[str, Entity], id_type: IdType
+    ):
         """Adds an entity to the vocabulary. If an entity with teh same iri
         already exists the label and comment are "merged" and both sources
         are noted
@@ -237,12 +239,15 @@ class VocabularyBuilder(BaseModel):
         if entity.iri in self.vocabulary.id_types:
             if not id_type == self.vocabulary.id_types[entity.iri]:
                 self.current_source.add_parsing_log_entry(
-                    LogLevel.CRITICAL, id_type, entity.iri,
+                    LogLevel.CRITICAL,
+                    id_type,
+                    entity.iri,
                     f"{entity.iri} from source "
                     f"{self.current_source.get_name()} "
                     f"exists multiple times in different catagories. It was "
                     f"only added for the category "
-                    f"{self.vocabulary.id_types[entity.iri].value}")
+                    f"{self.vocabulary.id_types[entity.iri].value}",
+                )
                 return
 
             old_entity = entity_dict[entity.iri]
@@ -258,15 +263,17 @@ class VocabularyBuilder(BaseModel):
                     return ""
                 else:
                     self.current_source.add_parsing_log_entry(
-                        LogLevel.WARNING, id_type, entity.iri,
+                        LogLevel.WARNING,
+                        id_type,
+                        entity.iri,
                         f"{property} from source "
                         f"{old_entity.get_source_names(self.vocabulary)} "
-                        f"was overwritten")
+                        f"was overwritten",
+                    )
                     return new
 
             entity.label = select_from(old_entity.label, entity.label, "label")
-            entity.comment = select_from(old_entity.comment, entity.comment,
-                                         "comment")
+            entity.comment = select_from(old_entity.comment, entity.comment, "comment")
 
         self.vocabulary.id_types[entity.iri] = id_type
         entity.source_ids.add(self.current_source.id)

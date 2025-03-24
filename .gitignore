@@ -12,8 +12,11 @@ __pycache__
 # include issue branch workflows
 !.github/workflows/issue-tracker.yml
 !.github/issue-branch.yml
+!.github/workflows/unittest.yml
+!filip_unittest/docker/docker-compose.yml
 
 *.yaml
+!.pre-commit-config.yaml
 
 # pip install #
 #####################
@@ -30,7 +33,7 @@ requirements.txt
 .idea
 .cache
 venv
-
+.venv
 # Unittest #
 #####################
 .pytest_cache

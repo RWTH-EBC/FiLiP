@@ -15,12 +15,13 @@
 """
 
 # ## Import packages
-from filip.clients.ngsi_v2 import \
-    HttpClient, \
-    HttpClientConfig, \
-    ContextBrokerClient, \
-    IoTAClient, \
-    QuantumLeapClient
+from filip.clients.ngsi_v2 import (
+    HttpClient,
+    HttpClientConfig,
+    ContextBrokerClient,
+    IoTAClient,
+    QuantumLeapClient,
+)
 
 # ## Parameters
 # ToDo: Enter your context broker url and port, e.g. http://localhost:1026.
@@ -49,6 +50,8 @@ if __name__ == "__main__":
     # ToDo: Create a multi client check again all services for their version.
     multic = HttpClient(config=config)
 
-    print(f"Multi Client (Context Broker): {multic.cb.get_version()}\n"
-          f"Multi Client (IoTA): {multic.iota.get_version()}\n"
-          f"Multi Client (Quantum Leap): {multic.timeseries.get_version()}")
+    print(
+        f"Multi Client (Context Broker): {multic.cb.get_version()}\n"
+        f"Multi Client (IoTA): {multic.iota.get_version()}\n"
+        f"Multi Client (Quantum Leap): {multic.timeseries.get_version()}"
+    )

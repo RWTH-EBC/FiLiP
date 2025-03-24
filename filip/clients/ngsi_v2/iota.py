@@ -1,6 +1,7 @@
 """
 IoT-Agent Module for API Client
 """
+
 from __future__ import annotations
 
 import json
@@ -36,18 +37,19 @@ class IoTAClient(BaseHttpClient):
         **kwargs (Optional): Optional arguments that ``request`` takes.
     """
 
-    def __init__(self,
-                 url: str = None,
-                 *,
-                 session: requests.Session = None,
-                 fiware_header: FiwareHeader = None,
-                 **kwargs):
+    def __init__(
+        self,
+        url: str = None,
+        *,
+        session: requests.Session = None,
+        fiware_header: FiwareHeader = None,
+        **kwargs,
+    ):
         # set service url
         url = url or settings.IOTA_URL
-        super().__init__(url=url,
-                         session=session,
-                         fiware_header=fiware_header,
-                         **kwargs)
+        super().__init__(
+            url=url, session=session, fiware_header=fiware_header, **kwargs
+        )
 
     # ABOUT API
     def get_version(self) -> Dict:
@@ -57,7 +59,7 @@ class IoTAClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, 'iot/about')
+        url = urljoin(self.base_url, "iot/about")
         try:
             res = self.get(url=url, headers=self.headers)
             if res.ok:
@@ -68,9 +70,11 @@ class IoTAClient(BaseHttpClient):
         raise
 
     # SERVICE GROUP API
-    def post_groups(self,
-                    service_groups: Union[ServiceGroup, List[ServiceGroup]],
-                    update: bool = False):
+    def post_groups(
+        self,
+        service_groups: Union[ServiceGroup, List[ServiceGroup]],
+        update: bool = False,
+    ):
         """
         Creates a set of service groups for the given service and service_path.
         The service_group and subservice information will taken from the
@@ -88,17 +92,22 @@ class IoTAClient(BaseHttpClient):
             service_groups = [service_groups]
         for group in service_groups:
             if group.service:
-                assert group.service == self.headers['fiware-service'], \
-                    "Service group service does not math fiware service"
+                assert (
+                    group.service == self.headers["fiware-service"]
+                ), "Service group service does not math fiware service"
             if group.subservice:
-                assert group.subservice == self.headers['fiware-servicepath'], \
-                    "Service group subservice does not math fiware service path"
+                assert (
+                    group.subservice == self.headers["fiware-servicepath"]
+                ), "Service group subservice does not math fiware service path"
 
-        url = urljoin(self.base_url, 'iot/services')
+        url = urljoin(self.base_url, "iot/services")
         headers = self.headers
-        data = {'services': [group.model_dump(exclude={'service', 'subservice'},
-                                              exclude_none=True)
-                             for group in service_groups]}
+        data = {
+            "services": [
+                group.model_dump(exclude={"service", "subservice"}, exclude_none=True)
+                for group in service_groups
+            ]
+        }
         try:
             res = self.post(url=url, headers=headers, json=data)
             if res.ok:
@@ -106,13 +115,13 @@ class IoTAClient(BaseHttpClient):
             elif res.status_code == 409:
                 self.logger.warning(res.text)
                 if len(service_groups) > 1:
-                    self.logger.info("Trying to split bulk operation into "
-                                     "single operations")
+                    self.logger.info(
+                        "Trying to split bulk operation into " "single operations"
+                    )
                     for group in service_groups:
                         self.post_group(service_group=group, update=update)
                 elif update is True:
-                    self.update_group(service_group=service_groups[0],
-                                      fields=None)
+                    self.update_group(service_group=service_groups[0], fields=None)
                 else:
                     res.raise_for_status()
             else:
@@ -132,8 +141,7 @@ class IoTAClient(BaseHttpClient):
         Returns:
             None
         """
-        return self.post_groups(service_groups=[service_group],
-                                update=update)
+        return self.post_groups(service_groups=[service_group], update=update)
 
     def get_group_list(self) -> List[ServiceGroup]:
         r"""
@@ -145,13 +153,13 @@ class IoTAClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'iot/services')
+        url = urljoin(self.base_url, "iot/services")
         headers = self.headers
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
                 ta = TypeAdapter(List[ServiceGroup])
-                return ta.validate_python(res.json()['services'])
+                return ta.validate_python(res.json()["services"])
             res.raise_for_status()
         except requests.RequestException as err:
             raise BaseHttpClientException(message=err.response.text, response=err.response) from err
@@ -167,19 +175,28 @@ class IoTAClient(BaseHttpClient):
 
         """
         groups = self.get_group_list()
-        groups = filter_group_list(group_list=groups, resources=resource, apikeys=apikey)
+        groups = filter_group_list(
+            group_list=groups, resources=resource, apikeys=apikey
+        )
         if len(groups) == 1:
             group = groups[0]
             return group
         elif len(groups) == 0:
-            raise KeyError(f"Service group with resource={resource} and apikey={apikey} was not found")
+            raise KeyError(
+                f"Service group with resource={resource} and apikey={apikey} was not found"
+            )
         else:
-            raise NotImplementedError("There is a wierd error, try get_group_list() for debugging")
+            raise NotImplementedError(
+                "There is a wierd error, try get_group_list() for debugging"
+            )
 
-    def update_groups(self, *,
-                      service_groups: Union[ServiceGroup, List[ServiceGroup]],
-                      add: False,
-                      fields: Union[Set[str], List[str]] = None) -> None:
+    def update_groups(
+        self,
+        *,
+        service_groups: Union[ServiceGroup, List[ServiceGroup]],
+        add: False,
+        fields: Union[Set[str], List[str]] = None,
+    ) -> None:
         """
         Bulk operation for service group update.
         Args:
@@ -195,15 +212,19 @@ class IoTAClient(BaseHttpClient):
         for group in service_groups:
             self.update_group(service_group=group, fields=fields, add=add)
 
-    def update_group(self, *, service_group: ServiceGroup,
-                     fields: Union[Set[str], List[str]] = None,
-                     add: bool = True):
+    def update_group(
+        self,
+        *,
+        service_group: ServiceGroup,
+        fields: Union[Set[str], List[str]] = None,
+        add: bool = True,
+    ):
         """
         Modifies the information for a service group configuration, identified
         by the resource and apikey query parameters. Takes a service group body
         as the payload. The body does not have to be complete: for incomplete
         bodies, just the existing attributes will be updated
-        
+
         Args:
             service_group (ServiceGroup): Service to update.
             fields: Fields of the service_group to update. If 'None' all allowed
@@ -217,17 +238,18 @@ class IoTAClient(BaseHttpClient):
                 fields = set(fields)
         else:
             fields = None
-        url = urljoin(self.base_url, 'iot/services')
+        url = urljoin(self.base_url, "iot/services")
         headers = self.headers
-        params = service_group.model_dump(include={'resource', 'apikey'})
+        params = service_group.model_dump(include={"resource", "apikey"})
         try:
-            res = self.put(url=url,
-                           headers=headers,
-                           params=params,
-                           json=service_group.model_dump(
-                               include=fields,
-                               exclude={'service', 'subservice'},
-                               exclude_none=True))
+            res = self.put(
+                url=url,
+                headers=headers,
+                params=params,
+                json=service_group.model_dump(
+                    include=fields, exclude={"service", "subservice"}, exclude_none=True
+                ),
+            )
             if res.ok:
                 self.logger.info("ServiceGroup updated!")
             elif (res.status_code == 404) & (add is True):
@@ -240,7 +262,7 @@ class IoTAClient(BaseHttpClient):
     def delete_group(self, *, resource: str, apikey: str):
         """
         Deletes a service group in in the IoT-Agent
-        
+
         Args:
             resource:
             apikey:
@@ -248,16 +270,18 @@ class IoTAClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'iot/services')
+        url = urljoin(self.base_url, "iot/services")
         headers = self.headers
-        params = {'resource': resource,
-                  'apikey': apikey}
+        params = {"resource": resource, "apikey": apikey}
         try:
             res = self.delete(url=url, headers=headers, params=params)
             if res.ok:
-                self.logger.info("ServiceGroup with resource: '%s' and "
-                                 "apikey: '%s' successfully deleted!",
-                                 resource, apikey)
+                self.logger.info(
+                    "ServiceGroup with resource: '%s' and "
+                    "apikey: '%s' successfully deleted!",
+                    resource,
+                    apikey,
+                )
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
@@ -266,8 +290,9 @@ class IoTAClient(BaseHttpClient):
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # DEVICE API
-    def post_devices(self, *, devices: Union[Device, List[Device]],
-                     update: bool = False) -> None:
+    def post_devices(
+        self, *, devices: Union[Device, List[Device]], update: bool = False
+    ) -> None:
         """
         Post a device from the device registry. No payload is required
         or received.
@@ -281,11 +306,15 @@ class IoTAClient(BaseHttpClient):
         """
         if not isinstance(devices, list):
             devices = [devices]
-        url = urljoin(self.base_url, 'iot/devices')
+        url = urljoin(self.base_url, "iot/devices")
         headers = self.headers
-        
-        data = {"devices": [json.loads(device.model_dump_json(exclude_none=True)
-                                       ) for device in devices]}
+
+        data = {
+            "devices": [
+                json.loads(device.model_dump_json(exclude_none=True))
+                for device in devices
+            ]
+        }
         try:
             res = self.post(url=url, headers=headers, json=data)
             if res.ok:
@@ -301,7 +330,7 @@ class IoTAClient(BaseHttpClient):
     def post_device(self, *, device: Device, update: bool = False) -> None:
         """
         Post a device configuration to the IoT-Agent
-        
+
         Args:
             device: IoT device configuration to send
             update: update device if configuration already exists
@@ -311,12 +340,15 @@ class IoTAClient(BaseHttpClient):
         """
         return self.post_devices(devices=[device], update=update)
 
-    def get_device_list(self, *,
-                        limit: int = None,
-                        offset: int = None,
-                        device_ids: Union[str, List[str]] = None,
-                        entity_names: Union[str, List[str]] = None,
-                        entity_types: Union[str, List[str]] = None) -> List[Device]:
+    def get_device_list(
+        self,
+        *,
+        limit: int = None,
+        offset: int = None,
+        device_ids: Union[str, List[str]] = None,
+        entity_names: Union[str, List[str]] = None,
+        entity_types: Union[str, List[str]] = None,
+    ) -> List[Device]:
         """
         Returns a list of all the devices in the device registry with all
         its data. The IoTAgent now only supports "limit" and "offset" as
@@ -344,23 +376,20 @@ class IoTAClient(BaseHttpClient):
         """
         if limit:
             if not 1 < limit < 1000:
-                self.logger.error("'limit' must be an integer between 1 and "
-                                  "1000!")
+                self.logger.error("'limit' must be an integer between 1 and " "1000!")
                 raise ValueError
-        url = urljoin(self.base_url, 'iot/devices')
+        url = urljoin(self.base_url, "iot/devices")
         headers = self.headers
-        params = {key: value for key, value in locals().items() if value is not
-                  None}
+        params = {key: value for key, value in locals().items() if value is not None}
         try:
             res = self.get(url=url, headers=headers, params=params)
             if res.ok:
                 ta = TypeAdapter(List[Device])
-                devices = ta.validate_python(res.json()['devices'])
+                devices = ta.validate_python(res.json()["devices"])
                 # filter by device_ids, entity_names or entity_types
-                devices = filter_device_list(devices,
-                                             device_ids,
-                                             entity_names,
-                                             entity_types)
+                devices = filter_device_list(
+                    devices, device_ids, entity_names, entity_types
+                )
                 return devices
             res.raise_for_status()
         except requests.RequestException as err:
@@ -369,7 +398,7 @@ class IoTAClient(BaseHttpClient):
     def get_device(self, *, device_id: str) -> Device:
         """
         Returns all the information about a particular device.
-        
+
         Args:
             device_id:
         Raises:
@@ -378,7 +407,7 @@ class IoTAClient(BaseHttpClient):
             Device
 
         """
-        url = urljoin(self.base_url, f'iot/devices/{device_id}')
+        url = urljoin(self.base_url, f"iot/devices/{device_id}")
         headers = self.headers
         try:
             res = self.get(url=url, headers=headers)
@@ -404,15 +433,19 @@ class IoTAClient(BaseHttpClient):
         Returns:
             None
         """
-        url = urljoin(self.base_url, f'iot/devices/{device.device_id}')
+        url = urljoin(self.base_url, f"iot/devices/{device.device_id}")
         headers = self.headers
         try:
-            res = self.put(url=url, headers=headers, json=device.model_dump(
-                include={'attributes', 'lazy', 'commands', 'static_attributes'},
-                exclude_none=True))
+            res = self.put(
+                url=url,
+                headers=headers,
+                json=device.model_dump(
+                    include={"attributes", "lazy", "commands", "static_attributes"},
+                    exclude_none=True,
+                ),
+            )
             if res.ok:
-                self.logger.info("Device '%s' successfully updated!",
-                                 device.device_id)
+                self.logger.info("Device '%s' successfully updated!", device.device_id)
             elif (res.status_code == 404) & (add is True):
                 self.post_device(device=device, update=False)
             else:
@@ -421,8 +454,9 @@ class IoTAClient(BaseHttpClient):
             msg = f"Could not update device '{device.device_id}'"
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
-    def update_devices(self, *, devices: Union[Device, List[Device]],
-                       add: False) -> None:
+    def update_devices(
+        self, *, devices: Union[Device, List[Device]], add: False
+    ) -> None:
         """
         Bulk operation for device update.
         Args:
@@ -437,16 +471,19 @@ class IoTAClient(BaseHttpClient):
         for device in devices:
             self.update_device(device=device, add=add)
 
-    def delete_device(self, *, device_id: str,
-                      cb_url: AnyHttpUrl = settings.CB_URL,
-                      delete_entity: bool = False,
-                      force_entity_deletion: bool = False,
-                      cb_client: ContextBrokerClient = None,
-                      ) -> None:
+    def delete_device(
+        self,
+        *,
+        device_id: str,
+        cb_url: AnyHttpUrl = settings.CB_URL,
+        delete_entity: bool = False,
+        force_entity_deletion: bool = False,
+        cb_client: ContextBrokerClient = None,
+    ) -> None:
         """
         Remove a device from the device registry. No payload is required
         or received.
-        
+
         Args:
             device_id: str, ID of Device
             delete_entity:  False -> Only delete the device entry,
@@ -472,7 +509,10 @@ class IoTAClient(BaseHttpClient):
         Returns:
             None
         """
-        url = urljoin(self.base_url, f'iot/devices/{device_id}', )
+        url = urljoin(
+            self.base_url,
+            f"iot/devices/{device_id}",
+        )
         headers = self.headers
 
         device = self.get_device(device_id=device_id)
@@ -494,9 +534,11 @@ class IoTAClient(BaseHttpClient):
 
             # Zero because we count the remaining devices
             if len(devices) > 0 and not force_entity_deletion:
-                raise Exception(f"The corresponding entity to the device "
-                                f"{device_id} was not deleted because it is "
-                                f"linked to multiple devices. ")
+                raise Exception(
+                    f"The corresponding entity to the device "
+                    f"{device_id} was not deleted because it is "
+                    f"linked to multiple devices. "
+                )
             else:
                 cb_client_local = None
                 try:
@@ -512,11 +554,12 @@ class IoTAClient(BaseHttpClient):
                         cb_client_local = ContextBrokerClient(
                             url=cb_url,
                             fiware_header=self.fiware_headers,
-                            headers=headers)
+                            headers=headers,
+                        )
 
                     cb_client_local.delete_entity(
-                        entity_id=device.entity_name,
-                        entity_type=device.entity_type)
+                        entity_id=device.entity_name, entity_type=device.entity_type
+                    )
 
                 except requests.RequestException as err:
                     # Do not throw an error
@@ -527,11 +570,13 @@ class IoTAClient(BaseHttpClient):
                 if cb_client_local:
                     cb_client_local.close()
 
-    def patch_device(self,
-                     device: Device,
-                     patch_entity: bool = True,
-                     cb_client: ContextBrokerClient = None,
-                     cb_url: AnyHttpUrl = settings.CB_URL) -> None:
+    def patch_device(
+        self,
+        device: Device,
+        patch_entity: bool = True,
+        cb_client: ContextBrokerClient = None,
+        cb_url: AnyHttpUrl = settings.CB_URL,
+    ) -> None:
         """
         Updates a device state in Fiware, if the device does not exists it
         is created, else its values are updated.
@@ -565,20 +610,30 @@ class IoTAClient(BaseHttpClient):
 
         # if the device settings were changed we need to delete the device
         # and repost it
-        settings_dict = {"device_id", "service", "service_path",
-                         "entity_name", "entity_type",
-                         "timestamp", "apikey", "endpoint",
-                         "protocol", "transport",
-                         "expressionLanguage"}
+        settings_dict = {
+            "device_id",
+            "service",
+            "service_path",
+            "entity_name",
+            "entity_type",
+            "timestamp",
+            "apikey",
+            "endpoint",
+            "protocol",
+            "transport",
+            "expressionLanguage",
+        }
 
         live_settings = live_device.model_dump(include=settings_dict)
         new_settings = device.model_dump(include=settings_dict)
 
         if not live_settings == new_settings:
-            self.delete_device(device_id=device.device_id,
-                               delete_entity=True,
-                               force_entity_deletion=True,
-                               cb_client=cb_client)
+            self.delete_device(
+                device_id=device.device_id,
+                delete_entity=True,
+                force_entity_deletion=True,
+                cb_client=cb_client,
+            )
             self.post_device(device=device)
             return
 
@@ -594,61 +649,67 @@ class IoTAClient(BaseHttpClient):
         # update context entry
         # 1. build context entity from information in device
         # 2. patch it
-        from filip.models.ngsi_v2.context import \
-            ContextEntity, NamedContextAttribute
+        from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
 
         def build_context_entity_from_device(device: Device) -> ContextEntity:
             from filip.models.base import DataType
-            entity = ContextEntity(id=device.entity_name,
-                                   type=device.entity_type)
+
+            entity = ContextEntity(id=device.entity_name, type=device.entity_type)
 
             for command in device.commands:
-                entity.add_attributes([
-                    # Command attribute will be registered by the device_update
-                    NamedContextAttribute(
-                        name=f"{command.name}_info",
-                        type=DataType.COMMAND_RESULT
-                    ),
-                    NamedContextAttribute(
-                        name=f"{command.name}_status",
-                        type=DataType.COMMAND_STATUS
-                    )
-                ])
+                entity.add_attributes(
+                    [
+                        # Command attribute will be registered by the device_update
+                        NamedContextAttribute(
+                            name=f"{command.name}_info", type=DataType.COMMAND_RESULT
+                        ),
+                        NamedContextAttribute(
+                            name=f"{command.name}_status", type=DataType.COMMAND_STATUS
+                        ),
+                    ]
+                )
             for attribute in device.attributes:
-                entity.add_attributes([
-                    NamedContextAttribute(
-                        name=attribute.name,
-                        type=DataType.STRUCTUREDVALUE,
-                        metadata=attribute.metadata
-                    )
-                ])
+                entity.add_attributes(
+                    [
+                        NamedContextAttribute(
+                            name=attribute.name,
+                            type=DataType.STRUCTUREDVALUE,
+                            metadata=attribute.metadata,
+                        )
+                    ]
+                )
             for static_attribute in device.static_attributes:
-                entity.add_attributes([
-                    NamedContextAttribute(
-                        name=static_attribute.name,
-                        type=static_attribute.type,
-                        value=static_attribute.value,
-                        metadata=static_attribute.metadata
-                    )
-                ])
+                entity.add_attributes(
+                    [
+                        NamedContextAttribute(
+                            name=static_attribute.name,
+                            type=static_attribute.type,
+                            value=static_attribute.value,
+                            metadata=static_attribute.metadata,
+                        )
+                    ]
+                )
             return entity
 
         if patch_entity:
             from filip.clients.ngsi_v2 import ContextBrokerClient
+
             if cb_client:
                 cb_client_local = deepcopy(cb_client)
             else:
-                warnings.warn("No `ContextBrokerClient` object provided! "
-                              "Will try to generate one. "
-                              "This usage is not recommended.")
+                warnings.warn(
+                    "No `ContextBrokerClient` object provided! "
+                    "Will try to generate one. "
+                    "This usage is not recommended."
+                )
 
                 cb_client_local = ContextBrokerClient(
-                    url=cb_url,
-                    fiware_header=self.fiware_headers,
-                    headers=self.headers)
+                    url=cb_url, fiware_header=self.fiware_headers, headers=self.headers
+                )
 
             cb_client_local.patch_entity(
-                entity=build_context_entity_from_device(device))
+                entity=build_context_entity_from_device(device)
+            )
             cb_client_local.close()
 
     def does_device_exists(self, device_id: str) -> bool:
@@ -663,7 +724,11 @@ class IoTAClient(BaseHttpClient):
             self.get_device(device_id=device_id)
             return True
         except requests.RequestException as err:
-            if not err.response.status_code == 404:
+            if err.response is None or not err.response.status_code == 404:
+                self.log_error(
+                    err=err,
+                    msg=f"Error while checking existence for device {device_id}",
+                )
                 raise
             return False
 
@@ -674,14 +739,14 @@ class IoTAClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, 'admin/log')
+        url = urljoin(self.base_url, "admin/log")
         headers = self.headers.copy()
-        del headers['fiware-service']
-        del headers['fiware-servicepath']
+        del headers["fiware-service"]
+        del headers["fiware-servicepath"]
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
-                return res.json()['level']
+                return res.json()["level"]
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err)
@@ -690,7 +755,7 @@ class IoTAClient(BaseHttpClient):
     def change_loglevel_of_agent(self, level: str):
         """
         Change current loglevel of agent
-        
+
         Args:
             level:
 
@@ -698,18 +763,19 @@ class IoTAClient(BaseHttpClient):
 
         """
         level = level.upper()
-        if level not in ['INFO', 'ERROR', 'FATAL', 'DEBUG', 'WARNING']:
+        if level not in ["INFO", "ERROR", "FATAL", "DEBUG", "WARNING"]:
             raise KeyError("Given log level is not supported")
 
-        url = urljoin(self.base_url, 'admin/log')
+        url = urljoin(self.base_url, "admin/log")
         headers = self.headers.copy()
-        del headers['fiware-service']
-        del headers['fiware-servicepath']
+        del headers["fiware-service"]
+        del headers["fiware-servicepath"]
         try:
             res = self.put(url=url, headers=headers, params=level)
             if res.ok:
-                self.logger.info("Loglevel of agent at %s "
-                                 "changed to '%s'", self.base_url, level)
+                self.logger.info(
+                    "Loglevel of agent at %s " "changed to '%s'", self.base_url, level
+                )
             else:
                 res.raise_for_status()
         except requests.RequestException as err:

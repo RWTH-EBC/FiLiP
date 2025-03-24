@@ -13,18 +13,28 @@ from typing import List, Optional
 import stringcase
 
 from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
-from filip.semantics.vocabulary import Source, IdType, Vocabulary, \
-    DatatypeType, Datatype, Class
-from filip.semantics.vocabulary import CombinedDataRelation, \
-    CombinedObjectRelation, CombinedRelation
+from filip.semantics.vocabulary import (
+    Source,
+    IdType,
+    Vocabulary,
+    DatatypeType,
+    Datatype,
+    Class,
+)
+from filip.semantics.vocabulary import (
+    CombinedDataRelation,
+    CombinedObjectRelation,
+    CombinedRelation,
+)
 
 
 class PostProcessor:
     """Class offering postprocessing as cls-methods for a vocabulary"""
 
     @classmethod
-    def post_process_vocabulary(cls, vocabulary: Vocabulary,
-                                old_vocabulary: Optional[Vocabulary] = None):
+    def post_process_vocabulary(
+        cls, vocabulary: Vocabulary, old_vocabulary: Optional[Vocabulary] = None
+    ):
         """Main methode to be called for post processing
 
         Args:
@@ -52,8 +62,9 @@ class PostProcessor:
         cls._combine_relations(voc_builder)
 
         if old_vocabulary is not None:
-            cls.transfer_settings(new_vocabulary=vocabulary,
-                                  old_vocabulary=old_vocabulary)
+            cls.transfer_settings(
+                new_vocabulary=vocabulary, old_vocabulary=old_vocabulary
+            )
         cls._apply_vocabulary_settings(voc_builder)
 
         cls._ensure_parent_class(voc_builder)
@@ -65,7 +76,7 @@ class PostProcessor:
 
     @classmethod
     def _set_labels(cls, voc_builder: VocabularyBuilder):
-        """ If entities have no label, extract their label from the iri
+        """If entities have no label, extract their label from the iri
 
         Args:
             voc_builder: Builder object for Vocabulary
@@ -78,7 +89,7 @@ class PostProcessor:
 
     @classmethod
     def _add_predefined_source(cls, voc_builder: VocabularyBuilder):
-        """ Add a special source to the vocabulary: PREDEFINED
+        """Add a special source to the vocabulary: PREDEFINED
 
         Args:
             voc_builder: Builder object for Vocabulary
@@ -87,8 +98,11 @@ class PostProcessor:
             None
         """
         if "PREDEFINED" not in voc_builder.vocabulary.sources:
-            source = Source(source_name="Predefined",
-                            timestamp=datetime.datetime.now(), predefined=True)
+            source = Source(
+                source_name="Predefined",
+                timestamp=datetime.datetime.now(),
+                predefined=True,
+            )
             voc_builder.add_source(source, "PREDEFINED")
 
     @classmethod
@@ -122,203 +136,309 @@ class PostProcessor:
             None
         """
         # Test if datatype_catalogue were already added, if yes skip
-        if 'http://www.w3.org/2002/07/owl#rational' in \
-                voc_builder.vocabulary.datatypes.keys():
+        if (
+            "http://www.w3.org/2002/07/owl#rational"
+            in voc_builder.vocabulary.datatypes.keys()
+        ):
             return
 
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2002/07/owl#rational",
-                     comment="All numbers allowed",
-                     type=DatatypeType.number,
-                     number_decimal_allowed=True))
+            Datatype(
+                iri="http://www.w3.org/2002/07/owl#rational",
+                comment="All numbers allowed",
+                type=DatatypeType.number,
+                number_decimal_allowed=True,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2002/07/owl#real",
-                     comment="All whole numbers allowed",
-                     type=DatatypeType.number,
-                     number_decimal_allowed=False))
+            Datatype(
+                iri="http://www.w3.org/2002/07/owl#real",
+                comment="All whole numbers allowed",
+                type=DatatypeType.number,
+                number_decimal_allowed=False,
+            )
+        )
         voc_builder.add_predefined_datatype(
             Datatype(
                 iri="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral",
                 comment="All strings allowed",
-                type=DatatypeType.string))
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
             Datatype(
                 iri="http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral",
                 comment="XML Syntax required",
-                type=DatatypeType.string))
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2000/01/rdf-schema#Literal",
-                     comment="All strings allowed",
-                     type=DatatypeType.string))
+            Datatype(
+                iri="http://www.w3.org/2000/01/rdf-schema#Literal",
+                comment="All strings allowed",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#anyURI",
-                     comment="Needs to start with http://",
-                     type=DatatypeType.string))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#anyURI",
+                comment="Needs to start with http://",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#base64Binary",
-                     comment="Base64Binary",
-                     type=DatatypeType.string))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#base64Binary",
+                comment="Base64Binary",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#boolean",
-                     comment="True or False",
-                     type=DatatypeType.enum,
-                     enum_values=["True", "False"]))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#boolean",
+                comment="True or False",
+                type=DatatypeType.enum,
+                enum_values=["True", "False"],
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#byte",
-                     comment="Byte Number",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=-128,
-                     number_range_max=127))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#byte",
+                comment="Byte Number",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=-128,
+                number_range_max=127,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#dateTime",
-                     comment="Date with possible timezone",
-                     type=DatatypeType.date))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#dateTime",
+                comment="Date with possible timezone",
+                type=DatatypeType.date,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#dateTimeStamp",
-                     comment="Date",
-                     type=DatatypeType.date))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#dateTimeStamp",
+                comment="Date",
+                type=DatatypeType.date,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#decimal",
-                     comment="All decimal numbers",
-                     type=DatatypeType.number,
-                     number_decimal_allowed=True))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#decimal",
+                comment="All decimal numbers",
+                type=DatatypeType.number,
+                number_decimal_allowed=True,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#double",
-                     comment="64 bit decimal",
-                     type=DatatypeType.number,
-                     number_decimal_allowed=True))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#double",
+                comment="64 bit decimal",
+                type=DatatypeType.number,
+                number_decimal_allowed=True,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#float",
-                     comment="32 bit decimal",
-                     type=DatatypeType.number,
-                     number_decimal_allowed=True))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#float",
+                comment="32 bit decimal",
+                type=DatatypeType.number,
+                number_decimal_allowed=True,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#hexBinary",
-                     comment="Hexadecimal",
-                     type=DatatypeType.string,
-                     allowed_chars=["0", "1", "2", "3", "4", "5", "6", "7", "8",
-                                    "9", "A", "B", "C", "D", "E", "F"]))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#hexBinary",
+                comment="Hexadecimal",
+                type=DatatypeType.string,
+                allowed_chars=[
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E",
+                    "F",
+                ],
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#int",
-                     comment="Signed 32 bit number",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=-2147483648,
-                     number_range_max=2147483647))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#int",
+                comment="Signed 32 bit number",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=-2147483648,
+                number_range_max=2147483647,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#integer",
-                     comment="All whole numbers",
-                     type=DatatypeType.number,
-                     number_decimal_allowed=False))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#integer",
+                comment="All whole numbers",
+                type=DatatypeType.number,
+                number_decimal_allowed=False,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#language",
-                     comment="Language code, e.g: en, en-US, fr, or fr-FR",
-                     type=DatatypeType.string))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#language",
+                comment="Language code, e.g: en, en-US, fr, or fr-FR",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#long",
-                     comment="Signed 64 bit integer",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=-9223372036854775808,
-                     number_range_max=9223372036854775807,
-                     number_decimal_allowed=False))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#long",
+                comment="Signed 64 bit integer",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=-9223372036854775808,
+                number_range_max=9223372036854775807,
+                number_decimal_allowed=False,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#Name",
-                     comment="Name string (dont start with number)",
-                     type=DatatypeType.string))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#Name",
+                comment="Name string (dont start with number)",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#NCName",
-                     comment="Name string : forbidden",
-                     type=DatatypeType.string,
-                     forbidden_chars=[":"]))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#NCName",
+                comment="Name string : forbidden",
+                type=DatatypeType.string,
+                forbidden_chars=[":"],
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#negativeInteger",
-                     comment="All negative whole numbers",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_max=-1
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#negativeInteger",
+                comment="All negative whole numbers",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_max=-1,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#NMTOKEN",
-                     comment="Token string",
-                     type=DatatypeType.string))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#NMTOKEN",
+                comment="Token string",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
-                     comment="All positive whole numbers",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=0
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+                comment="All positive whole numbers",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=0,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
-                     comment="All negative whole numbers",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_max=-1
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+                comment="All negative whole numbers",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_max=-1,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#normalizedString",
-                     comment="normalized String",
-                     type=DatatypeType.string
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#normalizedString",
+                comment="normalized String",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#positiveInteger",
-                     comment="All positive whole numbers",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=0
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#positiveInteger",
+                comment="All positive whole numbers",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=0,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#short",
-                     comment="signed 16 bit number",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=-32768,
-                     number_range_max=32767
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#short",
+                comment="signed 16 bit number",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=-32768,
+                number_range_max=32767,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#string",
-                     comment="String",
-                     type=DatatypeType.string
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#string",
+                comment="String",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#token",
-                     comment="String",
-                     type=DatatypeType.string
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#token",
+                comment="String",
+                type=DatatypeType.string,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#unsignedByte",
-                     comment="unsigned 8 bit number",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=0,
-                     number_range_max=255
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#unsignedByte",
+                comment="unsigned 8 bit number",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=0,
+                number_range_max=255,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#unsignedInt",
-                     comment="unsigned 32 bit number",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=0,
-                     number_range_max=4294967295
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#unsignedInt",
+                comment="unsigned 32 bit number",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=0,
+                number_range_max=4294967295,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#unsignedLong",
-                     comment="unsigned 64 bit number",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=0,
-                     number_range_max=18446744073709551615
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#unsignedLong",
+                comment="unsigned 64 bit number",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=0,
+                number_range_max=18446744073709551615,
+            )
+        )
         voc_builder.add_predefined_datatype(
-            Datatype(iri="http://www.w3.org/2001/XMLSchema#unsignedShort",
-                     comment="unsigned 16 bit number",
-                     type=DatatypeType.number,
-                     number_has_range=True,
-                     number_range_min=0,
-                     number_range_max=65535
-                     ))
+            Datatype(
+                iri="http://www.w3.org/2001/XMLSchema#unsignedShort",
+                comment="unsigned 16 bit number",
+                type=DatatypeType.number,
+                number_has_range=True,
+                number_range_min=0,
+                number_range_max=65535,
+            )
+        )
 
     @classmethod
     def _add_owl_thing(cls, voc_builder: VocabularyBuilder):
@@ -333,10 +453,12 @@ class PostProcessor:
         Returns:
             None
         """
-        root_class = Class(iri="http://www.w3.org/2002/07/owl#Thing",
-                           comment="Predefined root_class",
-                           label="Thing",
-                           predefined=True)
+        root_class = Class(
+            iri="http://www.w3.org/2002/07/owl#Thing",
+            comment="Predefined root_class",
+            label="Thing",
+            predefined=True,
+        )
 
         # as it is the root object it is only a parent of classes which have no
         # parents yet
@@ -376,7 +498,8 @@ class PostProcessor:
             if not class_.iri == "http://www.w3.org/2002/07/owl#Thing":
                 if len(class_.parent_class_iris) == 0:
                     class_.parent_class_iris.append(
-                        "http://www.w3.org/2002/07/owl#Thing")
+                        "http://www.w3.org/2002/07/owl#Thing"
+                    )
 
     @classmethod
     def _apply_vocabulary_settings(cls, voc_builder: VocabularyBuilder):
@@ -393,8 +516,12 @@ class PostProcessor:
         settings = vocabulary.settings
 
         def to_pascal_case(string: str) -> str:
-            return stringcase.pascalcase(string).replace("_", "").\
-                replace(" ", "").replace("-", "")
+            return (
+                stringcase.pascalcase(string)
+                .replace("_", "")
+                .replace(" ", "")
+                .replace("-", "")
+            )
 
         def to_camel_case(string: str) -> str:
             camel_string = stringcase.camelcase(string)
@@ -402,7 +529,7 @@ class PostProcessor:
 
         def to_snake_case(string: str) -> str:
             camel_string = to_pascal_case(string)
-            return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_string).lower()
+            return re.sub(r"(?<!^)(?=[A-Z])", "_", camel_string).lower()
 
         # replace all whitespaces
         for entity in vocabulary.get_all_entities():
@@ -449,11 +576,13 @@ class PostProcessor:
         Returns:
             None
         """
-        from filip.semantics.vocabulary_configurator import \
-            VocabularyConfigurator
-        vocabulary.original_label_summary = \
+        from filip.semantics.vocabulary_configurator import VocabularyConfigurator
+
+        vocabulary.original_label_summary = (
             VocabularyConfigurator.get_label_conflicts_in_vocabulary(
-                vocabulary=vocabulary)
+                vocabulary=vocabulary
+            )
+        )
 
     @classmethod
     def _compute_ancestor_classes(cls, voc_builder: VocabularyBuilder):
@@ -480,8 +609,7 @@ class PostProcessor:
                     continue
 
                 class_.ancestor_class_iris.append(parent)
-                grand_parents = \
-                    vocabulary.get_class_by_iri(parent).parent_class_iris
+                grand_parents = vocabulary.get_class_by_iri(parent).parent_class_iris
 
                 for grand_parent in grand_parents:
                     if grand_parent not in class_.ancestor_class_iris:
@@ -564,24 +692,29 @@ class PostProcessor:
                 # property are going to get ignored, maybe a not should be
                 # displayed
                 if vocabulary.is_id_of_type(property_iri, IdType.data_property):
-                    id = "combined-data-relation|{}|{}".format(class_.iri,
-                                                               property_iri)
-                    combi = CombinedDataRelation(id=id,
-                                                 property_iri=property_iri,
-                                                 relation_ids=rel_list,
-                                                 class_iri=class_.iri)
+                    id = "combined-data-relation|{}|{}".format(class_.iri, property_iri)
+                    combi = CombinedDataRelation(
+                        id=id,
+                        property_iri=property_iri,
+                        relation_ids=rel_list,
+                        class_iri=class_.iri,
+                    )
                     voc_builder.add_combined_data_relation_for_class(
-                        class_iri=class_.iri, cdata=combi)
-                elif vocabulary.is_id_of_type(property_iri,
-                                              IdType.object_property):
+                        class_iri=class_.iri, cdata=combi
+                    )
+                elif vocabulary.is_id_of_type(property_iri, IdType.object_property):
                     id = "combined-object-relation|{}|{}".format(
-                        class_.iri, property_iri)
-                    combi = CombinedObjectRelation(id=id,
-                                                   property_iri=property_iri,
-                                                   relation_ids=rel_list,
-                                                   class_iri=class_.iri)
+                        class_.iri, property_iri
+                    )
+                    combi = CombinedObjectRelation(
+                        id=id,
+                        property_iri=property_iri,
+                        relation_ids=rel_list,
+                        class_iri=class_.iri,
+                    )
                     voc_builder.add_combined_object_relation_for_class(
-                        class_iri=class_.iri, crel=combi)
+                        class_iri=class_.iri, crel=combi
+                    )
                 else:
                     pass
 
@@ -598,18 +731,19 @@ class PostProcessor:
 
         for class_ in vocabulary.get_classes():
             cors = class_.get_combined_object_relations(vocabulary)
-            class_.combined_object_relation_ids = \
-                cls._sort_list_of_combined_relations(cors, vocabulary)
+            class_.combined_object_relation_ids = cls._sort_list_of_combined_relations(
+                cors, vocabulary
+            )
 
             cdrs = class_.get_combined_data_relations(vocabulary)
-            class_.combined_data_relation_ids = \
-                cls._sort_list_of_combined_relations(cdrs, vocabulary)
+            class_.combined_data_relation_ids = cls._sort_list_of_combined_relations(
+                cdrs, vocabulary
+            )
 
     @classmethod
     def _sort_list_of_combined_relations(
-            cls,
-            combined_relations: List[CombinedRelation],
-            vocabulary: Vocabulary) -> List[str]:
+        cls, combined_relations: List[CombinedRelation], vocabulary: Vocabulary
+    ) -> List[str]:
         """sort given CombinedRelations according to their labels
 
         Args:
@@ -659,8 +793,7 @@ class PostProcessor:
                 inverse_prop.add_inverse_property_iri(obj_prop_iri)
 
     @classmethod
-    def transfer_settings(cls, new_vocabulary: Vocabulary,
-                          old_vocabulary: Vocabulary):
+    def transfer_settings(cls, new_vocabulary: Vocabulary, old_vocabulary: Vocabulary):
         """
         Transfer all the user made settings (labels, ..)
         from an old vocabulary to a new vocabulary
@@ -686,4 +819,3 @@ class PostProcessor:
             if iri in new_vocabulary.data_properties:
                 new_data_property = new_vocabulary.data_properties[iri]
                 new_data_property.field_type = data_property.field_type
-

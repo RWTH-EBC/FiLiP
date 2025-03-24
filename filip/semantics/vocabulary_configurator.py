@@ -15,29 +15,55 @@ import wget
 
 from filip.semantics.ontology_parser.post_processer import PostProcessor
 from filip.semantics.ontology_parser.rdfparser import RdfParser
-from filip.semantics.vocabulary import \
-    LabelSummary, \
-    Vocabulary, \
-    Source, \
-    Entity, \
-    RestrictionType, \
-    Class, \
-    ParsingError, \
-    CombinedRelation, \
-    DataFieldType, \
-    DependencyStatement, \
-    VocabularySettings
+from filip.semantics.vocabulary import (
+    LabelSummary,
+    Vocabulary,
+    Source,
+    Entity,
+    RestrictionType,
+    Class,
+    ParsingError,
+    CombinedRelation,
+    DataFieldType,
+    DependencyStatement,
+    VocabularySettings,
+)
 
 # Blacklist containing all labels that are forbidden for entities to have
 label_blacklist = list(keyword.kwlist)
 label_blacklist.extend(["referencedBy", "deviceSettings"])
-label_blacklist.extend(["references", "device_settings", "header",
-                        "old_state", "", "semantic_manager", "delete",
-                        "metadata"])
+label_blacklist.extend(
+    [
+        "references",
+        "device_settings",
+        "header",
+        "old_state",
+        "",
+        "semantic_manager",
+        "delete",
+        "metadata",
+    ]
+)
 label_blacklist.extend(["id", "type", "class"])
-label_blacklist.extend(["str", "int", "float", "complex", "list", "tuple",
-                        "range", "dict", "list", "set", "frozenset", "bool",
-                        "bytes", "bytearray", "memoryview"])
+label_blacklist.extend(
+    [
+        "str",
+        "int",
+        "float",
+        "complex",
+        "list",
+        "tuple",
+        "range",
+        "dict",
+        "list",
+        "set",
+        "frozenset",
+        "bool",
+        "bytes",
+        "bytearray",
+        "memoryview",
+    ]
+)
 
 # Whitelist containing all chars that an entity label can consist of
 label_char_whitelist = ascii_letters + digits + "_"
@@ -50,9 +76,9 @@ class VocabularyConfigurator:
     """
 
     @classmethod
-    def create_vocabulary(cls,
-                          settings: VocabularySettings = VocabularySettings()) \
-            -> Vocabulary:
+    def create_vocabulary(
+        cls, settings: VocabularySettings = VocabularySettings()
+    ) -> Vocabulary:
         """
         Create a new blank vocabulary with given settings
 
@@ -66,8 +92,9 @@ class VocabularyConfigurator:
         return Vocabulary(settings=settings)
 
     @classmethod
-    def delete_source_from_vocabulary(cls, vocabulary: Vocabulary,
-                                      source_id: str) -> Vocabulary:
+    def delete_source_from_vocabulary(
+        cls, vocabulary: Vocabulary, source_id: str
+    ) -> Vocabulary:
         """
         Delete a source from the vocabulary
 
@@ -88,28 +115,28 @@ class VocabularyConfigurator:
         for source in vocabulary.sources.values():
             if not source_id == source.id:
                 parser.parse_source_into_vocabulary(
-                    source=copy.deepcopy(source), vocabulary=new_vocabulary)
+                    source=copy.deepcopy(source), vocabulary=new_vocabulary
+                )
             else:
                 found = True
 
         PostProcessor.post_process_vocabulary(
-            vocabulary=new_vocabulary, old_vocabulary=vocabulary)
+            vocabulary=new_vocabulary, old_vocabulary=vocabulary
+        )
 
         if not found:
-            raise ValueError(
-                f"Source with source_id {source_id} not in vocabulary")
+            raise ValueError(f"Source with source_id {source_id} not in vocabulary")
 
         PostProcessor.transfer_settings(
-            new_vocabulary=new_vocabulary, old_vocabulary=vocabulary)
+            new_vocabulary=new_vocabulary, old_vocabulary=vocabulary
+        )
 
         return new_vocabulary
 
     @classmethod
     def add_ontology_to_vocabulary_as_link(
-            cls,
-            vocabulary: Vocabulary,
-            link: str,
-            source_name: Optional[str] = None) -> Vocabulary:
+        cls, vocabulary: Vocabulary, link: str, source_name: Optional[str] = None
+    ) -> Vocabulary:
         """
         Add a source to the vocabulary with via a weblink. Source name will
         be extracted from link, if no name is given
@@ -133,18 +160,19 @@ class VocabularyConfigurator:
         if source_name is None:
             source_name = wget.filename_from_url(link)
 
-        file_str = io.TextIOWrapper(file_bytes, encoding='utf-8').read()
+        file_str = io.TextIOWrapper(file_bytes, encoding="utf-8").read()
 
-        return cls.add_ontology_to_vocabulary_as_string(vocabulary=vocabulary,
-                                                        source_name=source_name,
-                                                        source_content=file_str)
+        return cls.add_ontology_to_vocabulary_as_string(
+            vocabulary=vocabulary, source_name=source_name, source_content=file_str
+        )
 
     @classmethod
     def add_ontology_to_vocabulary_as_file(
-            cls,
-            vocabulary: Vocabulary,
-            path_to_file: str,
-            source_name: Optional[str] = None) -> Vocabulary:
+        cls,
+        vocabulary: Vocabulary,
+        path_to_file: str,
+        source_name: Optional[str] = None,
+    ) -> Vocabulary:
         """
         Add a source to the vocabulary with via a file path. Source name will
         be extracted from path, if no name is given
@@ -163,23 +191,22 @@ class VocabularyConfigurator:
             New Vocabulary with the given source added to it
         """
 
-        with open(path_to_file, 'r') as file:
+        with open(path_to_file, "r") as file:
             data = file.read()
 
         if source_name is None:
             source_name = os.path.basename(path_to_file).split(".")[0]
 
-        source = Source(source_name=source_name,
-                        content=data,
-                        timestamp=datetime.now())
+        source = Source(source_name=source_name, content=data, timestamp=datetime.now())
 
         return VocabularyConfigurator._parse_sources_into_vocabulary(
-            vocabulary=vocabulary, sources=[source])
+            vocabulary=vocabulary, sources=[source]
+        )
 
     @classmethod
-    def add_ontology_to_vocabulary_as_string(cls, vocabulary: Vocabulary,
-                                             source_name: str,
-                                             source_content: str) -> Vocabulary:
+    def add_ontology_to_vocabulary_as_string(
+        cls, vocabulary: Vocabulary, source_name: str, source_content: str
+    ) -> Vocabulary:
         """
         Add a source to the vocabulary by giving the source content as string.
         Source name needs to be given
@@ -197,16 +224,18 @@ class VocabularyConfigurator:
         Returns:
             New Vocabulary with the given source added to it
         """
-        source = Source(source_name=source_name,
-                        content=source_content,
-                        timestamp=datetime.now())
+        source = Source(
+            source_name=source_name, content=source_content, timestamp=datetime.now()
+        )
 
         return VocabularyConfigurator._parse_sources_into_vocabulary(
-            vocabulary=vocabulary, sources=[source])
+            vocabulary=vocabulary, sources=[source]
+        )
 
     @classmethod
-    def _parse_sources_into_vocabulary(cls, vocabulary: Vocabulary,
-                                       sources: List[Source]) -> Vocabulary:
+    def _parse_sources_into_vocabulary(
+        cls, vocabulary: Vocabulary, sources: List[Source]
+    ) -> Vocabulary:
         """
         Parse the given source objects into the vocabulary
 
@@ -229,16 +258,19 @@ class VocabularyConfigurator:
         for source in vocabulary.sources.values():
             source_copy = copy.deepcopy(source)
             source_copy.clear()
-            parser.parse_source_into_vocabulary(source=source_copy,
-                                                vocabulary=new_vocabulary)
+            parser.parse_source_into_vocabulary(
+                source=source_copy, vocabulary=new_vocabulary
+            )
 
         # try to parse in the new sources and post_process
         try:
             for source in sources:
-                parser.parse_source_into_vocabulary(source=source,
-                                                    vocabulary=new_vocabulary)
+                parser.parse_source_into_vocabulary(
+                    source=source, vocabulary=new_vocabulary
+                )
             PostProcessor.post_process_vocabulary(
-                vocabulary=new_vocabulary, old_vocabulary=vocabulary)
+                vocabulary=new_vocabulary, old_vocabulary=vocabulary
+            )
         except Exception as e:
             raise ParsingException(e.args)
 
@@ -272,8 +304,7 @@ class VocabularyConfigurator:
         return False
 
     @classmethod
-    def get_label_conflicts_in_vocabulary(cls, vocabulary: Vocabulary) -> \
-            LabelSummary:
+    def get_label_conflicts_in_vocabulary(cls, vocabulary: Vocabulary) -> LabelSummary:
         """
         Compute a summary for all labels present in the vocabulary.
         The summary contains all naming clashes and illegal labels.
@@ -333,21 +364,33 @@ class VocabularyConfigurator:
 
         summary = LabelSummary(
             class_label_duplicates=get_conflicts_in_group(
-                [vocabulary.classes, vocabulary.individuals,
-                 vocabulary.get_enum_dataytypes()]),
+                [
+                    vocabulary.classes,
+                    vocabulary.individuals,
+                    vocabulary.get_enum_dataytypes(),
+                ]
+            ),
             field_label_duplicates=get_conflicts_in_group(
-                [vocabulary.data_properties, vocabulary.object_properties]),
-            datatype_label_duplicates=get_conflicts_in_group(
-                [vocabulary.datatypes]),
-            blacklisted_labels=get_blacklisted_labels([
-                vocabulary.classes, vocabulary.individuals,
-                vocabulary.data_properties, vocabulary.object_properties
-            ]),
-            labels_with_illegal_chars=get_illegal_labels([
-                vocabulary.classes, vocabulary.individuals,
-                vocabulary.data_properties, vocabulary.object_properties,
-                vocabulary.datatypes
-            ]),
+                [vocabulary.data_properties, vocabulary.object_properties]
+            ),
+            datatype_label_duplicates=get_conflicts_in_group([vocabulary.datatypes]),
+            blacklisted_labels=get_blacklisted_labels(
+                [
+                    vocabulary.classes,
+                    vocabulary.individuals,
+                    vocabulary.data_properties,
+                    vocabulary.object_properties,
+                ]
+            ),
+            labels_with_illegal_chars=get_illegal_labels(
+                [
+                    vocabulary.classes,
+                    vocabulary.individuals,
+                    vocabulary.data_properties,
+                    vocabulary.object_properties,
+                    vocabulary.datatypes,
+                ]
+            ),
         )
 
         return summary
@@ -365,11 +408,13 @@ class VocabularyConfigurator:
             bool
         """
         return VocabularyConfigurator.get_label_conflicts_in_vocabulary(
-            vocabulary).is_valid()
+            vocabulary
+        ).is_valid()
 
     @classmethod
-    def get_missing_dependency_statements(cls, vocabulary: Vocabulary) -> \
-            List[DependencyStatement]:
+    def get_missing_dependency_statements(
+        cls, vocabulary: Vocabulary
+    ) -> List[DependencyStatement]:
         """
         Get a list of all Dependencies that are currently missing in the
         vocabulary in form of DependencyStatements
@@ -425,12 +470,12 @@ class VocabularyConfigurator:
 
     @classmethod
     def generate_vocabulary_models(
-            cls,
-            vocabulary: Vocabulary,
-            path: Optional[str] = None,
-            filename: Optional[str] = None,
-            alternative_manager_name: Optional[str] = None) ->  \
-            Optional[str]:
+        cls,
+        vocabulary: Vocabulary,
+        path: Optional[str] = None,
+        filename: Optional[str] = None,
+        alternative_manager_name: Optional[str] = None,
+    ) -> Optional[str]:
         """
         Export the given vocabulary as python model file.
         All vocabulary classes will be converted to python classes,
@@ -461,7 +506,7 @@ class VocabularyConfigurator:
                 "prevented the generation of models. Check for conflicts with: "
                 "VocabularyConfigurator."
                 "get_label_conflicts_in_vocabulary(vocabulary)"
-                )
+            )
 
         def split_string_into_lines(string: str, limit: int) -> [str]:
             """Helper methode, takes a long string and splits it into
@@ -481,9 +526,9 @@ class VocabularyConfigurator:
             for char in string:
                 if char == " ":
                     last_space_index = current_index
-                if current_index-last_split_index > limit:
-                    result.append(string[last_split_index: last_space_index])
-                    last_split_index = last_space_index+1
+                if current_index - last_split_index > limit:
+                    result.append(string[last_split_index:last_space_index])
+                    last_split_index = last_space_index + 1
                 current_index += 1
 
             # add the remaining part, if the last character of the string was
@@ -492,29 +537,35 @@ class VocabularyConfigurator:
                 result.append(string[last_split_index:current_index])
             return result
 
-        content: str = '"""\nAutogenerated Models for the vocabulary ' \
-                       'described ' \
-                       'by the ontologies:\n'
+        content: str = (
+            '"""\nAutogenerated Models for the vocabulary '
+            "described "
+            "by the ontologies:\n"
+        )
         for source in vocabulary.sources.values():
             if not source.predefined:
-                content += f'\t{source.ontology_iri} ({source.source_name})\n'
+                content += f"\t{source.ontology_iri} ({source.source_name})\n"
         content += '"""\n\n'
 
         # imports
         content += "from enum import Enum\n"
         content += "from typing import Dict, Union, List\n"
-        content += "from filip.semantics.semantics_models import\\" \
-                   "\n\tSemanticClass,\\" \
-                   "\n\tSemanticIndividual,\\" \
-                   "\n\tRelationField,\\" \
-                   "\n\tDataField,\\" \
-                   "\n\tSemanticDeviceClass,\\" \
-                   "\n\tDeviceAttributeField,\\" \
-                   "\n\tCommandField"
+        content += (
+            "from filip.semantics.semantics_models import\\"
+            "\n\tSemanticClass,\\"
+            "\n\tSemanticIndividual,\\"
+            "\n\tRelationField,\\"
+            "\n\tDataField,\\"
+            "\n\tSemanticDeviceClass,\\"
+            "\n\tDeviceAttributeField,\\"
+            "\n\tCommandField"
+        )
         content += "\n"
-        content += "from filip.semantics.semantics_manager import\\" \
-                   "\n\tSemanticsManager,\\" \
-                   "\n\tInstanceRegistry"
+        content += (
+            "from filip.semantics.semantics_manager import\\"
+            "\n\tSemanticsManager,\\"
+            "\n\tInstanceRegistry"
+        )
 
         content += "\n\n\n"
         content += f"semantic_manager: SemanticsManager = SemanticsManager("
@@ -570,9 +621,9 @@ class VocabularyConfigurator:
                 child = vocabulary.classes[child_iri]
 
                 # all parents added, add child to queue
-                if len([p for p in child.parent_class_iris
-                        if p in added_class_iris]) == len(
-                        child.parent_class_iris):
+                if len(
+                    [p for p in child.parent_class_iris if p in added_class_iris]
+                ) == len(child.parent_class_iris):
 
                     if not child_iri in added_class_iris:
                         iri_queue.append(child_iri)
@@ -582,21 +633,20 @@ class VocabularyConfigurator:
             content += "\n\n\n"
             # Parent Classes
             parent_class_string = ""
-            parents = class_.get_parent_classes(vocabulary,
-                                                remove_redundancy=True)
+            parents = class_.get_parent_classes(vocabulary, remove_redundancy=True)
 
             # Device Class, only add if this is a device class and it was not
             # added for a parent
             if class_.is_iot_class(vocabulary):
-                if True not in [p.is_iot_class(vocabulary) for p in
-                                parents]:
+                if True not in [p.is_iot_class(vocabulary) for p in parents]:
                     parent_class_string = " ,SemanticDeviceClass"
 
             for parent in parents:
                 parent_class_string += f", {parent.get_label()}"
 
             parent_class_string = parent_class_string[
-                                  2:]  # remove first comma and space
+                2:
+            ]  # remove first comma and space
             if parent_class_string == "":
                 parent_class_string = "SemanticClass"
 
@@ -612,8 +662,10 @@ class VocabularyConfigurator:
             content += f"Source(s): \n\t\t"
 
             for source_id in class_.source_ids:
-                content += f"{vocabulary.sources[source_id].ontology_iri} " \
-                           f"({vocabulary.sources[source_id].source_name})"
+                content += (
+                    f"{vocabulary.sources[source_id].ontology_iri} "
+                    f"({vocabulary.sources[source_id].source_name})"
+                )
             content += f'\n\t"""'
 
             # ------Constructors------
@@ -649,26 +701,31 @@ class VocabularyConfigurator:
             for cdr in class_.get_combined_data_relations(vocabulary):
                 if not cdr.is_device_relation(vocabulary):
                     content += "\n\t\t\t"
-                    content += \
-                        f"self." \
-                        f"{cdr.get_property_label(vocabulary)}._rules = " \
+                    content += (
+                        f"self."
+                        f"{cdr.get_property_label(vocabulary)}._rules = "
                         f"{cdr.export_rule(vocabulary, stringify_fields=True)}"
+                    )
 
             if len(class_.get_combined_object_relations(vocabulary)) > 0:
                 content += "\n"
             for cor in class_.get_combined_object_relations(vocabulary):
                 content += "\n\t\t\t"
-                content += f"self." \
-                           f"{cor.get_property_label(vocabulary)}._rules = " \
-                           f"{cor.export_rule(vocabulary, stringify_fields=False)}"
+                content += (
+                    f"self."
+                    f"{cor.get_property_label(vocabulary)}._rules = "
+                    f"{cor.export_rule(vocabulary, stringify_fields=False)}"
+                )
 
             if len(class_.get_combined_relations(vocabulary)) > 0:
                 content += "\n"
             for cr in class_.get_combined_relations(vocabulary):
                 content += "\n\t\t\t"
-                content += f"self.{cr.get_property_label(vocabulary)}" \
-                           f"._instance_identifier = " \
-                           f"self.get_identifier()"
+                content += (
+                    f"self.{cr.get_property_label(vocabulary)}"
+                    f"._instance_identifier = "
+                    f"self.get_identifier()"
+                )
 
             # ------Add preset Values------
             for cdr in class_.get_combined_data_relations(vocabulary):
@@ -682,11 +739,12 @@ class VocabularyConfigurator:
                             # changed them
                             if rel.restriction_type == RestrictionType.value:
                                 content += "\n\t\t\t"
-                                content += \
-                                    f"self." \
-                                    f"{cdr.get_property_label(vocabulary)}" \
-                                    f".add(" \
+                                content += (
+                                    f"self."
+                                    f"{cdr.get_property_label(vocabulary)}"
+                                    f".add("
                                     f"'{rel.target_statement.target_data_value}')"
+                                )
 
             if len(class_.get_combined_object_relations(vocabulary)) > 0:
                 content += "\n"
@@ -696,14 +754,14 @@ class VocabularyConfigurator:
                 # Only add the statement on the uppermost occurring class
                 for rel in cor.get_relations(vocabulary):
                     if rel.id in class_.relation_ids:
-                        i = vocabulary. \
-                            get_label_for_entity_iri(
-                            rel.get_targets()[0][0])
+                        i = vocabulary.get_label_for_entity_iri(rel.get_targets()[0][0])
                         if rel.restriction_type == RestrictionType.value:
                             content += "\n\t\t\t"
-                            content += f"self." \
-                                       f"{cor.get_property_label(vocabulary)}" \
-                                       f".add({i}())"
+                            content += (
+                                f"self."
+                                f"{cor.get_property_label(vocabulary)}"
+                                f".add({i}())"
+                            )
 
             # if no content was added af the not initialised if, removed it
             # again, and its preceding \n
@@ -720,7 +778,7 @@ class VocabularyConfigurator:
                 if comment != "":
                     res += f'\n\t"""'
                     for line in split_string_into_lines(comment, 75):
-                        res += f'\n\t{line}'
+                        res += f"\n\t{line}"
                     res += f'\n\t"""'
                 return res
 
@@ -737,9 +795,10 @@ class VocabularyConfigurator:
                     content += "\n\t\t"
                     content += f"name='{label}',"
                     content += "\n\t\t"
-                    content += \
-                        f"rule='" \
+                    content += (
+                        f"rule='"
                         f"{cdr.get_all_targetstatements_as_string(vocabulary)}',"
+                    )
                     content += "\n\t\t"
                     content += f"semantic_manager=semantic_manager)"
                     content += build_field_comment(cdr)
@@ -757,8 +816,9 @@ class VocabularyConfigurator:
                 elif cdr_type == DataFieldType.device_attribute:
                     content += "\n\n\t"
                     label = cdr.get_property_label(vocabulary)
-                    content += f"{label}: DeviceAttributeField " \
-                               f"= DeviceAttributeField("
+                    content += (
+                        f"{label}: DeviceAttributeField " f"= DeviceAttributeField("
+                    )
                     content += "\n\t\t"
                     content += f"name='{label}',"
                     content += "\n\t\t"
@@ -776,8 +836,9 @@ class VocabularyConfigurator:
                 content += "\n\t\t"
                 content += f"name='{label}',"
                 content += "\n\t\t"
-                content += f"rule='" \
-                           f"{cor.get_all_targetstatements_as_string(vocabulary)}',"
+                content += (
+                    f"rule='" f"{cor.get_all_targetstatements_as_string(vocabulary)}',"
+                )
                 content += "\n\t\t"
                 if not len(cor.get_inverse_of_labels(vocabulary)) == 0:
                     content += "inverse_of="
@@ -859,7 +920,7 @@ class VocabularyConfigurator:
         else:
             path = pathlib.Path(path).joinpath(filename).with_suffix(".py")
 
-            with open(path, "w", encoding ="utf-8") as text_file:
+            with open(path, "w", encoding="utf-8") as text_file:
                 text_file.write(content)
 
 

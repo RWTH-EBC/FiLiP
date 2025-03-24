@@ -1,3 +1,44 @@
+### v0.6.x
+- add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
+- add: Context conversion methods to_keyvalues() and to_normalized() ([#393](https://github.com/RWTH-EBC/FiLiP/pull/393))
+- fix: relationship validation can not handle empty attributes ([#411](https://github.com/RWTH-EBC/FiLiP/pull/411))
+- fix:relationship and properties cannot be created via predefined models ([#412](https://github.com/RWTH-EBC/FiLiP/pull/412))
+- fix: LD entity model ignore unset properties ([#402](https://github.com/RWTH-EBC/FiLiP/pull/402))
+
+### v0.6.2
+- add: New features to validate and update relationships for V2 entities ([#380](https://github.com/RWTH-EBC/FiLiP/pull/380))
+- add: ngsi-ld support for entity creation and update with keyvalues format ([#394](https://github.com/RWTH-EBC/FiLiP/pull/394))
+- fix: exception handling for special characters in attribute value  ([#381](https://github.com/RWTH-EBC/FiLiP/pull/381))
+- update: relax pydantic requirements ([#390](https://github.com/RWTH-EBC/FiLiP/pull/390))
+- update: pandas requirement from ~=1.3.5 to >=1.3.5,<2.3.0 ([#396](https://github.com/RWTH-EBC/FiLiP/pull/396))
+
+### v0.6.1
+- add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#363](https://github.com/RWTH-EBC/FiLiP/pull/363))
+- add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
+- add: Validation of quotation mark in ``q`` strings for NGSI-LD ``get_entities_list`` ([#383](https://github.com/RWTH-EBC/FiLiP/pull/383/files))
+- fix: Addition of trailing slash if missing from base url ([#371](https://github.com/RWTH-EBC/FiLiP/pull/371))
+- fix: Serialization error for custom datamodels during batch operation ([#376](https://github.com/RWTH-EBC/FiLiP/pull/376))
+- update: omit invalid entities in `get_entity_list` ([#375](https://github.com/RWTH-EBC/FiLiP/pull/375))
+
+### v0.6.0
+- add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
+- add: Example for notification based command ([#332](https://github.com/RWTH-EBC/FiLiP/pull/332))
+- add: tests for clear functions ([#336](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- 🚀 **add: API client for NGSI-LD context broker** ([#338](https://github.com/RWTH-EBC/FiLiP/pull/338)
+,[#356](https://github.com/RWTH-EBC/FiLiP/pull/356)
+,[#327](https://github.com/RWTH-EBC/FiLiP/pull/327)
+,[#300](https://github.com/RWTH-EBC/FiLiP/pull/300)
+,[#301](https://github.com/RWTH-EBC/FiLiP/pull/301)
+,[#212](https://github.com/RWTH-EBC/FiLiP/pull/212)
+,[#222](https://github.com/RWTH-EBC/FiLiP/pull/222)
+,[#221](https://github.com/RWTH-EBC/FiLiP/pull/221)
+  )
+- fix: clear functions for context broker ([#336](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- fix: validation error of ``ngsipayloadattr`` when the attribute substitution is used([#351](https://github.com/RWTH-EBC/FiLiP/pull/351))
+- update: integrate the key-values endpoints with normalized endpoints ([#318](https://github.com/RWTH-EBC/FiLiP/pull/318))
+- remove: ``update_entity_attributes_key_values`` and ``update_entity_key_values`` are removed ([#318](https://github.com/RWTH-EBC/FiLiP/pull/318))
+
+
 ### v0.5.0
 - update: allow duplicated name in device, check uniqueness of object_id ([#279](https://github.com/RWTH-EBC/FiLiP/pull/279))
 - update: upgrade dependency of `paho-mqtt` to v2 ([#273](https://github.com/RWTH-EBC/FiLiP/pull/273/))

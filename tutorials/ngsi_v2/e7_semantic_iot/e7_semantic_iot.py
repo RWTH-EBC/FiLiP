@@ -25,22 +25,13 @@ from typing import List
 from pydantic import TypeAdapter
 
 # import from filip
-from filip.clients.ngsi_v2 import \
-    ContextBrokerClient, \
-    IoTAClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.base import NamedMetadata
-from filip.models.ngsi_v2.context import \
-    ContextEntity, \
-    NamedContextAttribute
-from filip.models.ngsi_v2.iot import \
-    Device, \
-    ServiceGroup, \
-    StaticDeviceAttribute
+from filip.models.ngsi_v2.context import ContextEntity, NamedContextAttribute
+from filip.models.ngsi_v2.iot import Device, ServiceGroup, StaticDeviceAttribute
 from filip.models.ngsi_v2.units import Unit
-from filip.utils.cleanup import \
-    clear_context_broker, \
-    clear_iot_agent
+from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 
 # ## Parameters
 # ToDo: Enter your context broker host and port, e.g. http://localhost:1026.
@@ -49,40 +40,36 @@ CB_URL = "http://localhost:1026"
 IOTA_URL = "http://localhost:4041"
 
 # FIWARE-Service
-SERVICE = 'filip_tutorial'
+SERVICE = "filip_tutorial"
 # FIWARE-Service path
 # ToDo: Change the name of your service-path to something unique. If you run
 #  on a shared instance this is very important in order to avoid user
 #  collisions. You will use this service path through the whole tutorial.
 #  If you forget to change it, an error will be raised!
-SERVICE_PATH = '/'
+SERVICE_PATH = "/"
 
 # ToDo: Change the APIKEY to something unique. This represents the "token"
 #  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
-APIKEY = 'your_apikey'
+APIKEY = "your_apikey"
 
 # path to read json-files from previous exercises
-READ_GROUPS_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_groups.json")
-READ_DEVICES_FILEPATH = \
-    Path("../e5_iot_thermal_zone_control_devices.json")
-READ_ENTITIES_FILEPATH = \
-    Path("../e3_context_entities.json")
+READ_GROUPS_FILEPATH = Path("../e5_iot_thermal_zone_control_groups.json")
+READ_DEVICES_FILEPATH = Path("../e5_iot_thermal_zone_control_devices.json")
+READ_ENTITIES_FILEPATH = Path("../e3_context_entities.json")
 
 # opening the files
-with open(READ_GROUPS_FILEPATH, 'r') as groups_file, \
-       open(READ_DEVICES_FILEPATH, 'r') as devices_file, \
-       open(READ_ENTITIES_FILEPATH, 'r') as entities_file:
+with open(READ_GROUPS_FILEPATH, "r") as groups_file, open(
+    READ_DEVICES_FILEPATH, "r"
+) as devices_file, open(READ_ENTITIES_FILEPATH, "r") as entities_file:
     json_groups = json.load(groups_file)
     json_devices = json.load(devices_file)
     json_entities = json.load(entities_file)
 
 # ## Main script
-if __name__ == '__main__':
+if __name__ == "__main__":
     # create a fiware header object
-    fiware_header = FiwareHeader(service=SERVICE,
-                                 service_path=SERVICE_PATH)
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
     # clear the state of your service and scope
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
     clear_context_broker(url=CB_URL, fiware_header=fiware_header)
@@ -108,10 +95,12 @@ if __name__ == '__main__':
 
     # ToDo: Get context entities from the Context Broker
     #  (exclude the IoT device ones).
-    building = cbc.get_entity(entity_id="urn:ngsi-ld:building:001",
-                              entity_type="Building")
-    thermal_zone = cbc.get_entity(entity_id="ThermalZone:001",
-                                  entity_type="ThermalZone")
+    building = cbc.get_entity(
+        entity_id="urn:ngsi-ld:building:001", entity_type="Building"
+    )
+    thermal_zone = cbc.get_entity(
+        entity_id="ThermalZone:001", entity_type="ThermalZone"
+    )
 
     # ToDo: Semantically connect the weather station and the building. By
     #  adding a `hasWeatherStation` attribute of type `Relationship`. For the
@@ -121,18 +110,17 @@ if __name__ == '__main__':
     # create the context attribute for the building and add it to the
     # building entity
     has_weather_station = NamedContextAttribute(
-        name="hasWeatherStation",
-        type="Relationship",
-        value=weather_station.entity_name)
+        name="hasWeatherStation", type="Relationship", value=weather_station.entity_name
+    )
     building.add_attributes(attrs=[has_weather_station])
 
     # create a static attribute that connects the weather station to the
     # building
     cbc.update_entity(entity=building)
 
-    ref_building = StaticDeviceAttribute(name="refBuilding",
-                                         type="Relationship",
-                                         value=building.id)
+    ref_building = StaticDeviceAttribute(
+        name="refBuilding", type="Relationship", value=building.id
+    )
     weather_station.add_attribute(ref_building)
     iotac.update_device(device=weather_station)
 
@@ -144,9 +132,7 @@ if __name__ == '__main__':
 
     # ToDo: Create a context attribute for the thermal zone and add it to the
     #   thermal zone entity.
-    has_sensor =  ...
-
-
+    has_sensor = ...
 
     thermal_zone.add_attributes(...)
 
@@ -169,8 +155,6 @@ if __name__ == '__main__':
     #   thermal zone entity.
     has_heater = ...
 
-
-
     thermal_zone.add_attributes(...)
 
     # ToDo: Create a static attribute that connects the zone temperature zone to
@@ -178,7 +162,6 @@ if __name__ == '__main__':
     cbc.update_entity(entity=thermal_zone)
 
     ref_thermal_zone = ...
-
 
     heater.add_attribute(ref_thermal_zone)
     iotac.update_device(device=heater)
@@ -189,12 +172,8 @@ if __name__ == '__main__':
     # get code from Unit model for seconds
     code = Unit(name="second [unit of time]").code
     # add metadata to sim_time attribute of the all devices
-    metadata_sim_time = NamedMetadata(name="unitCode",
-                                      type="Text",
-                                      value=code)
-    attr_sim_time = weather_station.get_attribute(
-        attribute_name="sim_time"
-    )
+    metadata_sim_time = NamedMetadata(name="unitCode", type="Text", value=code)
+    attr_sim_time = weather_station.get_attribute(attribute_name="sim_time")
     attr_sim_time.metadata = metadata_sim_time
     weather_station.update_attribute(attribute=attr_sim_time)
     zone_temperature_sensor.update_attribute(attribute=attr_sim_time)
@@ -205,15 +184,12 @@ if __name__ == '__main__':
     # ToDo: Add metadata to temperature attribute of the weather
     #  station and the zone temperature sensor.
     metadata_t_amb = NamedMetadata(...)
-    attr_t_amb = weather_station.get_attribute(
-        attribute_name="temperature"
-    )
+    attr_t_amb = weather_station.get_attribute(attribute_name="temperature")
     attr_t_amb.metadata = metadata_t_amb
     weather_station.update_attribute(attribute=attr_t_amb)
 
     metadata_t_zone = NamedMetadata(...)
-    attr_t_zone = zone_temperature_sensor.get_attribute(
-        attribute_name="...")
+    attr_t_zone = zone_temperature_sensor.get_attribute(attribute_name="...")
     attr_t_zone.metadata = ...
     zone_temperature_sensor.update_attribute(...)
 

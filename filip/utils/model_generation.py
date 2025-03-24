@@ -1,6 +1,7 @@
 """
 Code generator for data models from schema.json descriptions
 """
+
 import json
 import shutil
 from pathlib import Path
@@ -14,14 +15,14 @@ from pydantic import create_model
 from filip.models.ngsi_v2.context import ContextAttribute, ContextEntity
 
 
-def create_data_model_file(*,
-                           path: Union[Path, str],
-                           url: str = None,
-                           schema: Union[Path, str, ParseResult] = None,
-                           schema_type: Union[str, InputFileType] =
-                     InputFileType.JsonSchema,
-                           class_name: str = None
-                           ) -> None:
+def create_data_model_file(
+    *,
+    path: Union[Path, str],
+    url: str = None,
+    schema: Union[Path, str, ParseResult] = None,
+    schema_type: Union[str, InputFileType] = InputFileType.JsonSchema,
+    class_name: str = None,
+) -> None:
     """
     This will create a data model from data model definitions. The schemas
     can either downloaded from a url or passed as str or dict. Allowed input
@@ -70,29 +71,32 @@ def create_data_model_file(*,
 
     with TemporaryDirectory() as temp:
         temp = Path(temp)
-        output = Path(temp).joinpath(f'{uuid4()}.py')
+        output = Path(temp).joinpath(f"{uuid4()}.py")
 
         if url:
             schema = parse.urlparse(url)
         if not schema:
-            raise ValueError("Missing argument! Either 'url' or 'schema' "
-                             "must be provided")
+            raise ValueError(
+                "Missing argument! Either 'url' or 'schema' " "must be provided"
+            )
 
         generate(
             input_=schema,
             input_file_type=schema_type,
             output=output,
-            class_name=class_name)
+            class_name=class_name,
+        )
 
         # move temporary file to output directory
         shutil.move(str(output), str(path))
 
 
-def create_context_entity_model(name: str = None,
-                                data: Dict = None,
-                                validators: Dict[str, Any] = None,
-                                path: Union[Path, str] = None) -> \
-        Type['ContextEntity']:
+def create_context_entity_model(
+    name: str = None,
+    data: Dict = None,
+    validators: Dict[str, Any] = None,
+    path: Union[Path, str] = None,
+) -> Type["ContextEntity"]:
     r"""
     Creates a ContextEntity-Model from a dict:
 
@@ -126,31 +130,32 @@ def create_context_entity_model(name: str = None,
         ContextEntity
 
     """
-    properties = {key: (ContextAttribute, ...) for key in data.keys() if
-                  key not in ContextEntity.model_fields}
+    properties = {
+        key: (ContextAttribute, ...)
+        for key in data.keys()
+        if key not in ContextEntity.model_fields
+    }
     model = create_model(
-        __model_name=name or 'GeneratedContextEntity',
+        name or "GeneratedContextEntity",
         __base__=ContextEntity,
         __validators__=validators or {},
-        **properties
+        **properties,
     )
 
     # if path exits a file will be generated that contains the model
     if path:
         if isinstance(path, str):
-            path=Path(path)
+            path = Path(path)
 
         with TemporaryDirectory() as temp:
             temp = Path(temp)
-            output = Path(temp).joinpath(f'{uuid4()}.json')
+            output = Path(temp).joinpath(f"{uuid4()}.json")
             output.touch(exist_ok=True)
-            with output.open('w') as f:
+            with output.open("w") as f:
                 json.dump(model.model_json_schema(), f, indent=2)
-            if path.suffix == '.json':
+            if path.suffix == ".json":
                 # move temporary file to output directory
                 shutil.move(str(output), str(path))
-            elif path.suffix == '.py':
-                create_data_model_file(path=path,
-                                       schema=output,
-                                       class_name=name)
+            elif path.suffix == ".py":
+                create_data_model_file(path=path, schema=output, class_name=name)
     return model

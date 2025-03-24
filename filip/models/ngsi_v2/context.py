@@ -1,14 +1,21 @@
 """
 NGSIv2 models for context broker interaction
 """
+
 import json
 from typing import Any, List, Dict, Union, Optional, Set, Tuple
 
 from aenum import Enum
-from pydantic import field_validator, ConfigDict, BaseModel, Field, \
-    model_validator
+from pydantic import (
+    field_validator,
+    ConfigDict,
+    BaseModel,
+    Field,
+    model_validator,
+    SerializeAsAny,
+)
 from pydantic_core.core_schema import ValidationInfo
-
+from pydantic.types import OnErrorOmit
 from filip.models.ngsi_v2.base import (
     EntityPattern,
     Expression,
@@ -20,6 +27,8 @@ from filip.models.base import DataType
 from filip.utils.validators import (
     validate_fiware_datatype_standard,
     validate_fiware_datatype_string_protect,
+    validate_fiware_attribute_value_regex,
+    validate_fiware_attribute_name_regex,
 )
 
 
@@ -101,6 +110,7 @@ class ContextAttribute(BaseAttribute, BaseValueAttribute):
         >>> attr = ContextAttribute(**data)
 
     """
+
     # although `type` is a required field in the NGSIv2 specification, it is
     # set to optional here to allow for the possibility of setting
     # default-types in child classes. Pydantic will raise the correct error
@@ -147,7 +157,7 @@ class ContextEntityKeyValues(BaseModel):
         "characters are the ones in the plain ASCII set, except "
         "the following ones: control characters, "
         "whitespace, &, ?, / and #.",
-        example="Bcn-Welt",
+        json_schema_extra={"example": "Bcn-Welt"},
         max_length=256,
         min_length=1,
         frozen=True,
@@ -160,7 +170,7 @@ class ContextEntityKeyValues(BaseModel):
         "Allowed characters are the ones in the plain ASCII set, "
         "except the following ones: control characters, "
         "whitespace, &, ?, / and #.",
-        example="Room",
+        json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
         frozen=True,
@@ -181,7 +191,20 @@ class ContextEntityKeyValues(BaseModel):
                 # `type` was found and pydantic will raise the correct error
                 super().__init__(id=id, **data)
         # This will result in usual behavior
+        data.update(self._validate_attributes(data))
         super().__init__(id=id, type=type, **data)
+
+    # Validation of attributes
+    @classmethod
+    def _validate_attributes(cls, data: dict):
+        """
+        Validate attribute name and value of the entity in keyvalues format
+        """
+        for attr_name, attr_value in data.items():
+            if isinstance(attr_value, str):
+                validate_fiware_attribute_value_regex(attr_value)
+            validate_fiware_attribute_name_regex(attr_name)
+        return data
 
     def get_attributes(self) -> dict:
         """
@@ -192,6 +215,24 @@ class ContextEntityKeyValues(BaseModel):
             dict
         """
         return self.model_dump(exclude={"id", "type"})
+
+    def to_normalized(self):
+        attrs = []
+        for key, value in self.get_attributes().items():
+            attr_type = (
+                DataType.NUMBER.value
+                if isinstance(value, int) or isinstance(value, float)
+                else (
+                    DataType.TEXT.value
+                    if isinstance(value, str)
+                    else DataType.OBJECT.value
+                )
+            )
+            attr = NamedContextAttribute(name=key, value=value, type=attr_type)
+            attrs.append(attr)
+        entity = ContextEntity(self.id, self.type)
+        entity.add_attributes(attrs)
+        return entity
 
 
 class ContextEntity(ContextEntityKeyValues):
@@ -231,6 +272,7 @@ class ContextEntity(ContextEntityKeyValues):
     model_config = ConfigDict(
         extra="allow", validate_default=True, validate_assignment=True
     )
+
     # although `type` is a required field in the NGSIv2 specification, it is
     # set to optional here to allow for the possibility of setting
     # default-types in child classes. Pydantic will raise the correct error
@@ -254,12 +296,18 @@ class ContextEntity(ContextEntityKeyValues):
         attrs = {
             key: ContextAttribute.model_validate(attr)
             for key, attr in data.items()
-            if (key not in cls.model_fields and not isinstance(attr, ContextAttribute))
+            if (
+                # validate_fiware_attribute_value_regex(key) not in cls.model_fields
+                validate_fiware_attribute_name_regex(key) not in cls.model_fields
+                and not isinstance(attr, ContextAttribute)
+                # key not in cls.model_fields
+                # and not isinstance(attr, ContextAttribute)
+            )
         }
 
         return attrs
 
-    @field_validator('*')
+    @field_validator("*")
     @classmethod
     def check_attributes(cls, value, info: ValidationInfo):
         """
@@ -267,13 +315,17 @@ class ContextEntity(ContextEntityKeyValues):
         ensure full functionality.
         """
         if info.field_name in ["id", "type"]:
-             return value
+            return value
 
         if info.field_name in cls.model_fields:
-            if not (isinstance(value, ContextAttribute)
-                    or value == cls.model_fields[info.field_name].default):
-                raise ValueError(f"Attribute {info.field_name} must be a of "
-                                 f"type or subtype ContextAttribute")
+            if not (
+                isinstance(value, ContextAttribute)
+                or value == cls.model_fields[info.field_name].default
+            ):
+                raise ValueError(
+                    f"Attribute {info.field_name} must be a of "
+                    f"type or subtype ContextAttribute"
+                )
         return value
 
     @model_validator(mode="after")
@@ -282,11 +334,13 @@ class ContextEntity(ContextEntityKeyValues):
         try:
             for attr in values.model_extra:
                 if not isinstance(values.__getattr__(attr), ContextAttribute):
-                    raise ValueError(f"Attribute {attr} must be a of type or "
-                                     f"subtype ContextAttribute. You most "
-                                     f"likely tried to directly assign an "
-                                     f"attribute without converting it to a "
-                                     f"proper Attribute-Type!")
+                    raise ValueError(
+                        f"Attribute {attr} must be a of type or "
+                        f"subtype ContextAttribute. You most "
+                        f"likely tried to directly assign an "
+                        f"attribute without converting it to a "
+                        f"proper Attribute-Type!"
+                    )
         except TypeError:
             pass
         return values
@@ -615,6 +669,35 @@ class ContextEntity(ContextEntityKeyValues):
 
         return command, command_status, command_info
 
+    def to_keyvalues(self):
+        attrs = {
+            attr: value.value
+            for attr, value in self.get_attributes(
+                response_format=PropertyFormat.DICT
+            ).items()
+        }
+        entity = ContextEntityKeyValues(self.id, self.type, **attrs)
+        return entity
+
+    def to_normalized(self):
+        raise AttributeError("This method is not available in ContextEntity")
+
+
+class ContextEntityList(BaseModel):
+    """
+    Collection model for a list of context entities
+    """
+
+    entities: List[OnErrorOmit[ContextEntity]]
+
+
+class ContextEntityKeyValuesList(BaseModel):
+    """
+    Collection model for a list of context entities in key-values format
+    """
+
+    entities: List[OnErrorOmit[ContextEntityKeyValues]]
+
 
 class Query(BaseModel):
     """
@@ -632,8 +715,7 @@ class Query(BaseModel):
     )
     expression: Optional[Expression] = Field(
         default=None,
-        description="An expression composed of q, mq, georel, geometry and "
-                    "coords",
+        description="An expression composed of q, mq, georel, geometry and " "coords",
     )
     metadata: Optional[List[str]] = Field(
         default=None,
@@ -683,9 +765,11 @@ class Update(BaseModel):
         description="actionType, to specify the kind of update action to do: "
         "either append, appendStrict, update, delete, or replace. ",
     )
-    entities: List[Union[ContextEntity, ContextEntityKeyValues]] = Field(
-        description="an array of entities, each entity specified using the "
-        "JSON entity representation format "
+    entities: SerializeAsAny[List[Union[ContextEntity, ContextEntityKeyValues]]] = (
+        Field(
+            description="an array of entities, each entity specified using the "
+            "JSON entity representation format "
+        )
     )
 
     @field_validator("action_type")
@@ -747,4 +831,4 @@ class NamedCommand(Command):
         max_length=256,
         min_length=1,
     )
-    valid_name = field_validator("name")(validate_fiware_datatype_string_protect)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
