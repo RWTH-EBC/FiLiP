@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.vocabulary package &mdash; FiLiP 0.6.2 documentation</title>
+  <title>filip.semantics.vocabulary package &mdash; FiLiP 0.6.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -117,38 +117,8 @@
 Represents one Data Field of a class</p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.class_iri" title="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.class_iri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_iri</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.id" title="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.property_iri" title="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.property_iri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">property_iri</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.relation_ids" title="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.relation_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relation_ids</span> <span class="pre">(List[str])</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-odd"><p></p></dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.class_iri">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">class_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.class_iri" title="Permalink to this definition"></a></dt>
-<dd><p>IRI of the class the relations and this CR belongs to</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.id">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.id" title="Permalink to this definition"></a></dt>
-<dd><p>Generated unique ID of the CR</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.property_iri">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">property_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.property_iri" title="Permalink to this definition"></a></dt>
-<dd><p>IRI of the property, under which the relations are bundled</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.relation_ids">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">relation_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.relation_ids" title="Permalink to this definition"></a></dt>
-<dd><p>List of all relations of the class that are bundled; have the same property</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_field_type">
 <span class="sig-name descname"><span class="pre">get_field_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vocabulary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataFieldType" title="filip.semantics.vocabulary.entities.DataFieldType"><span class="pre">DataFieldType</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/vocabulary/combined_relations.html#CombinedDataRelation.get_field_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_field_type" title="Permalink to this definition"></a></dt>
@@ -218,38 +188,8 @@ Represents one Data Field of a class</p>
 Represents one Relation Field of a class</p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.class_iri" title="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.class_iri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_iri</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.id" title="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.property_iri" title="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.property_iri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">property_iri</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.relation_ids" title="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.relation_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relation_ids</span> <span class="pre">(List[str])</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-odd"><p></p></dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.class_iri">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">class_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.class_iri" title="Permalink to this definition"></a></dt>
-<dd><p>IRI of the class the relations and this CR belongs to</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.id">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.id" title="Permalink to this definition"></a></dt>
-<dd><p>Generated unique ID of the CR</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.property_iri">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">property_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.property_iri" title="Permalink to this definition"></a></dt>
-<dd><p>IRI of the property, under which the relations are bundled</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.relation_ids">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">relation_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.relation_ids" title="Permalink to this definition"></a></dt>
-<dd><p>List of all relations of the class that are bundled; have the same property</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_all_possible_target_class_iris">
 <span class="sig-name descname"><span class="pre">get_all_possible_target_class_iris</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vocabulary</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/semantics/vocabulary/combined_relations.html#CombinedObjectRelation.get_all_possible_target_class_iris"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_all_possible_target_class_iris" title="Permalink to this definition"></a></dt>
@@ -801,52 +741,8 @@ This can be an ENUM, a number range, or a check for black/whitelisted chars</p>
 vocabulary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.comment" title="filip.semantics.vocabulary.entities.Datatype.comment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comment</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.iri" title="filip.semantics.vocabulary.entities.Datatype.iri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iri</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.label" title="filip.semantics.vocabulary.entities.Datatype.label"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.predefined" title="filip.semantics.vocabulary.entities.Datatype.predefined"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predefined</span> <span class="pre">(bool)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.source_ids" title="filip.semantics.vocabulary.entities.Datatype.source_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source_ids</span> <span class="pre">(Set[str])</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.user_set_label" title="filip.semantics.vocabulary.entities.Datatype.user_set_label"><code class="xref py py-obj docutils literal notranslate"><span class="pre">user_set_label</span> <span class="pre">(Any)</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-odd"><p></p></dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.entities.Datatype.comment">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">comment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#filip.semantics.vocabulary.entities.Datatype.comment" title="Permalink to this definition"></a></dt>
-<dd><p>Comment extracted from the ontology/source</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.entities.Datatype.iri">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.semantics.vocabulary.entities.Datatype.iri" title="Permalink to this definition"></a></dt>
-<dd><p>Unique Internationalized Resource Identifier</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.entities.Datatype.label">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#filip.semantics.vocabulary.entities.Datatype.label" title="Permalink to this definition"></a></dt>
-<dd><p>Label (displayname) extracted from source file (multiple Entities could have the same label)</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.entities.Datatype.predefined">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predefined</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#filip.semantics.vocabulary.entities.Datatype.predefined" title="Permalink to this definition"></a></dt>
-<dd><p>Stats if the entity is not extracted from a source, but predefined in the program (Standard Datatypes)</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.entities.Datatype.source_ids">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.13)"><span class="pre">Set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#filip.semantics.vocabulary.entities.Datatype.source_ids" title="Permalink to this definition"></a></dt>
-<dd><p>IDs of the sources that influenced this class</p>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.semantics.vocabulary.entities.Datatype.user_set_label">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_set_label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#filip.semantics.vocabulary.entities.Datatype.user_set_label" title="Permalink to this definition"></a></dt>
-<dd><p>Given by user and overwrites ‘label’. Needed to make labels unique</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.semantics.vocabulary.entities.Datatype.export">
 <span class="sig-name descname"><span class="pre">export</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/semantics/vocabulary/entities.html#Datatype.export"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.vocabulary.entities.Datatype.export" title="Permalink to this definition"></a></dt>

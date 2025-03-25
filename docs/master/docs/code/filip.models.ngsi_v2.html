@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2 package &mdash; FiLiP 0.6.2 documentation</title>
+  <title>filip.models.ngsi_v2 package &mdash; FiLiP 0.6.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -799,68 +799,10 @@ dict in order to give it a name.</p>
 </ul>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute.metadata" title="filip.models.ngsi_v2.context.ContextAttribute.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">(Dict[str,</span> <span class="pre">filip.models.ngsi_v2.base.Metadata]</span> <span class="pre">|</span> <span class="pre">filip.models.ngsi_v2.base.NamedMetadata</span> <span class="pre">|</span> <span class="pre">List[filip.models.ngsi_v2.base.NamedMetadata]</span> <span class="pre">|</span> <span class="pre">Dict[str,</span> <span class="pre">Dict[str,</span> <span class="pre">str]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute.type" title="filip.models.ngsi_v2.context.ContextAttribute.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(filip.models.base.DataType</span> <span class="pre">|</span> <span class="pre">str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute.value" title="filip.models.ngsi_v2.context.ContextAttribute.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(Optional[Any])</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-even"><p></p></dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type" title="filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_metadata_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute.metadata" title="filip.models.ngsi_v2.context.ContextAttribute.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute.value" title="filip.models.ngsi_v2.context.ContextAttribute.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute.type" title="filip.models.ngsi_v2.context.ContextAttribute.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-odd"><p></p></dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextAttribute.metadata">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata" title="filip.models.ngsi_v2.base.Metadata"><span class="pre">Metadata</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata" title="filip.models.ngsi_v2.base.NamedMetadata"><span class="pre">NamedMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata" title="filip.models.ngsi_v2.base.NamedMetadata"><span class="pre">NamedMetadata</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextAttribute.metadata" title="Permalink to this definition"></a></dt>
-<dd><p>optional metadata describing properties of the attribute value like e.g. accuracy, provider, or a timestamp</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type" title="filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_metadata_type</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextAttribute.type">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="filip.models.html#filip.models.base.DataType" title="filip.models.base.DataType"><span class="pre">DataType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">DataType.TEXT</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextAttribute.type" title="Permalink to this definition"></a></dt>
-<dd><p>The attribute type represents the NGSI value type of the attribute value. Note that FIWARE NGSI has its own type system for attribute values, so NGSI value types are not the same as JSON types. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextAttribute.value">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextAttribute.value" title="Permalink to this definition"></a></dt>
-<dd><p>the actual data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class pydantic_model">
@@ -901,62 +843,14 @@ not allowed as attribute names.</p>
 </ul>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.id" title="filip.models.ngsi_v2.context.ContextEntity.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.type" title="filip.models.ngsi_v2.context.ContextEntity.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">aenum._enum.Enum)</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-even"><p></p></dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.check_attributes" title="filip.models.ngsi_v2.context.ContextEntity.check_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_attributes</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.check_attributes_after" title="filip.models.ngsi_v2.context.ContextEntity.check_attributes_after"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_attributes_after</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.id" title="filip.models.ngsi_v2.context.ContextEntity.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.type" title="filip.models.ngsi_v2.context.ContextEntity.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntity.id">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntity.id" title="Permalink to this definition"></a></dt>
-<dd><p>Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.check_attributes" title="filip.models.ngsi_v2.context.ContextEntity.check_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_attributes</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.check_attributes_after" title="filip.models.ngsi_v2.context.ContextEntity.check_attributes_after"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_attributes_after</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntity.type">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Enum</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntity.type" title="Permalink to this definition"></a></dt>
-<dd><p>Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.check_attributes" title="filip.models.ngsi_v2.context.ContextEntity.check_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_attributes</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextEntity.check_attributes_after" title="filip.models.ngsi_v2.context.ContextEntity.check_attributes_after"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_attributes_after</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntity.add_attributes">
 <span class="sig-name descname"><span class="pre">add_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.context.ContextAttribute" title="filip.models.ngsi_v2.context.ContextAttribute"><span class="pre">ContextAttribute</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute" title="filip.models.ngsi_v2.context.NamedContextAttribute"><span class="pre">NamedContextAttribute</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntity.add_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntity.add_attributes" title="Permalink to this definition"></a></dt>
@@ -1400,90 +1294,10 @@ an attribute value and metadata.</p>
 </ul>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.metadata" title="filip.models.ngsi_v2.context.NamedContextAttribute.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">(Dict[str,</span> <span class="pre">filip.models.ngsi_v2.base.Metadata]</span> <span class="pre">|</span> <span class="pre">filip.models.ngsi_v2.base.NamedMetadata</span> <span class="pre">|</span> <span class="pre">List[filip.models.ngsi_v2.base.NamedMetadata]</span> <span class="pre">|</span> <span class="pre">Dict[str,</span> <span class="pre">Dict[str,</span> <span class="pre">str]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.name" title="filip.models.ngsi_v2.context.NamedContextAttribute.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.type" title="filip.models.ngsi_v2.context.NamedContextAttribute.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(filip.models.base.DataType</span> <span class="pre">|</span> <span class="pre">str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.value" title="filip.models.ngsi_v2.context.NamedContextAttribute.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(Optional[Any])</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-even"><p></p></dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_fiware_attribute_name_regex" title="filip.utils.validators.validate_fiware_attribute_name_regex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_fiware_attribute_name_regex</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.name" title="filip.models.ngsi_v2.context.NamedContextAttribute.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type" title="filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_metadata_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.metadata" title="filip.models.ngsi_v2.context.NamedContextAttribute.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.value" title="filip.models.ngsi_v2.context.NamedContextAttribute.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.context.NamedContextAttribute.type" title="filip.models.ngsi_v2.context.NamedContextAttribute.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-odd"><p></p></dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.NamedContextAttribute.metadata">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata" title="filip.models.ngsi_v2.base.Metadata"><span class="pre">Metadata</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata" title="filip.models.ngsi_v2.base.NamedMetadata"><span class="pre">NamedMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata" title="filip.models.ngsi_v2.base.NamedMetadata"><span class="pre">NamedMetadata</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.NamedContextAttribute.metadata" title="Permalink to this definition"></a></dt>
-<dd><p>optional metadata describing properties of the attribute value like e.g. accuracy, provider, or a timestamp</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type" title="filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_metadata_type</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.NamedContextAttribute.name">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.NamedContextAttribute.name" title="Permalink to this definition"></a></dt>
-<dd><p>The attribute name describes what kind of property the attribute value represents of the entity, for example current_speed. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_fiware_attribute_name_regex" title="filip.utils.validators.validate_fiware_attribute_name_regex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_fiware_attribute_name_regex</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.NamedContextAttribute.type">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="filip.models.html#filip.models.base.DataType" title="filip.models.base.DataType"><span class="pre">DataType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">DataType.TEXT</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.NamedContextAttribute.type" title="Permalink to this definition"></a></dt>
-<dd><p>The attribute type represents the NGSI value type of the attribute value. Note that FIWARE NGSI has its own type system for attribute values, so NGSI value types are not the same as JSON types. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.NamedContextAttribute.value">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.NamedContextAttribute.value" title="Permalink to this definition"></a></dt>
-<dd><p>the actual data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -2832,162 +2646,10 @@ based on our best practice, following rules are checked</p>
 </ul>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_name" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_name</span> <span class="pre">(Optional[str])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_type" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_type</span> <span class="pre">(Optional[str])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.expression" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.expression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expression</span> <span class="pre">(Optional[str])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.metadata" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">(Optional[Union[Dict[str,</span> <span class="pre">Metadata],</span> <span class="pre">NamedMetadata,</span> <span class="pre">List[NamedMetadata],</span> <span class="pre">Dict[str,</span> <span class="pre">Dict[str,</span> <span class="pre">str]]]])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.name" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.reverse" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span> <span class="pre">(Optional[str])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.type" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(Union[DataType,</span> <span class="pre">str])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.value" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(Optional[Any])</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-even"><p></p></dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_fiware_attribute_name_regex" title="filip.utils.validators.validate_fiware_attribute_name_regex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_fiware_attribute_name_regex</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.name" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type" title="filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_metadata_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.metadata" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.value" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_name" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_name</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_type" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_type</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.type" title="filip.models.ngsi_v2.iot.StaticDeviceAttribute.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
-</ul>
-</dd>
+<dd class="field-odd"><p></p></dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_name">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entity_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_name" title="Permalink to this definition"></a></dt>
-<dd><p>entity_name: the presence of this attribute indicates that the value will not be stored in the original device entity but in a new entity with an ID given by this attribute. The type of this additional entity can be configured with the entity_type attribute. If no type is configured, the device entity type is used instead. Entity names can be defined as expressions, using the Expression Language definition (<a class="reference external" href="https://iotagent-node-lib.readthedocs.io/en/latest/api.html#expression-language-support">https://iotagent-node-lib.readthedocs.io/en/latest/api.html#expression-language-support</a>). Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_type">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entity_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.entity_type" title="Permalink to this definition"></a></dt>
-<dd><p>configures the type of an alternative entity. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.expression">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expression</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.expression" title="Permalink to this definition"></a></dt>
-<dd><p>indicates that the value of the target attribute will not be the plain value or the measurement, but an expression based on a combination of the reported values. See the Expression Language definition for details (<a class="reference external" href="https://iotagent-node-lib.readthedocs.io/en/latest/api.html#expression-language-support">https://iotagent-node-lib.readthedocs.io/en/latest/api.html#expression-language-support</a>)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.metadata">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata" title="filip.models.ngsi_v2.base.Metadata"><span class="pre">Metadata</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata" title="filip.models.ngsi_v2.base.NamedMetadata"><span class="pre">NamedMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata" title="filip.models.ngsi_v2.base.NamedMetadata"><span class="pre">NamedMetadata</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.metadata" title="Permalink to this definition"></a></dt>
-<dd><p>optional metadata describing properties of the attribute value like e.g. accuracy, provider, or a timestamp</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type" title="filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_metadata_type</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.name">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.name" title="Permalink to this definition"></a></dt>
-<dd><p>The attribute name describes what kind of property the attribute value represents of the entity, for example current_speed. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_fiware_attribute_name_regex" title="filip.utils.validators.validate_fiware_attribute_name_regex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_fiware_attribute_name_regex</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.reverse">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reverse</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.reverse" title="Permalink to this definition"></a></dt>
-<dd><p>add bidirectionality expressions to the attribute. See the bidirectionality transformation plugin in the Data Mapping Plugins section for details. (<a class="reference external" href="https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#data-mapping-plugins">https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#data-mapping-plugins</a>)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.type">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="filip.models.html#filip.models.base.DataType" title="filip.models.base.DataType"><span class="pre">DataType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">DataType.TEXT</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.type" title="Permalink to this definition"></a></dt>
-<dd><p>The attribute type represents the NGSI value type of the attribute value. Note that FIWARE NGSI has its own type system for attribute values, so NGSI value types are not the same as JSON types. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-<dt class="field-even">Validated by<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.StaticDeviceAttribute.value">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.StaticDeviceAttribute.value" title="Permalink to this definition"></a></dt>
-<dd><p>the actual data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_based_on_type</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type" title="filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_type</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">

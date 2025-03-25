@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for filip/clients/ngsi_v2/cb.py: 82%</title>
+    <title>Coverage for filip/clients/ngsi_v2/cb.py: 81%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="coverage_html.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>filip/clients/ngsi_v2/cb.py</b>:
-            <span class="pc_cov">82%</span>
+            <span class="pc_cov">81%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">704 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">574<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">130<span class="text"> missing</span></button>
+            <span class="text">706 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">575<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">131<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">164<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_5b5c6c23d4d80535_client_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
-            created at 2025-03-19 17:46 +0000
+            created at 2025-03-25 09:36 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -1564,7 +1564,7 @@
     <p class="run"><span class="n"><a id="t1482" href="#t1482">1482</a></span><span class="t">            <span class="key">if</span> <span class="nam">parse_version</span><span class="op">(</span><span class="nam">version</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="nam">parse_version</span><span class="op">(</span><span class="str">"3.1"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1483" href="#t1483">1483</a></span><span class="t">                <span class="nam">params</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="op">{</span><span class="str">"options"</span><span class="op">:</span> <span class="str">"skipInitialNotification"</span><span class="op">}</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1484" href="#t1484">1484</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1485" href="#t1485">1485</a></span><span class="t">                <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1485" href="#t1485">1485</a></span><span class="t">                <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1486" href="#t1486">1486</a></span><span class="t">            <span class="nam">warnings</span><span class="op">.</span><span class="nam">warn</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1487" href="#t1487">1487</a></span><span class="t">                <span class="str">f"Skip initial notifications is a deprecated "</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1488" href="#t1488">1488</a></span><span class="t">                <span class="str">f"feature of older versions &lt;=3.1 of the context "</span>&nbsp;</span><span class="r"></span></p>
@@ -1640,7 +1640,7 @@
     <p class="mis show_mis"><span class="n"><a id="t1558" href="#t1558">1558</a></span><span class="t">            <span class="key">if</span> <span class="nam">parse_version</span><span class="op">(</span><span class="nam">version</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="nam">parse_version</span><span class="op">(</span><span class="str">"3.1"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1559" href="#t1559">1559</a></span><span class="t">                <span class="nam">params</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="op">{</span><span class="str">"options"</span><span class="op">:</span> <span class="str">"skipInitialNotification"</span><span class="op">}</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1560" href="#t1560">1560</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1561" href="#t1561">1561</a></span><span class="t">                <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t1561" href="#t1561">1561</a></span><span class="t">                <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t1562" href="#t1562">1562</a></span><span class="t">            <span class="nam">warnings</span><span class="op">.</span><span class="nam">warn</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1563" href="#t1563">1563</a></span><span class="t">                <span class="str">f"Skip initial notifications is a deprecated "</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1564" href="#t1564">1564</a></span><span class="t">                <span class="str">f"feature of older versions &lt;3.1 of the context "</span>&nbsp;</span><span class="r"></span></p>
@@ -2524,7 +2524,7 @@
             <a id="nextFileLink" class="nav" href="d_5b5c6c23d4d80535_client_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
-            created at 2025-03-19 17:46 +0000
+            created at 2025-03-25 09:36 +0000
         </p>
     </div>
 </footer>
