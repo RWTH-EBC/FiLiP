@@ -1,5 +1,16 @@
-### v0.6.x
+### v0.6.3
+- add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
+- add: Context conversion methods to_keyvalues() and to_normalized() ([#393](https://github.com/RWTH-EBC/FiLiP/pull/393))
+- fix: relationship validation can not handle empty attributes ([#411](https://github.com/RWTH-EBC/FiLiP/pull/411))
+- fix:relationship and properties cannot be created via predefined models ([#412](https://github.com/RWTH-EBC/FiLiP/pull/412))
+- fix: LD entity model ignore unset properties ([#402](https://github.com/RWTH-EBC/FiLiP/pull/402))
+
+### v0.6.2
 - add: New features to validate and update relationships for V2 entities ([#380](https://github.com/RWTH-EBC/FiLiP/pull/380))
+- add: ngsi-ld support for entity creation and update with keyvalues format ([#394](https://github.com/RWTH-EBC/FiLiP/pull/394))
+- fix: exception handling for special characters in attribute value  ([#381](https://github.com/RWTH-EBC/FiLiP/pull/381))
+- update: relax pydantic requirements ([#390](https://github.com/RWTH-EBC/FiLiP/pull/390))
+- update: pandas requirement from ~=1.3.5 to >=1.3.5,<2.3.0 ([#396](https://github.com/RWTH-EBC/FiLiP/pull/396))
 
 ### v0.6.1
 - add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#363](https://github.com/RWTH-EBC/FiLiP/pull/363))
