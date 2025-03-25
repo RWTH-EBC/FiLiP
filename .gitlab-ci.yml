@@ -7,8 +7,8 @@ stages:
     - deploy
 
 variables:
-    EXCLUDE_PYTHON: 37, 38, 39, 310, 311
-    PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.9"
+    EXCLUDE_PYTHON: 37, 38, 39, 310, 311, 312
+    PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.10"
     PAGES_BRANCH: master
     GIT_REPO: "RWTH-EBC/FiLiP"
     PYTHON_VERSION_NAME: "__version__"
