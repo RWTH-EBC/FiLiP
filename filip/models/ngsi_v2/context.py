@@ -699,6 +699,24 @@ class ContextEntityKeyValuesList(BaseModel):
     entities: List[OnErrorOmit[ContextEntityKeyValues]]
 
 
+class ContextEntityCustomList(BaseModel):
+    """
+    Collection model for a list of context entities
+    """
+
+    entities: List[OnErrorOmit[ContextEntity]]
+    invalid_entities: List[ContextEntity]
+
+
+class ContextEntityKeyValuesCustomList(BaseModel):
+    """
+    Collection model for a list of context entities in key-values format
+    """
+
+    entities: List[OnErrorOmit[ContextEntityKeyValues]]
+    invalid_entities: List[ContextEntityKeyValues]
+
+
 class Query(BaseModel):
     """
     Model for queries
