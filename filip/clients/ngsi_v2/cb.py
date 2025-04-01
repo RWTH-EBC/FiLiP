@@ -435,7 +435,7 @@ class ContextBrokerClient(BaseHttpClient):
 
                     return ContextEntityCustomList.model_validate(
                         {
-                            "entities": valid_entities,
+                            "valid_entities": valid_entities,
                             "invalid_entities": invalid_entities,
                         }
                     )
@@ -452,7 +452,7 @@ class ContextBrokerClient(BaseHttpClient):
 
                     return ContextEntityKeyValuesCustomList.model_validate(
                         {
-                            "entities": valid_entities,
+                            "valid_entities": valid_entities,
                             "invalid_entities": invalid_entities,
                         }
                     )

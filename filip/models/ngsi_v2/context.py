@@ -701,19 +701,19 @@ class ContextEntityKeyValuesList(BaseModel):
 
 class ContextEntityCustomList(BaseModel):
     """
-    Collection model for a list of context entities
+    Collection model for a list of valid and invalid context entities
     """
 
-    entities: List[OnErrorOmit[ContextEntity]]
+    valid_entities: List[OnErrorOmit[ContextEntity]]
     invalid_entities: List[ContextEntity]
 
 
 class ContextEntityKeyValuesCustomList(BaseModel):
     """
-    Collection model for a list of context entities in key-values format
+    Collection model for a list of valid and invalid context entities in key-values format
     """
 
-    entities: List[OnErrorOmit[ContextEntityKeyValues]]
+    valid_entities: List[OnErrorOmit[ContextEntityKeyValues]]
     invalid_entities: List[ContextEntityKeyValues]
 
 
