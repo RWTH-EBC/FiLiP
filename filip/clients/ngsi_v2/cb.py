@@ -296,7 +296,7 @@ class ContextBrokerClient(BaseHttpClient):
         metadata: str = None,
         order_by: str = None,
         response_format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED,
-        include_invalid: bool = True,
+        include_invalid: bool = False,
     ) -> Union[
         List[Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]],
         ContextEntityCustomList,
@@ -423,15 +423,14 @@ class ContextBrokerClient(BaseHttpClient):
                 invalid_entities = []
 
                 if AttrsFormat.NORMALIZED in response_format:
-                    adapter = TypeAdapter(List[ContextEntity])
-                    adapter.validate_python(items)
+                    adapter = TypeAdapter(ContextEntity)
 
                     for entity in items:
                         try:
                             valid_entity = adapter.validate_python(entity)
                             valid_entities.append(valid_entity)
                         except ValidationError:
-                            invalid_entities.append(entity)
+                            invalid_entities.append(entity.get("id"))
 
                     return ContextEntityCustomList.model_validate(
                         {
@@ -440,15 +439,14 @@ class ContextBrokerClient(BaseHttpClient):
                         }
                     )
                 elif AttrsFormat.KEY_VALUES in response_format:
-                    adapter = TypeAdapter(List[ContextEntityKeyValues])
-                    adapter.validate_python(items)
+                    adapter = TypeAdapter(ContextEntityKeyValues)
 
                     for entity in items:
                         try:
                             valid_entity = adapter.validate_python(entity)
                             valid_entities.append(valid_entity)
                         except ValidationError:
-                            invalid_entities.append(entity)
+                            invalid_entities.append(entity.get("id"))
 
                     return ContextEntityKeyValuesCustomList.model_validate(
                         {

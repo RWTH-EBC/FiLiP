@@ -705,7 +705,7 @@ class ContextEntityCustomList(BaseModel):
     """
 
     valid_entities: List[OnErrorOmit[ContextEntity]]
-    invalid_entities: List[ContextEntity]
+    invalid_entities: List[str]
 
 
 class ContextEntityKeyValuesCustomList(BaseModel):
@@ -714,7 +714,7 @@ class ContextEntityKeyValuesCustomList(BaseModel):
     """
 
     valid_entities: List[OnErrorOmit[ContextEntityKeyValues]]
-    invalid_entities: List[ContextEntityKeyValues]
+    invalid_entities: List[str]
 
 
 class Query(BaseModel):
