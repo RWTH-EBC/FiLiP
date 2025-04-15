@@ -281,7 +281,11 @@ class TestContextBroker(unittest.TestCase):
             headers = {"Content-Type": "application/json"}
             headers.update(self.fiware_header.model_dump(by_alias=True))
             url = f"{settings.CB_URL}v2/entities"
-            response = requests.request("POST", url, headers=headers, data=data)
+            # add parameters "options": "forcedUpdate" to the request
+            params = {"options": "forcedUpdate"}
+            response = requests.request(
+                "POST", url, headers=headers, data=data, params=params
+            )
             return response
 
         # Send bad entities to the Context Broker
@@ -325,6 +329,8 @@ class TestContextBroker(unittest.TestCase):
             ),
             (len(entities_valid) + len(entities_invalid)),
         )
+        self.client.delete_entity(entity_id=entity_wrong_value_type["id"])
+        self.client.delete_entity(entity_id=entity_wrong_unit["id"])
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
