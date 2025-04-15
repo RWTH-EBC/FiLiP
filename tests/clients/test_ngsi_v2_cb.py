@@ -279,9 +279,13 @@ class TestContextBroker(unittest.TestCase):
 
         def post_entity_request(data):
             headers = {"Content-Type": "application/json"}
-            headers.update(self.fiware_header)
+            headers.update(self.fiware_header.model_dump(by_alias=True))
             url = f"{settings.CB_URL}v2/entities"
-            response = requests.request("POST", url, headers=headers, data=data)
+            # add parameters "options": "forcedUpdate" to the request
+            params = {"options": "forcedUpdate"}
+            response = requests.request(
+                "POST", url, headers=headers, data=data, params=params
+            )
             return response
 
         # Send bad entities to the Context Broker
@@ -301,7 +305,9 @@ class TestContextBroker(unittest.TestCase):
             },
         }
 
-        for entity in [entity_wrong_value_type, entity_wrong_unit]:
+        entities_invalid = [entity_wrong_value_type, entity_wrong_unit]
+
+        for entity in entities_invalid:
             payload = json.dumps(entity)
             post_entity_request(data=payload)
 
@@ -313,8 +319,15 @@ class TestContextBroker(unittest.TestCase):
 
         # The bad entities should not block the whole request
         entities_res = self.client.get_entity_list()
+        entities_res_all = self.client.get_entity_list(include_invalid=True)
 
         self.assertEqual(len(entities_res), len(entities_valid))
+        self.assertEqual(
+            (len(entities_res_all.entities) + len(entities_res_all.invalid_entities)),
+            (len(entities_valid) + len(entities_invalid)),
+        )
+        self.client.delete_entity(entity_id=entity_wrong_value_type["id"])
+        self.client.delete_entity(entity_id=entity_wrong_unit["id"])
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,

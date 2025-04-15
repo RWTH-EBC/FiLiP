@@ -1,3 +1,6 @@
+### v0.6.x
+- add: flag to decide on whether ignore invalide entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
+
 ### v0.6.3
 - add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
 - add: Context conversion methods to_keyvalues() and to_normalized() ([#393](https://github.com/RWTH-EBC/FiLiP/pull/393))
