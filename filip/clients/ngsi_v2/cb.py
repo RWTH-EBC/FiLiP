@@ -33,8 +33,8 @@ from filip.models.ngsi_v2.context import (
     PropertyFormat,
     ContextEntityList,
     ContextEntityKeyValuesList,
-    ContextEntityCustomList,
-    ContextEntityKeyValuesCustomList,
+    ContextEntityValidationList,
+    ContextEntityKeyValuesValidationList,
 )
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
@@ -299,8 +299,8 @@ class ContextBrokerClient(BaseHttpClient):
         include_invalid: bool = False,
     ) -> Union[
         List[Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]],
-        ContextEntityCustomList,
-        ContextEntityKeyValuesCustomList,
+        ContextEntityValidationList,
+        ContextEntityKeyValuesValidationList,
     ]:
         r"""
         Retrieves a list of context entities that match different criteria by
@@ -432,9 +432,9 @@ class ContextBrokerClient(BaseHttpClient):
                         except ValidationError:
                             invalid_entities.append(entity.get("id"))
 
-                    return ContextEntityCustomList.model_validate(
+                    return ContextEntityValidationList.model_validate(
                         {
-                            "valid_entities": valid_entities,
+                            "entities": valid_entities,
                             "invalid_entities": invalid_entities,
                         }
                     )
@@ -448,9 +448,9 @@ class ContextBrokerClient(BaseHttpClient):
                         except ValidationError:
                             invalid_entities.append(entity.get("id"))
 
-                    return ContextEntityKeyValuesCustomList.model_validate(
+                    return ContextEntityKeyValuesValidationList.model_validate(
                         {
-                            "valid_entities": valid_entities,
+                            "entities": valid_entities,
                             "invalid_entities": invalid_entities,
                         }
                     )

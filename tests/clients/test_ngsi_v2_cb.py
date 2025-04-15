@@ -323,10 +323,7 @@ class TestContextBroker(unittest.TestCase):
 
         self.assertEqual(len(entities_res), len(entities_valid))
         self.assertEqual(
-            (
-                len(entities_res_all.valid_entities)
-                + len(entities_res_all.invalid_entities)
-            ),
+            (len(entities_res_all.entities) + len(entities_res_all.invalid_entities)),
             (len(entities_valid) + len(entities_invalid)),
         )
         self.client.delete_entity(entity_id=entity_wrong_value_type["id"])
