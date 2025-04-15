@@ -490,7 +490,7 @@ of the data provided.
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Expression.validate_expressions">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_expressions</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.mq" title="filip.models.ngsi_v2.base.Expression.mq"><em class="xref py py-obj"><span class="pre">mq</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.q" title="filip.models.ngsi_v2.base.Expression.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Expression.validate_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Expression.validate_expressions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1157,6 +1157,25 @@ dict format</p>
 </dd></dl>
 
 <dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntityKeyValuesValidationList">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.context.</span></span><span class="sig-name descname"><span class="pre">ContextEntityKeyValuesValidationList</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntityKeyValuesValidationList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntityKeyValuesValidationList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValuesList" title="filip.models.ngsi_v2.context.ContextEntityKeyValuesList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextEntityKeyValuesList</span></code></a></p>
+<p>Collection model for a list of valid and invalid context entities in key-values format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValuesValidationList.invalid_entities" title="filip.models.ngsi_v2.context.ContextEntityKeyValuesValidationList.invalid_entities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invalid_entities</span> <span class="pre">(List[str])</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntityKeyValuesValidationList.invalid_entities">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invalid_entities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntityKeyValuesValidationList.invalid_entities" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntityList">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.context.</span></span><span class="sig-name descname"><span class="pre">ContextEntityList</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntityList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntityList" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
@@ -1171,6 +1190,25 @@ dict format</p>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntityList.entities">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity" title="filip.models.ngsi_v2.context.ContextEntity"><span class="pre">ContextEntity</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntityList.entities" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntityValidationList">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.context.</span></span><span class="sig-name descname"><span class="pre">ContextEntityValidationList</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/context.html#ContextEntityValidationList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntityValidationList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityList" title="filip.models.ngsi_v2.context.ContextEntityList"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextEntityList</span></code></a></p>
+<p>Collection model for a list of valid and invalid context entities</p>
+<dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityValidationList.invalid_entities" title="filip.models.ngsi_v2.context.ContextEntityValidationList.invalid_entities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invalid_entities</span> <span class="pre">(List[str])</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.context.ContextEntityValidationList.invalid_entities">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invalid_entities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.context.ContextEntityValidationList.invalid_entities" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

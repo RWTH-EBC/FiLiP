@@ -111,6 +111,8 @@
     <span class="n">PropertyFormat</span><span class="p">,</span>
     <span class="n">ContextEntityList</span><span class="p">,</span>
     <span class="n">ContextEntityKeyValuesList</span><span class="p">,</span>
+    <span class="n">ContextEntityValidationList</span><span class="p">,</span>
+    <span class="n">ContextEntityKeyValuesValidationList</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttrsFormat</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.subscriptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Subscription</span><span class="p">,</span> <span class="n">Message</span>
@@ -372,7 +374,12 @@
         <span class="n">metadata</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">order_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AttrsFormat</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">NORMALIZED</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+        <span class="n">include_invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+        <span class="n">ContextEntityValidationList</span><span class="p">,</span>
+        <span class="n">ContextEntityKeyValuesValidationList</span><span class="p">,</span>
+    <span class="p">]:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves a list of context entities that match different criteria by</span>
 <span class="sd">        id, type, pattern matching (either id or type) and/or those which</span>
@@ -427,6 +434,7 @@
 <span class="sd">                &#39;keyValues&#39; or &#39;values&#39; are used the response model will</span>
 <span class="sd">                change to List[ContextEntityKeyValues] and to List[Dict[str,</span>
 <span class="sd">                Any]], respectively.</span>
+<span class="sd">            include_invalid: Specify if the returned list should also contain a list of invalid entity IDs or not.</span>
 <span class="sd">        Returns:</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -488,13 +496,55 @@
                 <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                 <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">NORMALIZED</span> <span class="ow">in</span> <span class="n">response_format</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">ContextEntityList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">({</span><span class="s2">&quot;entities&quot;</span><span class="p">:</span> <span class="n">items</span><span class="p">})</span><span class="o">.</span><span class="n">entities</span>
-            <span class="k">elif</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">KEY_VALUES</span> <span class="ow">in</span> <span class="n">response_format</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">ContextEntityKeyValuesList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
-                    <span class="p">{</span><span class="s2">&quot;entities&quot;</span><span class="p">:</span> <span class="n">items</span><span class="p">}</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">entities</span>
-            <span class="k">return</span> <span class="n">items</span>  <span class="c1"># in case of VALUES as response_format</span>
+            <span class="k">if</span> <span class="n">include_invalid</span><span class="p">:</span>
+                <span class="n">valid_entities</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">invalid_entities</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">NORMALIZED</span> <span class="ow">in</span> <span class="n">response_format</span><span class="p">:</span>
+                    <span class="n">adapter</span> <span class="o">=</span> <span class="n">TypeAdapter</span><span class="p">(</span><span class="n">ContextEntity</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">valid_entity</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+                            <span class="n">valid_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">valid_entity</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="n">ValidationError</span><span class="p">:</span>
+                            <span class="n">invalid_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">))</span>
+
+                    <span class="k">return</span> <span class="n">ContextEntityValidationList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;entities&quot;</span><span class="p">:</span> <span class="n">valid_entities</span><span class="p">,</span>
+                            <span class="s2">&quot;invalid_entities&quot;</span><span class="p">:</span> <span class="n">invalid_entities</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">KEY_VALUES</span> <span class="ow">in</span> <span class="n">response_format</span><span class="p">:</span>
+                    <span class="n">adapter</span> <span class="o">=</span> <span class="n">TypeAdapter</span><span class="p">(</span><span class="n">ContextEntityKeyValues</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">valid_entity</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
+                            <span class="n">valid_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">valid_entity</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="n">ValidationError</span><span class="p">:</span>
+                            <span class="n">invalid_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">))</span>
+
+                    <span class="k">return</span> <span class="n">ContextEntityKeyValuesValidationList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;entities&quot;</span><span class="p">:</span> <span class="n">valid_entities</span><span class="p">,</span>
+                            <span class="s2">&quot;invalid_entities&quot;</span><span class="p">:</span> <span class="n">invalid_entities</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">items</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">NORMALIZED</span> <span class="ow">in</span> <span class="n">response_format</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ContextEntityList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
+                        <span class="p">{</span><span class="s2">&quot;entities&quot;</span><span class="p">:</span> <span class="n">items</span><span class="p">}</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">entities</span>
+                <span class="k">elif</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">KEY_VALUES</span> <span class="ow">in</span> <span class="n">response_format</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ContextEntityKeyValuesList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
+                        <span class="p">{</span><span class="s2">&quot;entities&quot;</span><span class="p">:</span> <span class="n">items</span><span class="p">}</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">entities</span>
+                <span class="k">return</span> <span class="n">items</span>  <span class="c1"># in case of VALUES as response_format</span>
+
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not load entities&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>

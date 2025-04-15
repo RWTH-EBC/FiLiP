@@ -1009,25 +1009,25 @@
         },
         "dependencies": {
             "filip.config": [
-                "filip",
-                "tests.test_config"
+                "tests.test_config",
+                "filip"
             ],
             "filip.clients.ngsi_v2": [
                 "filip"
             ],
             "pydantic": [
-                "filip.config",
                 "tests.test_config",
+                "filip.custom_types",
                 "tests.config",
-                "filip.custom_types"
+                "filip.config"
             ],
             "pydantic_settings": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "dotenv": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
@@ -1179,18 +1179,18 @@
                 "filip"
             ],
             "pydantic": [
-                "filip.config",
                 "tests.test_config",
+                "filip.custom_types",
                 "tests.config",
-                "filip.custom_types"
+                "filip.config"
             ],
             "pydantic_settings": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "dotenv": [
-                "filip.config",
-                "tests.config"
+                "tests.config",
+                "filip.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
