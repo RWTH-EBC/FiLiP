@@ -380,13 +380,21 @@ class IoTAClient(BaseHttpClient):
         Returns:
             List of matching devices
         """
+        params = {}
         if limit:
             if not 1 < limit < 1000:
                 self.logger.error("'limit' must be an integer between 1 and " "1000!")
                 raise ValueError
+            else:
+                params["limit"] = limit
+        if offset:
+            if not isinstance(offset, int):
+                self.logger.error("'offset' must be an integer!")
+                raise ValueError
+            else:
+                params["offset"] = offset
         url = urljoin(self.base_url, "iot/devices")
         headers = self.headers
-        params = {key: value for key, value in locals().items() if value is not None}
         try:
             res = self.get(url=url, headers=headers, params=params)
             if res.ok:
