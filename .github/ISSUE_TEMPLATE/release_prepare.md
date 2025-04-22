@@ -10,6 +10,9 @@ assignees: ''
 **Release Version**
 Specify the version number for the release (e.g., v0.7.1):
 
+**What is changed?**
+TODO: please at least copy the release note here, afterwards
+
 **Checklist**
 Following steps will be checked:
 - [ ] Revise the changelog if necessary

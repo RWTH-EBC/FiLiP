@@ -545,7 +545,12 @@ class ContextLDEntity(ContextLDEntityKeyValues):
         )
 
     @classmethod
-    def _validate_single_property(cls, attr) -> ContextProperty:
+    def _validate_single_property(
+        cls, attr
+    ) -> Union[ContextProperty, ContextRelationship, ContextGeoProperty]:
+        # skip validation if pre-defined model is already used
+        if type(attr) in [ContextProperty, ContextRelationship, ContextGeoProperty]:
+            return attr
         property_fields = ContextProperty.get_model_fields_set()
         property_fields.remove(None)
         # subattrs = {}
