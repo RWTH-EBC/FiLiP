@@ -33,6 +33,8 @@ from filip.models.ngsi_v2.context import (
     PropertyFormat,
     ContextEntityList,
     ContextEntityKeyValuesList,
+    ContextEntityValidationList,
+    ContextEntityKeyValuesValidationList,
 )
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
@@ -294,7 +296,12 @@ class ContextBrokerClient(BaseHttpClient):
         metadata: str = None,
         order_by: str = None,
         response_format: Union[AttrsFormat, str] = AttrsFormat.NORMALIZED,
-    ) -> List[Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]]:
+        include_invalid: bool = False,
+    ) -> Union[
+        List[Union[ContextEntity, ContextEntityKeyValues, Dict[str, Any]]],
+        ContextEntityValidationList,
+        ContextEntityKeyValuesValidationList,
+    ]:
         r"""
         Retrieves a list of context entities that match different criteria by
         id, type, pattern matching (either id or type) and/or those which
@@ -349,6 +356,7 @@ class ContextBrokerClient(BaseHttpClient):
                 'keyValues' or 'values' are used the response model will
                 change to List[ContextEntityKeyValues] and to List[Dict[str,
                 Any]], respectively.
+            include_invalid: Specify if the returned list should also contain a list of invalid entity IDs or not.
         Returns:
 
         """
@@ -410,13 +418,55 @@ class ContextBrokerClient(BaseHttpClient):
                 params=params,
                 headers=headers,
             )
-            if AttrsFormat.NORMALIZED in response_format:
-                return ContextEntityList.model_validate({"entities": items}).entities
-            elif AttrsFormat.KEY_VALUES in response_format:
-                return ContextEntityKeyValuesList.model_validate(
-                    {"entities": items}
-                ).entities
-            return items  # in case of VALUES as response_format
+            if include_invalid:
+                valid_entities = []
+                invalid_entities = []
+
+                if AttrsFormat.NORMALIZED in response_format:
+                    adapter = TypeAdapter(ContextEntity)
+
+                    for entity in items:
+                        try:
+                            valid_entity = adapter.validate_python(entity)
+                            valid_entities.append(valid_entity)
+                        except ValidationError:
+                            invalid_entities.append(entity.get("id"))
+
+                    return ContextEntityValidationList.model_validate(
+                        {
+                            "entities": valid_entities,
+                            "invalid_entities": invalid_entities,
+                        }
+                    )
+                elif AttrsFormat.KEY_VALUES in response_format:
+                    adapter = TypeAdapter(ContextEntityKeyValues)
+
+                    for entity in items:
+                        try:
+                            valid_entity = adapter.validate_python(entity)
+                            valid_entities.append(valid_entity)
+                        except ValidationError:
+                            invalid_entities.append(entity.get("id"))
+
+                    return ContextEntityKeyValuesValidationList.model_validate(
+                        {
+                            "entities": valid_entities,
+                            "invalid_entities": invalid_entities,
+                        }
+                    )
+                else:
+                    return items
+            else:
+                if AttrsFormat.NORMALIZED in response_format:
+                    return ContextEntityList.model_validate(
+                        {"entities": items}
+                    ).entities
+                elif AttrsFormat.KEY_VALUES in response_format:
+                    return ContextEntityKeyValuesList.model_validate(
+                        {"entities": items}
+                    ).entities
+                return items  # in case of VALUES as response_format
+
         except requests.RequestException as err:
             msg = "Could not load entities"
             self.log_error(err=err, msg=msg)

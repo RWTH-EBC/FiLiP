@@ -699,6 +699,22 @@ class ContextEntityKeyValuesList(BaseModel):
     entities: List[OnErrorOmit[ContextEntityKeyValues]]
 
 
+class ContextEntityValidationList(ContextEntityList):
+    """
+    Collection model for a list of valid and invalid context entities
+    """
+
+    invalid_entities: List[str]
+
+
+class ContextEntityKeyValuesValidationList(ContextEntityKeyValuesList):
+    """
+    Collection model for a list of valid and invalid context entities in key-values format
+    """
+
+    invalid_entities: List[str]
+
+
 class Query(BaseModel):
     """
     Model for queries
