@@ -19,7 +19,7 @@ from filip.models.ngsi_ld.subscriptions import (
     NotificationParams,
     Endpoint,
 )
-from filip.models.ngsi_v2.context import ContextEntity
+from filip.models.ngsi_v2.context import ContextEntity, ContextEntityKeyValues
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.utils.cleanup import (
@@ -27,6 +27,7 @@ from filip.utils.cleanup import (
     clear_iot_agent,
     clear_quantumleap,
     clear_context_broker_ld,
+    clear_all,
 )
 from tests.config import settings
 
@@ -94,6 +95,28 @@ class TestClearFunctions(unittest.TestCase):
             len(self.cb_client.get_entity_list())
             or len(self.cb_client.get_subscription_list()),
         )
+
+    def test_clear_context_broker_large_amount_of_data(self):
+        """
+        Test for clearing the context broker when there are more than 1000
+        entities to delete
+        """
+
+        # fill cb with 1000 entites
+        for _type in range(5):
+            test_keyvalues = [
+                ContextEntityKeyValues(id=f"test_{_type}:entity_{i}", temperature=20)
+                for i in range(200)
+            ]
+            self.cb_client.update(
+                entities=test_keyvalues, update_format="keyValues", action_type="append"
+            )
+
+        # clear orion
+        clear_all(cb_client=self.cb_client, fiware_header=self.fiware_header)
+
+        # check if all is cleared
+        self.assertEqual(0, len(self.cb_client.get_entity_list()))
 
     def test_clear_context_broker_ld(self):
         """
