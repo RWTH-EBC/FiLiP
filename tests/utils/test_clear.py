@@ -105,7 +105,9 @@ class TestClearFunctions(unittest.TestCase):
         # fill cb with 1000 entites
         for _type in range(5):
             test_keyvalues = [
-                ContextEntityKeyValues(id=f"test_{_type}:entity_{i}", temperature=20)
+                ContextEntityKeyValues(
+                    id=f"test_{_type}:entity_{i}", type=f"test", temperature=20
+                )
                 for i in range(200)
             ]
             self.cb_client.update(
