@@ -804,6 +804,7 @@ class ContextBrokerClient(BaseHttpClient):
         # and removes the attributes for the other
         # The entities are sorted based on the fact if they have
         # attributes.
+        limit = 1000  # max number of entities that will be deleted at once
         entities_with_attributes: List[ContextEntity] = []
         for entity in entities:
             attribute_names = [
@@ -819,10 +820,14 @@ class ContextBrokerClient(BaseHttpClient):
         # Post update_delete for those without attribute only once,
         # for the other post update_delete again but for the changed entity
         # in the ContextBroker (only id and type left)
-        if len(entities) > 0:
-            self.update(entities=entities, action_type="delete")
-        if len(entities_with_attributes) > 0:
-            self.update(entities=entities_with_attributes, action_type="delete")
+        while len(entities) > 0:
+            self.update(entities=entities[0:limit], action_type="delete")
+            entities = entities[limit:]
+        while len(entities_with_attributes) > 0:
+            self.update(
+                entities=entities_with_attributes[0:limit], action_type="delete"
+            )
+            entities_with_attributes = entities_with_attributes[limit:]
 
     def update_or_append_entity_attributes(
         self,
