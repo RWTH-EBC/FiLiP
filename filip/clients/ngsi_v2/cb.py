@@ -269,12 +269,11 @@ class ContextBrokerClient(BaseHttpClient):
                 if update and err.response.status_code == 422:
                     return self.override_entity(entity=entity, key_values=key_values)
                 if patch and err.response.status_code == 422:
-                    if not key_values:
-                        return self.patch_entity(
-                            entity=entity, override_attr_metadata=override_attr_metadata
-                        )
-                    else:
-                        return self._patch_entity_key_values(entity=entity)
+                    return self.patch_entity(
+                        entity=entity, 
+                        override_attr_metadata=override_attr_metadata,
+                        key_values=key_values
+                    )
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
             raise
@@ -2146,6 +2145,7 @@ class ContextBrokerClient(BaseHttpClient):
         entity: ContextEntity,
         old_entity: Optional[ContextEntity] = None,
         override_attr_metadata: bool = True,
+        key_values: bool = False
     ) -> None:
         """
         Takes a given entity and updates the state in the CB to match it.
@@ -2168,7 +2168,6 @@ class ContextBrokerClient(BaseHttpClient):
         """
 
         new_entity = entity
-
         if old_entity is None:
             # If no old entity_was provided we use the current state to compare
             # the entity to
@@ -2183,116 +2182,39 @@ class ContextBrokerClient(BaseHttpClient):
                 self.post_entity(new_entity, update=False)
                 return
 
-        else:
-            # An old_entity was provided
-            # check if the old_entity (still) exists else recall methode
-            # and discard old_entity
-            if not self.does_entity_exist(
-                entity_id=old_entity.id, entity_type=old_entity.type
-            ):
-                self.patch_entity(
-                    new_entity, override_attr_metadata=override_attr_metadata
+        old_dict = old_entity.get_attributes(response_format=PropertyFormat.DICT)
+        new_dict = new_entity.get_attributes(response_format=PropertyFormat.DICT)
+        diff = { k : old_dict[k] for k in set(old_dict) - set(new_dict) }
+        for deleted_attr in diff:
+            try:
+                self.delete_entity_attribute(
+                    entity_id=new_entity.id,
+                    entity_type=new_entity.type,
+                    attr_name=deleted_attr,
                 )
-                return
-
-            # if type or id was changed, the old_entity needs to be deleted
-            # and the new_entity created
-            # In this case we will lose the current state of the entity
-            if old_entity.id != new_entity.id or old_entity.type != new_entity.type:
-                self.delete_entity(entity_id=old_entity.id, entity_type=old_entity.type)
-
-                if not self.does_entity_exist(
-                    entity_id=new_entity.id, entity_type=new_entity.type
-                ):
-                    self.post_entity(entity=new_entity, update=False)
-                    return
-
-        # At this point we know that we need to patch only the attributes of
-        # the entity
-        # Check the differences between the attributes of old and new entity
-        # Delete the removed attributes, create the new ones,
-        # and update the existing if necessary
-        old_attributes = old_entity.get_attributes()
-        new_attributes = new_entity.get_attributes()
-
-        # Manage attributes that existed before
-        for old_attr in old_attributes:
-            # commands do not exist in the ContextEntity and are only
-            # registrations to the corresponding device. Operations as
-            # delete will fail as it does not technically exist
-            corresponding_new_attr = None
-            for new_attr in new_attributes:
-                if new_attr.name == old_attr.name:
-                    corresponding_new_attr = new_attr
-
-            if corresponding_new_attr is None:
-                # Attribute no longer exists, delete it
-                try:
-                    self.delete_entity_attribute(
-                        entity_id=new_entity.id,
-                        entity_type=new_entity.type,
-                        attr_name=old_attr.name,
+            except requests.RequestException as err:
+                msg = (
+                    f"Failed to delete attribute {deleted_attr.name} of "
+                    f"entity {new_entity.id}."
+                )
+                if err.response is not None and err.response.status_code == 404:
+                    # if the attribute is provided by a registration the
+                    # deletion will fail
+                    msg += (
+                        f" The attribute is probably provided "
+                        f"by a registration."
                     )
-                except requests.RequestException as err:
-                    msg = (
-                        f"Failed to delete attribute {old_attr.name} of "
-                        f"entity {new_entity.id}."
-                    )
-                    if err.response is not None and err.response.status_code == 404:
-                        # if the attribute is provided by a registration the
-                        # deletion will fail
-                        msg += (
-                            f" The attribute is probably provided "
-                            f"by a registration."
-                        )
-                        self.log_error(err=err, msg=msg)
-                    else:
-                        self.log_error(err=err, msg=msg)
-                        raise
-            else:
-                # Check if attributed changed in any way, if yes update
-                # else do nothing and keep current state
-                if old_attr != corresponding_new_attr:
-                    try:
-                        self.update_entity_attribute(
-                            entity_id=new_entity.id,
-                            entity_type=new_entity.type,
-                            attr=corresponding_new_attr,
-                            override_metadata=override_attr_metadata,
-                        )
-                    except requests.RequestException as err:
-                        msg = (
-                            f"Failed to update attribute {old_attr.name} of "
-                            f"entity {new_entity.id}."
-                        )
-                        if err.response is not None and err.response.status_code == 404:
-                            # if the attribute is provided by a registration the
-                            # update will fail
-                            msg += (
-                                f" The attribute is probably provided "
-                                f"by a registration."
-                            )
-                        self.log_error(err=err, msg=msg)
-                        raise
+                    self.log_error(err=err, msg=msg)
+                else:
+                    self.log_error(err=err, msg=msg)
+                    raise
 
-        # Create new attributes
-        update_entity = ContextEntity(id=entity.id, type=entity.type)
-        update_needed = False
-        for new_attr in new_attributes:
-            # commands do not exist in the ContextEntity and are only
-            # registrations to the corresponding device. Operations as
-            # delete will fail as it does not technically exists
-            attr_existed = False
-            for old_attr in old_attributes:
-                if new_attr.name == old_attr.name:
-                    attr_existed = True
-
-            if not attr_existed:
-                update_needed = True
-                update_entity.add_attributes([new_attr])
-
-        if update_needed:
-            self.update_entity(update_entity)
+        return self.replace_entity_attributes(
+            entity_id=new_entity.id,
+            attrs=new_dict,
+            entity_type=new_entity.type,
+            key_values=key_values
+        )
 
     def _subscription_dicts_are_equal(self, first: dict, second: dict):
         """

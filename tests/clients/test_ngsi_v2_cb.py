@@ -1962,31 +1962,6 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
-        # sub-Test2: ID/type of old_entity changed. Old entity is provided and
-        # updated!
-        self.client.post_entity(entity=entity)
-        test_entity = ContextEntity(id="newID", type="newType")
-        test_entity.add_attributes([attr1, attr2])
-        self.client.patch_entity(test_entity, old_entity=entity)
-        self.assertEqual(test_entity, self.client.get_entity(entity_id=test_entity.id))
-        # assert that former entity_id is freed again
-        with self.assertRaises(RequestException):
-            self.client.get_entity(entity_id=entity.id)
-        self.tearDown()
-
-        # sub-Test3: a non valid old_entity is provided, but already entity
-        # exists
-        self.client.post_entity(entity=entity)
-        old_entity = ContextEntity(id="newID", type="newType")
-        self.client.patch_entity(entity, old_entity=old_entity)
-        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
-        self.tearDown()
-
-        # sub-Test4: non valid old_entity provided, entity is new
-        old_entity = ContextEntity(id="newID", type="newType")
-        self.client.patch_entity(entity, old_entity=old_entity)
-        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
-        self.tearDown()
 
         # sub-Test5: New attr, attr del, and attr changed. No Old_entity given
         self.client.post_entity(entity=entity)
@@ -2001,30 +1976,25 @@ class TestContextBroker(unittest.TestCase):
         attr3 = NamedContextAttribute(name="attr3", value="3")
         test_entity.add_attributes([attr1_changed, attr3])
         self.client.patch_entity(test_entity)
-
         self.assertEqual(test_entity, self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
         # sub-Test6: Attr changes, concurrent changes in Fiware,
         #            old_entity given
-
         self.client.post_entity(entity=entity)
-
         concurrent_entity = ContextEntity(id="test_id1", type="test_type1")
         attr1_changed = copy.deepcopy(attr1)
         attr1_changed.metadata["m1"].value = "3"
         attr1_changed.value = "4"
         concurrent_entity.add_attributes([attr1_changed, attr2])
         self.client.patch_entity(concurrent_entity)
-
+        
         user_entity = copy.deepcopy(entity)
         attr3 = NamedContextAttribute(name="attr3", value="3")
         user_entity.add_attributes([attr3])
         self.client.patch_entity(user_entity, old_entity=entity)
-
-        result_entity = concurrent_entity
-        result_entity.add_attributes([attr2, attr3])
-
+        result_entity = ContextEntity(id="test_id1", type="test_type1")
+        result_entity.add_attributes([attr1,attr2, attr3])
         self.assertEqual(result_entity, self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
