@@ -27,7 +27,7 @@ include:
     #  file: 'python/tests/tests.gitlab-ci.yml'
     #- project: 'EBC/EBC_all/gitlab_ci/templates'
     #  file: 'python/tests/coverage.gitlab-ci.yml'
-    # this template deploy FIWARE stack inside the pipeline 
+    # This template deploy FIWARE stack inside the pipeline
     - project: 'EBC/EBC_all/gitlab_ci/fiware_templates'
       file: 'unittest_fiware/fiware_tests.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
