@@ -35,7 +35,7 @@ jobs:
           python generate_compose.py ${{ matrix.orion_version }} ${{ matrix.iot_json_version }}
 
       - name: Start containers
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for services
         run: sleep 15
@@ -54,4 +54,4 @@ jobs:
 
       - name: Tear down containers
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
