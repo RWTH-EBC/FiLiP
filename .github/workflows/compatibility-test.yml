@@ -78,6 +78,11 @@ jobs:
             curl -s http://localhost:8668/version && break || sleep 5
           done
 
+      - name: Navigate to Tests Folder
+        run: |
+          cd $GITHUB_WORKSPACE
+          ls -la
+
       - name: Run Pytest
         run: |
           python -m unittest tests/clients/test_ngsi_v2_cb.py
