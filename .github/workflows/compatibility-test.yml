@@ -17,18 +17,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Create .env file
         run: |
-          python -m pip install --upgrade pip
-          pip install setuptools wheel
-          pip install
-          pip install jinja2 pytest
+          cat <<EOF > .env
+          LOG_LEVEL="INFO"
+          CB_URL=${{ vars.CB_URL }} # Using stored environment variable
+          ORION_LD_URL=${{ vars.ORION_LD_URL }}
+          IOTA_JSON_URL=${{ vars.IOTA_JSON_URL }}
+          IOTA_UL_URL=${{ vars.IOTA_UL_URL }}
+          QL_URL=${{ vars.QL_URL }}
+          MQTT_BROKER_URL=${{ vars.MQTT_BROKER_URL }}
+          MQTT_BROKER_URL_INTERNAL=${{ vars.MQTT_BROKER_URL_INTERNAL }}
+          LD_MQTT_BROKER_URL=${{ vars.LD_MQTT_BROKER_URL }}
+          LD_MQTT_BROKER_URL_INTERNAL=${{ vars.LD_MQTT_BROKER_URL_INTERNAL }}
+          FIWARE_SERVICE=${{ vars.FIWARE_SERVICE }}
+          FIWARE_SERVICEPATH=${{ vars.FIWARE_SERVICEPATH }}
+          STATIC_RECORDS=${{ vars.STATIC_RECORDS }}
+          EOF
+
+      - name: Verify .env file
+        run: cat .env
 
       - name: Generate docker-compose.yml
         run: |
@@ -37,8 +53,22 @@ jobs:
       - name: Start containers
         run: docker compose up -d
 
-      - name: Wait for services
-        run: sleep 15
+      - name: Wait for FIWARE Services
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:1026/version && \
+            curl -s http://localhost:1027/version && \
+            curl -s http://localhost:4061/version && \
+            curl -s http://localhost:4041/version && \
+            curl -s http://localhost:8668/version && break || sleep 5
+          done
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel
+          pip install
+          pip install jinja2 pytest
 
       - name: Run Pytest
         run: |
