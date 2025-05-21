@@ -79,6 +79,9 @@ jobs:
             curl -s http://localhost:8668/version && break || sleep 5
           done
 
+      - name: Debug - Show Running Docker Containers
+        run: docker ps -a
+
       - name: Navigate to Tests Folder
         run: |
           cd $GITHUB_WORKSPACE
@@ -88,13 +91,6 @@ jobs:
         run: |
           python -m unittest tests/clients/test_ngsi_v2_cb.py
           python -m pytest tests
-
-#      - name: Archive test logs
-#        if: always()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: logs-Orion=${{ matrix.orion_version }}__IoT=${{ matrix.iot_json_version }}
-#          path: result.log
 
       - name: Tear down containers
         if: always()
