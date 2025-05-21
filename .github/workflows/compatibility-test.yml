@@ -60,10 +60,13 @@ jobs:
 
       - name: Generate docker-compose.yml
         run: |
+          cd filip_unittest/docker
           python generate-compose.py ${{ matrix.orion_version }} ${{ matrix.iot_json_version }}
 
       - name: Start containers
-        run: docker compose up -d
+        run: |
+          cd filip_unittest/docker
+          docker compose up -d
 
       - name: Wait for FIWARE Services
         run: |
@@ -89,4 +92,6 @@ jobs:
 
       - name: Tear down containers
         if: always()
-        run: docker compose down -v
+        run: |
+          cd filip_unittest/docker
+          docker compose down -v
