@@ -20,6 +20,11 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
+      - name: Debug - Verify Repository Structure
+        run: |
+          pwd
+          ls -la
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -48,7 +53,7 @@ jobs:
 
       - name: Generate docker-compose.yml
         run: |
-          python generate_compose.py ${{ matrix.orion_version }} ${{ matrix.iot_json_version }}
+          python generate-compose.py ${{ matrix.orion_version }} ${{ matrix.iot_json_version }}
 
       - name: Start containers
         run: docker compose up -d
