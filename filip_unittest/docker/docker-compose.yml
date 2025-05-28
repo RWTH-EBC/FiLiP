@@ -22,7 +22,7 @@ x-logging-high: &logging-high # Used by: cratedb, iot-agent-json
 services:
 
   orion:
-    image: fiware/orion:3.8.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
+    image: fiware/orion:3.10.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
     hostname: orion
     container_name: "orion"
     restart: always
@@ -60,7 +60,7 @@ services:
     logging: *logging-low
 
   iot-agent-json:
-    image: fiware/iotagent-json:1.26.0
+    image: fiware/iotagent-json:1.25.0
     hostname: iot-agent
     container_name: "iot-agent"
     restart: always
