@@ -2112,7 +2112,6 @@ class ContextBrokerClient(BaseHttpClient):
     def patch_entity(
         self,
         entity: Union[ContextEntity, ContextEntityKeyValues],
-        old_entity: Optional[ContextEntity] = None,
         key_values: bool = False,
         forcedUpdate: bool = False,
         override_metadata: bool = False,
