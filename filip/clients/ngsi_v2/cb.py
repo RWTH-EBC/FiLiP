@@ -270,9 +270,9 @@ class ContextBrokerClient(BaseHttpClient):
                     return self.override_entity(entity=entity, key_values=key_values)
                 if patch and err.response.status_code == 422:
                     return self.patch_entity(
-                        entity=entity, 
+                        entity=entity,
                         override_attr_metadata=override_attr_metadata,
-                        key_values=key_values
+                        key_values=key_values,
                     )
             msg = f"Could not post entity {entity.id}"
             self.log_error(err=err, msg=msg)
@@ -916,42 +916,6 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not update or append attributes of entity" f" {entity.id} !"
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def _patch_entity_key_values(
-        self,
-        entity: Union[ContextEntityKeyValues, dict],
-    ):
-        """
-        The entity are updated with a ContextEntityKeyValues object or a
-        dictionary contain the simplified entity data. This corresponds to a
-        'PATCH' request.
-        Only existing attribute can be updated!
-
-        Args:
-            entity: A ContextEntityKeyValues object or a dictionary contain
-            the simplified entity data
-
-        """
-        if isinstance(entity, dict):
-            entity = ContextEntityKeyValues(**entity)
-        url = urljoin(self.base_url, f"v2/entities/{entity.id}/attrs")
-        headers = self.headers.copy()
-        params = {"type": entity.type, "options": AttrsFormat.KEY_VALUES.value}
-        try:
-            res = self.patch(
-                url=url,
-                headers=headers,
-                json=entity.model_dump(exclude={"id", "type"}, exclude_unset=True),
-                params=params,
-            )
-            if res.ok:
-                self.logger.info("Entity '%s' successfully " "updated!", entity.id)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not update attributes of entity" f" {entity.id} !"
             self.log_error(err=err, msg=msg)
             raise
 
@@ -2147,10 +2111,11 @@ class ContextBrokerClient(BaseHttpClient):
 
     def patch_entity(
         self,
-        entity: ContextEntity,
+        entity: Union[ContextEntity, ContextEntityKeyValues],
         old_entity: Optional[ContextEntity] = None,
-        override_attr_metadata: bool = True,
-        key_values: bool = False
+        key_values: bool = False,
+        forcedUpdate: bool = False,
+        override_metadata: bool = False,
     ) -> None:
         """
         Takes a given entity and updates the state in the CB to match it.
@@ -2164,61 +2129,24 @@ class ContextBrokerClient(BaseHttpClient):
                        Other changes made to the entity in CB, can be kept.
                        If type or id was changed, the old_entity will be
                        deleted.
-            override_attr_metadata:
-                Whether to override or append the attributes metadata.
-                `True` for overwrite or `False` for update/append
-
+            key_values: If True, the entity is updated in key-values format.
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
+            override_metadata: If True, the existing metadata of the entity
         Returns:
            None
         """
+        attributes = entity.get_attributes()
 
-        new_entity = entity
-        if old_entity is None:
-            # If no old entity_was provided we use the current state to compare
-            # the entity to
-            if self.does_entity_exist(
-                entity_id=new_entity.id, entity_type=new_entity.type
-            ):
-                old_entity = self.get_entity(
-                    entity_id=new_entity.id, entity_type=new_entity.type
-                )
-            else:
-                # the entity is new, post and finish
-                self.post_entity(new_entity, update=False)
-                return
-
-        old_dict = old_entity.get_attributes(response_format=PropertyFormat.DICT)
-        new_dict = new_entity.get_attributes(response_format=PropertyFormat.DICT)
-        diff = { k : old_dict[k] for k in set(old_dict) - set(new_dict) }
-        for deleted_attr in diff:
-            try:
-                self.delete_entity_attribute(
-                    entity_id=new_entity.id,
-                    entity_type=new_entity.type,
-                    attr_name=deleted_attr,
-                )
-            except requests.RequestException as err:
-                msg = (
-                    f"Failed to delete attribute {deleted_attr.name} of "
-                    f"entity {new_entity.id}."
-                )
-                if err.response is not None and err.response.status_code == 404:
-                    # if the attribute is provided by a registration the
-                    # deletion will fail
-                    msg += (
-                        f" The attribute is probably provided "
-                        f"by a registration."
-                    )
-                    self.log_error(err=err, msg=msg)
-                else:
-                    self.log_error(err=err, msg=msg)
-                    raise
-
-        return self.replace_entity_attributes(
-            entity_id=new_entity.id,
-            attrs=new_dict,
-            entity_type=new_entity.type,
-            key_values=key_values
+        self.update_existing_entity_attributes(
+            entity_id=entity.id,
+            entity_type=entity.type,
+            attrs=attributes,
+            key_values=key_values,
+            forcedUpdate=forcedUpdate,
+            override_metadata=override_metadata,
         )
 
     def _subscription_dicts_are_equal(self, first: dict, second: dict):

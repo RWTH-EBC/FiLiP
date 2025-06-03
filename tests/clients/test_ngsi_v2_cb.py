@@ -1956,12 +1956,18 @@ class TestContextBroker(unittest.TestCase):
         attr2 = NamedContextAttribute(name="attr2", value="2")
         attr1.metadata["m2"] = NamedMetadata(name="meta2", type="metatype", value="3")
         entity.add_attributes([attr1, attr2])
+        entity_kv = ContextEntityKeyValues(
+            id="test_id2_kv",
+            type="test_type_kv",
+            attr1="1",
+            attr2="2",
+        )
 
         # sub-Test1: Post new. No old entity not exist or is provided!
-        self.client.patch_entity(entity=entity)
-        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
-        self.tearDown()
-
+        with self.assertRaises(requests.RequestException):
+            self.client.patch_entity(entity=entity)
+        # self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        # self.tearDown()
 
         # sub-Test5: New attr, attr del, and attr changed. No Old_entity given
         self.client.post_entity(entity=entity)
@@ -1973,30 +1979,53 @@ class TestContextBroker(unittest.TestCase):
         attr1_changed.metadata["m4"] = NamedMetadata(
             name="meta3", type="metatype5", value="4"
         )
-        attr3 = NamedContextAttribute(name="attr3", value="3")
-        test_entity.add_attributes([attr1_changed, attr3])
+        test_entity.add_attributes([attr1_changed, attr2])
         self.client.patch_entity(test_entity)
+        self.assertNotEqual(test_entity, self.client.get_entity(entity_id=entity.id))
+        self.client.patch_entity(test_entity, override_metadata=True)
         self.assertEqual(test_entity, self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
-        # sub-Test6: Attr changes, concurrent changes in Fiware,
-        #            old_entity given
+        # test with unknown attributs
         self.client.post_entity(entity=entity)
-        concurrent_entity = ContextEntity(id="test_id1", type="test_type1")
-        attr1_changed = copy.deepcopy(attr1)
-        attr1_changed.metadata["m1"].value = "3"
-        attr1_changed.value = "4"
-        concurrent_entity.add_attributes([attr1_changed, attr2])
-        self.client.patch_entity(concurrent_entity)
-        
-        user_entity = copy.deepcopy(entity)
+        test_entity = ContextEntity(id="test_id1", type="test_type1")
         attr3 = NamedContextAttribute(name="attr3", value="3")
-        user_entity.add_attributes([attr3])
-        self.client.patch_entity(user_entity, old_entity=entity)
-        result_entity = ContextEntity(id="test_id1", type="test_type1")
-        result_entity.add_attributes([attr1,attr2, attr3])
-        self.assertEqual(result_entity, self.client.get_entity(entity_id=entity.id))
+        test_entity.add_attributes([attr1_changed, attr3])
+        test_entity.add_attributes([attr1, attr2, attr3])
+        with self.assertRaises(requests.RequestException):
+            self.client.patch_entity(test_entity)
         self.tearDown()
+
+        # test patch with keyValues
+        with self.assertRaises(requests.HTTPError):
+            self.client.patch_entity(entity=entity_kv, key_values=True)
+
+        self.client.post_entity(entity=entity_kv, key_values=True)
+
+        self.client.patch_entity(entity=entity_kv, key_values=True)
+        self.assertEqual(
+            entity_kv,
+            self.client.get_entity(entity_id=entity_kv.id, response_format="keyValues"),
+        )
+
+        # add attribute
+        entity_kv.attr3 = "3"
+        with self.assertRaises(requests.RequestException):
+            self.client.patch_entity(entity=entity_kv, key_values=True)
+        self.assertEqual(
+            len(self.client.get_entity(entity_id=entity_kv.id).get_attributes()), 2
+        )
+
+        # remove attribute attr1
+        test_entity_kv = ContextEntityKeyValues(
+            id="test_id2_kv",
+            type="test_type_kv",
+            attr2="2",
+        )
+        self.client.patch_entity(entity=test_entity_kv, key_values=True)
+        self.assertEqual(
+            len(self.client.get_entity(entity_id=entity_kv.id).get_attributes()), 2
+        )
 
     def test_delete_entity_devices(self):
         # create devices
