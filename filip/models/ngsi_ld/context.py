@@ -93,7 +93,7 @@ class ContextProperty(BaseModel):
     )
     field_validator("modifiedAt")(validate_fiware_datatype_string_protect)
 
-    UnitCode: Optional[str] = Field(
+    unitCode: Optional[str] = Field(
         None,
         title="Unit Code",
         description="Representing the unit of the value. "
@@ -103,7 +103,7 @@ class ContextProperty(BaseModel):
         max_length=256,
         min_length=1,
     )
-    field_validator("UnitCode")(validate_fiware_datatype_string_protect)
+    field_validator("unitCode")(validate_fiware_datatype_string_protect)
 
     datasetId: Optional[str] = Field(
         None,
@@ -817,4 +817,22 @@ class UpdateLD(BaseModel):
     entities: List[Union[ContextLDEntity, ContextLDEntityKeyValues]] = Field(
         description="an array of entities, each entity specified using the "
         "JSON entity representation format "
+    )
+    
+class MessageLD(BaseModel):
+    """
+    Model for a notification message, when sent to other NGSIv2-APIs
+    """
+
+    subscriptionId: Optional[str] = Field(
+        default=None,
+        description="Id of the subscription the notification comes from",
+    )
+    data: List[ContextLDEntity] = Field(
+        description="is an array with the notification data itself which "
+        "includes the entity and all concerned attributes. Each "
+        "element in the array corresponds to a different entity. "
+        "By default, the entities are represented in normalized "
+        "mode. However, using the attrsFormat modifier, a "
+        "simplified representation mode can be requested."
     )
