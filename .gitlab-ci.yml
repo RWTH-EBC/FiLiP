@@ -29,7 +29,7 @@ include:
     #  file: 'python/tests/tests.gitlab-ci.yml'
     #- project: 'EBC/EBC_all/gitlab_ci/templates'
     #  file: 'python/tests/coverage.gitlab-ci.yml'
-    # The new template deploys FIWARE stack inside the pipeline (orion:1027, orionld:1026, crate:4200, mqtt-broker:1883, iot-agent-ul:4061) .
+    # The new template deploys FIWARE stack inside the pipeline (orion:1027, orionld:1026, crate:4200, mqtt-broker:1883, iot-agent-ul:4061, quantumleap:8668) .
     - project: 'EBC/EBC_all/gitlab_ci/fiware_templates'
       file: 'unittest_fiware/fiware_tests.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
