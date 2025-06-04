@@ -13,6 +13,7 @@ variables:
     GIT_REPO: "RWTH-EBC/FiLiP"
     PYTHON_VERSION_NAME: "__version__"
     PYTHON_PACKAGE_NAME: "filip"
+    MAX_ATTEMPTS: "10" # for fiware stack health check
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
