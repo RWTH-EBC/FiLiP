@@ -21,7 +21,11 @@ import time
 
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models import FiwareLDHeader
-from filip.models.ngsi_ld.subscriptions import SubscriptionLD, NotificationParams,Endpoint
+from filip.models.ngsi_ld.subscriptions import (
+    SubscriptionLD,
+    NotificationParams,
+    Endpoint,
+)
 from filip.models.ngsi_ld.context import ContextLDEntity
 from filip.config import settings
 from filip.utils.cleanup import clear_context_broker_ld
@@ -30,7 +34,7 @@ import logging
 
 
 # Host address of Context Broker
-CB_URL = settings.CB_URL
+LD_CB_URL = settings.LD_CB_URL
 # Host address of the MQTT-Broker
 MQTT_BROKER_URL = "mqtt://mosquitto:1883"
 
@@ -99,8 +103,10 @@ def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
 def create_subscription(
     cbc: ContextBrokerLDClient, entity_id: str, notification: NotificationParams
 ):
-    
-    sub = SubscriptionLD(id=entity_id, notification=notification, entities=[{"type": "Room"}])
+
+    sub = SubscriptionLD(
+        id=entity_id, notification=notification, entities=[{"type": "Room"}]
+    )
     cbc.post_subscription(sub)
 
 
@@ -109,7 +115,7 @@ if __name__ == "__main__":
     fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
 
     # Create a Context Broker Client
-    cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=fiware_header)
+    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     clear_context_broker_ld(cb_ld_client=cb_client)
 
     # Set up a dummy MQTT actuator
@@ -117,22 +123,26 @@ if __name__ == "__main__":
     mqtt_topic_custom = "actuator/2"  # Topic for the actuator 2 (custom payload)
 
     actuator_client = set_up_mqtt_actuator(mqtt_topic, mqtt_topic_custom)
-    actuator_client.connect("localhost",1883)
+    actuator_client.connect("localhost", 1883)
     actuator_client.loop_start()
 
     # Create entities for the actuators
     actuator_1 = ContextLDEntity(
-        id="urn:ngsi-ld:actuator1", type="Actuator", toggle={"type": "Property", "value": False}
+        id="urn:ngsi-ld:actuator1",
+        type="Actuator",
+        toggle={"type": "Property", "value": False},
     )
     cb_client.post_entity(actuator_1)
     actuator_2 = ContextLDEntity(
-        id="urn:ngsi-ld:actuator2", type="Actuator", heatPower={"type": "Property", "value": 0}
+        id="urn:ngsi-ld:actuator2",
+        type="Actuator",
+        heatPower={"type": "Property", "value": 0},
     )
     cb_client.post_entity(actuator_2)
 
     # Create a notification for the actuator 1 with normal payload
     notification_normal = NotificationParams(
-        endpoint=Endpoint(uri=f'{MQTT_BROKER_URL}/{mqtt_topic}')
+        endpoint=Endpoint(uri=f"{MQTT_BROKER_URL}/{mqtt_topic}")
     )
     create_subscription(
         cb_client, entity_id=actuator_1.id, notification=notification_normal
@@ -140,7 +150,9 @@ if __name__ == "__main__":
 
     # Create a subscription for the actuator 2 with custom payload
     notification_custom = NotificationParams(
-        endpoint=Endpoint(uri=f'{MQTT_BROKER_URL}/{mqtt_topic_custom}',accept="application/json")
+        endpoint=Endpoint(
+            uri=f"{MQTT_BROKER_URL}/{mqtt_topic_custom}", accept="application/json"
+        )
     )
     create_subscription(
         cb_client, entity_id=actuator_2.id, notification=notification_custom
@@ -169,6 +181,6 @@ if __name__ == "__main__":
     actuator_client.loop_stop()
     actuator_client.disconnect()
 
-    #gotta sleep here for some reason, otherwise orion restarts ( ikr ?)
+    # gotta sleep here for some reason, otherwise orion restarts ( ikr ?)
     time.sleep(2)
     clear_context_broker_ld(cb_ld_client=cb_client)

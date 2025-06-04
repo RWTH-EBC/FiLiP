@@ -11,7 +11,7 @@ import datetime
 import time
 import json
 from threading import Thread
-from http.server import HTTPServer,BaseHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from filip.config import settings
 import pprint
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
@@ -23,13 +23,14 @@ from filip.models.ngsi_ld.context import (
     ContextProperty,
 )
 from filip.utils.cleanup import clear_context_broker_ld
+
 # ## Parameters
 #
 # To run this example you need a working Fiware v2 setup with a context-broker
 # You can set the address:
 #
 # Host address of Context Broker
-CB_URL = settings.CB_URL
+LD_CB_URL = settings.LD_CB_URL
 
 # You can also change the used Fiware service
 # FIWARE-Service
@@ -59,25 +60,25 @@ if __name__ == "__main__":
     #
     # Create the context broker client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
-    cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=fiware_header)
+    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     entities = cb_client.get_entity_list()
     logger.info(entities)
+
     class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
         def do_POST(self):
             print("Received notification")
-            if self.headers['Content-Length']:
-                content_length = int(self.headers['Content-Length'])
+            if self.headers["Content-Length"]:
+                content_length = int(self.headers["Content-Length"])
                 body = self.rfile.read(content_length)
                 if body:
-                    pprint.pprint(json.loads(body.decode("utf-8")),compact=True)
+                    pprint.pprint(json.loads(body.decode("utf-8")), compact=True)
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(b'Hello, world!')
-        
-   
-    httpd = HTTPServer(('0.0.0.0', 1995), SimpleHTTPRequestHandler)
-    server_thread= Thread(target = lambda : httpd.serve_forever(), args =())
+            self.wfile.write(b"Hello, world!")
+
+    httpd = HTTPServer(("0.0.0.0", 1995), SimpleHTTPRequestHandler)
+    server_thread = Thread(target=lambda: httpd.serve_forever(), args=())
     server_thread.start()
     # # 2 Subscription setup
     #
@@ -89,41 +90,41 @@ if __name__ == "__main__":
     room1_dictionary = {
         "id": "urn:ngsi-ld:Room:001",
         "type": "Room",
-        "temperature": {"value": 11, "type": DataTypeLD.PROPERTY}
+        "temperature": {"value": 11, "type": DataTypeLD.PROPERTY},
     }
-    
+
     room1_entity = ContextLDEntity(**room1_dictionary)
     cb_client.post_entity(room1_entity)
     sub_example = {
         "description": "Subscription to receive HTTP-Notifications about "
         + interesting_entity_id,
         "entities": [{"type": "Room"}],
-        "watchedAttributes":["temperature"],
-        "q":"temperature>30",
+        "watchedAttributes": ["temperature"],
+        "q": "temperature>30",
         "notification": {
             "attributes": ["temperature"],
             "format": "normalized",
             "endpoint": {
                 "uri": SERVER_URL,
                 "Accept": "application/json",
-            }
+            },
         },
         "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
         "throttling": 0,
-        "id":"urg:ngsi-ld:Sub:001",
-        "type":"Subscription"
+        "id": "urg:ngsi-ld:Sub:001",
+        "type": "Subscription",
     }
     sub = SubscriptionLD(**sub_example)
     # Posting an example subscription for Room1
     sub_id = cb_client.post_subscription(subscription=sub, update=True)
-    
+
     time.sleep(1)
     cb_client.update_entity_attribute(
         entity_id=interesting_entity_id,
-        attr=ContextProperty(value=42,type="Property"),
-        attr_name="temperature"
+        attr=ContextProperty(value=42, type="Property"),
+        attr_name="temperature",
     )
-    
+
     # # 3 Filter subscriptions
     retrieve_sub = cb_client.get_subscription(sub_id)
     logger.info(retrieve_sub)

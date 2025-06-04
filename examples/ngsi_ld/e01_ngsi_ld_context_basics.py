@@ -12,7 +12,7 @@ from filip.models.ngsi_ld.context import (
     ContextLDEntity,
     ContextProperty,
     NamedContextProperty,
-    NamedContextRelationship
+    NamedContextRelationship,
 )
 from filip.utils.simple_ql import QueryString
 from filip.config import settings
@@ -23,7 +23,7 @@ from filip.config import settings
 # You can set the address here:
 #
 # Host address of Context Broker
-CB_URL = settings.CB_URL
+LD_CB_URL = settings.LD_CB_URL
 
 # You can also change the used Fiware service
 # FIWARE-Service
@@ -45,12 +45,10 @@ if __name__ == "__main__":
     #
     # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
-    cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=fiware_header)
+    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     # View version
     for key, value in cb_client.get_version().items():
-        logger.info(
-            f"{key}: {value}"
-        )
+        logger.info(f"{key}: {value}")
 
     # # 2 Create Entities
     #
@@ -64,18 +62,22 @@ if __name__ == "__main__":
         "id": "urn:ngsi-ld:Room:001",
         "type": "Room",
         "temperature": {"value": 11, "type": DataTypeLD.PROPERTY},
-        "nextto":{"object":"urn:ngsi-ld:Room:002","type":DataTypeLD.RELATIONSHIP}
+        "nextto": {"object": "urn:ngsi-ld:Room:002", "type": DataTypeLD.RELATIONSHIP},
     }
-    
+
     room1_entity = ContextLDEntity(**room1_dictionary)
 
     # ### 2.1.2 Using the constructor and interfaces
     #
     room2_entity = ContextLDEntity(id="urn:ngsi-ld:Room:002", type="Room")
-    #Differentiate between property and relationship in LD
-    temp_prop = NamedContextProperty(name="temperature", value=22, type=DataTypeLD.PROPERTY)
-    #Relationships can reference other entities
-    room_rel = NamedContextRelationship(name="nextto", object="urn:ngsi-ld:Room:001", type=DataTypeLD.RELATIONSHIP)
+    # Differentiate between property and relationship in LD
+    temp_prop = NamedContextProperty(
+        name="temperature", value=22, type=DataTypeLD.PROPERTY
+    )
+    # Relationships can reference other entities
+    room_rel = NamedContextRelationship(
+        name="nextto", object="urn:ngsi-ld:Room:001", type=DataTypeLD.RELATIONSHIP
+    )
     room2_entity.add_properties([temp_prop])
     room2_entity.add_relationships([room_rel])
 
@@ -139,33 +141,26 @@ if __name__ == "__main__":
         cb_client.update_entity_attribute(
             entity_id=entity.id,
             attr=ContextProperty(type="Property", value=111),
-            attr_name="temperature"
+            attr_name="temperature",
         )
     )
-    
-    #But can append/overwrite any attributes with the following
-    #For appending only provide the noOverwrite option
+
+    # But can append/overwrite any attributes with the following
+    # For appending only provide the noOverwrite option
     entity = room2_entity
     entity.add_properties(
-        {"humidity":ContextProperty(type="Property",value=80),
-        "pressure":ContextProperty(type="Property",value=42)}
+        {
+            "humidity": ContextProperty(type="Property", value=80),
+            "pressure": ContextProperty(type="Property", value=42),
+        }
     )
-    logger.info(
-        cb_client.append_entity_attributes(
-            entity
-        )
-    )
-    
-    entity.add_properties({"pressure":ContextProperty(type="Property",value=100)})
-    
-    #Or optionally replace existing attributes
-    logger.info(
-        cb_client.replace_existing_attributes_of_entity(
-            entity
-        )
-    )
-    
-    
+    logger.info(cb_client.append_entity_attributes(entity))
+
+    entity.add_properties({"pressure": ContextProperty(type="Property", value=100)})
+
+    # Or optionally replace existing attributes
+    logger.info(cb_client.replace_existing_attributes_of_entity(entity))
+
     # Deleting attributes
     # logger.info(cb_client.delete_entity_attribute(entity_id=room1_entity.id,
     #                                               attr_name="temperature"))
@@ -178,15 +173,15 @@ if __name__ == "__main__":
     # keeping as much of the current live state as possible
 
     # Update locally with add_properties/relationships
-    #Will overwrites
-    room2_entity.add_properties([NamedContextProperty(name="temperature",type=DataTypeLD.PROPERTY,value=1995)])
+    # Will overwrites
+    room2_entity.add_properties(
+        [NamedContextProperty(name="temperature", type=DataTypeLD.PROPERTY, value=1995)]
+    )
 
     room2_entity.delete_properties(["pressure"])
 
     # all changes are transmitted with one methode call
-    cb_client.append_entity_attributes(
-        room2_entity
-    )
+    cb_client.append_entity_attributes(room2_entity)
 
     # ## 4.2 Deleting
     #

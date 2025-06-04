@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 # You can set the address:
 #
 # Host address of Context Broker
-CB_URL = settings.CB_URL
+LD_CB_URL = settings.LD_CB_URL
 
 # You can also change the used Fiware service
 # FIWARE-Service
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     #
     # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
-    cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=fiware_header)
+    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
 
     room_001 = {
         "id": "urn:ngsi-ld:Room:001",
@@ -82,20 +82,20 @@ if __name__ == "__main__":
         "description": "Subscription to receive MQTT-Notifications about "
         "urn:ngsi-ld:Room:001",
         "entities": [{"type": "Room"}],
-        "watchedAttributes":["temperature"],
-        "q":"temperature>30",
+        "watchedAttributes": ["temperature"],
+        "q": "temperature>30",
         "notification": {
             "attributes": ["temperature"],
             "format": "normalized",
             "endpoint": {
                 "uri": f"{MQTT_BROKER_URL_INTERNAL}/{mqtt_topic}",
                 "Accept": "application/json",
-            }
+            },
         },
         "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
         "throttling": 0,
-        "id":"urg:ngsi-ld:Sub:001",
-        "type":"Subscription"
+        "id": "urg:ngsi-ld:Sub:001",
+        "type": "Subscription",
     }
     # Generate Subscription object for validation
     sub = SubscriptionLD(**sub_example)
@@ -124,9 +124,7 @@ if __name__ == "__main__":
         logger.info(f"MQTT Client successfully subscribed: {granted_qos[0]}")
 
     def on_message(client, userdata, msg):
-        logger.info(
-            "MQTT Client received this message:\n" 
-        )
+        logger.info("MQTT Client received this message:\n")
         pprint.pprint(json.loads(msg.payload.decode("utf-8")))
 
     def on_disconnect(client, userdata, flags, reasonCode, properties=None):
@@ -168,12 +166,12 @@ if __name__ == "__main__":
     cb_client.update_entity_attribute(
         entity_id="urn:ngsi-ld:Room:001",
         attr_name="temperature",
-        attr=ContextProperty(value=new_value,type="Property"),
+        attr=ContextProperty(value=new_value, type="Property"),
     )
     cb_client.update_entity_attribute(
         entity_id="urn:ngsi-ld:Room:001",
         attr_name="pressure",
-        attr=ContextProperty(value=new_value,type="Property"),
+        attr=ContextProperty(value=new_value, type="Property"),
     )
     time.sleep(1)
 

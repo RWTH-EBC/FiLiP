@@ -9,7 +9,7 @@ import datetime
 import random
 from filip.config import settings
 from filip.models.ngsi_ld.subscriptions import SubscriptionLD
-from filip.models.ngsi_ld.context import ContextLDEntity,ContextProperty,MessageLD
+from filip.models.ngsi_ld.context import ContextLDEntity, ContextProperty, MessageLD
 from filip.models.base import FiwareLDHeader
 from filip.clients.ngsi_v2 import QuantumLeapClient
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
@@ -21,7 +21,7 @@ from filip.utils.cleanup import clear_quantumleap, clear_context_broker_ld
 # Context Broker and QuantumLeap. Here you can set the addresses:
 #
 # Host address of Context Broker
-CB_URL = settings.CB_URL
+LD_CB_URL = settings.LD_CB_URL
 # Host address of QuantumLeap
 QL_URL = settings.QL_URL
 
@@ -49,7 +49,6 @@ if __name__ == "__main__":
 
     fiware_header = FiwareLDHeader()
 
-
     ql_client = QuantumLeapClient(url=QL_URL, fiware_header=fiware_header)
     clear_quantumleap(ql_client=ql_client)
     print(
@@ -57,9 +56,9 @@ if __name__ == "__main__":
         f" located at url: {ql_client.base_url}"
     )
 
-    cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=fiware_header)
+    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     clear_context_broker_ld(cb_ld_client=cb_client)
-    
+
     print(
         f"Context Broker version: {cb_client.get_version()}"
         f" located at url: {cb_client.base_url}"
@@ -87,24 +86,24 @@ if __name__ == "__main__":
 
     subscription: SubscriptionLD = SubscriptionLD.model_validate(
         {
-        "description": "Subscription to receive HTTP-Notifications about "
-        + hall_entity.id,
-        "entities": [{"type": "Room"}],
-        "watchedAttributes":["temperature"],
-        "q":"temperature<101",
-        "notification": {
-            "attributes": [],
-            "format": "normalized",
-            "endpoint": {
-                "uri": "http://localhost:8668/v2/notify",
-                "Accept": "application/json",
-            }
-        },
-        "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
-        "throttling": 0,
-        "id":"urg:ngsi-ld:Sub:001",
-        "type":"Subscription"
-    }
+            "description": "Subscription to receive HTTP-Notifications about "
+            + hall_entity.id,
+            "entities": [{"type": "Room"}],
+            "watchedAttributes": ["temperature"],
+            "q": "temperature<101",
+            "notification": {
+                "attributes": [],
+                "format": "normalized",
+                "endpoint": {
+                    "uri": "http://localhost:8668/v2/notify",
+                    "Accept": "application/json",
+                },
+            },
+            "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
+            "throttling": 0,
+            "id": "urg:ngsi-ld:Sub:001",
+            "type": "Subscription",
+        }
     )
     subscription_id = cb_client.post_subscription(subscription=subscription)
 
@@ -118,7 +117,9 @@ if __name__ == "__main__":
             if entity.type == hall_entity.type:
                 try:
                     ql_client.post_notification(
-                        notification=MessageLD(data=[hall_entity], subscriptionId=sub.id)
+                        notification=MessageLD(
+                            data=[hall_entity], subscriptionId=sub.id
+                        )
                     )
                     subscription_id = sub.id
                 except Exception as e:
@@ -129,7 +130,7 @@ if __name__ == "__main__":
         cb_client.update_entity_attribute(
             entity_id=hall_entity.id,
             attr=ContextProperty(value=i),
-            attr_name="temperature"
+            attr_name="temperature",
         )
 
     time.sleep(1)
@@ -166,7 +167,7 @@ if __name__ == "__main__":
         )
     except:
         logger.info("There might be no historical data for some calls.")
-        
+
     # ## 2.3 Delete
     #
     # Delete entity in QL

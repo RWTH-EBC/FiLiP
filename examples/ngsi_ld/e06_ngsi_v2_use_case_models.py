@@ -13,13 +13,17 @@ from pydantic import ConfigDict, BaseModel
 from pydantic.fields import Field, FieldInfo
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models import FiwareLDHeader
-from filip.models.ngsi_ld.context import ContextLDEntity,ContextLDEntityKeyValues,ContextProperty
+from filip.models.ngsi_ld.context import (
+    ContextLDEntity,
+    ContextLDEntityKeyValues,
+    ContextProperty,
+)
 from filip.utils.cleanup import clear_context_broker_ld
 from pprint import pprint
 from filip.config import settings
 
 # Host address of Context Broker
-CB_URL = settings.CB_URL
+LD_CB_URL = settings.LD_CB_URL
 
 # You can here also change the used Fiware service
 # FIWARE-Service
@@ -104,7 +108,7 @@ if __name__ == "__main__":
     # Workflow to utilize these data models.
 
     # 0. Initial client
-    cb_client = ContextBrokerLDClient(url=CB_URL, fiware_header=fiware_header)
+    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     # clear cb
     clear_context_broker_ld(cb_ld_client=cb_client)
 
@@ -117,17 +121,17 @@ if __name__ == "__main__":
             address_country="Germany",
             street_address="Mathieustr. 10",
             postal_code=52072,
-        )
+        ),
     )
-    
-    '''
+
+    """
     
     comp_attr = {"testtemperature": 20.0}
     comp_entity = ContextLDEntityKeyValues(
         id="urn:ngsi-ld:my:id4", type="MyType", **comp_attr
     )
     
-    '''
+    """
     cb_client.post_entity(entity=weather_station)
 
     # 2. Update data
