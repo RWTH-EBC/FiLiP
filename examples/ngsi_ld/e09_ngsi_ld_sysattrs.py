@@ -31,10 +31,8 @@ LD_CB_URL = settings.LD_CB_URL
 QL_URL = settings.QL_URL
 
 # Here you can also change FIWARE service and service path.
-# FIWARE-Service
-SERVICE = "filip_e15"
-# FIWARE-Service path
-SERVICE_PATH = "/"
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip_e15"
 
 # Setting up logging
 logging.basicConfig(
@@ -46,14 +44,14 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-    fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
-    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     try:
-        clear_context_broker_ld(cb_ld_client=cb_client)
+        clear_context_broker_ld(cb_ld_client=cb_ld_client)
     except:
         pass
     id = "urn:ngsi-ld:temperatureSensor"
-    cb_client.post_entity(
+    cb_ld_client.post_entity(
         ContextLDEntity(
             id=id,
             type="TemperatureSensor",
@@ -66,7 +64,7 @@ if __name__ == "__main__":
     # the so called "system attributes" are in fact the time when an
     # entity has been created or last modified(createdAt, modifiedAt)
 
-    entity = cb_client.get_entity(entity_id=id)
+    entity = cb_ld_client.get_entity(entity_id=id)
 
     # Without prompting it, the broker will return null for these values
     logger.info(
@@ -77,7 +75,7 @@ if __name__ == "__main__":
     )
 
     # To get the system attributes, one has to provide the sysAttrs options in the parameters
-    entity = cb_client.get_entity(entity_id=id, options="sysAttrs")
+    entity = cb_ld_client.get_entity(entity_id=id, options="sysAttrs")
     old_mod = entity.modifiedAt
     logger.info(f'modifiedAt attribute is {old_mod if old_mod is not None else "None"}')
     logger.info(
@@ -86,17 +84,17 @@ if __name__ == "__main__":
 
     # And the context broker will update accordingly
     time.sleep(5)
-    cb_client.update_entity_attribute(
+    cb_ld_client.update_entity_attribute(
         entity_id=id,
         attr=NamedContextProperty(name="temperature", value=23),
         attr_name="temperature",
     )
 
-    entity = cb_client.get_entity(entity_id=id, options="sysAttrs")
+    entity = cb_ld_client.get_entity(entity_id=id, options="sysAttrs")
     new_mod = entity.modifiedAt
     t_delta = datetime.fromisoformat(new_mod.replace("Z", "")) - datetime.fromisoformat(
         old_mod.replace("Z", "")
     )
 
     logger.info(f"Modified {t_delta.seconds} seconds ago")
-    clear_context_broker_ld(cb_ld_client=cb_client)
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)

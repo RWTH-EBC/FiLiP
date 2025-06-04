@@ -20,10 +20,8 @@ from filip.config import settings
 LD_CB_URL = settings.LD_CB_URL
 
 # You can also change the used Fiware service
-# FIWARE-Service
-SERVICE = "filip"
-# FIWARE-Service path
-SERVICE_PATH = "/example"
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip"
 
 # Setting up logging
 logging.basicConfig(
@@ -38,13 +36,15 @@ if __name__ == "__main__":
     # # 1 Setup Client
     #
     # create the client, for more details view the example: e01_http_clients.py
-    fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
 
     # ## 1.1 Store entities
     #
-    with ContextBrokerLDClient(fiware_header=fiware_header, url=LD_CB_URL) as cb_client:
+    with ContextBrokerLDClient(
+        fiware_header=fiware_header, url=LD_CB_URL
+    ) as cb_ld_client:
         # make sure that the server is clean
-        clear_context_broker_ld(cb_ld_client=cb_client)
+        clear_context_broker_ld(cb_ld_client=cb_ld_client)
         store_dict = [
             {
                 "type": "Store",
@@ -63,11 +63,13 @@ if __name__ == "__main__":
         ]
         store_entities = [ContextLDEntity(**store) for store in store_dict]
         for entity in store_entities:
-            cb_client.post_entity(entity)
+            cb_ld_client.post_entity(entity)
 
     # ## 1.2 Product entities
     #
-    with ContextBrokerLDClient(fiware_header=fiware_header, url=LD_CB_URL) as cb_client:
+    with ContextBrokerLDClient(
+        fiware_header=fiware_header, url=LD_CB_URL
+    ) as cb_ld_client:
         product_dict = [
             {
                 "id": "urn:ngsi-ld:Product:001",
@@ -100,12 +102,14 @@ if __name__ == "__main__":
         ]
         product_entities = []
         for product_entity in product_dict:
-            cb_client.post_entity(ContextLDEntity(**product_entity))
+            cb_ld_client.post_entity(ContextLDEntity(**product_entity))
             product_entities.append(ContextLDEntity(**product_entity))
 
     # ## 1.3 Inventory Entities
     #
-    with ContextBrokerLDClient(fiware_header=fiware_header, url=LD_CB_URL) as cb_client:
+    with ContextBrokerLDClient(
+        fiware_header=fiware_header, url=LD_CB_URL
+    ) as cb_ld_client:
         inventory_dict = {
             "id": "urn:ngsi-ld:InventoryItem:001",
             "type": "InventoryItem",
@@ -114,7 +118,7 @@ if __name__ == "__main__":
             "stockCount": {"type": "Property", "value": 10000},
         }
         inventory_entity = ContextLDEntity(**inventory_dict)
-        cb_client.post_entity(inventory_entity)
+        cb_ld_client.post_entity(inventory_entity)
 
     # # 2 Read data from FIWARE
     #
@@ -123,19 +127,23 @@ if __name__ == "__main__":
 
     # ## 2.2 Get entities
     #
-    with ContextBrokerLDClient(fiware_header=fiware_header, url=LD_CB_URL) as cb_client:
+    with ContextBrokerLDClient(
+        fiware_header=fiware_header, url=LD_CB_URL
+    ) as cb_ld_client:
         # It should return the inventory item according to the relationship
         query = 'refProduct=="urn:ngsi-ld:Product:001"'
-        logger.info(cb_client.get_entity_list(q=query))
+        logger.info(cb_ld_client.get_entity_list(q=query))
 
         query = 'refStore=="urn:ngsi-ld:Store:001"'
-        logger.info(cb_client.get_entity_list(q=query))
+        logger.info(cb_ld_client.get_entity_list(q=query))
 
         # It should not return the inventory item according to the relationship
         query = 'refStore=="urn:ngsi-ld:Store:002"'
-        logger.info(cb_client.get_entity_list(q=query))
+        logger.info(cb_ld_client.get_entity_list(q=query))
 
     # # 3 Delete test entities
     #
-    with ContextBrokerLDClient(fiware_header=fiware_header, url=LD_CB_URL) as cb_client:
-        clear_context_broker_ld(cb_ld_client=cb_client)
+    with ContextBrokerLDClient(
+        fiware_header=fiware_header, url=LD_CB_URL
+    ) as cb_ld_client:
+        clear_context_broker_ld(cb_ld_client=cb_ld_client)

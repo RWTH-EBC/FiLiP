@@ -26,11 +26,10 @@ from filip.config import settings
 LD_CB_URL = settings.LD_CB_URL
 
 # You can here also change the used Fiware service
-# FIWARE-Service
-SERVICE = "filip"
-# FIWARE-Servicepath
-SERVICE_PATH = "/"
-fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip"
+# NGSI-LD Tenantpath
+fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
 
 
 # Reuse existing data model from the internet
@@ -108,9 +107,9 @@ if __name__ == "__main__":
     # Workflow to utilize these data models.
 
     # 0. Initial client
-    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     # clear cb
-    clear_context_broker_ld(cb_ld_client=cb_client)
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)
 
     # 1. Crate data
     weather_station = WeatherStationFIWARE(
@@ -132,15 +131,15 @@ if __name__ == "__main__":
     )
     
     """
-    cb_client.post_entity(entity=weather_station)
+    cb_ld_client.post_entity(entity=weather_station)
 
     # 2. Update data
     weather_station.temperature = 30  # represent use case algorithm
-    cb_client.update_entity(entity=weather_station, key_values=True)
+    cb_ld_client.update_entity(entity=weather_station, key_values=True)
 
     # 3. Query and validate data
     # represent querying data by data users
-    weather_station_data = cb_client.get_entity(
+    weather_station_data = cb_ld_client.get_entity(
         entity_id=weather_station.id, response_format="keyValues"
     )
     # validate with general model
@@ -171,4 +170,4 @@ if __name__ == "__main__":
     )
 
     # clear cb
-    clear_context_broker_ld(cb_ld_client=cb_client)
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)

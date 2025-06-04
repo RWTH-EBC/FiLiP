@@ -7,9 +7,7 @@ from filip.config import settings
 from filip.utils.cleanup import clear_context_broker_ld
 
 LD_CB_URL = settings.LD_CB_URL
-SERVICE = "filip"
-# FIWARE-Service path
-SERVICE_PATH = "/example"
+NGSILD_TENANT = "filip"
 
 # Setting up logging
 logging.basicConfig(
@@ -36,11 +34,11 @@ if __name__ == "__main__":
     # When no context is provided, default is used, which defined by core_context
     logger.info(core_context)
 
-    default_header = FiwareLDHeader(ngsild_tenant=SERVICE)
+    default_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
     default_client = ContextBrokerLDClient(fiware_header=default_header, url=LD_CB_URL)
 
     # A custom context can be provided through a 'Link' http header
-    custom_header = FiwareLDHeader(ngsild_tenant=SERVICE)
+    custom_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
 
     custom_context = (
         "https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"

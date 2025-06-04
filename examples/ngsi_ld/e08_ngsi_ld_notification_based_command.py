@@ -38,11 +38,8 @@ LD_CB_URL = settings.LD_CB_URL
 # Host address of the MQTT-Broker
 MQTT_BROKER_URL = "mqtt://mosquitto:1883"
 
-# FIWARE-Service
-SERVICE = "filip"
-# FIWARE-Service path
-SERVICE_PATH = "/"
-
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip"
 # Setting up logging
 logging.basicConfig(
     level="INFO",
@@ -112,11 +109,11 @@ def create_subscription(
 
 if __name__ == "__main__":
     # FIWARE header
-    fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
 
     # Create a Context Broker Client
-    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
-    clear_context_broker_ld(cb_ld_client=cb_client)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)
 
     # Set up a dummy MQTT actuator
     mqtt_topic = "actuator/1"  # Topic for the actuator 1
@@ -132,20 +129,20 @@ if __name__ == "__main__":
         type="Actuator",
         toggle={"type": "Property", "value": False},
     )
-    cb_client.post_entity(actuator_1)
+    cb_ld_client.post_entity(actuator_1)
     actuator_2 = ContextLDEntity(
         id="urn:ngsi-ld:actuator2",
         type="Actuator",
         heatPower={"type": "Property", "value": 0},
     )
-    cb_client.post_entity(actuator_2)
+    cb_ld_client.post_entity(actuator_2)
 
     # Create a notification for the actuator 1 with normal payload
     notification_normal = NotificationParams(
         endpoint=Endpoint(uri=f"{MQTT_BROKER_URL}/{mqtt_topic}")
     )
     create_subscription(
-        cb_client, entity_id=actuator_1.id, notification=notification_normal
+        cb_ld_client, entity_id=actuator_1.id, notification=notification_normal
     )
 
     # Create a subscription for the actuator 2 with custom payload
@@ -155,26 +152,26 @@ if __name__ == "__main__":
         )
     )
     create_subscription(
-        cb_client, entity_id=actuator_2.id, notification=notification_custom
+        cb_ld_client, entity_id=actuator_2.id, notification=notification_custom
     )
 
     # Send command to actuator 1
     actuator_1.toggle.value = True
     # Update the subscribed entity will trigger the notification
-    cb_client.append_entity_attributes(entity=actuator_1)
+    cb_ld_client.append_entity_attributes(entity=actuator_1)
     time.sleep(2)
     actuator_1.toggle.value = False
-    cb_client.append_entity_attributes(entity=actuator_1)
+    cb_ld_client.append_entity_attributes(entity=actuator_1)
     time.sleep(2)
 
     # Send command to actuator 2
     actuator_2.heatPower.value = 500
     # Update the subscribed entity will trigger the notification
-    cb_client.append_entity_attributes(entity=actuator_1)
+    cb_ld_client.append_entity_attributes(entity=actuator_1)
     time.sleep(2)
 
     actuator_2.heatPower.value = 1000
-    cb_client.append_entity_attributes(entity=actuator_1)
+    cb_ld_client.append_entity_attributes(entity=actuator_1)
     time.sleep(2)
 
     # Clean up
@@ -183,4 +180,4 @@ if __name__ == "__main__":
 
     # gotta sleep here for some reason, otherwise orion restarts ( ikr ?)
     time.sleep(2)
-    clear_context_broker_ld(cb_ld_client=cb_client)
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)

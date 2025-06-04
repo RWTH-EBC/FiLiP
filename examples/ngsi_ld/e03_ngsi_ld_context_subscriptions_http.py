@@ -1,8 +1,5 @@
 """
 # Examples for subscriptions
-
-# create new subscriptions following the API Walkthrough example:
-# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2.html#subscriptions
 """
 
 # ## Import packages
@@ -33,10 +30,8 @@ from filip.utils.cleanup import clear_context_broker_ld
 LD_CB_URL = settings.LD_CB_URL
 
 # You can also change the used Fiware service
-# FIWARE-Service
-SERVICE = "filip"
-# FIWARE-Servicepath
-SERVICE_PATH = "/example"
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip"
 
 # Web server URL for receiving notifications
 # It has to be accessible from the context broker!
@@ -59,9 +54,12 @@ if __name__ == "__main__":
     # # 1 Client setup
     #
     # Create the context broker client, for more details view the example: e01_http_clients.py
-    fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
-    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
-    entities = cb_client.get_entity_list()
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    # Make sure that the database is clean
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)
+
+    entities = cb_ld_client.get_entity_list()
     logger.info(entities)
 
     class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
@@ -94,7 +92,7 @@ if __name__ == "__main__":
     }
 
     room1_entity = ContextLDEntity(**room1_dictionary)
-    cb_client.post_entity(room1_entity)
+    cb_ld_client.post_entity(room1_entity)
     sub_example = {
         "description": "Subscription to receive HTTP-Notifications about "
         + interesting_entity_id,
@@ -110,45 +108,45 @@ if __name__ == "__main__":
             },
         },
         "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
-        "throttling": 0,
+        # "throttling": 1,  # Minimal period of time in seconds which shall elapse between two consecutive notifications
         "id": "urg:ngsi-ld:Sub:001",
         "type": "Subscription",
     }
     sub = SubscriptionLD(**sub_example)
     # Posting an example subscription for Room1
-    sub_id = cb_client.post_subscription(subscription=sub, update=True)
+    sub_id = cb_ld_client.post_subscription(subscription=sub, update=True)
 
     time.sleep(1)
-    cb_client.update_entity_attribute(
+    cb_ld_client.update_entity_attribute(
         entity_id=interesting_entity_id,
         attr=ContextProperty(value=42, type="Property"),
         attr_name="temperature",
     )
 
     # # 3 Filter subscriptions
-    retrieve_sub = cb_client.get_subscription(sub_id)
+    retrieve_sub = cb_ld_client.get_subscription(sub_id)
     logger.info(retrieve_sub)
 
     time.sleep(1)
 
     # # 4 Update subscription
     #
-    sub_to_update = cb_client.get_subscription(sub_id)
+    sub_to_update = cb_ld_client.get_subscription(sub_id)
     # Update expiration time of the example subscription
     sub_to_update = sub_to_update.model_copy(
         update={"expires": datetime.datetime.now() + datetime.timedelta(minutes=15)}
     )
-    cb_client.update_subscription(sub_to_update)
-    updated_subscription = cb_client.get_subscription(sub_id)
+    cb_ld_client.update_subscription(sub_to_update)
+    updated_subscription = cb_ld_client.get_subscription(sub_id)
     logger.info(updated_subscription)
     # # 5 Deleting the example subscription
     #
 
     time.sleep(1)
     httpd.shutdown()
-    cb_client.delete_subscription(sub_id)
+    cb_ld_client.delete_subscription(sub_id)
 
     # # 6 Clean up (Optional)
-    clear_context_broker_ld(cb_ld_client=cb_client)
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)
     # Close client
-    cb_client.close()
+    cb_ld_client.close()

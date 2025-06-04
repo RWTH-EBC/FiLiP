@@ -26,10 +26,8 @@ from filip.config import settings
 LD_CB_URL = settings.LD_CB_URL
 
 # You can also change the used Fiware service
-# FIWARE-Service
-SERVICE = "filip"
-# FIWARE-Service path
-SERVICE_PATH = "/example"
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip"
 
 # Setting up logging
 logging.basicConfig(
@@ -44,10 +42,10 @@ if __name__ == "__main__":
     # # 1 Setup Client
     #
     # create the client, for more details view the example: e01_http_clients.py
-    fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
-    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     # View version
-    for key, value in cb_client.get_version().items():
+    for key, value in cb_ld_client.get_version().items():
         logger.info(f"{key}: {value}")
 
     # # 2 Create Entities
@@ -62,7 +60,7 @@ if __name__ == "__main__":
         "id": "urn:ngsi-ld:Room:001",
         "type": "Room",
         "temperature": {"value": 11, "type": DataTypeLD.PROPERTY},
-        "nextto": {"object": "urn:ngsi-ld:Room:002", "type": DataTypeLD.RELATIONSHIP},
+        "nextTo": {"object": "urn:ngsi-ld:Room:002", "type": DataTypeLD.RELATIONSHIP},
     }
 
     room1_entity = ContextLDEntity(**room1_dictionary)
@@ -83,24 +81,24 @@ if __name__ == "__main__":
 
     # ## 2.2 Post Entities
     #
-    logger.info(f"Entity list before posting to CB: {cb_client.get_entity_list()}")
-    cb_client.post_entity(entity=room1_entity)
-    cb_client.post_entity(entity=room2_entity)
+    logger.info(f"Entity list before posting to CB: {cb_ld_client.get_entity_list()}")
+    cb_ld_client.post_entity(entity=room1_entity)
+    cb_ld_client.post_entity(entity=room2_entity)
 
     # # 3 Access entities in Fiware
     #
     # Get all entities from context broker
-    logger.info(f"Entity list after posting to CB: {cb_client.get_entity_list()}")
+    logger.info(f"Entity list after posting to CB: {cb_ld_client.get_entity_list()}")
 
     # Get entities by id
     logger.info(
         f'Entities with ID "urn:ngsi-ld:Room:001": '
-        f'{cb_client.get_entity_list(entity_id="urn:ngsi-ld:Room:001")}'
+        f'{cb_ld_client.get_entity_list(entity_id="urn:ngsi-ld:Room:001")}'
     )
 
     # Get entities by type
     logger.info(
-        f'Entities by type "Room": {cb_client.get_entity_list(entity_type="Room")}'
+        f'Entities by type "Room": {cb_ld_client.get_entity_list(entity_type="Room")}'
     )
 
     # Get entities by id pattern
@@ -108,18 +106,18 @@ if __name__ == "__main__":
     # with the prefix 'urn:ngsi-ld:Room:'
     logger.info(
         f'Entities with id pattern "^urn:ngsi-ld:Room:00[2-5]": '
-        f'{cb_client.get_entity_list(id_pattern="^urn:ngsi-ld:Room:00[2-5]")}'
+        f'{cb_ld_client.get_entity_list(id_pattern="^urn:ngsi-ld:Room:00[2-5]")}'
     )
 
     # Get entities by query expression
     query = "temperature>=22"
     logger.info(
-        f"Entities with temperature >= 22: {cb_client.get_entity_list(q=query)}"
+        f"Entities with temperature >= 22: {cb_ld_client.get_entity_list(q=query)}"
     )
 
     # Get one entity by id
     logger.info(
-        f'Attributes of entities: {cb_client.get_entity(entity_id="urn:ngsi-ld:Room:001")}'
+        f'Attributes of entities: {cb_ld_client.get_entity(entity_id="urn:ngsi-ld:Room:001")}'
     )
 
     # Trying to access non-existing ids or attributes will always throw
@@ -138,7 +136,7 @@ if __name__ == "__main__":
 
     # Can only update one attribute through update EP in LD
     logger.info(
-        cb_client.update_entity_attribute(
+        cb_ld_client.update_entity_attribute(
             entity_id=entity.id,
             attr=ContextProperty(type="Property", value=111),
             attr_name="temperature",
@@ -154,15 +152,15 @@ if __name__ == "__main__":
             "pressure": ContextProperty(type="Property", value=42),
         }
     )
-    logger.info(cb_client.append_entity_attributes(entity))
+    logger.info(cb_ld_client.append_entity_attributes(entity))
 
     entity.add_properties({"pressure": ContextProperty(type="Property", value=100)})
 
     # Or optionally replace existing attributes
-    logger.info(cb_client.replace_existing_attributes_of_entity(entity))
+    logger.info(cb_ld_client.replace_existing_attributes_of_entity(entity))
 
     # Deleting attributes
-    # logger.info(cb_client.delete_entity_attribute(entity_id=room1_entity.id,
+    # logger.info(cb_ld_client.delete_entity_attribute(entity_id=room1_entity.id,
     #                                               attr_name="temperature"))
     # ### 4.1.2 Updating the model
     #
@@ -181,10 +179,10 @@ if __name__ == "__main__":
     room2_entity.delete_properties(["pressure"])
 
     # all changes are transmitted with one methode call
-    cb_client.append_entity_attributes(room2_entity)
+    cb_ld_client.append_entity_attributes(room2_entity)
 
     # ## 4.2 Deleting
     #
     # To delete an entry in LD, we can call:
-    cb_client.delete_entity_by_id(entity_id=room1_entity.id)
-    cb_client.delete_entity_by_id(entity_id=room2_entity.id)
+    cb_ld_client.delete_entity_by_id(entity_id=room1_entity.id)
+    cb_ld_client.delete_entity_by_id(entity_id=room2_entity.id)

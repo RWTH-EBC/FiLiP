@@ -26,10 +26,8 @@ LD_CB_URL = settings.LD_CB_URL
 QL_URL = settings.QL_URL
 
 # Here you can also change FIWARE service and service path.
-# FIWARE-Service
-SERVICE = "filip"
-# FIWARE-Service path
-SERVICE_PATH = "/example"
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip"
 
 # Setting up logging
 logging.basicConfig(
@@ -56,12 +54,12 @@ if __name__ == "__main__":
         f" located at url: {ql_client.base_url}"
     )
 
-    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
-    clear_context_broker_ld(cb_ld_client=cb_client)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    clear_context_broker_ld(cb_ld_client=cb_ld_client)
 
     print(
-        f"Context Broker version: {cb_client.get_version()}"
-        f" located at url: {cb_client.base_url}"
+        f"Context Broker version: {cb_ld_client.get_version()}"
+        f" located at url: {cb_ld_client.base_url}"
     )
 
     # ## 2 Interact with QL
@@ -76,7 +74,7 @@ if __name__ == "__main__":
     }
 
     hall_entity = ContextLDEntity(**hall)
-    cb_client.post_entity(hall_entity)
+    cb_ld_client.post_entity(hall_entity)
 
     # ### 2.2 Manage subscriptions
     #
@@ -105,10 +103,10 @@ if __name__ == "__main__":
             "type": "Subscription",
         }
     )
-    subscription_id = cb_client.post_subscription(subscription=subscription)
+    subscription_id = cb_ld_client.post_subscription(subscription=subscription)
 
     # get all subscriptions
-    subscription_list = cb_client.get_subscription_list()
+    subscription_list = cb_ld_client.get_subscription_list()
 
     # notify QL manually
     for sub in subscription_list:
@@ -127,7 +125,7 @@ if __name__ == "__main__":
 
     # notify QL via Orion
     for i in range(5, 10):
-        cb_client.update_entity_attribute(
+        cb_ld_client.update_entity_attribute(
             entity_id=hall_entity.id,
             attr=ContextProperty(value=i),
             attr_name="temperature",
@@ -178,13 +176,15 @@ if __name__ == "__main__":
 
     # delete entity in CV
     try:
-        cb_client.delete_entity(entity_id=hall_entity.id, entity_type=hall_entity.type)
+        cb_ld_client.delete_entity(
+            entity_id=hall_entity.id, entity_type=hall_entity.type
+        )
     except:
         logger.error("Can not delete entity from context broker")
 
     # delete the subscription
     try:
-        cb_client.delete_subscription(subscription_id)
+        cb_ld_client.delete_subscription(subscription_id)
     except:
         logger.error("Can not delete subscription from context broker.")
 
@@ -192,4 +192,4 @@ if __name__ == "__main__":
     #
     # Close clients
     ql_client.close()
-    cb_client.close()
+    cb_ld_client.close()

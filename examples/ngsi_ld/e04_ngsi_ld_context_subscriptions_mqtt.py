@@ -30,17 +30,15 @@ from urllib.parse import urlparse
 LD_CB_URL = settings.LD_CB_URL
 
 # You can also change the used Fiware service
-# FIWARE-Service
-SERVICE = "filip"
-# FIWARE-Service path
-SERVICE_PATH = "/example"
+# NGSI-LD Tenant
+NGSILD_TENANT = "filip"
 
 # MQTT URL for eclipse mosquitto
 MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
 MQTT_BROKER_URL_EXPOSED = str(settings.MQTT_BROKER_URL)
 
 # MQTT topic that the subscription will send to
-mqtt_topic = "".join([SERVICE, SERVICE_PATH])
+mqtt_topic = "".join([NGSILD_TENANT])
 
 # Setting up logging
 logging.basicConfig(
@@ -55,8 +53,8 @@ if __name__ == "__main__":
     # # 1 Client setup
     #
     # create the client, for more details view the example: e01_http_clients.py
-    fiware_header = FiwareLDHeader(ngsild_tenant=SERVICE)
-    cb_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
 
     room_001 = {
         "id": "urn:ngsi-ld:Room:001",
@@ -65,7 +63,7 @@ if __name__ == "__main__":
         "pressure": {"value": 111, "type": "Property"},
     }
     room_entity = ContextLDEntity(**room_001)
-    cb_client.post_entity(entity=room_entity, update=True)
+    cb_ld_client.post_entity(entity=room_entity, update=True)
 
     # # 2 Setup for a subscription and MQTT notifications
     #
@@ -102,7 +100,7 @@ if __name__ == "__main__":
 
     # Posting an example subscription for Room1. Make sure that you store the
     # returned id because you might need it for later updates of the subscription.
-    sub_id = cb_client.post_subscription(subscription=sub)
+    sub_id = cb_ld_client.post_subscription(subscription=sub)
 
     # # 3 Setup for callbacks and the MQTT client
     #
@@ -163,12 +161,12 @@ if __name__ == "__main__":
     mqtt_client.loop_start()
     new_value = 55
 
-    cb_client.update_entity_attribute(
+    cb_ld_client.update_entity_attribute(
         entity_id="urn:ngsi-ld:Room:001",
         attr_name="temperature",
         attr=ContextProperty(value=new_value, type="Property"),
     )
-    cb_client.update_entity_attribute(
+    cb_ld_client.update_entity_attribute(
         entity_id="urn:ngsi-ld:Room:001",
         attr_name="pressure",
         attr=ContextProperty(value=new_value, type="Property"),
@@ -177,11 +175,11 @@ if __name__ == "__main__":
 
     # # 5 Deleting the example entity and the subscription
     #
-    cb_client.delete_subscription(sub_id)
-    cb_client.delete_entity(entity_id=room_entity.id, entity_type=room_entity.type)
+    cb_ld_client.delete_subscription(sub_id)
+    cb_ld_client.delete_entity(entity_id=room_entity.id, entity_type=room_entity.type)
     # # 6 Clean up (Optional)
     #
     # Close clients
     mqtt_client.loop_stop()
     mqtt_client.disconnect()
-    cb_client.close()
+    cb_ld_client.close()
