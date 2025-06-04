@@ -6,7 +6,7 @@ import setuptools
 from pathlib import Path
 
 readme_path = Path(__file__).parent.joinpath("README.md")
-LONG_DESCRIPTION = readme_path.read_text()
+LONG_DESCRIPTION = readme_path.read_text(encoding="utf-8")
 
 INSTALL_REQUIRES = [
     "aenum~=3.1.15",
