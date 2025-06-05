@@ -3,24 +3,34 @@ name: CI for FiLiP
 on:
   push:
     branches:
-      - "**"
+      - "**" # Runs on pushes to all branches
   pull_request:
     branches:
-      - main
+      - main # Runs on PRs targeting the main branch
+
+# Add permissions for contents to allow pushing to gh-pages
+permissions:
+  contents: write
 
 jobs:
-  setup:
+  setup: # This job will now handle both regular tests and the coverage run
     runs-on: ubuntu-latest
-    environment: unittests  # Environment for unit tests
+    environment: unittests # Environment for unit tests
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-      fail-fast: false  # Ensure all setups run even if one fails
+        include:
+          # Add a specific entry for coverage.
+          # This will run on Python 3.11 (or choose your preferred version).
+          # It creates an additional job in the matrix strategy.
+          - python-version: "3.11"
+            run_coverage: true
+      fail-fast: false # Ensure all setups run even if one fails
 
     steps:
       # Step 1: Checkout correct branch
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated to v4
         with:
           ref: ${{ github.ref }}
 
@@ -62,40 +72,124 @@ jobs:
       # Step 6: Start FIWARE services
       - name: Start FIWARE Services
         run: |
-          cd filip_unittest/docker
+          cd filip_unittest/docker # Navigate to docker compose directory
           docker compose up -d
+          cd $GITHUB_WORKSPACE # IMPORTANT: Navigate back to workspace root
 
       # Step 7: Wait for FIWARE Services
       - name: Wait for FIWARE Services
         run: |
+          echo "Waiting for FIWARE services..."
           for i in {1..30}; do
-            curl -s http://localhost:1026/version && \
-            curl -s http://localhost:1027/version && \
-            curl -s http://localhost:4061/version && \
-            curl -s http://localhost:4041/version && \
-            curl -s http://localhost:8668/version && break || sleep 5
+            # Using -f to fail on server errors, -s for silent
+            (curl -sf http://localhost:1026/version) && \
+            (curl -sf http://localhost:1027/version) && \
+            (curl -sf http://localhost:4061/version) && \
+            (curl -sf http://localhost:4041/version) && \
+            (curl -sf http://localhost:8668/version) && \
+            echo "All services are up." && break
+            echo "Attempt $i: Services not fully ready, sleeping 5s..."
+            sleep 5
+            if [ $i -eq 30 ]; then
+              echo "Timeout: FIWARE services did not start within 150 seconds."
+              # Optional: print status of containers
+              docker ps -a
+              # Optional: print logs of containers if they are named predictably
+              # docker logs <container_name_orion>
+              exit 1
+            fi
           done
 
-      # Step 8: Install dependencies (if cache is empty)
-      - name: Install dependencies (if needed)
+      # Step 8: Install dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel
-          pip install .
+          pip install . # Install current package
           pip install pytest
+          if [[ "${{ matrix.run_coverage }}" == "true" ]]; then
+            pip install coverage coverage-badge
+          fi
 
       # Step 9: Debug - Show Running Docker Containers
       - name: Debug - Show Running Docker Containers
         run: docker ps -a
       
-      # Step 10: Navigate back to tests folder
-      - name: Navigate to Tests Folder
-        run: |
-          cd $GITHUB_WORKSPACE
-          ls -la
+      # Step 10: Navigate back to root folder (already handled by cd $GITHUB_WORKSPACE after docker compose)
+      # - name: Navigate to Root Folder
+      #   run: |
+      #     cd $GITHUB_WORKSPACE
+      #     ls -la
 
       # Step 11: Run Tests
-      - name: Run tests with unittest and pytest
+      - name: Run tests
         run: |
-          python -m unittest tests/clients/test_ngsi_v2_cb.py
-          python -m pytest tests
+          if [[ "${{ matrix.run_coverage }}" == "true" ]]; then
+            echo "Running tests with coverage for Python ${{ matrix.python-version }}"
+            # Using --source=. to focus coverage on your project's code
+            coverage run --source=. -m pytest tests
+          else
+            echo "Running tests for Python ${{ matrix.python-version }}"
+            python -m unittest tests/clients/test_ngsi_v2_cb.py
+            python -m pytest tests
+          fi
+
+      # --- Steps for Coverage Reporting (only run if matrix.run_coverage is true) ---
+
+      - name: Generate HTML coverage report
+        if: matrix.run_coverage
+        run: coverage html -d coverage_html_report
+
+      - name: Generate coverage badge
+        if: matrix.run_coverage
+        run: coverage-badge -o coverage_badge.svg # Create badge in the root
+
+      - name: Upload HTML coverage report as artifact
+        if: matrix.run_coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-html-py${{ matrix.python-version }}
+          path: coverage_html_report/
+
+      - name: Deploy coverage badge to gh-pages
+        if: matrix.run_coverage && github.ref == 'refs/heads/main' # Only for the coverage job on main branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          # Create the necessary directory structure for the publish_dir
+          # The content of 'badge_publish_dir' will be deployed to the root of 'gh-pages'
+          # So we prepare 'badge_publish_dir/docs/master/coverage/badge.svg'
+          publish_dir: ./badge_publish_dir
+          # Keep other files on gh-pages branch
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'docs: Update coverage badge [CI]'
+        env: # Env variables for the step itself
+          # Prepare the directory for publishing the badge
+          SETUP_SCRIPT: |
+            mkdir -p ./badge_publish_dir/docs/master/coverage
+            mv coverage_badge.svg ./badge_publish_dir/docs/master/coverage/badge.svg
+      # The env.SETUP_SCRIPT for peaceiris/actions-gh-pages doesn't work like that directly.
+      # Instead, create the structure in a separate step before deploying:
+
+      - name: Prepare badge for gh-pages deployment
+        if: matrix.run_coverage && github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p ./badge_to_publish/docs/master/coverage
+          mv coverage_badge.svg ./badge_to_publish/docs/master/coverage/badge.svg
+          echo "Prepared badge for publishing:"
+          ls -R ./badge_to_publish
+
+      - name: Deploy coverage badge to gh-pages (revised)
+        if: matrix.run_coverage && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./badge_to_publish # This directory now has the correct structure
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'docs: Update coverage badge [CI]'
