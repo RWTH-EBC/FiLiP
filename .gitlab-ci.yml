@@ -14,6 +14,10 @@ variables:
     PYTHON_VERSION_NAME: "__version__"
     PYTHON_PACKAGE_NAME: "filip"
     MAX_ATTEMPTS: "10" # for fiware stack health check
+    TEST_PATH: tests
+    # Test engine. If != "PYTEST", unittest will be used.
+    TEST_ENGINE: "PYTEST"
+
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
