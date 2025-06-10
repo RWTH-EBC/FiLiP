@@ -135,61 +135,40 @@ jobs:
           fi
 
       # --- Steps for Coverage Reporting (only run if matrix.run_coverage is true) ---
-
+      # Step 1: Generate the HTML report first
       - name: Generate HTML coverage report
         if: matrix.run_coverage
         run: coverage html -d coverage_html_report
 
+      # Step 2: Generate the badge and place it *inside* the HTML report directory
       - name: Generate coverage badge
         if: matrix.run_coverage
-        run: coverage-badge -o coverage_badge.svg # Create badge in the root
+        run: coverage-badge -o coverage_html_report/badge.svg
 
-      - name: Upload HTML coverage report as artifact
+      # Step 3: (Recommended) Upload the combined report as a build artifact
+      - name: Upload coverage report as artifact
         if: matrix.run_coverage
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report-html-py${{ matrix.python-version }}
           path: coverage_html_report/
 
-      - name: Deploy coverage badge to gh-pages
-        if: matrix.run_coverage && github.ref == 'refs/heads/425-Problem-of-the-gitlab-pipeline' # Only for the coverage job on main branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          # Create the necessary directory structure for the publish_dir
-          # The content of 'badge_publish_dir' will be deployed to the root of 'gh-pages'
-          # So we prepare 'badge_publish_dir/docs/master/coverage/badge.svg'
-          publish_dir: ./badge_publish_dir
-          # Keep other files on gh-pages branch
-          keep_files: true
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: 'docs: Update coverage badge [CI]'
-        env: # Env variables for the step itself
-          # Prepare the directory for publishing the badge
-          SETUP_SCRIPT: |
-            mkdir -p ./badge_publish_dir/docs/master/coverage
-            mv coverage_badge.svg ./badge_publish_dir/docs/master/coverage/badge.svg
-      # The env.SETUP_SCRIPT for peaceiris/actions-gh-pages doesn't work like that directly.
-      # Instead, create the structure in a separate step before deploying:
-
-      - name: Prepare badge for gh-pages deployment
-        if: matrix.run_coverage && github.ref == 'refs/heads/425-Problem-of-the-gitlab-pipeline'
-        run: |
-          mkdir -p ./badge_to_publish/docs/master/coverage
-          mv coverage_badge.svg ./badge_to_publish/docs/master/coverage/badge.svg
-          echo "Prepared badge for publishing:"
-          ls -R ./badge_to_publish
-
-      - name: Deploy coverage badge to gh-pages (revised)
+      # Step 4: Deploy the entire coverage_html_report folder to gh-pages
+      - name: Deploy coverage report to gh-pages
+        # This condition deploys only when running on the specified branch.
+        # You would typically change this to your main branch, e.g., 'refs/heads/main'.
         if: matrix.run_coverage && github.ref == 'refs/heads/425-Problem-of-the-gitlab-pipeline'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./badge_to_publish # This directory now has the correct structure
+          # The directory to publish. Its entire content will be deployed.
+          publish_dir: ./coverage_html_report
+          # The target directory on the gh-pages branch.
+          destination_dir: docs/master/coverage
+          # Keep this 'true' if you have other content on the gh-pages branch.
+          # Set to 'false' if this report is the ONLY thing on the branch.
           keep_files: true
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: 'docs: Update coverage badge [CI]'
+          commit_message: 'docs: Update coverage report and badge [CI]'
