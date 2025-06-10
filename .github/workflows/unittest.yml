@@ -152,7 +152,7 @@ jobs:
           path: coverage_html_report/
 
       - name: Deploy coverage badge to gh-pages
-        if: matrix.run_coverage && github.ref == 'refs/heads/main' # Only for the coverage job on main branch
+        if: matrix.run_coverage && github.ref == 'refs/heads/425-Problem-of-the-gitlab-pipeline' # Only for the coverage job on main branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -175,7 +175,7 @@ jobs:
       # Instead, create the structure in a separate step before deploying:
 
       - name: Prepare badge for gh-pages deployment
-        if: matrix.run_coverage && github.ref == 'refs/heads/main'
+        if: matrix.run_coverage && github.ref == 'refs/heads/425-Problem-of-the-gitlab-pipeline'
         run: |
           mkdir -p ./badge_to_publish/docs/master/coverage
           mv coverage_badge.svg ./badge_to_publish/docs/master/coverage/badge.svg
@@ -183,7 +183,7 @@ jobs:
           ls -R ./badge_to_publish
 
       - name: Deploy coverage badge to gh-pages (revised)
-        if: matrix.run_coverage && github.ref == 'refs/heads/main'
+        if: matrix.run_coverage && github.ref == 'refs/heads/425-Problem-of-the-gitlab-pipeline'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
