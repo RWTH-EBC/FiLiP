@@ -3,24 +3,34 @@ name: CI for FiLiP
 on:
   push:
     branches:
-      - "**"
+      - "**" # Runs on pushes to all branches
   pull_request:
     branches:
-      - main
+      - main # Runs on PRs targeting the main branch
+
+# Add permissions for contents to allow pushing to gh-pages
+permissions:
+  contents: write
 
 jobs:
-  setup:
+  setup: # This job will now handle both regular tests and the coverage run
     runs-on: ubuntu-latest
-    environment: unittests  # Environment for unit tests
+    environment: unittests # Environment for unit tests
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-      fail-fast: false  # Ensure all setups run even if one fails
+        include:
+          # Add a specific entry for coverage.
+          # This will run on Python 3.11 (or choose your preferred version).
+          # It creates an additional job in the matrix strategy.
+          - python-version: "3.11"
+            run_coverage: true
+      fail-fast: false # Ensure all setups run even if one fails
 
     steps:
       # Step 1: Checkout correct branch
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated to v4
         with:
           ref: ${{ github.ref }}
 
@@ -62,40 +72,97 @@ jobs:
       # Step 6: Start FIWARE services
       - name: Start FIWARE Services
         run: |
-          cd filip_unittest/docker
+          cd filip_unittest/docker # Navigate to docker compose directory
           docker compose up -d
+          cd $GITHUB_WORKSPACE # IMPORTANT: Navigate back to workspace root
 
       # Step 7: Wait for FIWARE Services
       - name: Wait for FIWARE Services
         run: |
+          echo "Waiting for FIWARE services..."
           for i in {1..30}; do
-            curl -s http://localhost:1026/version && \
-            curl -s http://localhost:1027/version && \
-            curl -s http://localhost:4061/version && \
-            curl -s http://localhost:4041/version && \
-            curl -s http://localhost:8668/version && break || sleep 5
+            # Using -f to fail on server errors, -s for silent
+            (curl -sf http://localhost:1026/version) && \
+            (curl -sf http://localhost:1027/version) && \
+            (curl -sf http://localhost:4061/version) && \
+            (curl -sf http://localhost:4041/version) && \
+            (curl -sf http://localhost:8668/version) && \
+            echo "All services are up." && break
+            echo "Attempt $i: Services not fully ready, sleeping 5s..."
+            sleep 5
+            if [ $i -eq 30 ]; then
+              echo "Timeout: FIWARE services did not start within 150 seconds."
+              # Optional: print status of containers
+              docker ps -a
+              # Optional: print logs of containers if they are named predictably
+              # docker logs <container_name_orion>
+              exit 1
+            fi
           done
 
-      # Step 8: Install dependencies (if cache is empty)
-      - name: Install dependencies (if needed)
+      # Step 8: Install dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel
-          pip install .
+          pip install . # Install current package
           pip install pytest
+          if [[ "${{ matrix.run_coverage }}" == "true" ]]; then
+            pip install coverage coverage-badge
+          fi
 
       # Step 9: Debug - Show Running Docker Containers
       - name: Debug - Show Running Docker Containers
         run: docker ps -a
-      
-      # Step 10: Navigate back to tests folder
-      - name: Navigate to Tests Folder
-        run: |
-          cd $GITHUB_WORKSPACE
-          ls -la
 
-      # Step 11: Run Tests
-      - name: Run tests with unittest and pytest
+      # Step 10: Run Tests
+      - name: Run tests
         run: |
-          python -m unittest tests/clients/test_ngsi_v2_cb.py
-          python -m pytest tests
+          if [[ "${{ matrix.run_coverage }}" == "true" ]]; then
+            echo "Running tests with coverage for Python ${{ matrix.python-version }}"
+            # Using --source=. to focus coverage on your project's code
+            coverage run --source=. -m pytest tests
+          else
+            echo "Running tests for Python ${{ matrix.python-version }}"
+            python -m unittest tests/clients/test_ngsi_v2_cb.py
+            python -m pytest tests
+          fi
+
+      # --- Steps for Coverage Reporting (only run if matrix.run_coverage is true) ---
+      # Step 1: Generate the HTML report first
+      - name: Generate HTML coverage report
+        if: matrix.run_coverage
+        run: coverage html -d coverage_html_report
+
+      # Step 2: Generate the badge and place it *inside* the HTML report directory
+      - name: Generate coverage badge
+        if: matrix.run_coverage
+        run: coverage-badge -o coverage_html_report/badge.svg
+
+      # Step 3: (Recommended) Upload the combined report as a build artifact
+      - name: Upload coverage report as artifact
+        if: matrix.run_coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-html-py${{ matrix.python-version }}
+          path: coverage_html_report/
+
+      # Step 4: Deploy the entire coverage_html_report folder to gh-pages
+      - name: Deploy coverage report to gh-pages
+        # This condition deploys only when running on the specified branch.
+        # You would typically change this to your main branch, e.g., 'refs/heads/main'.
+        if: matrix.run_coverage && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          # The directory to publish. Its entire content will be deployed.
+          publish_dir: ./coverage_html_report
+          # The target directory on the gh-pages branch.
+          destination_dir: docs/master/coverage
+          # Keep this 'true' if you have other content on the gh-pages branch.
+          # Set to 'false' if this report is the ONLY thing on the branch.
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'docs: Update coverage report and badge [CI]'
