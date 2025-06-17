@@ -271,7 +271,7 @@ class ContextBrokerClient(BaseHttpClient):
                 if patch and err.response.status_code == 422:
                     return self.patch_entity(
                         entity=entity,
-                        override_attr_metadata=override_attr_metadata,
+                        override_metadata=override_attr_metadata,
                         key_values=key_values,
                     )
             msg = f"Could not post entity {entity.id}"
@@ -2123,17 +2123,13 @@ class ContextBrokerClient(BaseHttpClient):
 
         Args:
             entity: Entity to update
-            old_entity: OPTIONAL, if given only the differences between the
-                       old_entity and entity are updated in the CB.
-                       Other changes made to the entity in CB, can be kept.
-                       If type or id was changed, the old_entity will be
-                       deleted.
             key_values: If True, the entity is updated in key-values format.
             forcedUpdate: Update operation have to trigger any matching
                 subscription, no matter if there is an actual attribute
                 update or no instead of the default behavior, which is to
                 updated only if attribute is effectively updated.
             override_metadata: If True, the existing metadata of the entity
+                is replaced
         Returns:
            None
         """
