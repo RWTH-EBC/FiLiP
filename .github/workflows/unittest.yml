@@ -114,14 +114,8 @@ jobs:
       # Step 9: Debug - Show Running Docker Containers
       - name: Debug - Show Running Docker Containers
         run: docker ps -a
-      
-      # Step 10: Navigate back to root folder (already handled by cd $GITHUB_WORKSPACE after docker compose)
-      # - name: Navigate to Root Folder
-      #   run: |
-      #     cd $GITHUB_WORKSPACE
-      #     ls -la
 
-      # Step 11: Run Tests
+      # Step 10: Run Tests
       - name: Run tests
         run: |
           if [[ "${{ matrix.run_coverage }}" == "true" ]]; then
