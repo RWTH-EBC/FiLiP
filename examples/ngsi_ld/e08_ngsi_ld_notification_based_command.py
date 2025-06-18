@@ -36,7 +36,8 @@ import logging
 # Host address of Context Broker
 LD_CB_URL = settings.LD_CB_URL
 # Host address of the MQTT-Broker
-MQTT_BROKER_URL = "mqtt://mosquitto:1883"
+MQTT_BROKER_URL = settings.LD_MQTT_BROKER_URL
+MQTT_BROKER_URL_INTERNAL = "mqtt://mqtt-broker-ld:1883"  # TODO need to be changed if the host name is not "mqtt-broker-ld"
 
 # NGSI-LD Tenant
 NGSILD_TENANT = "filip"
@@ -71,13 +72,14 @@ def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
         logger.info("Receive MQTT command: " + msg.topic + " " + str(msg.payload))
         if msg.topic == normal_topic:
             data = json.loads(msg.payload)
-            data_pretty = json.dumps(data, indent=2)
-            print(f"Actuator 1 received raw data: {data_pretty}")
-            print(f"Turn toggle to: {data['data'][0]['toggle']['value']}")
+            print(f"Turn toggle to: {data['body']['data'][0]['toggle']['value']}")
             pass
         if msg.topic == custom_topic:
-            print(f"Actuator 2 received raw data: {msg.payload}")
-            print(f"Turn heat power to: {msg.payload.decode()}")
+            data = json.loads(msg.payload)
+            # print(f"Actuator 2 received raw data: {msg.payload}")
+            print(
+                f"Turn heat power to: {data['body']['data'][0]['heatPower']['value']}"
+            )
 
     def on_disconnect(client, userdata, flags, reasonCode, properties=None):
         logger.info("MQTT client disconnected with reasonCode " + str(reasonCode))
@@ -102,7 +104,10 @@ def create_subscription(
 ):
 
     sub = SubscriptionLD(
-        id=entity_id, notification=notification, entities=[{"type": "Room"}]
+        id=f"sub:{entity_id}",
+        watchedAttributes=["toggle", "heatPower"],  # TODO hard code
+        notification=notification,
+        entities=[{"type": "Actuator", "id": entity_id}],
     )
     cbc.post_subscription(sub)
 
@@ -120,7 +125,7 @@ if __name__ == "__main__":
     mqtt_topic_custom = "actuator/2"  # Topic for the actuator 2 (custom payload)
 
     actuator_client = set_up_mqtt_actuator(mqtt_topic, mqtt_topic_custom)
-    actuator_client.connect("localhost", 1883)
+    actuator_client.connect(MQTT_BROKER_URL.host, MQTT_BROKER_URL.port)
     actuator_client.loop_start()
 
     # Create entities for the actuators
@@ -139,7 +144,12 @@ if __name__ == "__main__":
 
     # Create a notification for the actuator 1 with normal payload
     notification_normal = NotificationParams(
-        endpoint=Endpoint(uri=f"{MQTT_BROKER_URL}/{mqtt_topic}")
+        attributes=["toggle"],
+        endpoint=Endpoint(
+            uri=f"{MQTT_BROKER_URL_INTERNAL}/{mqtt_topic}",
+        ),
+        # accept="application/json"),
+        format="normalized",  # Use normalized format for the payload
     )
     create_subscription(
         cb_ld_client, entity_id=actuator_1.id, notification=notification_normal
@@ -147,9 +157,12 @@ if __name__ == "__main__":
 
     # Create a subscription for the actuator 2 with custom payload
     notification_custom = NotificationParams(
+        attributes=["heatPower"],
         endpoint=Endpoint(
-            uri=f"{MQTT_BROKER_URL}/{mqtt_topic_custom}", accept="application/json"
-        )
+            uri=f"{MQTT_BROKER_URL_INTERNAL}/{mqtt_topic_custom}",
+        ),
+        # accept="application/json"),
+        format="normalized",  # Use custom format for the payload
     )
     create_subscription(
         cb_ld_client, entity_id=actuator_2.id, notification=notification_custom
@@ -167,17 +180,17 @@ if __name__ == "__main__":
     # Send command to actuator 2
     actuator_2.heatPower.value = 500
     # Update the subscribed entity will trigger the notification
-    cb_ld_client.append_entity_attributes(entity=actuator_1)
+    cb_ld_client.append_entity_attributes(entity=actuator_2)
     time.sleep(2)
 
     actuator_2.heatPower.value = 1000
-    cb_ld_client.append_entity_attributes(entity=actuator_1)
+    cb_ld_client.append_entity_attributes(entity=actuator_2)
     time.sleep(2)
 
     # Clean up
     actuator_client.loop_stop()
     actuator_client.disconnect()
 
-    # gotta sleep here for some reason, otherwise orion restarts ( ikr ?)
+    # need to sleep here for some reason, otherwise orion restarts ( ikr ?)
     time.sleep(2)
     clear_context_broker_ld(cb_ld_client=cb_ld_client)
