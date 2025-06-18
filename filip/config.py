@@ -61,6 +61,10 @@ class Settings(BaseSettings):
         ),
     )
 
+    FIWARE_SERVICE: str = Field(
+        default="filip", validation_alias=AliasChoices("FIWARE_SERVICE")
+    )
+
 
 # create settings object
 settings = Settings()

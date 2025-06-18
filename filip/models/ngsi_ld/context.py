@@ -93,7 +93,7 @@ class ContextProperty(BaseModel):
     )
     field_validator("modifiedAt")(validate_fiware_datatype_string_protect)
 
-    UnitCode: Optional[str] = Field(
+    unitCode: Optional[str] = Field(
         None,
         title="Unit Code",
         description="Representing the unit of the value. "
@@ -103,7 +103,7 @@ class ContextProperty(BaseModel):
         max_length=256,
         min_length=1,
     )
-    field_validator("UnitCode")(validate_fiware_datatype_string_protect)
+    field_validator("unitCode")(validate_fiware_datatype_string_protect)
 
     datasetId: Optional[str] = Field(
         None,
@@ -369,7 +369,7 @@ class NamedContextRelationship(ContextRelationship):
     field_validator("name")(validate_fiware_datatype_string_protect)
 
 
-class ContextLDEntityKeyValues(BaseModel):
+class ContextLDEntityBase(BaseModel):
     """
     Base Model for an entity is represented by a JSON object with the following
     syntax.
@@ -379,7 +379,6 @@ class ContextLDEntityKeyValues(BaseModel):
 
     The entity type is specified by the object's type property, whose value
     is a string containing the entity's type name.
-
     """
 
     model_config = ConfigDict(
@@ -416,6 +415,43 @@ class ContextLDEntityKeyValues(BaseModel):
     field_validator("type")(validate_fiware_standard_regex)
 
 
+class ContextLDEntityKeyValues(ContextLDEntityBase):
+    """
+    Base Model for an entity is represented by a JSON object with the following
+    syntax.
+
+    The entity id is specified by the object's id property, whose value
+    is a string containing the entity id.
+
+    The entity type is specified by the object's type property, whose value
+    is a string containing the entity's type name.
+
+    """
+
+    model_config = ConfigDict(
+        extra="allow", validate_default=True, validate_assignment=True
+    )
+
+    def to_normalized(self):
+        """
+        Convert the entity to a normalized representation.
+        """
+        return ContextLDEntity(
+            **{
+                "id": self.id,
+                "type": self.type,
+                **{
+                    key: {
+                        "type": "Property",
+                        "value": value,
+                    }
+                    for key, value in self.model_dump().items()
+                    if key not in ["id", "type"]
+                },
+            }
+        )
+
+
 class PropertyFormat(str, Enum):
     """
     Format to decide if properties of ContextEntity class are returned as
@@ -426,7 +462,7 @@ class PropertyFormat(str, Enum):
     DICT = "dict"
 
 
-class ContextLDEntity(ContextLDEntityKeyValues):
+class ContextLDEntity(ContextLDEntityBase):
     """
     Context LD entities, or simply entities, are the center of gravity in the
     FIWARE NGSI-LD information model. An entity represents a thing, i.e., any
@@ -817,4 +853,23 @@ class UpdateLD(BaseModel):
     entities: List[Union[ContextLDEntity, ContextLDEntityKeyValues]] = Field(
         description="an array of entities, each entity specified using the "
         "JSON entity representation format "
+    )
+
+
+class MessageLD(BaseModel):
+    """
+    Model for a notification message, when sent to other NGSIv2-APIs
+    """
+
+    subscriptionId: Optional[str] = Field(
+        default=None,
+        description="Id of the subscription the notification comes from",
+    )
+    data: List[ContextLDEntity] = Field(
+        description="is an array with the notification data itself which "
+        "includes the entity and all concerned attributes. Each "
+        "element in the array corresponds to a different entity. "
+        "By default, the entities are represented in normalized "
+        "mode. However, using the attrsFormat modifier, a "
+        "simplified representation mode can be requested."
     )
