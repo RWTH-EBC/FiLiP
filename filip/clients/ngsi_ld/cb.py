@@ -215,6 +215,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f"{self._url_version}/entities")
         headers = self.headers.copy()
+        if isinstance(entity, ContextLDEntityKeyValues):
+            entity = entity.to_normalized()
         if entity.model_dump().get("@context", None) is not None:
             headers.update({"Content-Type": "application/ld+json"})
             headers.update({"Link": None})
@@ -451,6 +453,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity.id}/attrs")
         headers = self.headers.copy()
+        if isinstance(entity, ContextLDEntityKeyValues):
+            entity = entity.to_normalized()
         if entity.model_dump().get("@context", None) is not None:
             headers.update({"Content-Type": "application/ld+json"})
             headers.update({"Link": None})
