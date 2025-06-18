@@ -34,8 +34,8 @@ LD_CB_URL = settings.LD_CB_URL
 NGSILD_TENANT = "filip"
 
 # MQTT URL for eclipse mosquitto
-MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
-MQTT_BROKER_URL_EXPOSED = str(settings.MQTT_BROKER_URL)
+MQTT_BROKER_URL_INTERNAL = "mqtt://mqtt-broker-ld:1883"  # TODO need to be changed if the host name is not "mqtt-broker-ld"
+MQTT_BROKER_URL_EXPOSED = str(settings.LD_MQTT_BROKER_URL)
 
 # MQTT topic that the subscription will send to
 mqtt_topic = "".join([NGSILD_TENANT])
@@ -91,7 +91,6 @@ if __name__ == "__main__":
             },
         },
         "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
-        "throttling": 0,
         "id": "urg:ngsi-ld:Sub:001",
         "type": "Subscription",
     }
@@ -176,7 +175,9 @@ if __name__ == "__main__":
     # # 5 Deleting the example entity and the subscription
     #
     cb_ld_client.delete_subscription(sub_id)
-    cb_ld_client.delete_entity(entity_id=room_entity.id, entity_type=room_entity.type)
+    cb_ld_client.delete_entity_by_id(
+        entity_id=room_entity.id, entity_type=room_entity.type
+    )
     # # 6 Clean up (Optional)
     #
     # Close clients

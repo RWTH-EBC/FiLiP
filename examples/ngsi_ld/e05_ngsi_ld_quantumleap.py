@@ -90,7 +90,7 @@ if __name__ == "__main__":
             "watchedAttributes": ["temperature"],
             "q": "temperature<101",
             "notification": {
-                "attributes": [],
+                "attributes": ["temperature"],
                 "format": "normalized",
                 "endpoint": {
                     "uri": "http://localhost:8668/v2/notify",
@@ -98,7 +98,6 @@ if __name__ == "__main__":
                 },
             },
             "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
-            "throttling": 0,
             "id": "urg:ngsi-ld:Sub:001",
             "type": "Subscription",
         }

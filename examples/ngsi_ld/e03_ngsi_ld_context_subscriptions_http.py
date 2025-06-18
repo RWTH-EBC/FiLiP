@@ -108,7 +108,6 @@ if __name__ == "__main__":
             },
         },
         "expires": datetime.datetime.now() + datetime.timedelta(minutes=15),
-        # "throttling": 1,  # Minimal period of time in seconds which shall elapse between two consecutive notifications
         "id": "urg:ngsi-ld:Sub:001",
         "type": "Subscription",
     }
