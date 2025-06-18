@@ -364,25 +364,29 @@ class TestContextBroker(unittest.TestCase):
                 entity_post = entity_init.model_copy(deep=True)
                 # 1) append attribute
                 entity_post.add_attributes(attrs=[attr_append])
-                client.post_entity(entity=entity_post, patch=True)
+                with self.assertRaises(
+                    requests.RequestException
+                ):  # this should raise an error
+                    client.post_entity(entity=entity_post, patch=True)
+                self.assertNotEqual(
+                    client.get_entity(entity_id=entity_post.id), entity_post
+                )
+                # 2) delete attribute
+                entity_post.delete_attributes(attrs=[attr_append])
+                client.post_entity(entity=entity_post, update=True)
                 self.assertEqual(
                     client.get_entity(entity_id=entity_post.id), entity_post
                 )
-                # 2) update existing attribute value
+                # 3) update existing attribute value
                 attr_append_update = NamedContextAttribute(
-                    **{"name": "pressure", "type": "Number", "value": 2050}
+                    **{"name": "temperature", "type": "Text", "value": "somethingElse"}
                 )
                 entity_post.update_attribute(attrs=[attr_append_update])
                 client.post_entity(entity=entity_post, patch=True)
                 self.assertEqual(
                     client.get_entity(entity_id=entity_post.id), entity_post
                 )
-                # 3) delete attribute
-                entity_post.delete_attributes(attrs=[attr_append])
-                client.post_entity(entity=entity_post, update=True)
-                self.assertEqual(
-                    client.get_entity(entity_id=entity_post.id), entity_post
-                )
+
                 clear_all(fiware_header=self.fiware_header, cb_url=settings.CB_URL)
 
             # update_entity()
@@ -463,22 +467,25 @@ class TestContextBroker(unittest.TestCase):
                 entity_patch = entity_init.model_copy(deep=True)
                 # 1) append attribute
                 entity_patch.add_attributes(attrs=[attr_append])
-                client.patch_entity(entity=entity_patch)
-                self.assertEqual(
+                with self.assertRaises(
+                    requests.RequestException
+                ):  # this should raise an error
+                    client.patch_entity(entity=entity_patch)
+                self.assertNotEqual(
                     client.get_entity(entity_id=entity_patch.id), entity_patch
                 )
-                # 2) update existing attribute value
-                attr_append_update = NamedContextAttribute(
-                    **{"name": "pressure", "type": "Number", "value": 2050}
-                )
-                entity_patch.update_attribute(attrs=[attr_append_update])
-                client.patch_entity(entity=entity_patch)
-                self.assertEqual(
-                    client.get_entity(entity_id=entity_patch.id), entity_patch
-                )
-                # 3) delete attribute
+                # 2) delete attribute
                 entity_patch.delete_attributes(attrs=[attr_append])
                 client.patch_entity(entity=entity_patch)
+                self.assertEqual(
+                    client.get_entity(entity_id=entity_patch.id), entity_patch
+                )
+                # 3) update existing attribute value
+                attr_append_update = NamedContextAttribute(
+                    **{"name": "temperature", "type": "Text", "value": "somethingElse"}
+                )
+                entity_patch.update_attribute(attrs=[attr_append_update])
+                client.patch_entity(entity=entity_patch, override_metadata=True)
                 self.assertEqual(
                     client.get_entity(entity_id=entity_patch.id), entity_patch
                 )
