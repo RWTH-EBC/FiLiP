@@ -135,12 +135,12 @@ if __name__ == "__main__":
 
     # 2. Update data
     weather_station.temperature = 30  # represent use case algorithm
-    cb_ld_client.update_entity(entity=weather_station, key_values=True)
+    cb_ld_client.replace_existing_attributes_of_entity(entity=weather_station)
 
     # 3. Query and validate data
     # represent querying data by data users
     weather_station_data = cb_ld_client.get_entity(
-        entity_id=weather_station.id, response_format="keyValues"
+        entity_id=weather_station.id, options="keyValues"
     )
     # validate with general model
     weather_station_2_general = WeatherStation.model_validate(
