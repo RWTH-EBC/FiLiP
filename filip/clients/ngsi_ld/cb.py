@@ -901,8 +901,25 @@ class ContextBrokerLDClient(BaseHttpClient):
         url = urljoin(
             self.base_url, f"{self._url_version}/entityOperations/{action_type.value}"
         )
+        
         headers = self.headers.copy()
-        headers.update({"Content-Type": "application/json"})
+        ctx = any(
+            e.model_dump().get("@context", None) is not None for e in entities
+        )
+        
+        nctx = any(
+            e.model_dump().get("@context", None) is None for e in entities
+        )
+        if ctx and not nctx:
+            headers.update({"Content-Type": "application/ld+json"})
+            headers.update({"Link": None})
+        elif not ctx and nctx:
+            headers.update({"Content-Type":"application/json"})
+        else:
+            self.logger.warning("Detected mixed context provision in batch operation: "
+                                "Some entities have @context field while others don't."
+                                "This will cause the context broker to reject some")
+            
         params = {}
         if options:
             params.update({"options": options})
