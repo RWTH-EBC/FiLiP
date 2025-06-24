@@ -413,6 +413,21 @@ class ContextLDEntityBase(BaseModel):
         frozen=True,
     )
     field_validator("type")(validate_fiware_standard_regex)
+    context: Optional[Union[str, List[str], Dict]] = Field(
+        title="@context",
+        default=None,
+        description="The @context in JSON-LD is used to expand terms, provided as short "
+        "hand strings, to concepts, specified as URIs, and vice versa, "
+        "to compact URIs into terms "
+        "The main implication of NGSI-LD API is that if the @context is "
+        "a compound one, i.e. an @context which references multiple "
+        "individual @context, served by resources behind different URIs, "
+        "then a wrapper @context has to be created and hosted.",
+        examples=["https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"],
+        alias="@context",
+        validation_alias="@context",
+        frozen=False,
+    )
 
 
 class ContextLDEntityKeyValues(ContextLDEntityBase):
@@ -440,13 +455,14 @@ class ContextLDEntityKeyValues(ContextLDEntityBase):
             **{
                 "id": self.id,
                 "type": self.type,
+                "context": self.context if self.context else None,
                 **{
                     key: {
                         "type": "Property",
                         "value": value,
                     }
                     for key, value in self.model_dump().items()
-                    if key not in ["id", "type"]
+                    if key not in ["id", "type", "context"]
                 },
             }
         )
@@ -513,21 +529,6 @@ class ContextLDEntity(ContextLDEntityBase):
         "the location of the camera and the "
         "observationspace are different and "
         "can be disjoint. ",
-    )
-    context: Optional[Union[str, List[str], Dict]] = Field(
-        title="@context",
-        default=None,
-        description="The @context in JSON-LD is used to expand terms, provided as short "
-        "hand strings, to concepts, specified as URIs, and vice versa, "
-        "to compact URIs into terms "
-        "The main implication of NGSI-LD API is that if the @context is "
-        "a compound one, i.e. an @context which references multiple "
-        "individual @context, served by resources behind different URIs, "
-        "then a wrapper @context has to be created and hosted.",
-        examples=["https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld"],
-        alias="@context",
-        validation_alias="@context",
-        frozen=False,
     )
 
     @field_validator("context")
