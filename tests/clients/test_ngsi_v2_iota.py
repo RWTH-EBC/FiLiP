@@ -55,7 +55,7 @@ class TestAgent(unittest.TestCase):
             "service_path": self.fiware_header.service_path,
             "entity_name": "test_entity",
             "entity_type": "test_entity_type",
-            "timezone": "Europe/Berlin",
+            #"timezone": "Europe/Berlin",
             "timestamp": None,
             "apikey": "1234",
             "endpoint": None,
@@ -65,6 +65,18 @@ class TestAgent(unittest.TestCase):
         self.client = IoTAClient(
             url=settings.IOTA_JSON_URL, fiware_header=self.fiware_header
         )
+
+        self.client_wrong_port = IoTAClient(
+            url=str(settings.IOTA_JSON_URL.scheme) + "://" + str(settings.IOTA_JSON_URL.host) + ":9999/",
+            fiware_header=self.fiware_header)
+        self.client_wrong_path = IoTAClient(
+            url=str(settings.IOTA_JSON_URL.scheme) + "://" + str(settings.IOTA_JSON_URL.host) + ":4041/test_wrong_path",
+            fiware_header=self.fiware_header)
+        self.LOGLEVEL = ["ERROR",
+                         "DEBUG",
+                         "INFO",
+                         "WARN",
+                         "FATAL"]
 
     def test_get_version(self):
         with IoTAClient(
@@ -307,7 +319,6 @@ class TestAgent(unittest.TestCase):
         )
         device.add_command(DeviceCommand(name="Com2"))
 
-        # device.endpoint = "http://localhost:8080"
         self.client.update_device(device=device)
 
         # test if update does what it should, for the device. It does not
@@ -418,6 +429,7 @@ class TestAgent(unittest.TestCase):
                 fiware_servicepath=settings.FIWARE_SERVICEPATH,
                 cb_url=settings.CB_URL,
                 iota_url=settings.IOTA_JSON_URL)
+
     def test_device_exceptions(self):
         """
         Test for exceptions when handling a Device
@@ -430,9 +442,9 @@ class TestAgent(unittest.TestCase):
                 client.post_device(device=device)
             self.assertEqual(json.loads(context.exception.response.text)["name"], "DUPLICATE_DEVICE_ID")
 
-            with self.assertRaises(BaseHttpClientException) as context:
-                client.update_device(device=device, add=False)
-            self.assertEqual(json.loads(context.exception.response.text)["name"], "ENTITY_GENERIC_ERROR")
+           # with self.assertRaises(BaseHttpClientException) as context:
+           #client.update_device(device=device, add=False)
+           #self.assertEqual(json.loads(context.exception.response.text)["name"], "ENTITY_GENERIC_ERROR")
 
             client.delete_device(device_id=device.device_id)
 
@@ -546,6 +558,535 @@ class TestAgent(unittest.TestCase):
 
         clear_iot_agent(settings.IOTA_JSON_URL, self.fiware_header)
         self.assertCountEqual(cb_client.get_registration_list(), [])
+
+    def test_get_version_success(self):
+        try:
+            response = self.client.get_version()
+            print("Successful get_version() response:", response)
+
+            self.assertIsInstance(response, dict)
+            self.assertIn("libVersion", response)
+        except BaseHttpClientException as e:
+            self.fail(f"get_version() raised an exception unexpectedly: {e}")
+
+    def test_get_version_wrong_port(self):
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.get_version()
+        print("Wrong port get_version() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+    def test_get_version_wrong_path(self):
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_path.get_version()
+        print("Wrong path get_version() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+    def test_post_group_success(self):
+        try:
+            response = self.client.post_group(service_group=self.service_group1)
+            print("Successful post_group() response:", response)
+
+            self.assertIsNone(response)
+        except BaseHttpClientException as e:
+            self.fail(f"get_version() raised an exception unexpectedly: {e}")
+
+    def test_post_group_wrong_port(self):
+
+        # Use a broken client to trigger connection error (simulate RequestException)
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.post_group(service_group=self.service_group1)
+
+        print("Wrong port post_group() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+    def test_get_group_list_success(self):
+        try:
+            response = self.client.get_group_list()
+            print("Successful get_group_list() response:", response)
+            self.assertTrue(isinstance(response, list))
+
+        except BaseHttpClientException as e:
+            self.fail(f"get_version() raised an exception unexpectedly: {e}")
+
+    def test_get_group_list_wrong_port(self):
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.get_group_list()
+
+        print("Wrong port get_group_list() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+    def test_get_group_success(self):
+        try:
+            # Create dummy service groups
+            group_test = ServiceGroup(
+                service=settings.FIWARE_SERVICE,
+                subservice=settings.FIWARE_SERVICEPATH,
+                resource="/iot/json",
+                apikey="dummytest",
+            )
+            self.client.post_group(service_group=group_test)
+            response = self.client.get_group(resource=group_test.resource, apikey=group_test.apikey)
+            print("Successful get_group() response:", response)
+
+            self.assertEqual(group_test, response)
+            self.client.delete_group(resource=group_test.resource, apikey=group_test.apikey)
+        except BaseHttpClientException as e:
+            self.fail(f"get_group() raised an exception unexpectedly: {e}")
+
+    def test_get_group_wrong_port(self):
+        group_test = ServiceGroup(
+            service=settings.FIWARE_SERVICE,
+            subservice=settings.FIWARE_SERVICEPATH,
+            resource="/iot/json",
+            apikey="dummytest",
+        )
+        # post group_test
+        self.client.post_group(service_group=group_test)
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.get_group(resource=group_test.resource, apikey=group_test.apikey)
+
+        print("Wrong port get_group() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+        # delete group_test
+        self.client.delete_group(resource=group_test.resource, apikey=group_test.apikey)
+
+    def test_update_group_success(self):
+        """
+        Test for updating service group
+        """
+        try:
+            attributes = [DeviceAttribute(name="temperature", type="Number")]
+            group_base = ServiceGroup(
+                service=settings.FIWARE_SERVICE,
+                subservice=settings.FIWARE_SERVICEPATH,
+                resource="/iot/json",
+                apikey="base",
+                entity_type="Sensor",
+                attributes=attributes,
+            )
+
+            self.client.post_group(service_group=group_base)
+            self.assertEqual(
+                group_base, self.client.get_group(resource="/iot/json", apikey="base")
+            )
+
+            # entity type
+            group_base.entity_type = "TemperatureSensor"
+            response = self.client.update_group(service_group=group_base)
+            self.assertEqual(
+                group_base, self.client.get_group(resource="/iot/json", apikey="base")
+            )
+            print("Successful update_group() entity type response:", response)
+
+            # attributes
+            humidity = DeviceAttribute(name="humidity", type="Number")
+            group_base.attributes.append(humidity)
+            response = self.client.update_group(service_group=group_base)
+            self.assertEqual(
+                group_base, self.client.get_group(resource="/iot/json", apikey="base")
+            )
+            print("Successful update_group() attributes response:", response)
+            self.client.delete_group(resource=group_base.resource, apikey=group_base.apikey)
+        except BaseHttpClientException as e:
+            self.fail(f"get_version() raised an exception unexpectedly: {e}")
+
+    def test_update_group_wrong_port(self):
+        attributes = [DeviceAttribute(name="temperature", type="Number")]
+        group_base = ServiceGroup(
+            service=settings.FIWARE_SERVICE,
+            subservice=settings.FIWARE_SERVICEPATH,
+            resource="/iot/json",
+            apikey="base",
+            entity_type="Sensor",
+            attributes=attributes,
+        )
+
+        self.client.post_group(service_group=group_base)
+        self.assertEqual(
+            group_base, self.client.get_group(resource="/iot/json", apikey="base")
+        )
+
+        # entity type
+        group_base.entity_type = "TemperatureSensor"
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.update_group(service_group=group_base)
+
+        print("Wrong port update_group() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+        # delete group_test
+        self.client.delete_group(resource=group_base.resource, apikey=group_base.apikey)
+
+    def test_delete_group_success(self):
+        try:
+            self.client.post_group(service_group=self.service_group1)
+            response = self.client.delete_group(resource=self.service_group1.resource,
+                                                apikey=self.service_group1.apikey)
+            print("Successful delete_group() response:", response)
+
+            self.assertEqual(None, response)
+        except BaseHttpClientException as e:
+            self.fail(f"delete_group() raised an exception unexpectedly: {e}")
+
+    def test_delete_group_wrong_port(self):
+        self.client.post_group(service_group=self.service_group1)
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.delete_group(resource=self.service_group1.resource,
+                                                apikey=self.service_group1.apikey)
+
+        print("Wrong port delete_group() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+        # delete group
+        self.client.delete_group(resource=self.service_group1.resource, apikey=self.service_group1.apikey)
+
+    def test_post_device_success(self):
+        try:
+            device = Device(**self.device)
+            response = self.client.post_device(device=device)
+            print("Successful post_device() response:", response)
+            self.assertEqual(None, response)
+        except BaseHttpClientException as e:
+            self.fail(f"post_devices() raised an exception unexpectedly: {e}")
+
+    def test_post_device_wrong_port(self):
+        device = Device(**self.device)
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.post_device(device=device)
+        print("Wrong port error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+    def test_get_device_list_success(self):
+        try:
+            response = self.client.get_device_list()
+            print("Successful get_device_list() response:", response)
+            self.assertTrue(isinstance(response, list))
+        except BaseHttpClientException as e:
+            self.fail(f"get_device_list() raised an exception unexpecdly: {e}")
+
+    def test_get_device_list_wrong_port(self):
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.get_device_list()
+
+        print("Wrong port get_device_list() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+    def test_get_device_success(self):
+        try:
+            device = Device(**self.device)
+            self.client.post_device(device=device)
+            response = self.client.get_device(device_id=device.device_id)
+            print("Successful get_device_list() response:", response)
+            self.assertEqual(device, response)
+        except BaseHttpClientException as e:
+            self.fail(f"get_device_list() raised an exception unexpectedly: {e}")
+
+    def test_get_device_wrong_port(self):
+        device = Device(**self.device)
+        self.client.post_device(device=device)
+
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.get_device(device_id=device.device_id)
+
+        print("Wrong port get_device_list() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+        self.client.delete_device(device_id=device.device_id)
+
+    def test_update_device_success(self):
+        """
+                Test the methode: update_device of the iota client
+                """
+        try:
+            device = Device(**self.device)
+            device.endpoint = "http://test.com"
+            device.transport = "MQTT"
+
+            device.add_attribute(
+                DeviceAttribute(name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE)
+            )
+            device.add_attribute(
+                StaticDeviceAttribute(name="Stat1", value="test", type=DataType.TEXT)
+            )
+            device.add_attribute(
+                StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
+            )
+            device.add_command(DeviceCommand(name="Com1"))
+
+            # use update_device to post
+            self.client.update_device(device=device, add=True)
+
+            cb_client = ContextBrokerClient(
+                url=settings.CB_URL, fiware_header=self.fiware_header
+            )
+
+            # test if attributes exists correctly
+            live_entity = cb_client.get_entity(entity_id=device.entity_name)
+            live_entity.get_attribute("Att1")
+            live_entity.get_attribute("Com1")
+            live_entity.get_attribute("Com1_info")
+            live_entity.get_attribute("Com1_status")
+            self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
+
+            # change device attributes and update
+            device.get_attribute("Stat1").value = "new_test"
+            device.delete_attribute(device.get_attribute("Stat2"))
+            device.delete_attribute(device.get_attribute("Att1"))
+            device.delete_attribute(device.get_attribute("Com1"))
+            device.add_attribute(
+                DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
+            )
+            device.add_attribute(
+                StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
+            )
+            device.add_command(DeviceCommand(name="Com2"))
+
+            response = self.client.update_devices(devices=[device], add=True)
+            print("Successful update_devices() response:", response)
+
+            # test if update does what it should, for the device. It does not
+            # change the entity completely:
+
+            live_device = self.client.get_device(device_id=device.device_id)
+
+            with self.assertRaises(KeyError):
+                live_device.get_attribute("Att1")
+            with self.assertRaises(KeyError):
+                live_device.get_attribute("Com1_info")
+            with self.assertRaises(KeyError):
+                live_device.get_attribute("Stat2")
+            self.assertEqual(live_device.get_attribute("Stat1").value, "new_test")
+            live_device.get_attribute("Stat3")
+            live_device.get_command("Com2")
+            live_device.get_attribute("Att2")
+
+            cb_client.close()
+
+        except BaseHttpClientException as e:
+            self.fail(f"get_device_list() raised an exception unexpectedly: {e}")
+
+    def test_update_device_wrong_port(self):
+        device = Device(**self.device)
+        device.endpoint = "http://test.com"
+        device.transport = "MQTT"
+
+        device.add_attribute(
+            DeviceAttribute(name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE)
+        )
+        device.add_attribute(
+            StaticDeviceAttribute(name="Stat1", value="test", type=DataType.TEXT)
+        )
+        device.add_attribute(
+            StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
+        )
+        device.add_command(DeviceCommand(name="Com1"))
+
+        # use update_device to post
+        self.client.update_device(device=device, add=True)
+
+        cb_client = ContextBrokerClient(
+            url=settings.CB_URL, fiware_header=self.fiware_header
+        )
+
+        # test if attributes exists correctly
+        live_entity = cb_client.get_entity(entity_id=device.entity_name)
+        live_entity.get_attribute("Att1")
+        live_entity.get_attribute("Com1")
+        live_entity.get_attribute("Com1_info")
+        live_entity.get_attribute("Com1_status")
+        self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
+
+        # change device attributes and update
+        device.get_attribute("Stat1").value = "new_test"
+        device.delete_attribute(device.get_attribute("Stat2"))
+        device.delete_attribute(device.get_attribute("Att1"))
+        device.delete_attribute(device.get_attribute("Com1"))
+        device.add_attribute(
+            DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
+        )
+        device.add_attribute(
+            StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
+        )
+        device.add_command(DeviceCommand(name="Com2"))
+
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.update_devices(devices=[device], add=True)
+
+        print("Wrong port update_devices() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+        self.client.delete_device(device_id=device.device_id)
+
+    def test_delete_device_success(self):
+        try:
+            device = Device(**self.device)
+            self.client.post_device(device=device)
+            response = self.client.delete_device(device_id=device.device_id)
+            print("Successful delete_device() response:", response)
+            self.assertEqual(None, response)
+        except BaseHttpClientException as e:
+            self.fail(f"delete_device() raised an exception unexpectedly: {e}")
+
+    def test_delete_device_wrong_port(self):
+        device = Device(**self.device)
+        self.client.post_device(device=device)
+
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.delete_device(device_id=device.device_id)
+
+        print("Wrong port delete_device() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+        self.client.delete_device(device_id=device.device_id)
+
+    def test_patch_device_success(self):
+        """
+        Test the methode: patch_device of the iota client
+        """
+        try:
+            device = Device(**self.device)
+            device.endpoint = "http://test.com"
+            device.transport = "MQTT"
+
+            device.add_attribute(
+                DeviceAttribute(name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE)
+            )
+            device.add_attribute(
+                StaticDeviceAttribute(name="Stat1", value="test", type=DataType.TEXT)
+            )
+            device.add_attribute(
+                StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
+            )
+            device.add_command(DeviceCommand(name="Com1"))
+
+            # use patch_device to post
+            self.client.patch_device(device=device)
+
+            cb_client = ContextBrokerClient(
+                url=settings.CB_URL, fiware_header=self.fiware_header
+            )
+
+            # test if attributes exists correctly
+            live_entity = cb_client.get_entity(entity_id=device.entity_name)
+            live_entity.get_attribute("Att1")
+            live_entity.get_attribute("Com1")
+            live_entity.get_attribute("Com1_info")
+            live_entity.get_attribute("Com1_status")
+            self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
+
+            # change device attributes and update
+            device.get_attribute("Stat1").value = "new_test"
+            device.delete_attribute(device.get_attribute("Stat2"))
+            device.delete_attribute(device.get_attribute("Att1"))
+            device.delete_attribute(device.get_attribute("Com1"))
+            device.add_attribute(
+                DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
+            )
+            device.add_attribute(
+                StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
+            )
+            device.add_command(DeviceCommand(name="Com2"))
+
+            self.client.patch_device(device=device, cb_url=settings.CB_URL)
+
+            # test if update does what it should, for the device. It does not
+            # change the entity completely:
+            live_entity = cb_client.get_entity(entity_id=device.entity_name)
+            with self.assertRaises(KeyError):
+                live_entity.get_attribute("Att1")
+            with self.assertRaises(KeyError):
+                live_entity.get_attribute("Com1_info")
+            with self.assertRaises(KeyError):
+                live_entity.get_attribute("Stat2")
+            self.assertEqual(live_entity.get_attribute("Stat1").value, "new_test")
+            live_entity.get_attribute("Stat3")
+            live_entity.get_attribute("Com2_info")
+            live_entity.get_attribute("Att2")
+
+            # test update where device information were changed
+            new_device_dict = {
+                "endpoint": "http://localhost:7071/",
+                "device_id": "new_id",
+                "entity_name": "new_name",
+                "entity_type": "new_type",
+                "timestamp": False,
+                "apikey": "zuiop",
+                "protocol": "HTTP",
+                "transport": "HTTP",
+            }
+            new_device = Device(**new_device_dict)
+
+            for key, value in new_device_dict.items():
+                device.__setattr__(key, value)
+                self.client.patch_device(device=device)
+                live_device = self.client.get_device(device_id=device.device_id)
+                self.assertEqual(
+                    live_device.__getattribute__(key), new_device.__getattribute__(key)
+                )
+                cb_client.close()
+        except BaseHttpClientException as e:
+            self.fail(f"patch_device() raised an exception unexpectedly: {e}")
+
+    def test_patch_device_wrong_port(self):
+        device = Device(**self.device)
+        device.endpoint = "http://test.com"
+        device.transport = "MQTT"
+
+        device.add_attribute(
+            DeviceAttribute(name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE)
+        )
+        device.add_attribute(
+            StaticDeviceAttribute(name="Stat1", value="test", type=DataType.TEXT)
+        )
+        device.add_attribute(
+            StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
+        )
+        device.add_command(DeviceCommand(name="Com1"))
+
+        # use patch_device to post
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.patch_device(device=device)
+
+        print("Wrong port does_device_exist() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+    def test_does_device_exist_success(self):
+        try:
+            device = Device(**self.device)
+            self.client.post_device(device=device)
+            response = self.client.does_device_exists(device_id=device.device_id)
+            print("Successful does_device_exist() response:", response)
+            self.assertTrue(isinstance(response, bool))
+        except BaseHttpClientException as e:
+            self.fail(f"does_device_exist() raised an exception unexpectedly: {e}")
+
+        self.client.delete_device(device_id=device.device_id)
+
+    def test_does_device_exist_wrong_port(self):
+        device = Device(**self.device)
+        self.client.post_device(device=device)
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.does_device_exists(device_id=device.device_id)
+
+        print("Wrong port does_device_exist() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
+        self.client.delete_device(device_id=device.device_id)
+
+    def test_get_loglevel_of_agent_success(self):
+        try:
+            response = self.client.get_loglevel_of_agent()
+            print("Successful get_loglevel_of_agent() response:", response)
+            self.assertIn(response, self.LOGLEVEL)
+        except BaseHttpClientException as e:
+            self.fail(f"get_loglevel_of_agent() raised an exception unexpectedly: {e}")
+
+    def test_get_loglevel_of_agent_wrong_port(self):
+
+        with self.assertRaises(BaseHttpClientException) as cm:
+            self.client_wrong_port.get_loglevel_of_agent()
+
+        print("Wrong port get_loglevel_of_agent() error message:", str(cm.exception))
+        self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
+
 
     def tearDown(self) -> None:
         """

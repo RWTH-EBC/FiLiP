@@ -16,6 +16,7 @@ import re
 import requests
 from urllib.parse import urljoin
 import warnings
+from requests import RequestException
 from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
 from filip.models.base import FiwareHeader, PaginationMethod, DataType
@@ -164,7 +165,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
+            raise RequestException(response=err.response) from err
 
     def get_resources(self) -> Dict:
         """
@@ -181,7 +182,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
+            raise RequestException(response=err.response) from err
 
     # STATISTICS API
     def get_statistics(self) -> Dict:
