@@ -596,9 +596,9 @@ class IoTAClient(BaseHttpClient):
         cb_url: AnyHttpUrl = settings.CB_URL,
     ) -> None:
         """
-        Updates a device state in Fiware, if the device does not exists it
+        Updates a device state in Fiware, if the device does not exist it
         is created, else its values are updated.
-        If the device settings (endpoint,..) were changed the device and
+        If the device settings were changed the device and
         entity are deleted and re-added.
 
         If patch_entity is true the corresponding entity in the ContextBroker is
@@ -725,7 +725,7 @@ class IoTAClient(BaseHttpClient):
                     url=cb_url, fiware_header=self.fiware_headers, headers=self.headers
                 )
 
-            cb_client_local.patch_entity(
+            cb_client_local.override_entity(
                 entity=build_context_entity_from_device(device)
             )
             cb_client_local.close()
