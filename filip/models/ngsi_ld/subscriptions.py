@@ -18,9 +18,7 @@ class EntityInfo(BaseModel):
     In v1.6.1 it is specified in a new data type, namely EntitySelector
     """
 
-    id: Optional[HttpUrl] = Field(
-        default=None, description="Entity identifier (valid URI)"
-    )
+    id: Optional[str] = Field(default=None, description="Entity identifier (valid URI)")
     idPattern: Optional[str] = Field(
         default=None, description="Regular expression as per IEEE POSIX 1003.2™ [11]"
     )
@@ -271,8 +269,20 @@ class SubscriptionLD(BaseModel):
     )
     throttling: Optional[int] = Field(
         default=None,
-        description="Minimal period of time in seconds between two consecutive notifications",
+        description="Minimal period of time in seconds between two consecutive notifications."
+        "It must be greater than 0 if set. If not set, it means no throttling is used.",
     )
+
+    @field_validator("throttling")
+    @classmethod
+    def check_throttling(cls, throttling):
+        """
+        Validate the throttling value. It must be greater than 0 if provided.
+        """
+        if throttling is not None and throttling <= 0:
+            raise ValueError("Throttling must be greater than 0")
+        return throttling
+
     temporalQ: Optional[TemporalQuery] = Field(
         default=None, description="Temporal Query"
     )
