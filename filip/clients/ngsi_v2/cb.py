@@ -208,7 +208,7 @@ class ContextBrokerClient(BaseHttpClient):
         entity: Union[ContextEntity, ContextEntityKeyValues],
         update: bool = False,
         patch: bool = False,
-        override_attr_metadata: bool = True,
+        override_metadata: bool = True,
         key_values: bool = False,
     ):
         """
@@ -232,7 +232,7 @@ class ContextBrokerClient(BaseHttpClient):
             patch (bool):
                 If the response.status_code is 422, whether to manipulate the
                 existing entity. Omitted if update `True`.
-            override_attr_metadata:
+            override_metadata:
                 Only applies for patch equal to `True`.
                 Whether to override or append the attribute's metadata.
                 `True` for overwrite or `False` for update/append
@@ -271,7 +271,7 @@ class ContextBrokerClient(BaseHttpClient):
                 if patch and err.response.status_code == 422:
                     return self.patch_entity(
                         entity=entity,
-                        override_metadata=override_attr_metadata,
+                        override_metadata=override_metadata,
                         key_values=key_values,
                     )
             msg = f"Could not post entity {entity.id}"
