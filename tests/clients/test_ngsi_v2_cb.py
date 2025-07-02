@@ -2134,25 +2134,25 @@ class TestContextBroker(unittest.TestCase):
         # update_or_append_entity_attributes
         entityAttr.value = "value1"
         attr_data2 = NamedContextAttribute(name="data2", value="value2")
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.update_or_append_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # update_existing_entity_attributes
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.update_existing_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # replace_entity_attributes
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.replace_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # delete entity
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.delete_entity(entity_id=test_entity_id)
 
     def test_does_entity_exist(self):
