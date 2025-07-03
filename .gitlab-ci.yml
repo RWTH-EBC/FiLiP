@@ -7,12 +7,17 @@ stages:
     - deploy
 
 variables:
-    EXCLUDE_PYTHON: 37, 38, 39, 310, 311
-    PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.9"
+    # EXCLUDE_PYTHON: 37, 38, 39, 310, 311
+    PYTHON_VERSION: "registry.git.rwth-aachen.de/ebc/ebc_all/gitlab_ci/templates:python_3.10"
     PAGES_BRANCH: master
     GIT_REPO: "RWTH-EBC/FiLiP"
     PYTHON_VERSION_NAME: "__version__"
     PYTHON_PACKAGE_NAME: "filip"
+    MAX_ATTEMPTS: "10" # for fiware stack health check
+    TEST_PATH: tests
+    # Test engine. If != "PYTEST", unittest will be used.
+    TEST_ENGINE: "PYTEST"
+
 
 include:
     - project: 'EBC/EBC_all/gitlab_ci/templates'
@@ -23,10 +28,17 @@ include:
       file: 'pages/gh-pages.gitlab-ci.yml'
       rules:
         - if: $CI_COMMIT_BRANCH == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
-    - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'python/tests/tests.gitlab-ci.yml'
-    - project: 'EBC/EBC_all/gitlab_ci/templates'
-      file: 'python/tests/coverage.gitlab-ci.yml'
+    # Old CI pipeline that interacts with a standalone FIWARE cluster.
+    #- project: 'EBC/EBC_all/gitlab_ci/templates'
+    #  file: 'python/tests/tests.gitlab-ci.yml'
+    #- project: 'EBC/EBC_all/gitlab_ci/templates'
+    #  file: 'python/tests/coverage.gitlab-ci.yml'
+    # The new template deploys FIWARE stack inside the pipeline (orion:1027, orionld:1026, crate:4200, mqtt-broker:1883, iot-agent-ul:4061, quantumleap:8668) .
+    #- project: 'EBC/EBC_all/gitlab_ci/fiware_templates'
+    #  file: 'unittest_fiware/fiware_tests.gitlab-ci.yml'
+    # The new template to test coverage in an all-in-one pipeline
+    - project: 'EBC/EBC_all/gitlab_ci/fiware_templates'
+      file: 'unittest_fiware/fiware_tests_coverage.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'
       file: 'python/pypi-release/release.gitlab-ci.yml'
     - project: 'EBC/EBC_all/gitlab_ci/templates'

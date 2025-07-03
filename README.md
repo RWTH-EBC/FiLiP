@@ -285,13 +285,13 @@ Conference Series, 1343, 12063. https://doi.org/10.1088/1742-6596/1343/1/012063
 
 ## License
 
-This project is licensed under the BSD License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the BSD License - see the [LICENSE](LICENSE.md) file for details.
 
 ## Copyright
 
 <a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a>
 
-2021-2024, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
+2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy 
 Efficient Buildings and Indoor Climate
 
 [Institute for Energy Efficient Buildings and Indoor Climate (EBC)](https://www.ebc.eonerc.rwth-aachen.de)  

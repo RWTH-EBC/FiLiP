@@ -172,7 +172,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         is given in headers
         """
         idhex = f"urn:ngsi-ld:{os.urandom(6).hex()}"
-        e = ContextLDEntity(id=idhex, type=f"urn:ngsi-ld:{os.urandom(6).hex()}")
+        e = ContextLDEntity(id=idhex, type="TemporaryTenant")
         try:
             self.post_entity(entity=e)
             self.delete_entity_by_id(idhex)
