@@ -21,15 +21,16 @@ from filip.models.base import FiwareHeader, DataType
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
-from filip.models.ngsi_v2.context import (
-    ContextEntity,
-    ContextAttribute,
-    NamedContextAttribute,
-    NamedCommand,
-    Query,
-    ActionType,
-    ContextEntityKeyValues,
-)
+from filip.config import settings
+from filip.models.ngsi_v2.context import \
+    ContextEntity, \
+    ContextAttribute, \
+    NamedContextAttribute, \
+    NamedCommand, \
+    Query, \
+    ActionType, \
+    ContextEntityKeyValues
+from filip.clients.exceptions import BaseHttpClientException
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, NamedMetadata
 from filip.models.ngsi_v2.subscriptions import (
@@ -2146,25 +2147,25 @@ class TestContextBroker(unittest.TestCase):
         # update_or_append_entity_attributes
         entityAttr.value = "value1"
         attr_data2 = NamedContextAttribute(name="data2", value="value2")
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.update_or_append_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # update_existing_entity_attributes
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.update_existing_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # replace_entity_attributes
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.replace_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # delete entity
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.delete_entity(entity_id=test_entity_id)
 
     def test_does_entity_exist(self):
@@ -2178,6 +2179,18 @@ class TestContextBroker(unittest.TestCase):
         self.assertTrue(
             self.client.does_entity_exist(entity_id=entity.id, entity_type=entity.type)
         )
+
+    @clean_test(fiware_service=settings.FIWARE_SERVICE,
+                fiware_servicepath=settings.FIWARE_SERVICEPATH,
+                cb_url=settings.CB_URL)
+    def test_entity_exceptions(self):
+        entity1 = self.entity.model_copy(deep=True)
+        self.client.post_entity(entity1)
+
+        with self.assertRaises(BaseHttpClientException) as context:
+            self.client.post_entity(entity1)
+        self.assertEqual(json.loads(context.exception.response.text)["description"], "Already Exists")
+
 
     def tearDown(self) -> None:
         """
