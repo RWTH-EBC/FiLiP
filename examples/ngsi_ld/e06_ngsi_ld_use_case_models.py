@@ -5,7 +5,7 @@
 # and in other information processing systems to establish interoperability.
 
 # In short: this workflow shows you a way to keep use case model simple and
-# reusable while ensuring the compatability with FIWARE NGSI-V2 standards
+# reusable while ensuring the compatability with FIWARE NGSI-LD standards
 """
 
 from typing import Optional
@@ -14,9 +14,7 @@ from pydantic.fields import Field, FieldInfo
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient
 from filip.models import FiwareLDHeader
 from filip.models.ngsi_ld.context import (
-    ContextLDEntity,
     ContextLDEntityKeyValues,
-    ContextProperty,
 )
 from filip.utils.cleanup import clear_context_broker_ld
 from pprint import pprint

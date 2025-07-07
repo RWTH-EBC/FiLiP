@@ -1,3 +1,8 @@
+"""
+# Example explaining context in NGSI-LD , and demonstrating
+# The multitenancy of the FIWARE orion ld context broker
+"""
+
 import logging
 
 from filip.clients.ngsi_ld.cb import ContextBrokerLDClient

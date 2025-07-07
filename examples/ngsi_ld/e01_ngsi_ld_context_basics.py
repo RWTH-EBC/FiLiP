@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     # # 1 Setup Client
     #
-    # create the client, for more details view the example: e01_http_clients.py
+    # create the client
     fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
     cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
     # View version

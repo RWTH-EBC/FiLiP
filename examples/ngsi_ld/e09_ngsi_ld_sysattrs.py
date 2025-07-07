@@ -1,14 +1,6 @@
 """
-Usually the live data is stored in Context Broker and the historical data in the time
-series database. However, there is a specific use case, where the live data itself is a
-time series, i.e. the forecast data.
-
-This is not a trivial task, because by default the historical forecasts will be saved
-as objects in the time series database, complicating the request and the visualization
-in dashboard.
-
-In this example, we will demonstrate the best practice to save the forecast data in
-Context Broker and in the time series database.
+In this example, we will demonstrate the best practice to use system attributes: default
+meta attributes the LD context broker adds to each entity.
 """
 
 import logging
@@ -22,15 +14,13 @@ from filip.config import settings
 
 # ## Parameters
 #
-# To run this example you need a working Fiware v2 setup with a
-# Context Broker and QuantumLeap. Here you can set the addresses:
+# To run this example you need a working Fiware ld setup with a
+# Context Broker. Here you can set the addresses:
 #
 # Host address of Context Broker
 LD_CB_URL = settings.LD_CB_URL
-# Host address of QuantumLeap
-QL_URL = settings.QL_URL
 
-# Here you can also change FIWARE service and service path.
+# Here you can also change FIWARE service.
 # NGSI-LD Tenant
 NGSILD_TENANT = "filip_e15"
 

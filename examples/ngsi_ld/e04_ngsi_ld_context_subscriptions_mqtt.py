@@ -1,8 +1,8 @@
 """
 # Examples for subscriptions
 
-# create new subscription following the API Walkthrough example:
-# https://fiware-orion.readthedocs.io/en/master/user/walkthrough_apiv2.html#subscriptions
+# create new subscription analogous to the API Walkthrough example:
+# https://fiware-tutorials.readthedocs.io/en/latest/ld-subscriptions-registrations.html
 """
 
 # ## Import packages
@@ -23,14 +23,13 @@ from urllib.parse import urlparse
 
 # ## Parameters
 #
-# To run this example you need a working Fiware v2 setup with a context-broker
+# To run this example you need a working Fiware ld setup with a context-broker
 # You can set the address:
 #
 # Host address of Context Broker
 LD_CB_URL = settings.LD_CB_URL
 
-# You can also change the used Fiware service
-# NGSI-LD Tenant
+# You can also change the used NGSI-LD Tenant
 NGSILD_TENANT = "filip"
 
 # MQTT URL for eclipse mosquitto
@@ -52,7 +51,7 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # # 1 Client setup
     #
-    # create the client, for more details view the example: e01_http_clients.py
+    # create the client
     fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
     cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
 

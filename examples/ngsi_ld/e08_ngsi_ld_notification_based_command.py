@@ -1,19 +1,12 @@
 """
-In e08_ngsi_v2_iota_paho_mqtt, and e09_ngsi_v2_iota_filip_mqtt we have learned
-how to set up the communication via MQTT for both sensors and actuators.
-The solution was to rely on the IoTAgent. However, practice experiences showed
-that for the communication of actuators, i.e. commands, the IoTAgent has some
-limitations. For example, the IoTAgent does not support the modification of the
-downlink topics and the payload format, and to connect another MQTT Broker, extra
-instance of IoTAgent is needed.
+In this example, we will learn how to set up the MQTT communication for actuators 
+via Notification.
 
-Therefore, in this example, we will learn about the alternative of the previous solutions,
- i.e. how to set up the MQTT communication for actuators via Notification.
-
-At the end of this example, you will be able to adjust the payload format to best
-suit your actuators' requirements. The default payload format is a quit verbose JSON
-object. With the customization, you can simplify the payload format to a simple string.
-More information: https://fiware-orion.readthedocs.io/en/3.8.0/orion-api.html#custom-notifications
+At the end of this example, you will be able to customize the payload format. 
+As opposed to v2, ld notification only allow a limited number of formats: normalized and
+keyValues. 
+More information: 
+https://fiware-tutorials.readthedocs.io/en/latest/ld-subscriptions-registrations.html#using-subscriptions-with-ngsi-ld
 """
 
 import json
@@ -78,7 +71,7 @@ def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
             data = json.loads(msg.payload)
             # print(f"Actuator 2 received raw data: {msg.payload}")
             print(
-                f"Turn heat power to: {data['body']['data'][0]['heatPower']['value']}"
+                f"Turn heat power to: {data['body']['data'][0]['heatPower']}"
             )
 
     def on_disconnect(client, userdata, flags, reasonCode, properties=None):
@@ -162,7 +155,7 @@ if __name__ == "__main__":
             uri=f"{MQTT_BROKER_URL_INTERNAL}/{mqtt_topic_custom}",
         ),
         # accept="application/json"),
-        format="normalized",  # Use custom format for the payload
+        format="keyValues",  # Use keyValues format for the payload
     )
     create_subscription(
         cb_ld_client, entity_id=actuator_2.id, notification=notification_custom
@@ -191,6 +184,5 @@ if __name__ == "__main__":
     actuator_client.loop_stop()
     actuator_client.disconnect()
 
-    # need to sleep here for some reason, otherwise orion restarts ( ikr ?)
     time.sleep(2)
     clear_context_broker_ld(cb_ld_client=cb_ld_client)
