@@ -286,7 +286,7 @@
         <span class="n">entity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">],</span>
         <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">patch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">override_attr_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">override_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">key_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -310,7 +310,7 @@
 <span class="sd">            patch (bool):</span>
 <span class="sd">                If the response.status_code is 422, whether to manipulate the</span>
 <span class="sd">                existing entity. Omitted if update `True`.</span>
-<span class="sd">            override_attr_metadata:</span>
+<span class="sd">            override_metadata:</span>
 <span class="sd">                Only applies for patch equal to `True`.</span>
 <span class="sd">                Whether to override or append the attribute&#39;s metadata.</span>
 <span class="sd">                `True` for overwrite or `False` for update/append</span>
@@ -347,12 +347,11 @@
                 <span class="k">if</span> <span class="n">update</span> <span class="ow">and</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">override_entity</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">,</span> <span class="n">key_values</span><span class="o">=</span><span class="n">key_values</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">patch</span> <span class="ow">and</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">key_values</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_entity</span><span class="p">(</span>
-                            <span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">,</span> <span class="n">override_attr_metadata</span><span class="o">=</span><span class="n">override_attr_metadata</span>
-                        <span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch_entity_key_values</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch_entity</span><span class="p">(</span>
+                        <span class="n">entity</span><span class="o">=</span><span class="n">entity</span><span class="p">,</span>
+                        <span class="n">override_metadata</span><span class="o">=</span><span class="n">override_metadata</span><span class="p">,</span>
+                        <span class="n">key_values</span><span class="o">=</span><span class="n">key_values</span><span class="p">,</span>
+                    <span class="p">)</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not post entity </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span></div>
@@ -882,6 +881,7 @@
         <span class="c1"># and removes the attributes for the other</span>
         <span class="c1"># The entities are sorted based on the fact if they have</span>
         <span class="c1"># attributes.</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># max number of entities that will be deleted at once</span>
         <span class="n">entities_with_attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
             <span class="n">attribute_names</span> <span class="o">=</span> <span class="p">[</span>
@@ -897,10 +897,14 @@
         <span class="c1"># Post update_delete for those without attribute only once,</span>
         <span class="c1"># for the other post update_delete again but for the changed entity</span>
         <span class="c1"># in the ContextBroker (only id and type left)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">entities_with_attributes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="n">entities_with_attributes</span><span class="p">,</span> <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span></div>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">limit</span><span class="p">],</span> <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span>
+            <span class="n">entities</span> <span class="o">=</span> <span class="n">entities</span><span class="p">[</span><span class="n">limit</span><span class="p">:]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">entities_with_attributes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">entities</span><span class="o">=</span><span class="n">entities_with_attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">limit</span><span class="p">],</span> <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span>
+            <span class="p">)</span>
+            <span class="n">entities_with_attributes</span> <span class="o">=</span> <span class="n">entities_with_attributes</span><span class="p">[</span><span class="n">limit</span><span class="p">:]</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.update_or_append_entity_attributes"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_or_append_entity_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_or_append_entity_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -992,42 +996,6 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update or append attributes of entity&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> !&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">raise</span></div>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_patch_entity_key_values</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">entity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextEntityKeyValues</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The entity are updated with a ContextEntityKeyValues object or a</span>
-<span class="sd">        dictionary contain the simplified entity data. This corresponds to a</span>
-<span class="sd">        &#39;PATCH&#39; request.</span>
-<span class="sd">        Only existing attribute can be updated!</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            entity: A ContextEntityKeyValues object or a dictionary contain</span>
-<span class="sd">            the simplified entity data</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">entity</span> <span class="o">=</span> <span class="n">ContextEntityKeyValues</span><span class="p">(</span><span class="o">**</span><span class="n">entity</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;v2/entities/</span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/attrs&quot;</span><span class="p">)</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">entity</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">AttrsFormat</span><span class="o">.</span><span class="n">KEY_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">}</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span>
-                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-                <span class="n">json</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">},</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Entity &#39;</span><span class="si">%s</span><span class="s2">&#39; successfully &quot;</span> <span class="s2">&quot;updated!&quot;</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update attributes of entity&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span>
 
 <div class="viewcode-block" id="ContextBrokerClient.update_existing_entity_attributes"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_existing_entity_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_existing_entity_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2221,9 +2189,10 @@
 
 <div class="viewcode-block" id="ContextBrokerClient.patch_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.patch_entity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">patch_entity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">entity</span><span class="p">:</span> <span class="n">ContextEntity</span><span class="p">,</span>
-        <span class="n">old_entity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">override_attr_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">entity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">],</span>
+        <span class="n">key_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">forcedUpdate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">override_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes a given entity and updates the state in the CB to match it.</span>
@@ -2232,145 +2201,26 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            entity: Entity to update</span>
-<span class="sd">            old_entity: OPTIONAL, if given only the differences between the</span>
-<span class="sd">                       old_entity and entity are updated in the CB.</span>
-<span class="sd">                       Other changes made to the entity in CB, can be kept.</span>
-<span class="sd">                       If type or id was changed, the old_entity will be</span>
-<span class="sd">                       deleted.</span>
-<span class="sd">            override_attr_metadata:</span>
-<span class="sd">                Whether to override or append the attributes metadata.</span>
-<span class="sd">                `True` for overwrite or `False` for update/append</span>
-
+<span class="sd">            key_values: If True, the entity is updated in key-values format.</span>
+<span class="sd">            forcedUpdate: Update operation have to trigger any matching</span>
+<span class="sd">                subscription, no matter if there is an actual attribute</span>
+<span class="sd">                update or no instead of the default behavior, which is to</span>
+<span class="sd">                updated only if attribute is effectively updated.</span>
+<span class="sd">            override_metadata: If True, the existing metadata of the entity</span>
+<span class="sd">                is replaced</span>
 <span class="sd">        Returns:</span>
 <span class="sd">           None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
 
-        <span class="n">new_entity</span> <span class="o">=</span> <span class="n">entity</span>
-
-        <span class="k">if</span> <span class="n">old_entity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># If no old entity_was provided we use the current state to compare</span>
-            <span class="c1"># the entity to</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">does_entity_exist</span><span class="p">(</span>
-                <span class="n">entity_id</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">type</span>
-            <span class="p">):</span>
-                <span class="n">old_entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_entity</span><span class="p">(</span>
-                    <span class="n">entity_id</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">type</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># the entity is new, post and finish</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">post_entity</span><span class="p">(</span><span class="n">new_entity</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="k">return</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># An old_entity was provided</span>
-            <span class="c1"># check if the old_entity (still) exists else recall methode</span>
-            <span class="c1"># and discard old_entity</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">does_entity_exist</span><span class="p">(</span>
-                <span class="n">entity_id</span><span class="o">=</span><span class="n">old_entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">old_entity</span><span class="o">.</span><span class="n">type</span>
-            <span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">patch_entity</span><span class="p">(</span>
-                    <span class="n">new_entity</span><span class="p">,</span> <span class="n">override_attr_metadata</span><span class="o">=</span><span class="n">override_attr_metadata</span>
-                <span class="p">)</span>
-                <span class="k">return</span>
-
-            <span class="c1"># if type or id was changed, the old_entity needs to be deleted</span>
-            <span class="c1"># and the new_entity created</span>
-            <span class="c1"># In this case we will lose the current state of the entity</span>
-            <span class="k">if</span> <span class="n">old_entity</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">new_entity</span><span class="o">.</span><span class="n">id</span> <span class="ow">or</span> <span class="n">old_entity</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">new_entity</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">delete_entity</span><span class="p">(</span><span class="n">entity_id</span><span class="o">=</span><span class="n">old_entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">old_entity</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">does_entity_exist</span><span class="p">(</span>
-                    <span class="n">entity_id</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">type</span>
-                <span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">post_entity</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="n">new_entity</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                    <span class="k">return</span>
-
-        <span class="c1"># At this point we know that we need to patch only the attributes of</span>
-        <span class="c1"># the entity</span>
-        <span class="c1"># Check the differences between the attributes of old and new entity</span>
-        <span class="c1"># Delete the removed attributes, create the new ones,</span>
-        <span class="c1"># and update the existing if necessary</span>
-        <span class="n">old_attributes</span> <span class="o">=</span> <span class="n">old_entity</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
-        <span class="n">new_attributes</span> <span class="o">=</span> <span class="n">new_entity</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
-
-        <span class="c1"># Manage attributes that existed before</span>
-        <span class="k">for</span> <span class="n">old_attr</span> <span class="ow">in</span> <span class="n">old_attributes</span><span class="p">:</span>
-            <span class="c1"># commands do not exist in the ContextEntity and are only</span>
-            <span class="c1"># registrations to the corresponding device. Operations as</span>
-            <span class="c1"># delete will fail as it does not technically exist</span>
-            <span class="n">corresponding_new_attr</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">for</span> <span class="n">new_attr</span> <span class="ow">in</span> <span class="n">new_attributes</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">new_attr</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">old_attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-                    <span class="n">corresponding_new_attr</span> <span class="o">=</span> <span class="n">new_attr</span>
-
-            <span class="k">if</span> <span class="n">corresponding_new_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># Attribute no longer exists, delete it</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">delete_entity_attribute</span><span class="p">(</span>
-                        <span class="n">entity_id</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                        <span class="n">entity_type</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-                        <span class="n">attr_name</span><span class="o">=</span><span class="n">old_attr</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Failed to delete attribute </span><span class="si">{</span><span class="n">old_attr</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> of &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;entity </span><span class="si">{</span><span class="n">new_entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.&quot;</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
-                        <span class="c1"># if the attribute is provided by a registration the</span>
-                        <span class="c1"># deletion will fail</span>
-                        <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot; The attribute is probably provided &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;by a registration.&quot;</span>
-                        <span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-                        <span class="k">raise</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Check if attributed changed in any way, if yes update</span>
-                <span class="c1"># else do nothing and keep current state</span>
-                <span class="k">if</span> <span class="n">old_attr</span> <span class="o">!=</span> <span class="n">corresponding_new_attr</span><span class="p">:</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">update_entity_attribute</span><span class="p">(</span>
-                            <span class="n">entity_id</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                            <span class="n">entity_type</span><span class="o">=</span><span class="n">new_entity</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-                            <span class="n">attr</span><span class="o">=</span><span class="n">corresponding_new_attr</span><span class="p">,</span>
-                            <span class="n">override_metadata</span><span class="o">=</span><span class="n">override_attr_metadata</span><span class="p">,</span>
-                        <span class="p">)</span>
-                    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Failed to update attribute </span><span class="si">{</span><span class="n">old_attr</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> of &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;entity </span><span class="si">{</span><span class="n">new_entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.&quot;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
-                            <span class="c1"># if the attribute is provided by a registration the</span>
-                            <span class="c1"># update will fail</span>
-                            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot; The attribute is probably provided &quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;by a registration.&quot;</span>
-                            <span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-                        <span class="k">raise</span>
-
-        <span class="c1"># Create new attributes</span>
-        <span class="n">update_entity</span> <span class="o">=</span> <span class="n">ContextEntity</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
-        <span class="n">update_needed</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">new_attr</span> <span class="ow">in</span> <span class="n">new_attributes</span><span class="p">:</span>
-            <span class="c1"># commands do not exist in the ContextEntity and are only</span>
-            <span class="c1"># registrations to the corresponding device. Operations as</span>
-            <span class="c1"># delete will fail as it does not technically exists</span>
-            <span class="n">attr_existed</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">for</span> <span class="n">old_attr</span> <span class="ow">in</span> <span class="n">old_attributes</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">new_attr</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">old_attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-                    <span class="n">attr_existed</span> <span class="o">=</span> <span class="kc">True</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">attr_existed</span><span class="p">:</span>
-                <span class="n">update_needed</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="n">update_entity</span><span class="o">.</span><span class="n">add_attributes</span><span class="p">([</span><span class="n">new_attr</span><span class="p">])</span>
-
-        <span class="k">if</span> <span class="n">update_needed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update_entity</span><span class="p">(</span><span class="n">update_entity</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_existing_entity_attributes</span><span class="p">(</span>
+            <span class="n">entity_id</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">entity_type</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+            <span class="n">attrs</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="n">key_values</span><span class="o">=</span><span class="n">key_values</span><span class="p">,</span>
+            <span class="n">forcedUpdate</span><span class="o">=</span><span class="n">forcedUpdate</span><span class="p">,</span>
+            <span class="n">override_metadata</span><span class="o">=</span><span class="n">override_metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_subscription_dicts_are_equal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">second</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

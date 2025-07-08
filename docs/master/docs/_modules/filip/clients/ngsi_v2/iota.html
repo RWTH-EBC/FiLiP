@@ -458,13 +458,21 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            List of matching devices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">limit</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;&#39;limit&#39; must be an integer between 1 and &quot;</span> <span class="s2">&quot;1000!&quot;</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;limit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="k">if</span> <span class="n">offset</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;&#39;offset&#39; must be an integer!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;offset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">offset</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/devices&quot;</span><span class="p">)</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
@@ -666,9 +674,9 @@
         <span class="n">cb_url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">CB_URL</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates a device state in Fiware, if the device does not exists it</span>
+<span class="sd">        Updates a device state in Fiware, if the device does not exist it</span>
 <span class="sd">        is created, else its values are updated.</span>
-<span class="sd">        If the device settings (endpoint,..) were changed the device and</span>
+<span class="sd">        If the device settings were changed the device and</span>
 <span class="sd">        entity are deleted and re-added.</span>
 
 <span class="sd">        If patch_entity is true the corresponding entity in the ContextBroker is</span>
@@ -795,7 +803,7 @@
                     <span class="n">url</span><span class="o">=</span><span class="n">cb_url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
                 <span class="p">)</span>
 
-            <span class="n">cb_client_local</span><span class="o">.</span><span class="n">patch_entity</span><span class="p">(</span>
+            <span class="n">cb_client_local</span><span class="o">.</span><span class="n">override_entity</span><span class="p">(</span>
                 <span class="n">entity</span><span class="o">=</span><span class="n">build_context_entity_from_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">cb_client_local</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
