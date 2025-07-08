@@ -947,15 +947,18 @@ class TestContextBroker(unittest.TestCase):
             value=new_value,
             entity_type=entity.type,
         )
-        time.sleep(2)
-
         # test if the subscriptions arrives and the content aligns with updates
+        max_retry = 5
+        for _ in range(max_retry):
+            if sub_message:
+                break
+            else:
+                time.sleep(1)
         self.assertIsNotNone(sub_message)
         self.assertEqual(sub_id, sub_message.subscriptionId)
         self.assertEqual(new_value, sub_message.data[0].temperature.value)
         mqtt_client.loop_stop()
         mqtt_client.disconnect()
-        time.sleep(2)
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
@@ -1388,7 +1391,12 @@ class TestContextBroker(unittest.TestCase):
                 entity_id=entity.id, attr_name="temperature", value=10
             )
             # check the notified entities
-            time.sleep(2)
+            max_retry = 5
+            for _ in range(max_retry):
+                if sub_message:
+                    break
+                else:
+                    time.sleep(1)
             sub_1 = client.get_subscription(sub_id_1)
             self.assertEqual(sub_1.notification.timesSent, 1)
             self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
