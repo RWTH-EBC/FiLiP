@@ -44,8 +44,8 @@ services:
       - ORION_MONGO_WRITE_CONCERN=1
       - ORION_NOTIF_MODE=threadpool
       - ORION_MQTT_TIMEOUT=10000
-      - ORION_TRQ_POOL_SIZE=2 # Use only if ORION_NOTIFICATION_MODE is set to "threadpool"
-      - ORION_MUTEX_POLICY=all
+      - ORION_TRQ_POOL_SIZE=3 # Use only if ORION_NOTIFICATION_MODE is set to "threadpool"
+      - ORION_MUTEX_POLICY=none
       - ORION_CONN_MEMORY=128
     logging: *logging-medium
 
