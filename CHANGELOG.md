@@ -1,6 +1,7 @@
 ### v0.6.x
 - add: flag to decide on whether ignore invalide entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
-- fix: handle large amount of data in clear context broker
+- fix: handle large amount of data in clear context broker ([#419](https://github.com/RWTH-EBC/FiLiP/pull/419))
+- update: adapt the behavior of `patch_entity` to align with the API specification ([#429](https://github.com/RWTH-EBC/FiLiP/pull/429))
 
 ### v0.6.3
 - add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
