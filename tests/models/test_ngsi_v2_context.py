@@ -471,7 +471,7 @@ class TestContextModels(unittest.TestCase):
                     }
                 )
 
-        # try to generate a entity with one of dissalowed character in attribute value
+        # try to generate an entity with one of disallowed characters in attribute value
         attribute_value_not_allowed = ["<", ">", '"', "'", "=", ";", "(", ")"]
         for char in attribute_value_not_allowed:
             with self.assertRaises(ValueError) as context:
