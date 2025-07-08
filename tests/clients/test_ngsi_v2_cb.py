@@ -954,6 +954,12 @@ class TestContextBroker(unittest.TestCase):
                 break
             else:
                 time.sleep(1)
+        # TODO to be removed
+        logger.info("test_mqtt_subscriptions DEBUG")
+        entity_res = self.client.get_entity(entity_id=entity.id)
+        logger.info(entity_res.model_dump_json(indent=2))
+        sub_res = self.client.get_subscription(subscription_id=sub_id)
+        logger.info(sub_res.model_dump_json(indent=2))
         self.assertIsNotNone(sub_message)
         self.assertEqual(sub_id, sub_message.subscriptionId)
         self.assertEqual(new_value, sub_message.data[0].temperature.value)
