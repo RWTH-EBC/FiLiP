@@ -973,13 +973,6 @@ class TestContextBroker(unittest.TestCase):
             if mqtt_agent.sub_message:
                 break
             else:
-                self.client.update_attribute_value(
-                    entity_id=entity.id,
-                    attr_name="temperature",
-                    value=new_value,
-                    entity_type=entity.type,
-                    forcedUpdate=True,
-                )
                 time.sleep(1)
         # TODO to be removed
         logger.info("test_mqtt_subscriptions DEBUG")
@@ -1432,12 +1425,6 @@ class TestContextBroker(unittest.TestCase):
                 if sub_message:
                     break
                 else:
-                    client.update_attribute_value(
-                        entity_id=entity.id,
-                        attr_name="temperature",
-                        value=10,
-                        forcedUpdate=True,
-                    )
                     time.sleep(1)
             sub_1 = client.get_subscription(sub_id_1)
             self.assertEqual(sub_1.notification.timesSent, 1)
