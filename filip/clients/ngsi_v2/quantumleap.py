@@ -74,7 +74,8 @@ class QuantumLeapClient(BaseHttpClient):
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
-            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
+            raise BaseHttpClientException(message=err.response, response=err.response) from err
+
 
     def get_health(self) -> Dict:
         """

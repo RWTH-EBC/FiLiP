@@ -2153,17 +2153,23 @@ class ContextBrokerClient(BaseHttpClient):
         if old_entity is None:
             # If no old entity_was provided we use the current state to compare
             # the entity to
-            if self.does_entity_exist(
-                entity_id=new_entity.id, entity_type=new_entity.type
-            ):
-                old_entity = self.get_entity(
+            try:
+                if self.does_entity_exist(
                     entity_id=new_entity.id, entity_type=new_entity.type
+                ):
+                    old_entity = self.get_entity(
+                        entity_id=new_entity.id, entity_type=new_entity.type
+                    )
+                else:
+                    # the entity is new, post and finish
+                    self.post_entity(new_entity, update=False)
+                    return
+            except requests.RequestException as err:
+                msg = (
+                    f"Failed to check or post entity in patch entity because of the following reason:"
                 )
-            else:
-                # the entity is new, post and finish
-                self.post_entity(new_entity, update=False)
-                return
-
+                self.log_error(err=err, msg=msg)
+                raise BaseHttpClientException(message=msg, response=err.response) from err
         else:
             # An old_entity was provided
             # check if the old_entity (still) exists else recall methode
@@ -2229,7 +2235,7 @@ class ContextBrokerClient(BaseHttpClient):
                         self.log_error(err=err, msg=msg)
                     else:
                         self.log_error(err=err, msg=msg)
-                        raise
+                        raise BaseHttpClientException(message=msg, response=err.response) from err
             else:
                 # Check if attributed changed in any way, if yes update
                 # else do nothing and keep current state
@@ -2254,7 +2260,8 @@ class ContextBrokerClient(BaseHttpClient):
                                 f"by a registration."
                             )
                         self.log_error(err=err, msg=msg)
-                        raise
+                        raise BaseHttpClientException(message=msg, response=err.response) from err
+
 
         # Create new attributes
         update_entity = ContextEntity(id=entity.id, type=entity.type)
