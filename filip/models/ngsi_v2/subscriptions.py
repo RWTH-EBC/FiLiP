@@ -330,6 +330,29 @@ class Notification(BaseModel):
         "In case onlyChangedAttrs=true, CB notifies "
         "[A=0, B=null, C=null]. This ",
     )
+    lastSuccess: Optional[Any] = Field(
+        default=None,
+        description="Not editable, only present in GET operations. "
+        "A Timestamp in ISO8601 format for last successful "
+        "notification. Not present if subscription has never "
+        "had a successful notification.",
+    )
+    lastSuccessCode: Optional[Any] = Field(
+        default=None,
+        description="Not editable, only present in GET operations. "
+        "HTTP status code of the last successful notification.",
+    )
+    lastFailure: Optional[Any] = Field(
+        default=None,
+        description="Not editable, only present in GET operations"
+        "Last failure timestamp in ISO8601 format. Not present if "
+        "subscription has never had a problem with notifications.",
+    )
+    lastFailureReason: Optional[Any] = Field(
+        default=None,
+        description="Not editable, only present in GET operations. "
+        "A string with the reason for the last failure. ",
+    )
     covered: Optional[bool] = Field(
         default=False,
         description="A flag to decide whether to include not existing attribute in "
