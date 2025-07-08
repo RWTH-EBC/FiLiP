@@ -127,6 +127,12 @@ jobs:
             python -m unittest tests/clients/test_ngsi_v2_cb.py
             python -m pytest tests
           fi
+      
+      # (temp) Step 11: Check container logs
+      - name: check mqtt broker
+        run: |
+          docker logs mqtt-broker
+          docker logs orion
 
       # --- Steps for Coverage Reporting (only run if matrix.run_coverage is true) ---
       # Step 1: Generate the HTML report first
