@@ -888,56 +888,75 @@ class TestContextBroker(unittest.TestCase):
         self.client.post_entity(entity=entity)
         sub_id = self.client.post_subscription(subscription)
 
-        sub_message = None
+        # create a mqtt class to subscribe to the topic
+        class MqttAgent:
+            def __init__(self, topic):
+                self.sub_message = None
+                self.mqtt_topic = topic
 
-        def on_connect(client, userdata, flags, reasonCode, properties=None):
-            if reasonCode != 0:
-                logger.error(f"Connection failed with error code: " f"'{reasonCode}'")
-                raise ConnectionError
-            else:
-                logger.info(
-                    "Successfully, connected with result code " + str(reasonCode)
+                self.mqtt_client = mqtt.Client(
+                    userdata=None,
+                    protocol=mqtt.MQTTv5,
+                    callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+                    transport="tcp",
                 )
-            client.subscribe(mqtt_topic)
+                # add our callbacks to the client
+                self.mqtt_client.on_connect = self.on_connect
+                self.mqtt_client.on_subscribe = self.on_subscribe
+                self.mqtt_client.on_message = self.on_message
+                self.mqtt_client.on_disconnect = self.on_disconnect
 
-        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-            logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+                # connect to the server
+                self.mqtt_client.connect(
+                    host=mqtt_url.host,
+                    port=mqtt_url.port,
+                    keepalive=60,
+                    bind_address="",
+                    bind_port=0,
+                    clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                    properties=None,
+                )
 
-        def on_message(client, userdata, msg):
-            logger.info(msg.topic + " " + str(msg.payload))
-            nonlocal sub_message
-            sub_message = Message.model_validate_json(msg.payload)
+                # create a non-blocking thread for mqtt communication
+                self.mqtt_client.loop_start()
 
-        def on_disconnect(client, userdata, flags, reasonCode, properties=None):
-            logger.info("MQTT client disconnected with reasonCode " + str(reasonCode))
+            def on_connect(self, client, userdata, flags, reasonCode, properties=None):
+                if reasonCode != 0:
+                    logger.error(
+                        f"Connection failed with error code: " f"'{reasonCode}'"
+                    )
+                    raise ConnectionError
+                else:
+                    logger.info("Test MQTT subscription successfully connected")
+                    logger.info(
+                        "Successfully, connected with result code " + str(reasonCode)
+                    )
+                client.subscribe(self.mqtt_topic)
 
-        import paho.mqtt.client as mqtt
+            def on_subscribe(self, client, userdata, mid, granted_qos, properties=None):
+                logger.info(
+                    f"Test MQTT subscription successfully subscribed: {self.mqtt_topic}"
+                )
+                logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 
-        mqtt_client = mqtt.Client(
-            userdata=None,
-            protocol=mqtt.MQTTv5,
-            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-            transport="tcp",
-        )
-        # add our callbacks to the client
-        mqtt_client.on_connect = on_connect
-        mqtt_client.on_subscribe = on_subscribe
-        mqtt_client.on_message = on_message
-        mqtt_client.on_disconnect = on_disconnect
+            def on_message(self, client, userdata, msg):
+                logger.info(msg.topic + " " + str(msg.payload))
+                self.sub_message = Message.model_validate_json(msg.payload)
 
-        # connect to the server
-        mqtt_client.connect(
-            host=mqtt_url.host,
-            port=mqtt_url.port,
-            keepalive=60,
-            bind_address="",
-            bind_port=0,
-            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
+            def on_disconnect(
+                self, client, userdata, flags, reasonCode, properties=None
+            ):
+                logger.info("Test MQTT subscription successfully disconnected")
+                logger.info(
+                    "MQTT client disconnected with reasonCode " + str(reasonCode)
+                )
 
-        # create a non-blocking thread for mqtt communication
-        mqtt_client.loop_start()
+            def clean_up(self):
+                self.mqtt_client.loop_stop()
+                self.mqtt_client.disconnect()
+
+        mqtt_agent = MqttAgent(topic=mqtt_topic)
+
         new_value = 50
 
         time.sleep(2)
@@ -950,7 +969,7 @@ class TestContextBroker(unittest.TestCase):
         # test if the subscriptions arrives and the content aligns with updates
         max_retry = 5
         for _ in range(max_retry):
-            if sub_message:
+            if mqtt_agent.sub_message:
                 break
             else:
                 time.sleep(1)
@@ -960,11 +979,11 @@ class TestContextBroker(unittest.TestCase):
         logger.info(entity_res.model_dump_json(indent=2))
         sub_res = self.client.get_subscription(subscription_id=sub_id)
         logger.info(sub_res.model_dump_json(indent=2))
-        self.assertIsNotNone(sub_message)
-        self.assertEqual(sub_id, sub_message.subscriptionId)
-        self.assertEqual(new_value, sub_message.data[0].temperature.value)
-        mqtt_client.loop_stop()
-        mqtt_client.disconnect()
+        self.assertIsNotNone(mqtt_agent.sub_message)
+        self.assertEqual(sub_id, mqtt_agent.sub_message.subscriptionId)
+        self.assertEqual(new_value, mqtt_agent.sub_message.data[0].temperature.value)
+
+        mqtt_agent.clean_up()
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
