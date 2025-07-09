@@ -1,7 +1,9 @@
 ### v0.6.x
-- add: flag to decide on whether ignore invalide entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
+- add: flag to decide on whether ignore invalid entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
+- add: system params like ``lastSuccess`` to notification model ([#441](https://github.com/RWTH-EBC/FiLiP/pull/441))
 - fix: handle large amount of data in clear context broker ([#419](https://github.com/RWTH-EBC/FiLiP/pull/419))
 - update: allow UTF-8 characters in attribute values ([#437](https://github.com/RWTH-EBC/FiLiP/pull/437))
+- update: stop testing python 3.8 in workflow ([#441](https://github.com/RWTH-EBC/FiLiP/pull/441))
 
 ### v0.6.3
 - add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
