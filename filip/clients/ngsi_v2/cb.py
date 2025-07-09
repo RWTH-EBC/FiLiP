@@ -1535,7 +1535,7 @@ class ContextBrokerClient(BaseHttpClient):
                         "lastSuccess",
                         "lastFailure",
                         "lastSuccessCode",
-                        "lastFailureCode",
+                        "lastFailureReason",
                     },
                 ),
             ):
