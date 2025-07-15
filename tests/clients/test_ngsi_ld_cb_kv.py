@@ -622,12 +622,12 @@ class EntitiesBatchOperations(unittest.TestCase):
         )
         self.assertEqual(len(entity_list), 5)
         updated = [
-            x.model_dump(exclude_unset=True, exclude={"@context"})
+            x.model_dump(exclude_unset=True, exclude={"context"})
             for x in entity_list
             if int(x.id.split(":")[3]) in range(3, 5)
         ]
         nupdated = [
-            x.model_dump(exclude_unset=True, exclude={"@context"})
+            x.model_dump(exclude_unset=True, exclude={"context"})
             for x in entity_list
             if int(x.id.split(":")[3]) in range(0, 3)
         ]
@@ -782,7 +782,7 @@ class EntitiesBatchOperations(unittest.TestCase):
         self.assertEqual(len(entity_list), 5)
         for _e in entity_list:
             _id = int(_e.id.split(":")[3])
-            e = _e.model_dump(exclude_unset=True, exclude={"@context"})
+            e = _e.model_dump(exclude_unset=True, exclude={"context"})
             if _id in [0, 1]:
                 self.assertIsNone(e.get("temperature", None))
                 self.assertIsNotNone(e.get("pressure", None))
