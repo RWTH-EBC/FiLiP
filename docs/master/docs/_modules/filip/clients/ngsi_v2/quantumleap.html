@@ -94,6 +94,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.base_http_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHttpClient</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiwareHeader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.subscriptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_ld.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageLD</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.timeseries</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AggrPeriod</span><span class="p">,</span>
     <span class="n">AggrMethod</span><span class="p">,</span>
@@ -185,7 +186,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Endpoint to be implemented..&quot;</span><span class="p">)</span></div>
 
     <span class="c1"># INPUT API ENDPOINTS</span>
-<div class="viewcode-block" id="QuantumLeapClient.post_notification"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.post_notification">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_notification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notification</span><span class="p">:</span> <span class="n">Message</span><span class="p">):</span>
+<div class="viewcode-block" id="QuantumLeapClient.post_notification"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient.post_notification">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_notification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notification</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Message</span><span class="p">,</span><span class="n">MessageLD</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Notify QuantumLeap the arrival of a new NGSI notification.</span>
 

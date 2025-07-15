@@ -305,7 +305,7 @@ coordinates with a list containing the coordinates as value</p>
 <dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_ld.context.</span></span><span class="sig-name descname"><span class="pre">ContextLDEntity</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextLDEntityKeyValues</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityBase" title="filip.models.ngsi_ld.context.ContextLDEntityBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextLDEntityBase</span></code></a></p>
 <p>Context LD entities, or simply entities, are the center of gravity in the
 FIWARE NGSI-LD information model. An entity represents a thing, i.e., any
 physical or logical object (e.g., a sensor, a person, a room, an issue in
@@ -343,7 +343,6 @@ not allowed to be used as attribute names.</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="filip.models.ngsi_ld.context.ContextLDEntity.context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">List[str]</span> <span class="pre">|</span> <span class="pre">Dict</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.createdAt" title="filip.models.ngsi_ld.context.ContextLDEntity.createdAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createdAt</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.modifiedAt" title="filip.models.ngsi_ld.context.ContextLDEntity.modifiedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modifiedAt</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.observationSpace" title="filip.models.ngsi_ld.context.ContextLDEntity.observationSpace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observationSpace</span> <span class="pre">(filip.models.ngsi_ld.context.ContextGeoProperty</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
@@ -353,23 +352,10 @@ not allowed to be used as attribute names.</p>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_id</span></code> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="filip.models.ngsi_ld.context.ContextLDEntity.return_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_context</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="filip.models.ngsi_ld.context.ContextLDEntity.context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="filip.models.ngsi_ld.context.ContextLDEntity.return_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_context</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span></code></p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.context">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'&#64;context')</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="Permalink to this definition"></a></dt>
-<dd><p>The &#64;context in JSON-LD is used to expand terms, provided as short hand strings, to concepts, specified as URIs, and vice versa, to compact URIs into terms The main implication of NGSI-LD API is that if the &#64;context is a compound one, i.e. an &#64;context which references multiple individual &#64;context, served by resources behind different URIs, then a wrapper &#64;context has to be created and hosted.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Validated by<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="filip.models.ngsi_ld.context.ContextLDEntity.return_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_context</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.createdAt">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createdAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.createdAt" title="Permalink to this definition"></a></dt>
@@ -542,14 +528,14 @@ If mode is ‘python’, the output may contain non-JSON-serializable Python obj
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.return_context">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">return_context</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="filip.models.ngsi_ld.context.ContextLDEntity.context"><em class="xref py py-obj"><span class="pre">context</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntity.return_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">return_context</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">context</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntity.return_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class pydantic_model">
-<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityKeyValues">
-<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_ld.context.</span></span><span class="sig-name descname"><span class="pre">ContextLDEntityKeyValues</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntityKeyValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityBase">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_ld.context.</span></span><span class="sig-name descname"><span class="pre">ContextLDEntityBase</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntityBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityBase" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Base Model for an entity is represented by a JSON object with the following
 syntax.</p>
@@ -567,14 +553,21 @@ is a string containing the entity’s type name.</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.id" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.type" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityBase.context" title="filip.models.ngsi_ld.context.ContextLDEntityBase.context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">List[str]</span> <span class="pre">|</span> <span class="pre">Dict</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityBase.id" title="filip.models.ngsi_ld.context.ContextLDEntityBase.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityBase.type" title="filip.models.ngsi_ld.context.ContextLDEntityBase.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(str)</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityKeyValues.id">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.id" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityBase.context">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'&#64;context')</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityBase.context" title="Permalink to this definition"></a></dt>
+<dd><p>The &#64;context in JSON-LD is used to expand terms, provided as short hand strings, to concepts, specified as URIs, and vice versa, to compact URIs into terms The main implication of NGSI-LD API is that if the &#64;context is a compound one, i.e. an &#64;context which references multiple individual &#64;context, served by resources behind different URIs, then a wrapper &#64;context has to be created and hosted.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityBase.id">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityBase.id" title="Permalink to this definition"></a></dt>
 <dd><p>Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.the id should be structured according to the urn naming scheme.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Constraints<span class="colon">:</span></dt>
@@ -587,8 +580,8 @@ is a string containing the entity’s type name.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityKeyValues.type">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.type" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityBase.type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityBase.type" title="Permalink to this definition"></a></dt>
 <dd><p>Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Constraints<span class="colon">:</span></dt>
@@ -598,6 +591,35 @@ is a string containing the entity’s type name.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityKeyValues">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_ld.context.</span></span><span class="sig-name descname"><span class="pre">ContextLDEntityKeyValues</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntityKeyValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntityBase" title="filip.models.ngsi_ld.context.ContextLDEntityBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContextLDEntityBase</span></code></a></p>
+<p>Base Model for an entity is represented by a JSON object with the following
+syntax.</p>
+<p>The entity id is specified by the object’s id property, whose value
+is a string containing the entity id.</p>
+<p>The entity type is specified by the object’s type property, whose value
+is a string containing the entity’s type name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extra</strong>: <em>str = allow</em></p></li>
+<li><p><strong>validate_default</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntityKeyValues.to_normalized">
+<span class="sig-name descname"><span class="pre">to_normalized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntityKeyValues.to_normalized"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.to_normalized" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the entity to a normalized representation.</p>
 </dd></dl>
 
 </dd></dl>
@@ -625,12 +647,12 @@ specified further.</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.UnitCode" title="filip.models.ngsi_ld.context.ContextProperty.UnitCode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnitCode</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.createdAt" title="filip.models.ngsi_ld.context.ContextProperty.createdAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createdAt</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.datasetId" title="filip.models.ngsi_ld.context.ContextProperty.datasetId"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datasetId</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.modifiedAt" title="filip.models.ngsi_ld.context.ContextProperty.modifiedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modifiedAt</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.observedAt" title="filip.models.ngsi_ld.context.ContextProperty.observedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observedAt</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.type" title="filip.models.ngsi_ld.context.ContextProperty.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.unitCode" title="filip.models.ngsi_ld.context.ContextProperty.unitCode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unitCode</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.value" title="filip.models.ngsi_ld.context.ContextProperty.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(float</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">List</span> <span class="pre">|</span> <span class="pre">Dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">List[float</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">List</span> <span class="pre">|</span> <span class="pre">Dict[str,</span> <span class="pre">Any]]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 </ul>
 </dd>
@@ -640,20 +662,6 @@ specified further.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextProperty.UnitCode">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UnitCode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextProperty.UnitCode" title="Permalink to this definition"></a></dt>
-<dd><p>Representing the unit of the value. Should be part of the defined units by the UN/ECE Recommendation No. 21https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>min_length</strong> = 1</p></li>
-<li><p><strong>max_length</strong> = 256</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextProperty.createdAt">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createdAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextProperty.createdAt" title="Permalink to this definition"></a></dt>
@@ -717,6 +725,20 @@ specified further.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.check_property_type" title="filip.models.ngsi_ld.context.ContextProperty.check_property_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_property_type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextProperty.unitCode">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unitCode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextProperty.unitCode" title="Permalink to this definition"></a></dt>
+<dd><p>Representing the unit of the value. Should be part of the defined units by the UN/ECE Recommendation No. 21https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
 </ul>
 </dd>
 </dl>
@@ -862,6 +884,33 @@ should be specified as the URN. The existence of this entity is not assumed.</p>
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.DataTypeLD.RELATIONSHIP">
 <span class="sig-name descname"><span class="pre">RELATIONSHIP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Relationship'</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.DataTypeLD.RELATIONSHIP" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.MessageLD">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_ld.context.</span></span><span class="sig-name descname"><span class="pre">MessageLD</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#MessageLD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.MessageLD" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Model for a notification message, when sent to other NGSIv2-APIs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.MessageLD.data" title="filip.models.ngsi_ld.context.MessageLD.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span> <span class="pre">(List[filip.models.ngsi_ld.context.ContextLDEntity])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.MessageLD.subscriptionId" title="filip.models.ngsi_ld.context.MessageLD.subscriptionId"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subscriptionId</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.MessageLD.data">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.MessageLD.data" title="Permalink to this definition"></a></dt>
+<dd><p>is an array with the notification data itself which includes the entity and all concerned attributes. Each element in the array corresponds to a different entity. By default, the entities are represented in normalized mode. However, using the attrsFormat modifier, a simplified representation mode can be requested.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.MessageLD.subscriptionId">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subscriptionId</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.MessageLD.subscriptionId" title="Permalink to this definition"></a></dt>
+<dd><p>Id of the subscription the notification comes from</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1149,7 +1198,7 @@ In v1.6.1 it is specified in a new data type, namely EntitySelector</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.EntityInfo.id" title="filip.models.ngsi_ld.subscriptions.EntityInfo.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(pydantic_core._pydantic_core.Url</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.EntityInfo.id" title="filip.models.ngsi_ld.subscriptions.EntityInfo.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.EntityInfo.idPattern" title="filip.models.ngsi_ld.subscriptions.EntityInfo.idPattern"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idPattern</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.EntityInfo.type" title="filip.models.ngsi_ld.subscriptions.EntityInfo.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(str)</span></code></a></p></li>
 </ul>
@@ -1157,7 +1206,7 @@ In v1.6.1 it is specified in a new data type, namely EntitySelector</p>
 </dl>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.subscriptions.EntityInfo.id">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Url</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.EntityInfo.id" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.EntityInfo.id" title="Permalink to this definition"></a></dt>
 <dd><p>Entity identifier (valid URI)</p>
 </dd></dl>
 
@@ -1309,6 +1358,7 @@ convey the details of a notification, as described in NGSI-LD Spec section 5.2.1
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_q" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_q</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.q" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD.q"><code class="xref py py-obj docutils literal notranslate"><span class="pre">q</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_throttling</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.throttling" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD.throttling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">throttling</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -1400,7 +1450,14 @@ convey the details of a notification, as described in NGSI-LD Spec section 5.2.1
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.subscriptions.SubscriptionLD.throttling">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">throttling</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.throttling" title="Permalink to this definition"></a></dt>
-<dd><p>Minimal period of time in seconds between two consecutive notifications</p>
+<dd><p>Minimal period of time in seconds between two consecutive notifications.It must be greater than 0 if set. If not set, it means no throttling is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_throttling</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
@@ -1425,6 +1482,12 @@ convey the details of a notification, as described in NGSI-LD Spec section 5.2.1
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_q">
 <em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_q</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.q" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD.q"><em class="xref py py-obj"><span class="pre">q</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/subscriptions.html#SubscriptionLD.check_q"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_q" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_throttling</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.throttling" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD.throttling"><em class="xref py py-obj"><span class="pre">throttling</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/subscriptions.html#SubscriptionLD.check_throttling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling" title="Permalink to this definition"></a></dt>
+<dd><p>Validate the throttling value. It must be greater than 0 if provided.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1535,7 +1598,7 @@ will be used to resolve the temporal query. If not specified, the default is
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_uri</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt"><em class="xref py py-obj"><span class="pre">timeAt</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt"><em class="xref py py-obj"><span class="pre">endTimeAt</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/subscriptions.html#TemporalQuery.check_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_uri</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt"><em class="xref py py-obj"><span class="pre">endTimeAt</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt"><em class="xref py py-obj"><span class="pre">timeAt</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/subscriptions.html#TemporalQuery.check_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

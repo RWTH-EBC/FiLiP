@@ -171,7 +171,7 @@
     <span class="p">)</span>
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;modifiedAt&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
-    <span class="n">UnitCode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">unitCode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">None</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Unit Code&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Representing the unit of the value. &quot;</span>
@@ -181,7 +181,7 @@
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;UnitCode&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
+    <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;unitCode&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
 
     <span class="n">datasetId</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">None</span><span class="p">,</span>
@@ -447,7 +447,7 @@
     <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ContextLDEntityKeyValues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextLDEntityKeyValues</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextLDEntityBase"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityBase">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextLDEntityBase</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base Model for an entity is represented by a JSON object with the following</span>
 <span class="sd">    syntax.</span>
@@ -457,7 +457,6 @@
 
 <span class="sd">    The entity type is specified by the object&#39;s type property, whose value</span>
 <span class="sd">    is a string containing the entity&#39;s type name.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
@@ -491,7 +490,60 @@
         <span class="c1"># pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe</span>
         <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_standard_regex</span><span class="p">)</span></div>
+    <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_standard_regex</span><span class="p">)</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The @context in JSON-LD is used to expand terms, provided as short &quot;</span>
+        <span class="s2">&quot;hand strings, to concepts, specified as URIs, and vice versa, &quot;</span>
+        <span class="s2">&quot;to compact URIs into terms &quot;</span>
+        <span class="s2">&quot;The main implication of NGSI-LD API is that if the @context is &quot;</span>
+        <span class="s2">&quot;a compound one, i.e. an @context which references multiple &quot;</span>
+        <span class="s2">&quot;individual @context, served by resources behind different URIs, &quot;</span>
+        <span class="s2">&quot;then a wrapper @context has to be created and hosted.&quot;</span><span class="p">,</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld&quot;</span><span class="p">],</span>
+        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContextLDEntityKeyValues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextLDEntityKeyValues</span><span class="p">(</span><span class="n">ContextLDEntityBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base Model for an entity is represented by a JSON object with the following</span>
+<span class="sd">    syntax.</span>
+
+<span class="sd">    The entity id is specified by the object&#39;s id property, whose value</span>
+<span class="sd">    is a string containing the entity id.</span>
+
+<span class="sd">    The entity type is specified by the object&#39;s type property, whose value</span>
+<span class="sd">    is a string containing the entity&#39;s type name.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="ContextLDEntityKeyValues.to_normalized"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.to_normalized">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the entity to a normalized representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ContextLDEntity</span><span class="p">(</span>
+            <span class="o">**</span><span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="o">**</span><span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Property&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;context&quot;</span><span class="p">]</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PropertyFormat"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.PropertyFormat">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PropertyFormat</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
@@ -504,7 +556,7 @@
     <span class="n">DICT</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span></div>
 
 
-<div class="viewcode-block" id="ContextLDEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextLDEntity</span><span class="p">(</span><span class="n">ContextLDEntityKeyValues</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextLDEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextLDEntity</span><span class="p">(</span><span class="n">ContextLDEntityBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Context LD entities, or simply entities, are the center of gravity in the</span>
 <span class="sd">    FIWARE NGSI-LD information model. An entity represents a thing, i.e., any</span>
@@ -555,21 +607,6 @@
         <span class="s2">&quot;the location of the camera and the &quot;</span>
         <span class="s2">&quot;observationspace are different and &quot;</span>
         <span class="s2">&quot;can be disjoint. &quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The @context in JSON-LD is used to expand terms, provided as short &quot;</span>
-        <span class="s2">&quot;hand strings, to concepts, specified as URIs, and vice versa, &quot;</span>
-        <span class="s2">&quot;to compact URIs into terms &quot;</span>
-        <span class="s2">&quot;The main implication of NGSI-LD API is that if the @context is &quot;</span>
-        <span class="s2">&quot;a compound one, i.e. an @context which references multiple &quot;</span>
-        <span class="s2">&quot;individual @context, served by resources behind different URIs, &quot;</span>
-        <span class="s2">&quot;then a wrapper @context has to be created and hosted.&quot;</span><span class="p">,</span>
-        <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;https://n5geh.github.io/n5geh.test-context.io/context_saref.jsonld&quot;</span><span class="p">],</span>
-        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="s2">&quot;@context&quot;</span><span class="p">,</span>
-        <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
 <div class="viewcode-block" id="ContextLDEntity.return_context"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.return_context">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">)</span>
@@ -895,6 +932,25 @@
     <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;an array of entities, each entity specified using the &quot;</span>
         <span class="s2">&quot;JSON entity representation format &quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MessageLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.MessageLD">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">MessageLD</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for a notification message, when sent to other NGSIv2-APIs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subscriptionId</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of the subscription the notification comes from&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;is an array with the notification data itself which &quot;</span>
+        <span class="s2">&quot;includes the entity and all concerned attributes. Each &quot;</span>
+        <span class="s2">&quot;element in the array corresponds to a different entity. &quot;</span>
+        <span class="s2">&quot;By default, the entities are represented in normalized &quot;</span>
+        <span class="s2">&quot;mode. However, using the attrsFormat modifier, a &quot;</span>
+        <span class="s2">&quot;simplified representation mode can be requested.&quot;</span>
     <span class="p">)</span></div>
 </pre></div>
 
