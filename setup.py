@@ -25,6 +25,7 @@ INSTALL_REQUIRES = [
     "wget~=3.2",
     "PyLD~=2.0.4",
     "pyjexl~=0.3.0",
+    "packaging~=24.1",
 ]
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()

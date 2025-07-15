@@ -8,7 +8,7 @@ import copy
 from copy import deepcopy
 from enum import Enum
 from math import inf
-from pkg_resources import parse_version
+from packaging.version import parse as parse_version
 from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl, ValidationError
 from pydantic.type_adapter import TypeAdapter
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
