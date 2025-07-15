@@ -44,7 +44,7 @@ class FiwareRegex(str, Enum):
         "symbols: ( ) < > \" ' = ; § & / # ?",
     )
     attribute_value = (
-        r"(^((?![\"'<>()=;])[\x00-\x7F])*$)",
+        r"(^((?![\"'<>()=;]).)*$)",
         "Prevents any string that contains at least one of the "
         "symbols: ( ) < > \" ' = ; ",
     )

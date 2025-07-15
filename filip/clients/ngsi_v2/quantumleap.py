@@ -16,13 +16,15 @@ from filip import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.subscriptions import Message
-from filip.models.ngsi_v2.timeseries import \
-    AggrPeriod, \
-    AggrMethod, \
-    AggrScope, \
-    AttributeValues, \
-    TimeSeries, \
-    TimeSeriesHeader
+from filip.models.ngsi_ld.context import MessageLD
+from filip.models.ngsi_v2.timeseries import (
+    AggrPeriod,
+    AggrMethod,
+    AggrScope,
+    AttributeValues,
+    TimeSeries,
+    TimeSeriesHeader,
+)
 from filip.clients.exceptions import BaseHttpClientException
 
 
@@ -74,8 +76,9 @@ class QuantumLeapClient(BaseHttpClient):
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
-            raise BaseHttpClientException(message=err.response, response=err.response) from err
-
+            raise BaseHttpClientException(
+                message=err.response, response=err.response
+            ) from err
 
     def get_health(self) -> Dict:
         """
@@ -98,7 +101,9 @@ class QuantumLeapClient(BaseHttpClient):
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
-            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
+            raise BaseHttpClientException(
+                message=err.response.text, response=err.response
+            ) from err
 
     def post_config(self):
         """
@@ -108,7 +113,7 @@ class QuantumLeapClient(BaseHttpClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # INPUT API ENDPOINTS
-    def post_notification(self, notification: Message):
+    def post_notification(self, notification: Union[Message, MessageLD]):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
 
@@ -399,7 +404,9 @@ class QuantumLeapClient(BaseHttpClient):
                 else:
                     msg = "Could not load entity data"
                     self.log_error(err=err, msg=msg)
-                    raise BaseHttpClientException(message=msg, response=err.response) from err
+                    raise BaseHttpClientException(
+                        message=msg, response=err.response
+                    ) from err
 
         self.logger.info("Successfully retrieved entity data")
         return res_q

@@ -201,7 +201,9 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise BaseHttpClientException(message=err.response.text, response=err.response) from err
+            raise BaseHttpClientException(
+                message=err.response.text, response=err.response
+            ) from err
 
     # CONTEXT MANAGEMENT API ENDPOINTS
     # Entity Operations
@@ -210,7 +212,7 @@ class ContextBrokerClient(BaseHttpClient):
         entity: Union[ContextEntity, ContextEntityKeyValues],
         update: bool = False,
         patch: bool = False,
-        override_attr_metadata: bool = True,
+        override_metadata: bool = True,
         key_values: bool = False,
     ):
         """
@@ -234,7 +236,7 @@ class ContextBrokerClient(BaseHttpClient):
             patch (bool):
                 If the response.status_code is 422, whether to manipulate the
                 existing entity. Omitted if update `True`.
-            override_attr_metadata:
+            override_metadata:
                 Only applies for patch equal to `True`.
                 Whether to override or append the attribute's metadata.
                 `True` for overwrite or `False` for update/append
@@ -271,12 +273,11 @@ class ContextBrokerClient(BaseHttpClient):
                 if update and err.response.status_code == 422:
                     return self.override_entity(entity=entity, key_values=key_values)
                 if patch and err.response.status_code == 422:
-                    if not key_values:
-                        return self.patch_entity(
-                            entity=entity, override_attr_metadata=override_attr_metadata
-                        )
-                    else:
-                        return self._patch_entity_key_values(entity=entity)
+                    return self.patch_entity(
+                        entity=entity,
+                        override_metadata=override_metadata,
+                        key_values=key_values,
+                    )
             msg = f"Could not post entity {entity.id}"
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
@@ -914,42 +915,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not update or append attributes of entity" f" {entity.id} !"
-            raise BaseHttpClientException(message=msg, response=err.response) from err
-
-    def _patch_entity_key_values(
-        self,
-        entity: Union[ContextEntityKeyValues, dict],
-    ):
-        """
-        The entity are updated with a ContextEntityKeyValues object or a
-        dictionary contain the simplified entity data. This corresponds to a
-        'PATCH' request.
-        Only existing attribute can be updated!
-
-        Args:
-            entity: A ContextEntityKeyValues object or a dictionary contain
-            the simplified entity data
-
-        """
-        if isinstance(entity, dict):
-            entity = ContextEntityKeyValues(**entity)
-        url = urljoin(self.base_url, f"v2/entities/{entity.id}/attrs")
-        headers = self.headers.copy()
-        params = {"type": entity.type, "options": AttrsFormat.KEY_VALUES.value}
-        try:
-            res = self.patch(
-                url=url,
-                headers=headers,
-                json=entity.model_dump(exclude={"id", "type"}, exclude_unset=True),
-                params=params,
-            )
-            if res.ok:
-                self.logger.info("Entity '%s' successfully " "updated!", entity.id)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not update attributes of entity" \
-                  f" {entity.id} !"
+            self.log_error(err=err, msg=msg)
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_existing_entity_attributes(
@@ -1285,9 +1251,7 @@ class ContextBrokerClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            msg = (
-                f"Could not delete attribute '{attr_name}' of entity '{entity_id}'"
-            )
+            msg = f"Could not delete attribute '{attr_name}' of entity '{entity_id}'"
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Attribute value operations
@@ -2124,9 +2088,10 @@ class ContextBrokerClient(BaseHttpClient):
 
     def patch_entity(
         self,
-        entity: ContextEntity,
-        old_entity: Optional[ContextEntity] = None,
-        override_attr_metadata: bool = True,
+        entity: Union[ContextEntity, ContextEntityKeyValues],
+        key_values: bool = False,
+        forcedUpdate: bool = False,
+        override_metadata: bool = False,
     ) -> None:
         """
         Takes a given entity and updates the state in the CB to match it.
@@ -2135,152 +2100,26 @@ class ContextBrokerClient(BaseHttpClient):
 
         Args:
             entity: Entity to update
-            old_entity: OPTIONAL, if given only the differences between the
-                       old_entity and entity are updated in the CB.
-                       Other changes made to the entity in CB, can be kept.
-                       If type or id was changed, the old_entity will be
-                       deleted.
-            override_attr_metadata:
-                Whether to override or append the attributes metadata.
-                `True` for overwrite or `False` for update/append
-
+            key_values: If True, the entity is updated in key-values format.
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
+            override_metadata: If True, the existing metadata of the entity
+                is replaced
         Returns:
            None
         """
+        attributes = entity.get_attributes()
 
-        new_entity = entity
-
-        if old_entity is None:
-            # If no old entity_was provided we use the current state to compare
-            # the entity to
-            try:
-                if self.does_entity_exist(
-                    entity_id=new_entity.id, entity_type=new_entity.type
-                ):
-                    old_entity = self.get_entity(
-                        entity_id=new_entity.id, entity_type=new_entity.type
-                    )
-                else:
-                    # the entity is new, post and finish
-                    self.post_entity(new_entity, update=False)
-                    return
-            except requests.RequestException as err:
-                msg = (
-                    f"Failed to check or post entity in patch entity because of the following reason:"
-                )
-                self.log_error(err=err, msg=msg)
-                raise BaseHttpClientException(message=msg, response=err.response) from err
-        else:
-            # An old_entity was provided
-            # check if the old_entity (still) exists else recall methode
-            # and discard old_entity
-            if not self.does_entity_exist(
-                entity_id=old_entity.id, entity_type=old_entity.type
-            ):
-                self.patch_entity(
-                    new_entity, override_attr_metadata=override_attr_metadata
-                )
-                return
-
-            # if type or id was changed, the old_entity needs to be deleted
-            # and the new_entity created
-            # In this case we will lose the current state of the entity
-            if old_entity.id != new_entity.id or old_entity.type != new_entity.type:
-                self.delete_entity(entity_id=old_entity.id, entity_type=old_entity.type)
-
-                if not self.does_entity_exist(
-                    entity_id=new_entity.id, entity_type=new_entity.type
-                ):
-                    self.post_entity(entity=new_entity, update=False)
-                    return
-
-        # At this point we know that we need to patch only the attributes of
-        # the entity
-        # Check the differences between the attributes of old and new entity
-        # Delete the removed attributes, create the new ones,
-        # and update the existing if necessary
-        old_attributes = old_entity.get_attributes()
-        new_attributes = new_entity.get_attributes()
-
-        # Manage attributes that existed before
-        for old_attr in old_attributes:
-            # commands do not exist in the ContextEntity and are only
-            # registrations to the corresponding device. Operations as
-            # delete will fail as it does not technically exist
-            corresponding_new_attr = None
-            for new_attr in new_attributes:
-                if new_attr.name == old_attr.name:
-                    corresponding_new_attr = new_attr
-
-            if corresponding_new_attr is None:
-                # Attribute no longer exists, delete it
-                try:
-                    self.delete_entity_attribute(
-                        entity_id=new_entity.id,
-                        entity_type=new_entity.type,
-                        attr_name=old_attr.name,
-                    )
-                except requests.RequestException as err:
-                    msg = (
-                        f"Failed to delete attribute {old_attr.name} of "
-                        f"entity {new_entity.id}."
-                    )
-                    if err.response is not None and err.response.status_code == 404:
-                        # if the attribute is provided by a registration the
-                        # deletion will fail
-                        msg += (
-                            f" The attribute is probably provided "
-                            f"by a registration."
-                        )
-                        self.log_error(err=err, msg=msg)
-                    else:
-                        self.log_error(err=err, msg=msg)
-                        raise BaseHttpClientException(message=msg, response=err.response) from err
-            else:
-                # Check if attributed changed in any way, if yes update
-                # else do nothing and keep current state
-                if old_attr != corresponding_new_attr:
-                    try:
-                        self.update_entity_attribute(
-                            entity_id=new_entity.id,
-                            entity_type=new_entity.type,
-                            attr=corresponding_new_attr,
-                            override_metadata=override_attr_metadata,
-                        )
-                    except requests.RequestException as err:
-                        msg = (
-                            f"Failed to update attribute {old_attr.name} of "
-                            f"entity {new_entity.id}."
-                        )
-                        if err.response is not None and err.response.status_code == 404:
-                            # if the attribute is provided by a registration the
-                            # update will fail
-                            msg += (
-                                f" The attribute is probably provided "
-                                f"by a registration."
-                            )
-                        self.log_error(err=err, msg=msg)
-                        raise BaseHttpClientException(message=msg, response=err.response) from err
-
-
-        # Create new attributes
-        update_entity = ContextEntity(id=entity.id, type=entity.type)
-        update_needed = False
-        for new_attr in new_attributes:
-            # commands do not exist in the ContextEntity and are only
-            # registrations to the corresponding device. Operations as
-            # delete will fail as it does not technically exists
-            attr_existed = False
-            for old_attr in old_attributes:
-                if new_attr.name == old_attr.name:
-                    attr_existed = True
-
-            if not attr_existed:
-                update_needed = True
-                update_entity.add_attributes([new_attr])
-
-        if update_needed:
-            self.update_entity(update_entity)
+        self.update_existing_entity_attributes(
+            entity_id=entity.id,
+            entity_type=entity.type,
+            attrs=attributes,
+            key_values=key_values,
+            forcedUpdate=forcedUpdate,
+            override_metadata=override_metadata,
+        )
 
     def _subscription_dicts_are_equal(self, first: dict, second: dict):
         """
