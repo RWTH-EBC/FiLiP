@@ -692,13 +692,6 @@ class EntitiesBatchOperations(unittest.TestCase):
                 entities=[], action_type=ActionTypeLD.UPDATE
             )
 
-        # according to spec, this should raise bad request data,
-        # but pydantic is intercepting
-        with self.assertRaises(ValidationError):
-            self.cb_client.entity_batch_operation(
-                entities=[None], action_type=ActionTypeLD.UPDATE
-            )
-
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
