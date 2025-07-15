@@ -1,0 +1,99 @@
+name: Matrix Tests for Orion and IoT-Agent-JSON
+
+on:
+  push:
+    branches:
+      - "418-update-versions-for-fiware-ges"
+  workflow_dispatch:
+
+jobs:
+  matrix-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        orion_version: ["4.1.0", "4.0.0", "3.12.0", "3.11.0", "3.10.0", "3.9.0", "3.8.0", "3.7.0", "3.6.0"]
+        iot_json_version: ["3.7.0", "3.6.0", "3.5.0", "3.4.0", "3.3.0", "3.2.0", "3.1.0", "3.0.2", "2.4.2", "2.3.0",
+                    "1.26.0", "1.25.0"]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Debug - Verify Repository Structure
+        run: |
+          pwd
+          ls -la
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Create .env file
+        run: |
+          cat <<EOF > .env
+          LOG_LEVEL="INFO"
+          CB_URL=http://localhost:1026
+          ORION_LD_URL=http://localhost:1027
+          IOTA_JSON_URL=http://localhost:4041
+          IOTA_UL_URL=http://localhost:4061
+          QL_URL=http://localhost:8668
+          MQTT_BROKER_URL=mqtt://localhost:1883
+          MQTT_BROKER_URL_INTERNAL=mqtt://mqtt-broker:1883
+          LD_MQTT_BROKER_URL=mqtt://localhost:1883
+          LD_MQTT_BROKER_URL_INTERNAL=mqtt://mqtt-broker:1883
+          FIWARE_SERVICE=filip
+          FIWARE_SERVICEPATH=/
+          STATIC_RECORDS=1000
+          EOF
+
+      - name: Verify .env file
+        run: cat .env
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel
+          pip install .
+          pip install jinja2 pytest
+
+      - name: Generate docker-compose.yml
+        run: |
+          cd filip_unittest/docker
+          python generate-compose.py ${{ matrix.orion_version }} ${{ matrix.iot_json_version }}
+
+      - name: Start containers
+        run: |
+          cd filip_unittest/docker
+          docker compose up -d
+
+      - name: Wait for FIWARE Services
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:1026/version && \
+            curl -s http://localhost:1027/version && \
+            curl -s http://localhost:4061/version && \
+            curl -s http://localhost:4041/version && \
+            curl -s http://localhost:8668/version && break || sleep 5
+          done
+
+      - name: Debug - Show Running Docker Containers
+        run: docker ps -a
+
+      - name: Navigate to Tests Folder
+        run: |
+          cd $GITHUB_WORKSPACE
+          ls -la
+
+      - name: Run Pytest
+        run: |
+          python -m unittest tests/clients/test_ngsi_v2_cb.py
+          python -m pytest tests
+
+      - name: Tear down containers
+        if: always()
+        run: |
+          cd filip_unittest/docker
+          docker compose down -v

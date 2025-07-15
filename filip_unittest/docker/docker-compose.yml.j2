@@ -20,9 +20,8 @@ x-logging-high: &logging-high # Used by: cratedb, iot-agent-json
       max-size: 50m
 
 services:
-
   orion:
-    image: fiware/orion:3.10.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
+    image: "fiware/orion:{{ orion_version }}"  # Dynamic version for Orion
     hostname: orion
     container_name: "orion"
     restart: always
@@ -40,16 +39,14 @@ services:
       - ORION_STAT_TIMING=FALSE
       - ORION_STAT_NOTIF_QUEUE=TRUE
       - ORION_MONGO_HOST=mongo-db
-      # - ORION_MONGO_REPLICA_SET=rs0
       - ORION_MONGO_WRITE_CONCERN=1
       - ORION_NOTIF_MODE=transient
-      # - ORION_TRQ_POOL_SIZE={ORION_THREADPOOL_SIZE=-2} # Use only if ORION_NOTIFICATION_MODE is set to "threadpool"
       - ORION_MUTEX_POLICY=all
       - ORION_CONN_MEMORY=128
     logging: *logging-medium
 
   mongo-db:
-    image: mongo:5.0.24
+    image: "mongo:5.0.24"
     hostname: mongo-db
     container_name: "mongo-db"
     restart: always
@@ -60,7 +57,7 @@ services:
     logging: *logging-low
 
   iot-agent-json:
-    image: fiware/iotagent-json:1.26.0
+    image: "fiware/iotagent-json:{{ iot_json_version }}"  # Dynamic version for IoT Agent JSON
     hostname: iot-agent
     container_name: "iot-agent"
     restart: always
@@ -89,8 +86,6 @@ services:
       - IOTA_HTTP_PORT=7896
       - IOTA_MQTT_HOST=mqtt-broker
       - IOTA_MQTT_PORT=1883
-      # - IOTA_MQTT_USERNAME=iotagent
-      # - IOTA_MQTT_PASSWORD=mypassword
       - IOTA_MQTT_PROTOCOL=mqtt
       - IOTA_MQTT_KEEPALIVE=60
       - IOTA_AMQP_DISABLED=true
@@ -123,7 +118,7 @@ services:
     logging: *logging-high
 
   mqtt-broker:
-    image: eclipse-mosquitto:2.0.11
+    image: "eclipse-mosquitto:2.0.11"
     hostname: mqtt-broker
     container_name: mqtt-broker
     restart: always
@@ -135,7 +130,7 @@ services:
         - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
 
   quantumleap:
-    image: orchestracities/quantumleap:1.0.0
+    image: "orchestracities/quantumleap:1.0.0"
     hostname: quantumleap
     container_name: quantumleap
     restart: always
@@ -149,15 +144,10 @@ services:
     environment:
       - LOGLEVEL=DEBUG
       - CRATE_HOST=crate
-      # - CRATE_DB_USER=ql
-      # - CRATE_DB_PASS=myqlpassword
-      # - REDIS_HOST=redis-cache
-      # - REDIS_PORT=6379
-      # - CACHE_QUERIES=True
     logging: *logging-low
 
   crate:
-    image: crate:4.8.4 # Please check release notes!
+    image: "crate:4.8.4"
     hostname: crate
     container_name: crate
     restart: always
@@ -180,11 +170,11 @@ services:
     container_name: "orion-ld"
     restart: always
     ports:
-       - "1027:1026"
+      - "1027:1026"
     networks:
-        - filip
+      - filip
     depends_on:
-        - mongo-db
+      - mongo-db
     command: -experimental
     environment:
       - ORIONLD_LOG_LEVEL=DEBUG
