@@ -1467,10 +1467,29 @@ class ContextBrokerClient(BaseHttpClient):
         """
         existing_subscriptions = self.get_subscription_list()
 
-        sub_dict = subscription.model_dump(include={"subject", "notification"})
+        sub_dict = subscription.model_dump(
+            include={"subject", "notification"},
+            exclude={
+                "notification": {
+                    "lastSuccess",
+                    "lastFailure",
+                    "lastSuccessCode",
+                    "lastFailureReason",
+                }
+            },
+        )
         for ex_sub in existing_subscriptions:
             if self._subscription_dicts_are_equal(
-                sub_dict, ex_sub.model_dump(include={"subject", "notification"})
+                sub_dict,
+                ex_sub.model_dump(
+                    include={"subject", "notification"},
+                    exclude={
+                        "lastSuccess",
+                        "lastFailure",
+                        "lastSuccessCode",
+                        "lastFailureReason",
+                    },
+                ),
             ):
                 self.logger.info("Subscription already exists")
                 if update:
@@ -1507,7 +1526,18 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.post(
                 url=url,
                 headers=headers,
-                data=subscription.model_dump_json(exclude={"id"}, exclude_none=True),
+                data=subscription.model_dump_json(
+                    exclude={
+                        "id": True,
+                        "notification": {
+                            "lastSuccess",
+                            "lastFailure",
+                            "lastSuccessCode",
+                            "lastFailureReason",
+                        },
+                    },
+                    exclude_none=True,
+                ),
                 params=params,
             )
             if res.ok:
@@ -1583,7 +1613,18 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.patch(
                 url=url,
                 headers=headers,
-                data=subscription.model_dump_json(exclude={"id"}, exclude_none=True),
+                data=subscription.model_dump_json(
+                    exclude={
+                        "id": True,
+                        "notification": {
+                            "lastSuccess",
+                            "lastFailure",
+                            "lastSuccessCode",
+                            "lastFailureReason",
+                        },
+                    },
+                    exclude_none=True,
+                ),
             )
             if res.ok:
                 self.logger.info("Subscription successfully updated!")
