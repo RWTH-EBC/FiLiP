@@ -408,6 +408,29 @@
         <span class="s2">&quot;In case onlyChangedAttrs=true, CB notifies &quot;</span>
         <span class="s2">&quot;[A=0, B=null, C=null]. This &quot;</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">lastSuccess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Not editable, only present in GET operations. &quot;</span>
+        <span class="s2">&quot;A Timestamp in ISO8601 format for last successful &quot;</span>
+        <span class="s2">&quot;notification. Not present if subscription has never &quot;</span>
+        <span class="s2">&quot;had a successful notification.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">lastSuccessCode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Not editable, only present in GET operations. &quot;</span>
+        <span class="s2">&quot;HTTP status code of the last successful notification.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">lastFailure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Not editable, only present in GET operations&quot;</span>
+        <span class="s2">&quot;Last failure timestamp in ISO8601 format. Not present if &quot;</span>
+        <span class="s2">&quot;subscription has never had a problem with notifications.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">lastFailureReason</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Not editable, only present in GET operations. &quot;</span>
+        <span class="s2">&quot;A string with the reason for the last failure. &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">covered</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A flag to decide whether to include not existing attribute in &quot;</span>

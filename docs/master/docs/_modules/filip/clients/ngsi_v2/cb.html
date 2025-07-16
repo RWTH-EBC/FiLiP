@@ -1556,10 +1556,29 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">existing_subscriptions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subscription_list</span><span class="p">()</span>
 
-        <span class="n">sub_dict</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">})</span>
+        <span class="n">sub_dict</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+            <span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">},</span>
+            <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;notification&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;lastSuccess&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;lastFailure&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">ex_sub</span> <span class="ow">in</span> <span class="n">existing_subscriptions</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscription_dicts_are_equal</span><span class="p">(</span>
-                <span class="n">sub_dict</span><span class="p">,</span> <span class="n">ex_sub</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">})</span>
+                <span class="n">sub_dict</span><span class="p">,</span>
+                <span class="n">ex_sub</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+                    <span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">},</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;lastSuccess&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;lastFailure&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">),</span>
             <span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Subscription already exists&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
@@ -1596,7 +1615,18 @@
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
                 <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                 <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">subscription</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">},</span> <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">subscription</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;notification&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;lastSuccess&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;lastFailure&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                    <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">),</span>
                 <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
@@ -1674,7 +1704,18 @@
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span>
                 <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                 <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">subscription</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">},</span> <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">subscription</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;notification&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;lastSuccess&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;lastFailure&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                    <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">),</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Subscription successfully updated!&quot;</span><span class="p">)</span>
