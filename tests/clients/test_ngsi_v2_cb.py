@@ -972,6 +972,7 @@ class TestContextBroker(unittest.TestCase):
             attr_name="temperature",
             value=new_value,
             entity_type=entity.type,
+            forcedUpdate=True,
         )
         # test if the subscriptions arrives and the content aligns with updates
         max_retry = 5
@@ -980,12 +981,6 @@ class TestContextBroker(unittest.TestCase):
                 break
             else:
                 time.sleep(1)
-        # TODO to be removed
-        logger.info("test_mqtt_subscriptions DEBUG")
-        entity_res = self.client.get_entity(entity_id=entity.id)
-        logger.info(entity_res.model_dump_json(indent=2))
-        sub_res = self.client.get_subscription(subscription_id=sub_id)
-        logger.info(sub_res.model_dump_json(indent=2))
         self.assertIsNotNone(mqtt_agent.sub_message)
         self.assertEqual(sub_id, mqtt_agent.sub_message.subscriptionId)
         self.assertEqual(new_value, mqtt_agent.sub_message.data[0].temperature.value)
@@ -1420,7 +1415,10 @@ class TestContextBroker(unittest.TestCase):
             )
             time.sleep(2)
             client.update_attribute_value(
-                entity_id=entity.id, attr_name="temperature", value=10
+                entity_id=entity.id,
+                attr_name="temperature",
+                value=10,
+                forcedUpdate=True,
             )
             # check the notified entities
             max_retry = 5
