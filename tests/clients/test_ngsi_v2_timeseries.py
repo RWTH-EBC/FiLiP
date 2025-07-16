@@ -8,6 +8,9 @@ from random import random
 import requests
 import time
 from typing import List
+
+from filip.clients.exceptions import BaseHttpClientException
+
 from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.context import ContextEntity
@@ -292,31 +295,31 @@ class TestTimeSeries(unittest.TestCase):
             for expression, expected_result in re_patterns.items():
                 if expected_result == 0:
                     self.assertRaises(
-                        requests.exceptions.HTTPError,
+                        BaseHttpClientException,
                         client.get_entities,
                         id_pattern=expression,
                     )
                     self.assertRaises(
-                        requests.exceptions.HTTPError,
+                        BaseHttpClientException,
                         client.get_entity_by_type,
                         entity_type=entity.type,
                         id_pattern=expression,
                     )
                     self.assertRaises(
-                        requests.exceptions.HTTPError,
+                        BaseHttpClientException,
                         client.get_entity_values_by_type,
                         entity_type=entity.type,
                         id_pattern=expression,
                     )
                     self.assertRaises(
-                        requests.exceptions.HTTPError,
+                        BaseHttpClientException,
                         client.get_entity_attr_by_type,
                         entity_type=entity.type,
                         attr_name="temperature",
                         id_pattern=expression,
                     )
                     self.assertRaises(
-                        requests.exceptions.HTTPError,
+                        BaseHttpClientException,
                         client.get_entity_attr_values_by_type,
                         entity_type=entity.type,
                         attr_name="co2",

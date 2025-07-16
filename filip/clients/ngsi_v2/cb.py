@@ -990,7 +990,7 @@ class ContextBrokerClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Could not update attributes of entity" f" {entity.id} !"
+            msg = f"Could not update attributes of entity"
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def override_entity(

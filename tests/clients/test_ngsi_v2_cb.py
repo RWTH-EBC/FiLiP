@@ -2033,7 +2033,7 @@ class TestContextBroker(unittest.TestCase):
         self.tearDown()
 
         # test patch with keyValues
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.patch_entity(entity=entity_kv, key_values=True)
 
         self.client.post_entity(entity=entity_kv, key_values=True)
