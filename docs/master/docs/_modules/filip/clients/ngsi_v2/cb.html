@@ -94,6 +94,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urljoin</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.base_http_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHttpClient</span><span class="p">,</span> <span class="n">NgsiURLVersion</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiwareHeader</span><span class="p">,</span> <span class="n">PaginationMethod</span><span class="p">,</span> <span class="n">DataType</span>
@@ -117,6 +118,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttrsFormat</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.subscriptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Subscription</span><span class="p">,</span> <span class="n">Message</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.registrations</span><span class="w"> </span><span class="kn">import</span> <span class="n">Registration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHttpClientException</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.ngsi_v2.iota</span><span class="w"> </span><span class="kn">import</span> <span class="n">IoTAClient</span>
@@ -243,7 +245,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_resources"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_resources">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_resources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -260,7 +262,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># STATISTICS API</span>
 <div class="viewcode-block" id="ContextBrokerClient.get_statistics"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_statistics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
@@ -277,7 +279,9 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># CONTEXT MANAGEMENT API ENDPOINTS</span>
     <span class="c1"># Entity Operations</span>
@@ -353,8 +357,7 @@
                         <span class="n">key_values</span><span class="o">=</span><span class="n">key_values</span><span class="p">,</span>
                     <span class="p">)</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not post entity </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_entity_list"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_list">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_entity_list</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -546,8 +549,7 @@
 
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not load entities&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_entity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -609,8 +611,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_entity_attributes"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_entity_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -672,8 +673,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load attributes from entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.update_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_entity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -833,8 +833,7 @@
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
 
         <span class="k">if</span> <span class="n">delete_devices</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.ngsi_v2</span><span class="w"> </span><span class="kn">import</span> <span class="n">IoTAClient</span>
@@ -995,7 +994,7 @@
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update or append attributes of entity&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> !&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.update_existing_entity_attributes"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_existing_entity_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_existing_entity_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1069,9 +1068,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update attributes of entity&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update attributes of entity&quot;</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.override_entity"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.override_entity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">override_entity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
@@ -1163,8 +1161,7 @@
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not replace attribute of entity </span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># Attribute operations</span>
 <div class="viewcode-block" id="ContextBrokerClient.get_attribute"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attribute</span><span class="p">(</span>
@@ -1212,8 +1209,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Could not load attribute &#39;</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; from entity&quot;</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.update_entity_attribute"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_entity_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_entity_attribute</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1298,8 +1294,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Could not update attribute &#39;</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; of entity&quot;</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.delete_entity_attribute"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_entity_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_entity_attribute</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1335,8 +1330,7 @@
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete attribute &#39;</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; of entity &#39;</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># Attribute value operations</span>
 <div class="viewcode-block" id="ContextBrokerClient.get_attribute_value"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_attribute_value">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attribute_value</span><span class="p">(</span>
@@ -1375,8 +1369,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Could not load value of attribute &#39;</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; from &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;entity&#39;</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.update_attribute_value"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_attribute_value">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_attribute_value</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1438,8 +1431,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Could not update value of attribute &#39;</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; from &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;entity &#39;</span><span class="si">{</span><span class="n">entity_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># Types Operations</span>
 <div class="viewcode-block" id="ContextBrokerClient.get_entity_types"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_types">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_entity_types</span><span class="p">(</span>
@@ -1472,8 +1464,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not load entity types!&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_entity_type"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_entity_type">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_entity_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1495,8 +1486,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load entities of type&quot;</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">entity_type</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># SUBSCRIPTION API ENDPOINTS</span>
 <div class="viewcode-block" id="ContextBrokerClient.get_subscription_list"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_subscription_list">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_subscription_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">PositiveInt</span> <span class="o">=</span> <span class="n">inf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Subscription</span><span class="p">]:</span>
@@ -1522,8 +1512,7 @@
             <span class="k">return</span> <span class="n">adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not load subscriptions!&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.post_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.post_subscription">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_subscription</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1635,8 +1624,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not send subscription!&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_subscription">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subscription</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1659,8 +1647,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load subscription </span><span class="si">{</span><span class="n">subscription_id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.update_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update_subscription">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_subscription</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">:</span> <span class="n">Subscription</span><span class="p">,</span> <span class="n">skip_initial_notification</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1723,8 +1710,7 @@
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update subscription </span><span class="si">{</span><span class="n">subscription</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.delete_subscription"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_subscription">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1746,8 +1732,7 @@
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete subscription </span><span class="si">{</span><span class="n">subscription_id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># Registration API</span>
 <div class="viewcode-block" id="ContextBrokerClient.get_registration_list"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_registration_list">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_registration_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">PositiveInt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Registration</span><span class="p">]:</span>
@@ -1774,8 +1759,7 @@
             <span class="k">return</span> <span class="n">adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not load registrations!&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.post_registration"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.post_registration">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registration</span><span class="p">:</span> <span class="n">Registration</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1804,8 +1788,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not send registration </span><span class="si">{</span><span class="n">registration</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">!&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_registration"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_registration">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registration_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Registration</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1829,8 +1812,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load registration </span><span class="si">{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.add_valid_relationships"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.add_valid_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_valid_relationships</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]</span>
@@ -1963,8 +1945,7 @@
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update registration </span><span class="si">{</span><span class="n">registration</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.delete_registration"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.delete_registration">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registration_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1985,8 +1966,7 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete registration </span><span class="si">{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2"> !&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
     <span class="c1"># Batch operation API</span>
 <div class="viewcode-block" id="ContextBrokerClient.update"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.update">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span>
@@ -2070,8 +2050,7 @@
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Update operation &#39;</span><span class="si">{</span><span class="n">action_type</span><span class="si">}</span><span class="s2">&#39; failed!&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.query"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.query">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2121,8 +2100,7 @@
             <span class="k">return</span> <span class="n">items</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Query operation failed!&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.notify"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.notify">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2160,8 +2138,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Sending notifcation message failed! </span><span class="se">\n</span><span class="s2"> &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span></div>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 
 <div class="viewcode-block" id="ContextBrokerClient.post_command"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.post_command">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

@@ -512,6 +512,25 @@ body of the <code class="xref py py-class docutils literal notranslate"><span cl
 </dd></dl>
 
 </section>
+<section id="module-filip.clients.exceptions">
+<span id="filip-clients-exceptions-module"></span><h2>filip.clients.exceptions module<a class="headerlink" href="#module-filip.clients.exceptions" title="Permalink to this heading"></a></h2>
+<p>Module for client specific exceptions</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="filip.clients.exceptions.BaseHttpClientException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.clients.exceptions.</span></span><span class="sig-name descname"><span class="pre">BaseHttpClientException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/exceptions.html#BaseHttpClientException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.exceptions.BaseHttpClientException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RequestException</span></code></p>
+<p>Base exception class for all HTTP clients. The response of a request will be available in the exception.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Error message</p></li>
+<li><p><strong>response</strong> (<a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Response" title="filip.models.ngsi_v2.subscriptions.Response"><em>Response</em></a>) – Response object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 </section>
 
 
