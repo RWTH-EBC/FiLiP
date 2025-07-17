@@ -25,6 +25,7 @@ from filip.models.ngsi_v2.timeseries import (
     TimeSeries,
     TimeSeriesHeader,
 )
+from filip.clients.exceptions import BaseHttpClientException
 
 
 logger = logging.getLogger(__name__)
@@ -75,7 +76,9 @@ class QuantumLeapClient(BaseHttpClient):
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(
+                message=err.response, response=err.response
+            ) from err
 
     def get_health(self) -> Dict:
         """
@@ -98,7 +101,9 @@ class QuantumLeapClient(BaseHttpClient):
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(
+                message=err.response.text, response=err.response
+            ) from err
 
     def post_config(self):
         """
@@ -108,7 +113,7 @@ class QuantumLeapClient(BaseHttpClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # INPUT API ENDPOINTS
-    def post_notification(self, notification: Union[Message,MessageLD]):
+    def post_notification(self, notification: Union[Message, MessageLD]):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
 
@@ -134,7 +139,7 @@ class QuantumLeapClient(BaseHttpClient):
                 f"{notification.subscriptionId}"
             )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_subscription(
         self,
@@ -258,7 +263,7 @@ class QuantumLeapClient(BaseHttpClient):
         except requests.exceptions.RequestException as err:
             msg = f"Could not delete entities of type {entity_type}"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # QUERY API ENDPOINTS
     def __query_builder(
@@ -399,7 +404,9 @@ class QuantumLeapClient(BaseHttpClient):
                 else:
                     msg = "Could not load entity data"
                     self.log_error(err=err, msg=msg)
-                    raise
+                    raise BaseHttpClientException(
+                        message=msg, response=err.response
+                    ) from err
 
         self.logger.info("Successfully retrieved entity data")
         return res_q

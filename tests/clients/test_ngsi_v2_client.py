@@ -8,6 +8,8 @@ import requests
 
 from pathlib import Path
 
+from filip.clients.exceptions import BaseHttpClientException
+
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2.client import HttpClient, HttpClientConfig
 from filip.models.ngsi_v2 import ContextEntity
@@ -219,13 +221,14 @@ class TestClient(unittest.TestCase):
             ql_url=url_with_ssl_error,
         )
         client = HttpClient(config=config, fiware_header=self.fh)
-        with self.assertRaises(requests.exceptions.SSLError):
+        #with self.assertRaises(requests.exceptions.SSLError):
+        with self.assertRaises(BaseHttpClientException):
             client.cb.post_entity(entity=ContextEntity(id="test", type="test"))
-        with self.assertRaises(requests.exceptions.SSLError):
+        with self.assertRaises(BaseHttpClientException):
             client.cb.patch_entity(entity=ContextEntity(id="test", type="test"))
-        with self.assertRaises(requests.exceptions.SSLError):
+        with self.assertRaises(BaseHttpClientException):
             client.iota.does_device_exists(device_id="test")
-        with self.assertRaises(requests.exceptions.SSLError):
+        with self.assertRaises(BaseHttpClientException):
             client.timeseries.get_version()
 
     def tearDown(self) -> None:
