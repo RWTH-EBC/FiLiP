@@ -5,10 +5,11 @@ Tests for filip.cb.client
 import time
 import unittest
 import logging
+from random import Random
 from urllib.parse import urljoin
 
 
-from pydantic import AnyHttpUrl,BaseModel,fields
+from pydantic import AnyHttpUrl, BaseModel, fields
 from requests import RequestException, Session
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -20,6 +21,7 @@ from filip.models.ngsi_ld.context import (
     ActionTypeLD,
     ContextLDEntity,
     ContextLDEntityKeyValues,
+    Point,
     ContextProperty,
     NamedContextProperty,
     ContextRelationship,
@@ -32,7 +34,7 @@ from filip.utils.cleanup import clear_context_broker_ld
 
 # Setting up logging
 logging.basicConfig(
-    level="ERROR", format="%(asctime)s %(name)s %(levelname)s: %(message)s"
+    level="INFO", format="%(asctime)s %(name)s %(levelname)s: %(message)s"
 )
 
 
@@ -274,21 +276,21 @@ class TestContextBroker(unittest.TestCase):
             self.client.post_entity(ContextLDEntity(id="room2"))
         entity_list = self.client.get_entity_list()
         self.assertNotIn("room2", entity_list)
-        
-        #check if default attribute set to default value
+
+        # check if default attribute set to default value
         class Sensor(BaseModel):
             temperature: float = fields.Field(default=20.0)
+
         class SensorFIWARE(Sensor, ContextLDEntityKeyValues):
             type: str = fields.FieldInfo.merge_field_infos(
-                ContextLDEntityKeyValues.model_fields["type"],
-                default="Sensor"
+                ContextLDEntityKeyValues.model_fields["type"], default="Sensor"
             )
-            
+
         t_sen = SensorFIWARE(id="urn:ngsi-ld:check-default")
         self.client.post_entity(entity=t_sen, update=True)
         entity = self.client.get_entity(entity_id="urn:ngsi-ld:check-default")
-        self.assertEqual(entity.temperature.value,20.0)
-        self.assertEqual(entity.type,"Sensor")
+        self.assertEqual(entity.temperature.value, 20.0)
+        self.assertEqual(entity.type, "Sensor")
 
         """delete"""
         entity_list = self.client.get_entity_list()
@@ -601,7 +603,7 @@ class TestContextBroker(unittest.TestCase):
         self.entity.add_properties({"test_value": attr})
         self.client.append_entity_attributes(self.entity)
         self.entity.add_properties({"test_value": attr_same})
-        
+
         with self.assertRaises(RequestException):
             self.client.append_entity_attributes(self.entity, options="noOverwrite")
         entity = self.client.get_entity(entity_id=self.entity.id)
@@ -838,3 +840,134 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(prop_dict["test_value"], 25)
         self.assertIn("my_value", prop_dict)
         self.assertEqual(prop_dict["my_value"], 45)
+
+    def test_from_kv(self):
+        r = Random()
+        # define kv entites
+        entities_kv = [
+            ContextLDEntityKeyValues(
+                id=f"urn:ngsi-ld:sensor:{str(i)}",
+                type=f"sensor",
+                temperature=i,
+                room=f"urn:ngsi-ld:room:{str(i)}",
+                position=[r.randint(-25, 25), r.randint(-25, 25), r.randint(-25, 25)],
+            )
+            for i in range(0, 100)
+        ]
+
+        # define extra kv for relationships
+        entities_kv_extra = [
+            ContextLDEntityKeyValues(id=f"urn:ngsi-ld:room:{str(i)}", type=f"room")
+            for i in range(0, 100)
+        ]
+        for ekve in entities_kv_extra:
+            self.client.post_entity(entity=ekve)
+        for ekv in entities_kv:
+            entity = ekv.to_entity()
+            self.client.post_entity(entity=entity)
+            dbn = self.client.get_entity(entity_id=ekv.id)
+            self.assertEqual(
+                entity.model_dump(exclude=["context"]),
+                dbn.model_dump(exclude=["context"]),
+            )
+
+    def test_to_kv(self):
+        r = Random()
+        entities = [
+            ContextLDEntity(
+                id=f"urn:ngsi-ld:sensor:{str(i)}",
+                type=f"sensor",
+                temperature=ContextProperty(type="Property", value=i),
+                room=ContextRelationship(
+                    type="Relationship", object=f"urn:ngsi-ld:room:{str(i)}"
+                ),
+                position=ContextGeoProperty(
+                    type="GeoProperty",
+                    value={
+                        "type": "Point",
+                        "coordinates": [r.randint(-25, 25), r.randint(-25, 25)],
+                    },
+                ),
+            )
+            for i in range(0, 100)
+        ]
+
+        # define extra entities for relationships
+        entities_extra = [
+            ContextLDEntity(id=f"urn:ngsi-ld:room:{str(i)}", type=f"room")
+            for i in range(0, 100)
+        ]
+        for ee in entities_extra:
+            self.client.post_entity(entity=ee)
+        for e in entities:
+            ekv = e.to_keyvalues()
+            self.client.post_entity(entity=ekv)
+            dbkv = self.client.get_entity(entity_id=e.id, options="keyValues")
+            self.assertEqual(
+                dbkv.model_dump(exclude=["@context", "position"]),
+                ekv.model_dump(exclude=["position"]),
+            )
+            self.assertEqual(
+                dbkv.model_dump()["position"]["type"],
+                ekv.model_dump()["position"]["type"],
+            )
+            self.assertCountEqual(
+                dbkv.model_dump()["position"]["coordinates"],
+                ekv.model_dump()["position"]["coordinates"],
+            )
+
+    def test_validate_relationship(self):
+        entities = [
+            ContextLDEntity(id=f"urn:ngsi-ld:room:{str(i)}", type=f"room")
+            for i in range(0, 90)
+        ]
+
+        properties = [
+            ContextProperty(type="Property", value=f"urn:ngsi-ld:room:{str(i)}")
+            for i in range(0, 30)
+        ]
+
+        relationships = [
+            ContextRelationship(
+                type="Relationship", object=f"urn:ngsi-ld:room:{str(i)}"
+            )
+            for i in range(30, 60)
+        ]
+
+        dicts = [{"value": f"urn:ngsi-ld:room:{str(i)}"} for i in range(60, 90)]
+
+        self.client.entity_batch_operation(
+            entities=entities, action_type=ActionTypeLD.CREATE
+        )
+        self.assertTrue(all(self.client.validate_relationship(p) for p in properties))
+        self.assertTrue(
+            all(self.client.validate_relationship(r) for r in relationships)
+        )
+        self.assertTrue(all(self.client.validate_relationship(d) for d in dicts))
+
+        self.client.entity_batch_operation(
+            entities=[entities[i] for i in range(0, 30)],
+            action_type=ActionTypeLD.DELETE,
+        )
+        self.assertTrue(
+            all(not self.client.validate_relationship(p) for p in properties)
+        )
+        self.assertTrue(
+            all(self.client.validate_relationship(r) for r in relationships)
+        )
+        self.assertTrue(all(self.client.validate_relationship(d) for d in dicts))
+
+        self.client.entity_batch_operation(
+            entities=[entities[i] for i in range(30, 60)],
+            action_type=ActionTypeLD.DELETE,
+        )
+        self.assertTrue(
+            all(not self.client.validate_relationship(r) for r in relationships)
+        )
+        self.assertTrue(all(self.client.validate_relationship(d) for d in dicts))
+
+        self.client.entity_batch_operation(
+            entities=[entities[i] for i in range(60, 90)],
+            action_type=ActionTypeLD.DELETE,
+        )
+        self.assertTrue(all(not self.client.validate_relationship(d) for d in dicts))

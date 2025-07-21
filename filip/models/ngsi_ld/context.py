@@ -4,6 +4,7 @@ NGSI LD models for context broker interaction
 
 import logging
 from typing import Any, List, Dict, Union, Optional
+import re
 from geojson_pydantic import (
     Point,
     MultiPoint,
@@ -415,6 +416,17 @@ class ContextLDEntityKeyValues(BaseModel):
     )
     field_validator("type")(validate_fiware_standard_regex)
 
+    def to_entity(self):
+        attrs = self.model_dump(exclude=set(["id", "type"]))
+        result = ContextLDEntity(id=self.id, type=self.type)
+        for name, val in attrs.items():
+            try:
+                cgpv = ContextGeoPropertyValue(**val)
+                result.add_geo_properties({name: ContextGeoProperty(value=cgpv)})
+            except:
+                result.add_properties({name: ContextProperty(value=val)})
+        return result
+
 
 class PropertyFormat(str, Enum):
     """
@@ -796,6 +808,16 @@ class ContextLDEntity(ContextLDEntityKeyValues):
             return None
         else:
             return context
+
+    def to_keyvalues(self) -> ContextLDEntityKeyValues:
+        props = self.get_properties()
+        rels = self.get_relationships()
+        result = dict[str, Any]()
+        for prop in props:
+            result[prop.name] = prop.value
+        for rel in rels:
+            result[rel.name] = rel.object
+        return ContextLDEntityKeyValues(id=self.id, type=self.type, **result)
 
 
 class ActionTypeLD(str, Enum):
