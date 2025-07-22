@@ -3,10 +3,10 @@ name: CI for FiLiP
 on:
   push:
     branches:
-      - "**" # Runs on pushes to all branches
+      - master
   pull_request:
     branches:
-      - main # Runs on PRs targeting the main branch
+      - master
 
 # Add permissions for contents to allow pushing to gh-pages
 permissions:
@@ -150,8 +150,7 @@ jobs:
       # Step 4: Deploy the entire coverage_html_report folder to gh-pages
       - name: Deploy coverage report to gh-pages
         # This condition deploys only when running on the specified branch.
-        # You would typically change this to your main branch, e.g., 'refs/heads/main'.
-        if: matrix.run_coverage && github.ref == 'refs/heads/main'
+        if: matrix.run_coverage && github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
