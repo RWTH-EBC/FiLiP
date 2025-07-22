@@ -3,10 +3,10 @@ name: CI for FiLiP
 on:
   push:
     branches:
-      - "**" # Runs on pushes to all branches
+      - master
   pull_request:
     branches:
-      - master # Runs on PRs targeting the master branch
+      - master
 
 # Add permissions for contents to allow pushing to gh-pages
 permissions:
