@@ -448,7 +448,7 @@ class ContextLDEntityKeyValues(ContextLDEntityBase):
         extra="allow", validate_default=True, validate_assignment=True
     )
 
-    def to_normalized(self):
+    def to_entity(self):
         """
         Convert the entity to a normalized representation.
         """
@@ -467,17 +467,6 @@ class ContextLDEntityKeyValues(ContextLDEntityBase):
                 },
             }
         )
-
-    def to_entity(self):
-        attrs = self.model_dump(exclude=set(["id", "type"]))
-        result = ContextLDEntity(id=self.id, type=self.type)
-        for name, val in attrs.items():
-            try:
-                cgpv = ContextGeoPropertyValue(**val)
-                result.add_geo_properties({name: ContextGeoProperty(value=cgpv)})
-            except:
-                result.add_properties({name: ContextProperty(value=val)})
-        return result
 
 
 class PropertyFormat(str, Enum):
