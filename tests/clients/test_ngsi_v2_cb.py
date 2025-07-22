@@ -21,6 +21,7 @@ from filip.models.base import FiwareHeader, DataType
 from filip.utils.simple_ql import QueryString
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
+from filip.config import settings
 from filip.models.ngsi_v2.context import (
     ContextEntity,
     ContextAttribute,
@@ -30,6 +31,7 @@ from filip.models.ngsi_v2.context import (
     ActionType,
     ContextEntityKeyValues,
 )
+from filip.clients.exceptions import BaseHttpClientException
 
 from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, NamedMetadata
 from filip.models.ngsi_v2.subscriptions import (
@@ -364,25 +366,29 @@ class TestContextBroker(unittest.TestCase):
                 entity_post = entity_init.model_copy(deep=True)
                 # 1) append attribute
                 entity_post.add_attributes(attrs=[attr_append])
-                client.post_entity(entity=entity_post, patch=True)
+                with self.assertRaises(
+                    requests.RequestException
+                ):  # this should raise an error
+                    client.post_entity(entity=entity_post, patch=True)
+                self.assertNotEqual(
+                    client.get_entity(entity_id=entity_post.id), entity_post
+                )
+                # 2) delete attribute
+                entity_post.delete_attributes(attrs=[attr_append])
+                client.post_entity(entity=entity_post, update=True)
                 self.assertEqual(
                     client.get_entity(entity_id=entity_post.id), entity_post
                 )
-                # 2) update existing attribute value
+                # 3) update existing attribute value
                 attr_append_update = NamedContextAttribute(
-                    **{"name": "pressure", "type": "Number", "value": 2050}
+                    **{"name": "temperature", "type": "Text", "value": "somethingElse"}
                 )
                 entity_post.update_attribute(attrs=[attr_append_update])
                 client.post_entity(entity=entity_post, patch=True)
                 self.assertEqual(
                     client.get_entity(entity_id=entity_post.id), entity_post
                 )
-                # 3) delete attribute
-                entity_post.delete_attributes(attrs=[attr_append])
-                client.post_entity(entity=entity_post, update=True)
-                self.assertEqual(
-                    client.get_entity(entity_id=entity_post.id), entity_post
-                )
+
                 clear_all(fiware_header=self.fiware_header, cb_url=settings.CB_URL)
 
             # update_entity()
@@ -463,22 +469,25 @@ class TestContextBroker(unittest.TestCase):
                 entity_patch = entity_init.model_copy(deep=True)
                 # 1) append attribute
                 entity_patch.add_attributes(attrs=[attr_append])
-                client.patch_entity(entity=entity_patch)
-                self.assertEqual(
+                with self.assertRaises(
+                    requests.RequestException
+                ):  # this should raise an error
+                    client.patch_entity(entity=entity_patch)
+                self.assertNotEqual(
                     client.get_entity(entity_id=entity_patch.id), entity_patch
                 )
-                # 2) update existing attribute value
-                attr_append_update = NamedContextAttribute(
-                    **{"name": "pressure", "type": "Number", "value": 2050}
-                )
-                entity_patch.update_attribute(attrs=[attr_append_update])
-                client.patch_entity(entity=entity_patch)
-                self.assertEqual(
-                    client.get_entity(entity_id=entity_patch.id), entity_patch
-                )
-                # 3) delete attribute
+                # 2) delete attribute
                 entity_patch.delete_attributes(attrs=[attr_append])
                 client.patch_entity(entity=entity_patch)
+                self.assertEqual(
+                    client.get_entity(entity_id=entity_patch.id), entity_patch
+                )
+                # 3) update existing attribute value
+                attr_append_update = NamedContextAttribute(
+                    **{"name": "temperature", "type": "Text", "value": "somethingElse"}
+                )
+                entity_patch.update_attribute(attrs=[attr_append_update])
+                client.patch_entity(entity=entity_patch, override_metadata=True)
                 self.assertEqual(
                     client.get_entity(entity_id=entity_patch.id), entity_patch
                 )
@@ -888,56 +897,75 @@ class TestContextBroker(unittest.TestCase):
         self.client.post_entity(entity=entity)
         sub_id = self.client.post_subscription(subscription)
 
-        sub_message = None
+        # create a mqtt class to subscribe to the topic
+        class MqttAgent:
+            def __init__(self, topic):
+                self.sub_message = None
+                self.mqtt_topic = topic
 
-        def on_connect(client, userdata, flags, reasonCode, properties=None):
-            if reasonCode != 0:
-                logger.error(f"Connection failed with error code: " f"'{reasonCode}'")
-                raise ConnectionError
-            else:
-                logger.info(
-                    "Successfully, connected with result code " + str(reasonCode)
+                self.mqtt_client = mqtt.Client(
+                    userdata=None,
+                    protocol=mqtt.MQTTv5,
+                    callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+                    transport="tcp",
                 )
-            client.subscribe(mqtt_topic)
+                # add our callbacks to the client
+                self.mqtt_client.on_connect = self.on_connect
+                self.mqtt_client.on_subscribe = self.on_subscribe
+                self.mqtt_client.on_message = self.on_message
+                self.mqtt_client.on_disconnect = self.on_disconnect
 
-        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-            logger.info("Successfully subscribed to with QoS: %s", granted_qos)
+                # connect to the server
+                self.mqtt_client.connect(
+                    host=mqtt_url.host,
+                    port=mqtt_url.port,
+                    keepalive=60,
+                    bind_address="",
+                    bind_port=0,
+                    clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                    properties=None,
+                )
 
-        def on_message(client, userdata, msg):
-            logger.info(msg.topic + " " + str(msg.payload))
-            nonlocal sub_message
-            sub_message = Message.model_validate_json(msg.payload)
+                # create a non-blocking thread for mqtt communication
+                self.mqtt_client.loop_start()
 
-        def on_disconnect(client, userdata, flags, reasonCode, properties=None):
-            logger.info("MQTT client disconnected with reasonCode " + str(reasonCode))
+            def on_connect(self, client, userdata, flags, reasonCode, properties=None):
+                if reasonCode != 0:
+                    logger.error(
+                        f"Connection failed with error code: " f"'{reasonCode}'"
+                    )
+                    raise ConnectionError
+                else:
+                    logger.info("Test MQTT subscription successfully connected")
+                    logger.info(
+                        "Successfully, connected with result code " + str(reasonCode)
+                    )
+                client.subscribe(self.mqtt_topic)
 
-        import paho.mqtt.client as mqtt
+            def on_subscribe(self, client, userdata, mid, granted_qos, properties=None):
+                logger.info(
+                    f"Test MQTT subscription successfully subscribed: {self.mqtt_topic}"
+                )
+                logger.info("Successfully subscribed to with QoS: %s", granted_qos)
 
-        mqtt_client = mqtt.Client(
-            userdata=None,
-            protocol=mqtt.MQTTv5,
-            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-            transport="tcp",
-        )
-        # add our callbacks to the client
-        mqtt_client.on_connect = on_connect
-        mqtt_client.on_subscribe = on_subscribe
-        mqtt_client.on_message = on_message
-        mqtt_client.on_disconnect = on_disconnect
+            def on_message(self, client, userdata, msg):
+                logger.info(msg.topic + " " + str(msg.payload))
+                self.sub_message = Message.model_validate_json(msg.payload)
 
-        # connect to the server
-        mqtt_client.connect(
-            host=mqtt_url.host,
-            port=mqtt_url.port,
-            keepalive=60,
-            bind_address="",
-            bind_port=0,
-            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
+            def on_disconnect(
+                self, client, userdata, flags, reasonCode, properties=None
+            ):
+                logger.info("Test MQTT subscription successfully disconnected")
+                logger.info(
+                    "MQTT client disconnected with reasonCode " + str(reasonCode)
+                )
 
-        # create a non-blocking thread for mqtt communication
-        mqtt_client.loop_start()
+            def clean_up(self):
+                self.mqtt_client.loop_stop()
+                self.mqtt_client.disconnect()
+
+        mqtt_agent = MqttAgent(topic=mqtt_topic)
+
         new_value = 50
 
         time.sleep(2)
@@ -946,16 +974,20 @@ class TestContextBroker(unittest.TestCase):
             attr_name="temperature",
             value=new_value,
             entity_type=entity.type,
+            forcedUpdate=True,
         )
-        time.sleep(2)
-
         # test if the subscriptions arrives and the content aligns with updates
-        self.assertIsNotNone(sub_message)
-        self.assertEqual(sub_id, sub_message.subscriptionId)
-        self.assertEqual(new_value, sub_message.data[0].temperature.value)
-        mqtt_client.loop_stop()
-        mqtt_client.disconnect()
-        time.sleep(2)
+        max_retry = 5
+        for _ in range(max_retry):
+            if mqtt_agent.sub_message:
+                break
+            else:
+                time.sleep(1)
+        self.assertIsNotNone(mqtt_agent.sub_message)
+        self.assertEqual(sub_id, mqtt_agent.sub_message.subscriptionId)
+        self.assertEqual(new_value, mqtt_agent.sub_message.data[0].temperature.value)
+
+        mqtt_agent.clean_up()
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
@@ -1385,10 +1417,18 @@ class TestContextBroker(unittest.TestCase):
             )
             time.sleep(2)
             client.update_attribute_value(
-                entity_id=entity.id, attr_name="temperature", value=10
+                entity_id=entity.id,
+                attr_name="temperature",
+                value=10,
+                forcedUpdate=True,
             )
             # check the notified entities
-            time.sleep(2)
+            max_retry = 5
+            for _ in range(max_retry):
+                if sub_message:
+                    break
+                else:
+                    time.sleep(1)
             sub_1 = client.get_subscription(sub_id_1)
             self.assertEqual(sub_1.notification.timesSent, 1)
             self.assertEqual(len(sub_message.data[0].get_attributes()), 3)
@@ -1956,37 +1996,18 @@ class TestContextBroker(unittest.TestCase):
         attr2 = NamedContextAttribute(name="attr2", value="2")
         attr1.metadata["m2"] = NamedMetadata(name="meta2", type="metatype", value="3")
         entity.add_attributes([attr1, attr2])
+        entity_kv = ContextEntityKeyValues(
+            id="test_id2_kv",
+            type="test_type_kv",
+            attr1="1",
+            attr2="2",
+        )
 
         # sub-Test1: Post new. No old entity not exist or is provided!
-        self.client.patch_entity(entity=entity)
-        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
-        self.tearDown()
-
-        # sub-Test2: ID/type of old_entity changed. Old entity is provided and
-        # updated!
-        self.client.post_entity(entity=entity)
-        test_entity = ContextEntity(id="newID", type="newType")
-        test_entity.add_attributes([attr1, attr2])
-        self.client.patch_entity(test_entity, old_entity=entity)
-        self.assertEqual(test_entity, self.client.get_entity(entity_id=test_entity.id))
-        # assert that former entity_id is freed again
-        with self.assertRaises(RequestException):
-            self.client.get_entity(entity_id=entity.id)
-        self.tearDown()
-
-        # sub-Test3: a non valid old_entity is provided, but already entity
-        # exists
-        self.client.post_entity(entity=entity)
-        old_entity = ContextEntity(id="newID", type="newType")
-        self.client.patch_entity(entity, old_entity=old_entity)
-        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
-        self.tearDown()
-
-        # sub-Test4: non valid old_entity provided, entity is new
-        old_entity = ContextEntity(id="newID", type="newType")
-        self.client.patch_entity(entity, old_entity=old_entity)
-        self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
-        self.tearDown()
+        with self.assertRaises(requests.RequestException):
+            self.client.patch_entity(entity=entity)
+        # self.assertEqual(entity, self.client.get_entity(entity_id=entity.id))
+        # self.tearDown()
 
         # sub-Test5: New attr, attr del, and attr changed. No Old_entity given
         self.client.post_entity(entity=entity)
@@ -1998,35 +2019,53 @@ class TestContextBroker(unittest.TestCase):
         attr1_changed.metadata["m4"] = NamedMetadata(
             name="meta3", type="metatype5", value="4"
         )
-        attr3 = NamedContextAttribute(name="attr3", value="3")
-        test_entity.add_attributes([attr1_changed, attr3])
+        test_entity.add_attributes([attr1_changed, attr2])
         self.client.patch_entity(test_entity)
-
+        self.assertNotEqual(test_entity, self.client.get_entity(entity_id=entity.id))
+        self.client.patch_entity(test_entity, override_metadata=True)
         self.assertEqual(test_entity, self.client.get_entity(entity_id=entity.id))
         self.tearDown()
 
-        # sub-Test6: Attr changes, concurrent changes in Fiware,
-        #            old_entity given
-
+        # test with unknown attributs
         self.client.post_entity(entity=entity)
-
-        concurrent_entity = ContextEntity(id="test_id1", type="test_type1")
-        attr1_changed = copy.deepcopy(attr1)
-        attr1_changed.metadata["m1"].value = "3"
-        attr1_changed.value = "4"
-        concurrent_entity.add_attributes([attr1_changed, attr2])
-        self.client.patch_entity(concurrent_entity)
-
-        user_entity = copy.deepcopy(entity)
+        test_entity = ContextEntity(id="test_id1", type="test_type1")
         attr3 = NamedContextAttribute(name="attr3", value="3")
-        user_entity.add_attributes([attr3])
-        self.client.patch_entity(user_entity, old_entity=entity)
-
-        result_entity = concurrent_entity
-        result_entity.add_attributes([attr2, attr3])
-
-        self.assertEqual(result_entity, self.client.get_entity(entity_id=entity.id))
+        test_entity.add_attributes([attr1_changed, attr3])
+        test_entity.add_attributes([attr1, attr2, attr3])
+        with self.assertRaises(requests.RequestException):
+            self.client.patch_entity(test_entity)
         self.tearDown()
+
+        # test patch with keyValues
+        with self.assertRaises(BaseHttpClientException):
+            self.client.patch_entity(entity=entity_kv, key_values=True)
+
+        self.client.post_entity(entity=entity_kv, key_values=True)
+
+        self.client.patch_entity(entity=entity_kv, key_values=True)
+        self.assertEqual(
+            entity_kv,
+            self.client.get_entity(entity_id=entity_kv.id, response_format="keyValues"),
+        )
+
+        # add attribute
+        entity_kv.attr3 = "3"
+        with self.assertRaises(requests.RequestException):
+            self.client.patch_entity(entity=entity_kv, key_values=True)
+        self.assertEqual(
+            len(self.client.get_entity(entity_id=entity_kv.id).get_attributes()), 2
+        )
+
+        # remove attribute attr1
+        test_entity_kv = ContextEntityKeyValues(
+            id="test_id2_kv",
+            type="test_type_kv",
+            attr2="2",
+        )
+        self.client.patch_entity(entity=test_entity_kv, key_values=True)
+        self.assertEqual(
+            len(self.client.get_entity(entity_id=entity_kv.id).get_attributes()), 2
+        )
 
     def test_delete_entity_devices(self):
         # create devices
@@ -2146,25 +2185,25 @@ class TestContextBroker(unittest.TestCase):
         # update_or_append_entity_attributes
         entityAttr.value = "value1"
         attr_data2 = NamedContextAttribute(name="data2", value="value2")
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.update_or_append_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # update_existing_entity_attributes
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.update_existing_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # replace_entity_attributes
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.replace_entity_attributes(
                 entity_id=test_entity_id, attrs=[entityAttr, attr_data2]
             )
 
         # delete entity
-        with self.assertRaises(requests.HTTPError):
+        with self.assertRaises(BaseHttpClientException):
             self.client.delete_entity(entity_id=test_entity_id)
 
     def test_does_entity_exist(self):
@@ -2177,6 +2216,21 @@ class TestContextBroker(unittest.TestCase):
         self.client.post_entity(entity=entity)
         self.assertTrue(
             self.client.does_entity_exist(entity_id=entity.id, entity_type=entity.type)
+        )
+
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+    )
+    def test_entity_exceptions(self):
+        entity1 = self.entity.model_copy(deep=True)
+        self.client.post_entity(entity1)
+
+        with self.assertRaises(BaseHttpClientException) as context:
+            self.client.post_entity(entity1)
+        self.assertEqual(
+            json.loads(context.exception.response.text)["description"], "Already Exists"
         )
 
     def tearDown(self) -> None:

@@ -16,6 +16,7 @@ import re
 import requests
 from urllib.parse import urljoin
 import warnings
+from requests import RequestException
 from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
 from filip.config import settings
 from filip.models.base import FiwareHeader, PaginationMethod, DataType
@@ -39,6 +40,7 @@ from filip.models.ngsi_v2.context import (
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_v2.subscriptions import Subscription, Message
 from filip.models.ngsi_v2.registrations import Registration
+from filip.clients.exceptions import BaseHttpClientException
 
 if TYPE_CHECKING:
     from filip.clients.ngsi_v2.iota import IoTAClient
@@ -165,7 +167,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise
+            raise RequestException(response=err.response) from err
 
     def get_resources(self) -> Dict:
         """
@@ -182,7 +184,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise
+            raise RequestException(response=err.response) from err
 
     # STATISTICS API
     def get_statistics(self) -> Dict:
@@ -199,7 +201,9 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(
+                message=err.response.text, response=err.response
+            ) from err
 
     # CONTEXT MANAGEMENT API ENDPOINTS
     # Entity Operations
@@ -208,7 +212,7 @@ class ContextBrokerClient(BaseHttpClient):
         entity: Union[ContextEntity, ContextEntityKeyValues],
         update: bool = False,
         patch: bool = False,
-        override_attr_metadata: bool = True,
+        override_metadata: bool = True,
         key_values: bool = False,
     ):
         """
@@ -232,7 +236,7 @@ class ContextBrokerClient(BaseHttpClient):
             patch (bool):
                 If the response.status_code is 422, whether to manipulate the
                 existing entity. Omitted if update `True`.
-            override_attr_metadata:
+            override_metadata:
                 Only applies for patch equal to `True`.
                 Whether to override or append the attribute's metadata.
                 `True` for overwrite or `False` for update/append
@@ -269,15 +273,13 @@ class ContextBrokerClient(BaseHttpClient):
                 if update and err.response.status_code == 422:
                     return self.override_entity(entity=entity, key_values=key_values)
                 if patch and err.response.status_code == 422:
-                    if not key_values:
-                        return self.patch_entity(
-                            entity=entity, override_attr_metadata=override_attr_metadata
-                        )
-                    else:
-                        return self._patch_entity_key_values(entity=entity)
+                    return self.patch_entity(
+                        entity=entity,
+                        override_metadata=override_metadata,
+                        key_values=key_values,
+                    )
             msg = f"Could not post entity {entity.id}"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity_list(
         self,
@@ -469,8 +471,7 @@ class ContextBrokerClient(BaseHttpClient):
 
         except requests.RequestException as err:
             msg = "Could not load entities"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity(
         self,
@@ -532,8 +533,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entity {entity_id}"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity_attributes(
         self,
@@ -595,8 +595,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load attributes from entity {entity_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_entity(
         self,
@@ -756,8 +755,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete entity {entity_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
         if delete_devices:
             from filip.clients.ngsi_v2 import IoTAClient
@@ -918,43 +916,7 @@ class ContextBrokerClient(BaseHttpClient):
         except requests.RequestException as err:
             msg = f"Could not update or append attributes of entity" f" {entity.id} !"
             self.log_error(err=err, msg=msg)
-            raise
-
-    def _patch_entity_key_values(
-        self,
-        entity: Union[ContextEntityKeyValues, dict],
-    ):
-        """
-        The entity are updated with a ContextEntityKeyValues object or a
-        dictionary contain the simplified entity data. This corresponds to a
-        'PATCH' request.
-        Only existing attribute can be updated!
-
-        Args:
-            entity: A ContextEntityKeyValues object or a dictionary contain
-            the simplified entity data
-
-        """
-        if isinstance(entity, dict):
-            entity = ContextEntityKeyValues(**entity)
-        url = urljoin(self.base_url, f"v2/entities/{entity.id}/attrs")
-        headers = self.headers.copy()
-        params = {"type": entity.type, "options": AttrsFormat.KEY_VALUES.value}
-        try:
-            res = self.patch(
-                url=url,
-                headers=headers,
-                json=entity.model_dump(exclude={"id", "type"}, exclude_unset=True),
-                params=params,
-            )
-            if res.ok:
-                self.logger.info("Entity '%s' successfully " "updated!", entity.id)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f"Could not update attributes of entity" f" {entity.id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_existing_entity_attributes(
         self,
@@ -1028,9 +990,8 @@ class ContextBrokerClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Could not update attributes of entity" f" {entity_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            msg = f"Could not update attributes of entity"
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def override_entity(
         self, entity: Union[ContextEntity, ContextEntityKeyValues], **kwargs
@@ -1122,8 +1083,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not replace attribute of entity {entity_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Attribute operations
     def get_attribute(
@@ -1171,8 +1131,7 @@ class ContextBrokerClient(BaseHttpClient):
             msg = (
                 f"Could not load attribute '{attr_name}' from entity" f"'{entity_id}' "
             )
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_entity_attribute(
         self,
@@ -1257,8 +1216,7 @@ class ContextBrokerClient(BaseHttpClient):
             msg = (
                 f"Could not update attribute '{attr_name}' of entity" f"'{entity_id}' "
             )
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def delete_entity_attribute(
         self, entity_id: str, attr_name: str, entity_type: str = None
@@ -1294,8 +1252,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete attribute '{attr_name}' of entity '{entity_id}'"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Attribute value operations
     def get_attribute_value(
@@ -1334,8 +1291,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"Could not load value of attribute '{attr_name}' from "
                 f"entity'{entity_id}' "
             )
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_attribute_value(
         self,
@@ -1397,8 +1353,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"Could not update value of attribute '{attr_name}' from "
                 f"entity '{entity_id}' "
             )
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Types Operations
     def get_entity_types(
@@ -1431,8 +1386,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = "Could not load entity types!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_entity_type(self, entity_type: str) -> Dict[str, Any]:
         """
@@ -1454,8 +1408,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load entities of type" f"'{entity_type}' "
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # SUBSCRIPTION API ENDPOINTS
     def get_subscription_list(self, limit: PositiveInt = inf) -> List[Subscription]:
@@ -1481,8 +1434,7 @@ class ContextBrokerClient(BaseHttpClient):
             return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load subscriptions!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_subscription(
         self,
@@ -1515,10 +1467,29 @@ class ContextBrokerClient(BaseHttpClient):
         """
         existing_subscriptions = self.get_subscription_list()
 
-        sub_dict = subscription.model_dump(include={"subject", "notification"})
+        sub_dict = subscription.model_dump(
+            include={"subject", "notification"},
+            exclude={
+                "notification": {
+                    "lastSuccess",
+                    "lastFailure",
+                    "lastSuccessCode",
+                    "lastFailureReason",
+                }
+            },
+        )
         for ex_sub in existing_subscriptions:
             if self._subscription_dicts_are_equal(
-                sub_dict, ex_sub.model_dump(include={"subject", "notification"})
+                sub_dict,
+                ex_sub.model_dump(
+                    include={"subject", "notification"},
+                    exclude={
+                        "lastSuccess",
+                        "lastFailure",
+                        "lastSuccessCode",
+                        "lastFailureReason",
+                    },
+                ),
             ):
                 self.logger.info("Subscription already exists")
                 if update:
@@ -1555,7 +1526,18 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.post(
                 url=url,
                 headers=headers,
-                data=subscription.model_dump_json(exclude={"id"}, exclude_none=True),
+                data=subscription.model_dump_json(
+                    exclude={
+                        "id": True,
+                        "notification": {
+                            "lastSuccess",
+                            "lastFailure",
+                            "lastSuccessCode",
+                            "lastFailureReason",
+                        },
+                    },
+                    exclude_none=True,
+                ),
                 params=params,
             )
             if res.ok:
@@ -1564,8 +1546,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = "Could not send subscription!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_subscription(self, subscription_id: str) -> Subscription:
         """
@@ -1588,8 +1569,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load subscription {subscription_id}"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_subscription(
         self, subscription: Subscription, skip_initial_notification: bool = False
@@ -1633,7 +1613,18 @@ class ContextBrokerClient(BaseHttpClient):
             res = self.patch(
                 url=url,
                 headers=headers,
-                data=subscription.model_dump_json(exclude={"id"}, exclude_none=True),
+                data=subscription.model_dump_json(
+                    exclude={
+                        "id": True,
+                        "notification": {
+                            "lastSuccess",
+                            "lastFailure",
+                            "lastSuccessCode",
+                            "lastFailureReason",
+                        },
+                    },
+                    exclude_none=True,
+                ),
             )
             if res.ok:
                 self.logger.info("Subscription successfully updated!")
@@ -1641,8 +1632,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not update subscription {subscription.id}"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def delete_subscription(self, subscription_id: str) -> None:
         """
@@ -1664,8 +1654,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete subscription {subscription_id}"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Registration API
     def get_registration_list(self, *, limit: PositiveInt = None) -> List[Registration]:
@@ -1692,8 +1681,7 @@ class ContextBrokerClient(BaseHttpClient):
             return adapter.validate_python(items)
         except requests.RequestException as err:
             msg = "Could not load registrations!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_registration(self, registration: Registration):
         """
@@ -1722,8 +1710,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not send registration {registration.id}!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_registration(self, registration_id: str) -> Registration:
         """
@@ -1747,8 +1734,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not load registration {registration_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def add_valid_relationships(
         self, entities: List[ContextEntity]
@@ -1881,8 +1867,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not update registration {registration.id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def delete_registration(self, registration_id: str) -> None:
         """
@@ -1903,8 +1888,7 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete registration {registration_id} !"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # Batch operation API
     def update(
@@ -1988,8 +1972,7 @@ class ContextBrokerClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Update operation '{action_type}' failed!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def query(
         self,
@@ -2039,8 +2022,7 @@ class ContextBrokerClient(BaseHttpClient):
             return items
         except requests.RequestException as err:
             msg = "Query operation failed!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def notify(self, message: Message) -> None:
         """
@@ -2078,8 +2060,7 @@ class ContextBrokerClient(BaseHttpClient):
                 f"Sending notifcation message failed! \n "
                 f"{message.model_dump_json(indent=2)}"
             )
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_command(
         self,
@@ -2148,9 +2129,10 @@ class ContextBrokerClient(BaseHttpClient):
 
     def patch_entity(
         self,
-        entity: ContextEntity,
-        old_entity: Optional[ContextEntity] = None,
-        override_attr_metadata: bool = True,
+        entity: Union[ContextEntity, ContextEntityKeyValues],
+        key_values: bool = False,
+        forcedUpdate: bool = False,
+        override_metadata: bool = False,
     ) -> None:
         """
         Takes a given entity and updates the state in the CB to match it.
@@ -2159,145 +2141,26 @@ class ContextBrokerClient(BaseHttpClient):
 
         Args:
             entity: Entity to update
-            old_entity: OPTIONAL, if given only the differences between the
-                       old_entity and entity are updated in the CB.
-                       Other changes made to the entity in CB, can be kept.
-                       If type or id was changed, the old_entity will be
-                       deleted.
-            override_attr_metadata:
-                Whether to override or append the attributes metadata.
-                `True` for overwrite or `False` for update/append
-
+            key_values: If True, the entity is updated in key-values format.
+            forcedUpdate: Update operation have to trigger any matching
+                subscription, no matter if there is an actual attribute
+                update or no instead of the default behavior, which is to
+                updated only if attribute is effectively updated.
+            override_metadata: If True, the existing metadata of the entity
+                is replaced
         Returns:
            None
         """
+        attributes = entity.get_attributes()
 
-        new_entity = entity
-
-        if old_entity is None:
-            # If no old entity_was provided we use the current state to compare
-            # the entity to
-            if self.does_entity_exist(
-                entity_id=new_entity.id, entity_type=new_entity.type
-            ):
-                old_entity = self.get_entity(
-                    entity_id=new_entity.id, entity_type=new_entity.type
-                )
-            else:
-                # the entity is new, post and finish
-                self.post_entity(new_entity, update=False)
-                return
-
-        else:
-            # An old_entity was provided
-            # check if the old_entity (still) exists else recall methode
-            # and discard old_entity
-            if not self.does_entity_exist(
-                entity_id=old_entity.id, entity_type=old_entity.type
-            ):
-                self.patch_entity(
-                    new_entity, override_attr_metadata=override_attr_metadata
-                )
-                return
-
-            # if type or id was changed, the old_entity needs to be deleted
-            # and the new_entity created
-            # In this case we will lose the current state of the entity
-            if old_entity.id != new_entity.id or old_entity.type != new_entity.type:
-                self.delete_entity(entity_id=old_entity.id, entity_type=old_entity.type)
-
-                if not self.does_entity_exist(
-                    entity_id=new_entity.id, entity_type=new_entity.type
-                ):
-                    self.post_entity(entity=new_entity, update=False)
-                    return
-
-        # At this point we know that we need to patch only the attributes of
-        # the entity
-        # Check the differences between the attributes of old and new entity
-        # Delete the removed attributes, create the new ones,
-        # and update the existing if necessary
-        old_attributes = old_entity.get_attributes()
-        new_attributes = new_entity.get_attributes()
-
-        # Manage attributes that existed before
-        for old_attr in old_attributes:
-            # commands do not exist in the ContextEntity and are only
-            # registrations to the corresponding device. Operations as
-            # delete will fail as it does not technically exist
-            corresponding_new_attr = None
-            for new_attr in new_attributes:
-                if new_attr.name == old_attr.name:
-                    corresponding_new_attr = new_attr
-
-            if corresponding_new_attr is None:
-                # Attribute no longer exists, delete it
-                try:
-                    self.delete_entity_attribute(
-                        entity_id=new_entity.id,
-                        entity_type=new_entity.type,
-                        attr_name=old_attr.name,
-                    )
-                except requests.RequestException as err:
-                    msg = (
-                        f"Failed to delete attribute {old_attr.name} of "
-                        f"entity {new_entity.id}."
-                    )
-                    if err.response is not None and err.response.status_code == 404:
-                        # if the attribute is provided by a registration the
-                        # deletion will fail
-                        msg += (
-                            f" The attribute is probably provided "
-                            f"by a registration."
-                        )
-                        self.log_error(err=err, msg=msg)
-                    else:
-                        self.log_error(err=err, msg=msg)
-                        raise
-            else:
-                # Check if attributed changed in any way, if yes update
-                # else do nothing and keep current state
-                if old_attr != corresponding_new_attr:
-                    try:
-                        self.update_entity_attribute(
-                            entity_id=new_entity.id,
-                            entity_type=new_entity.type,
-                            attr=corresponding_new_attr,
-                            override_metadata=override_attr_metadata,
-                        )
-                    except requests.RequestException as err:
-                        msg = (
-                            f"Failed to update attribute {old_attr.name} of "
-                            f"entity {new_entity.id}."
-                        )
-                        if err.response is not None and err.response.status_code == 404:
-                            # if the attribute is provided by a registration the
-                            # update will fail
-                            msg += (
-                                f" The attribute is probably provided "
-                                f"by a registration."
-                            )
-                        self.log_error(err=err, msg=msg)
-                        raise
-
-        # Create new attributes
-        update_entity = ContextEntity(id=entity.id, type=entity.type)
-        update_needed = False
-        for new_attr in new_attributes:
-            # commands do not exist in the ContextEntity and are only
-            # registrations to the corresponding device. Operations as
-            # delete will fail as it does not technically exists
-            attr_existed = False
-            for old_attr in old_attributes:
-                if new_attr.name == old_attr.name:
-                    attr_existed = True
-
-            if not attr_existed:
-                update_needed = True
-                update_entity.add_attributes([new_attr])
-
-        if update_needed:
-            self.update_entity(update_entity)
+        self.update_existing_entity_attributes(
+            entity_id=entity.id,
+            entity_type=entity.type,
+            attrs=attributes,
+            key_values=key_values,
+            forcedUpdate=forcedUpdate,
+            override_metadata=override_metadata,
+        )
 
     def _subscription_dicts_are_equal(self, first: dict, second: dict):
         """

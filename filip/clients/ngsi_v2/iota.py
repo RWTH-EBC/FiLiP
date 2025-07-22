@@ -14,6 +14,7 @@ from pydantic import AnyHttpUrl
 from pydantic.type_adapter import TypeAdapter
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
+from filip.clients.exceptions import BaseHttpClientException
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.iot import Device, ServiceGroup
 
@@ -66,7 +67,10 @@ class IoTAClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-        raise
+            msg = "Could not retrieve version because of following reason: " + str(
+                err.args[0]
+            )
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # SERVICE GROUP API
     def post_groups(
@@ -97,7 +101,7 @@ class IoTAClient(BaseHttpClient):
             if group.subservice:
                 assert (
                     group.subservice == self.headers["fiware-servicepath"]
-                ), "Service group subservice does not math fiware service path"
+                ), "Service group subservice does not match fiware service path"
 
         url = urljoin(self.base_url, "iot/services")
         headers = self.headers
@@ -126,8 +130,11 @@ class IoTAClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
-            raise
+            self.logger.error(err)
+            msg = "Could not post group because of following reason: " + str(
+                err.args[0]
+            )
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_group(self, service_group: ServiceGroup, update: bool = False):
         """
@@ -162,8 +169,11 @@ class IoTAClient(BaseHttpClient):
                 return ta.validate_python(res.json()["services"])
             res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
-            raise
+            self.logger.error(err)
+            msg = "Could not retrieve group list because of following reason: " + str(
+                err.args[0]
+            )
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_group(self, *, resource: str, apikey: str) -> ServiceGroup:
         """
@@ -258,8 +268,11 @@ class IoTAClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
-            raise
+            self.logger.error(err)
+            msg = "Could not update group because of following reason: " + str(
+                err.args[0]
+            )
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def delete_group(self, *, resource: str, apikey: str):
         """
@@ -287,12 +300,12 @@ class IoTAClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
+            self.logger.error(err)
             msg = (
                 f"Could not delete ServiceGroup with resource "
-                f"'{resource}' and apikey '{apikey}'!"
+                f"'{resource}' and apikey '{apikey}' because of following reason: {str(err.args[0])}"
             )
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # DEVICE API
     def post_devices(
@@ -329,9 +342,11 @@ class IoTAClient(BaseHttpClient):
         except requests.RequestException as err:
             if update:
                 return self.update_devices(devices=devices, add=False)
-            msg = "Could not post devices"
-            self.log_error(err=err, msg=msg)
-            raise
+            self.logger.error(err)
+            msg = "Could not post devices because of following reason: " + str(
+                err.args[0]
+            )
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def post_device(self, *, device: Device, update: bool = False) -> None:
         """
@@ -407,8 +422,12 @@ class IoTAClient(BaseHttpClient):
                 return devices
             res.raise_for_status()
         except requests.RequestException as err:
-            self.log_error(err=err, msg=None)
-            raise
+            self.logger.error(err)
+            msg = (
+                "Not able to retrieve the device list because of the following reason:"
+                + str(err.args[0])
+            )
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_device(self, *, device_id: str) -> Device:
         """
@@ -430,9 +449,10 @@ class IoTAClient(BaseHttpClient):
                 return Device.model_validate(res.json())
             res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Device {device_id} was not found"
-            self.log_error(err=err, msg=msg)
-            raise
+            self.logger.error(err)
+
+            msg = f"Device '{device_id}' was not found because of the following reason: {str(err.args[0])}"
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_device(self, *, device: Device, add: bool = True) -> None:
         """
@@ -467,9 +487,9 @@ class IoTAClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
-            msg = f"Could not update device '{device.device_id}'"
-            self.log_error(err=err, msg=msg)
-            raise
+            self.logger.error(err)
+            msg = f"Could not update device '{device.device_id}' because of the following reason: {str(err.args[0])} "
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def update_devices(
         self, *, devices: Union[Device, List[Device]], add: False
@@ -542,8 +562,7 @@ class IoTAClient(BaseHttpClient):
                 res.raise_for_status()
         except requests.RequestException as err:
             msg = f"Could not delete device {device_id}!"
-            self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
         if delete_entity:
             # An entity can technically belong to multiple devices
@@ -558,6 +577,7 @@ class IoTAClient(BaseHttpClient):
                     f"linked to multiple devices. "
                 )
             else:
+                cb_client_local = None
                 try:
                     from filip.clients.ngsi_v2 import ContextBrokerClient
 
@@ -566,7 +586,7 @@ class IoTAClient(BaseHttpClient):
                     else:
                         warnings.warn(
                             "No `ContextBrokerClient` "
-                            "object providesd! Will try to generate "
+                            "object provided! Will try to generate "
                             "one. This usage is not recommended."
                         )
 
@@ -586,7 +606,8 @@ class IoTAClient(BaseHttpClient):
                     # this methode, not if this methode actively deleted it
                     pass
 
-                cb_client_local.close()
+                if cb_client_local:
+                    cb_client_local.close()
 
     def patch_device(
         self,
@@ -596,9 +617,9 @@ class IoTAClient(BaseHttpClient):
         cb_url: AnyHttpUrl = settings.CB_URL,
     ) -> None:
         """
-        Updates a device state in Fiware, if the device does not exists it
+        Updates a device state in Fiware, if the device does not exist it
         is created, else its values are updated.
-        If the device settings (endpoint,..) were changed the device and
+        If the device settings were changed the device and
         entity are deleted and re-added.
 
         If patch_entity is true the corresponding entity in the ContextBroker is
@@ -725,7 +746,7 @@ class IoTAClient(BaseHttpClient):
                     url=cb_url, fiware_header=self.fiware_headers, headers=self.headers
                 )
 
-            cb_client_local.patch_entity(
+            cb_client_local.override_entity(
                 entity=build_context_entity_from_device(device)
             )
             cb_client_local.close()
@@ -743,11 +764,11 @@ class IoTAClient(BaseHttpClient):
             return True
         except requests.RequestException as err:
             if err.response is None or not err.response.status_code == 404:
-                self.log_error(
-                    err=err,
-                    msg=f"Error while checking existence for device {device_id}",
-                )
-                raise
+                self.logger.error(err)
+                msg = f"Could not check device status because of the following reason: {str(err.args[0])}"
+                raise BaseHttpClientException(
+                    message=msg, response=err.response
+                ) from err
             return False
 
     # LOG API
@@ -768,7 +789,8 @@ class IoTAClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err)
-            raise
+            msg = f"Could not check for loglevel status because of the following reason: {str(err.args[0])}"
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def change_loglevel_of_agent(self, level: str):
         """
@@ -786,16 +808,20 @@ class IoTAClient(BaseHttpClient):
 
         url = urljoin(self.base_url, "admin/log")
         headers = self.headers.copy()
+        new_loglevel = {"level": level}
         del headers["fiware-service"]
         del headers["fiware-servicepath"]
         try:
-            res = self.put(url=url, headers=headers, params=level)
+            res = self.put(url=url, headers=headers, params=new_loglevel)
             if res.ok:
                 self.logger.info(
-                    "Loglevel of agent at %s " "changed to '%s'", self.base_url, level
+                    "Loglevel of agent at %s " "changed to '%s'",
+                    self.base_url,
+                    new_loglevel,
                 )
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
             self.log_error(err=err)
-            raise
+            msg = f"Could not change loglevel because of the following reason: {str(err.args[0])}"
+            raise BaseHttpClientException(message=msg, response=err.response) from err
