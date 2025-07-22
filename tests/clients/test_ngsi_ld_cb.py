@@ -904,8 +904,8 @@ class TestContextBroker(unittest.TestCase):
             self.client.post_entity(entity=ekv)
             dbkv = self.client.get_entity(entity_id=e.id, options="keyValues")
             self.assertEqual(
-                dbkv.model_dump(exclude=["@context", "position"]),
-                ekv.model_dump(exclude=["position"]),
+                dbkv.model_dump(exclude={"context", "position"}),
+                ekv.model_dump(exclude={"context", "position"}),
             )
             self.assertEqual(
                 dbkv.model_dump()["position"]["type"],
