@@ -471,9 +471,9 @@ class TestContextModels(unittest.TestCase):
                     }
                 )
 
-        # try to generate a entity with with one of dissalowed character in attribute value
-        attribute_value = ["<", ">", '"', "'", "=", ";", "(", ")"]
-        for char in attribute_value:
+        # try to generate an entity with one of disallowed characters in attribute value
+        attribute_value_not_allowed = ["<", ">", '"', "'", "=", ";", "(", ")"]
+        for char in attribute_value_not_allowed:
             with self.assertRaises(ValueError) as context:
                 ContextEntity(
                     **{
@@ -482,6 +482,17 @@ class TestContextModels(unittest.TestCase):
                         "temperature": {"value": "2" + char + "0", "type": "Text"},
                     }
                 )
+        # utf-8 characters are allowed in attribute values
+        attribute_value_allowed = ["ä", "ö", "ü", "ß", "é", "è"]
+        for char in attribute_value_allowed:
+            entity = ContextEntity(
+                **{
+                    "id": "Room",
+                    "type": "Room",
+                    "temperature": {"value": "2" + char + "0", "type": "Text"},
+                }
+            )
+            self.assertEqual(entity.temperature.value, "2" + char + "0")
 
     def test_command(self):
         """

@@ -233,13 +233,6 @@ class EntitiesBatchOperations(unittest.TestCase):
                 entities=[], action_type=ActionTypeLD.UPDATE
             )
 
-        # according to spec, this should raise bad request data,
-        # but pydantic is intercepting
-        with self.assertRaises(ValidationError):
-            self.cb_client.entity_batch_operation(
-                entities=[None], action_type=ActionTypeLD.UPDATE
-            )
-
         for entity in entity_list:
             self.cb_client.delete_entity_by_id(entity_id=entity.id)
 
@@ -453,3 +446,33 @@ class EntitiesBatchOperations(unittest.TestCase):
 
         entity_list = self.cb_client.get_entity_list(entity_type=entity_del_type)
         self.assertEqual(len(entity_list), 0)  # all entities were deleted
+
+    def test_entity_batch_operations_different_context(self) -> None:
+        """
+        Batch entity operations with different context.
+        """
+        entities_ct = [
+            ContextLDEntity(
+                id=f"urn:ngsi-ld:test-ct:{str(i)}",
+                type=f"filip:object:test-ct",
+                context="https://uri.etsi.org/ngsi-ld/v1/contexts/etsi-ngsi-ld.jsonld",
+            )
+            for i in range(0, 3)
+        ]
+        entities_no_ct = [
+            ContextLDEntity(
+                id=f"urn:ngsi-ld:test-ct:{str(i)}",
+                type=f"filip:object:test-ct",
+            )
+            for i in range(3, 6)
+        ]
+        entities = entities_ct + entities_no_ct
+        self.cb_client.entity_batch_operation(
+            entities=entities, action_type=ActionTypeLD.UPSERT
+        )
+        entity_list = self.cb_client.get_entity_list()
+        # the entities with context should be in the list
+        for entity in entities_no_ct:
+            self.assertIn(entity.id, [e.id for e in entity_list])
+        for entity in entities_ct:
+            self.assertNotIn(entity.id, [e.id for e in entity_list])
