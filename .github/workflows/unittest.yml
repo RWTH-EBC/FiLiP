@@ -139,14 +139,6 @@ jobs:
         if: matrix.run_coverage
         run: coverage-badge -o coverage_html_report/badge.svg
 
-      # Step 3: (Recommended) Upload the combined report as a build artifact
-      - name: Upload coverage report as artifact
-        if: matrix.run_coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-html-py${{ matrix.python-version }}
-          path: coverage_html_report/
-
       # Step 4: Deploy the entire coverage_html_report folder to gh-pages
       - name: Deploy coverage report to gh-pages
         # This condition deploys only when running on the specified branch.
