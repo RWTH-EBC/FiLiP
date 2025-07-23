@@ -147,14 +147,12 @@ jobs:
           name: coverage-report-html-py${{ matrix.python-version }}
           path: coverage_html_report/
 
-      - name: Debug coverage directory
-        run: |
-          echo "--- Content of coverage_html_report ---"
-          ls -lR coverage_html_report
-          
-          echo "--- Searching for .gitignore files ---"
-          find coverage_html_report -name ".gitignore" -print -exec cat {} \;
-
+      # * remove .gitignore if found
+      - name: Remove .gitignore from coverage report
+        if: matrix.run_coverage
+        run: rm -f coverage_html_report/.gitignore
+        continue-on-error: true
+        
       # Step 4: Deploy the entire coverage_html_report folder to gh-pages
       - name: Deploy coverage report to gh-pages
         # This condition deploys only when running on the specified branch.
