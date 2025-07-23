@@ -147,16 +147,6 @@ jobs:
           name: coverage-report-html-py${{ matrix.python-version }}
           path: coverage_html_report/
 
-      # Debug github.ref
-      - name: Debug github.ref run_coverage
-        if: matrix.run_coverage
-        run: echo "The current github.ref is ${{ github.ref }}"
-      
-      # Debug github.ref master
-      - name: Debug github.ref master
-        if: ${{ github.ref == 'refs/heads/master' }}
-        run: echo "The current github.ref is ${{ github.ref }}"
-
       # Step 4: Deploy the entire coverage_html_report folder to gh-pages
       - name: Deploy coverage report to gh-pages
         # This condition deploys only when running on the specified branch.
