@@ -4,7 +4,7 @@
 
 [![pylint](https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.svg)](https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.html)
 [![Documentation](https://rwth-ebc.github.io/FiLiP/master/docs/doc.svg)](https://rwth-ebc.github.io/FiLiP/master/docs/index.html)
-[![coverage](https://rwth-ebc.github.io/FiLiP/master/coverage/badge.svg)](https://rwth-ebc.github.io/FiLiP/master/coverage)
+[![coverage](https://rwth-ebc.github.io/FiLiP/coverage/badge.svg)](https://rwth-ebc.github.io/FiLiP/coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg     )](https://doi.org/10.21105/joss.06953    )
