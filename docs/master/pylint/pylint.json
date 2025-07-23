@@ -1017,9 +1017,9 @@
             ],
             "pydantic": [
                 "tests.config",
-                "tests.test_config",
+                "filip.custom_types",
                 "filip.config",
-                "filip.custom_types"
+                "tests.test_config"
             ],
             "pydantic_settings": [
                 "tests.config",
@@ -1180,9 +1180,9 @@
             ],
             "pydantic": [
                 "tests.config",
-                "tests.test_config",
+                "filip.custom_types",
                 "filip.config",
-                "filip.custom_types"
+                "tests.test_config"
             ],
             "pydantic_settings": [
                 "tests.config",
