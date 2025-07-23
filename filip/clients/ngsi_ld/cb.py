@@ -16,6 +16,7 @@ from filip.models.base import FiwareLDHeader, PaginationMethod, core_context
 from filip.models.ngsi_v2.base import AttrsFormat
 from filip.models.ngsi_ld.subscriptions import SubscriptionLD
 from filip.models.ngsi_ld.context import (
+    DataTypeLD,
     ContextLDEntity,
     ContextLDEntityKeyValues,
     ContextProperty,
@@ -216,7 +217,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         url = urljoin(self.base_url, f"{self._url_version}/entities")
         headers = self.headers.copy()
         if isinstance(entity, ContextLDEntityKeyValues):
-            entity = entity.to_normalized()
+            entity = entity.to_entity()
         if entity.model_dump().get("@context", None) is not None:
             headers.update({"Content-Type": "application/ld+json"})
             headers.update({"Link": None})
@@ -454,7 +455,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity.id}/attrs")
         headers = self.headers.copy()
         if isinstance(entity, ContextLDEntityKeyValues):
-            entity = entity.to_normalized()
+            entity = entity.to_entity()
         if entity.model_dump().get("@context", None) is not None:
             headers.update({"Content-Type": "application/ld+json"})
             headers.update({"Link": None})
@@ -952,3 +953,46 @@ class ContextBrokerLDClient(BaseHttpClient):
             raise err
         else:
             self.logger.info(f"Update operation {action_type} succeeded!")
+
+    def validate_relationship(
+        self,
+        relationship: Union[
+            NamedContextProperty,
+            ContextProperty,
+            NamedContextRelationship,
+            ContextRelationship,
+            Dict,
+        ],
+    ) -> bool:
+        """
+        Validates a relationship. A relationship is valid if it points to an existing
+        entity. Otherwise, it is considered invalid
+
+        Args:
+            relationship: relationship to validate,assumed to be property or relationship
+            since there is no geoproperty with string value
+        Returns
+            True if the relationship is valid, False otherwise
+        """
+        if hasattr(relationship, "value"):
+            destination_id = relationship.value
+        elif hasattr(relationship, "object"):
+            destination_id = relationship.object
+        elif isinstance(relationship, dict):
+            _sentinel = object()
+            destination_id = relationship.get("value", _sentinel)
+            if destination_id is _sentinel:
+                raise ValueError(
+                    "Invalid ld relationship dictionary format\n"
+                    "Expected format: {"
+                    f'"type": "{DataTypeLD.RELATIONSHIP[0]}", '
+                    '"value" "entity_id"}'
+                )
+        else:
+            raise ValueError("Invalid relationship type.")
+        try:
+            destination_entity = self.get_entity(entity_id=destination_id)
+            return destination_entity.id == destination_id
+        except requests.RequestException as err:
+            if err.response.status_code == 404:
+                return False

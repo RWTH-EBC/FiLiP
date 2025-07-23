@@ -33,15 +33,16 @@ QL_URL = settings.QL_URL
 
 # Here you can also change FIWARE service and service path.
 # FIWARE-Service
-SERVICE = 'filip_e15'
+SERVICE = "filip_e15"
 # FIWARE-Service path
-SERVICE_PATH = '/'
+SERVICE_PATH = "/"
 
 # Setting up logging
 logging.basicConfig(
-    level='INFO',
-    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
-    datefmt='%d-%m-%Y %H:%M:%S')
+    level="INFO",
+    format="%(asctime)s %(name)s %(levelname)s: %(message)s",
+    datefmt="%d-%m-%Y %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +69,7 @@ def temperature_forecast(current_temperature):
         t = current_time.hour + current_time.minute / 60.0
 
         # Calculate T
-        T += t ** 1.01
+        T += t**1.01
         value[current_time.strftime("%H:%M")] = T
         current_time += time_step
     return value
@@ -85,10 +86,9 @@ if __name__ == "__main__":
     cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
 
     # create entity for weather station
-    weather_station = ContextEntity(id='WeatherStation:001',
-                                    type='WeatherStation')
+    weather_station = ContextEntity(id="WeatherStation:001", type="WeatherStation")
 
-    # add forecast attribute in the entity 
+    # add forecast attribute in the entity
     # (forecast values should be Float values to ensure correct data type in CrateDB)
     forecast = NamedContextAttribute(
         name="temperatureForecast",
@@ -103,13 +103,10 @@ if __name__ == "__main__":
             "02:30": 20.0,
             "03:00": 20.0,
             "03:30": 20.0,
-            "04:00": 20.0
-        })
-    temperature = NamedContextAttribute(
-        name="temperature",
-        type="Number",
-        value=20
+            "04:00": 20.0,
+        },
     )
+    temperature = NamedContextAttribute(name="temperature", type="Number", value=20)
     weather_station.add_attributes([temperature, forecast])
 
     cb_client.post_entity(weather_station)
@@ -125,16 +122,10 @@ if __name__ == "__main__":
             ]
         },
         notification={
-            "http": {
-                "url": "http://quantumleap:8668/v2/notify"
-            },
-            "metadata": [
-                "dateModified",
-                "TimeInstant",
-                "timestamp"
-            ]
+            "http": {"url": "http://quantumleap:8668/v2/notify"},
+            "metadata": ["dateModified", "TimeInstant", "timestamp"],
         },
-        throttling=0
+        throttling=0,
     )
     cb_client.post_subscription(forecast_subscription)
 
@@ -150,11 +141,11 @@ if __name__ == "__main__":
     # check forecast from QuantumLeap
     query = ql_client.get_entity_by_id(entity_id=weather_station.id)
     forecast_history = ql_client.get_entity_attr_values_by_id(
-        entity_id=weather_station.id,
-        attr_name=forecast.name)
+        entity_id=weather_station.id, attr_name=forecast.name
+    )
     temperature_history = ql_client.get_entity_attr_values_by_id(
-        entity_id=weather_station.id,
-        attr_name=temperature.name)
+        entity_id=weather_station.id, attr_name=temperature.name
+    )
 
     # Modify the time index
     index = forecast_history.index
@@ -163,9 +154,8 @@ if __name__ == "__main__":
     # get current year , month and day
     current_date = datetime.now().date()
     plot_time = plot_time.replace(
-        year=current_date.year,
-        month=current_date.month,
-        day=current_date.day)
+        year=current_date.year, month=current_date.month, day=current_date.day
+    )
     plot_time_delta = timedelta(minutes=30)
     for i, _ in enumerate(index[:]):
         forecast_history.index[i] = plot_time
@@ -184,37 +174,39 @@ if __name__ == "__main__":
     for i, forecast in enumerate(forecast_history.attributes[0].values):
         forecast_values = [forecast[time] for time in forecast_time_labels]
         time_axis = [
-            forecast_history.index[i] + timedelta(hours=int(time.split(":")[0]),
-                                                  minutes=int(time.split(":")[1]))
+            forecast_history.index[i]
+            + timedelta(hours=int(time.split(":")[0]), minutes=int(time.split(":")[1]))
             for time in forecast_time_labels
         ]
-        fig.add_trace(go.Scatter(
-            x=time_axis,
-            y=forecast_values,
-            mode='lines',
-            name="Forecast "+index[i].strftime("%Y-%m-%d %H:%M:%S")
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=time_axis,
+                y=forecast_values,
+                mode="lines",
+                name="Forecast " + index[i].strftime("%Y-%m-%d %H:%M:%S"),
+            )
+        )
 
     # Add temperature history to the plot
     # for i, temperature in enumerate(temperature_history.attributes[0].values):
     temperature_values = temperature_history.attributes[0].values
-    fig.add_trace(go.Scatter(
-        x=temperature_history.index,
-        y=temperature_values,
-        mode='lines',
-        line=dict(width=4),  # Make the temperature lines thicker
-        name="Temperature History",
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=temperature_history.index,
+            y=temperature_values,
+            mode="lines",
+            line=dict(width=4),  # Make the temperature lines thicker
+            name="Temperature History",
+        )
+    )
 
     # Customize the layout
     fig.update_layout(
         title="Historical Data",
         xaxis_title="Time",
         yaxis_title="Value",
-        xaxis=dict(
-            tickangle=45
-        ),
-        template="plotly_white"
+        xaxis=dict(tickangle=45),
+        template="plotly_white",
     )
 
     # Add gridlines
@@ -238,4 +230,3 @@ if __name__ == "__main__":
                 FROM "etweatherstation"
                 LIMIT 100;
     """
-
