@@ -380,6 +380,25 @@ replaced by the ones in the request.</p>
 <p>Returns:</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.validate_relationship">
+<span class="sig-name descname"><span class="pre">validate_relationship</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relationship</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextProperty" title="filip.models.ngsi_ld.context.NamedContextProperty"><span class="pre">NamedContextProperty</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty" title="filip.models.ngsi_ld.context.ContextProperty"><span class="pre">ContextProperty</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextRelationship" title="filip.models.ngsi_ld.context.NamedContextRelationship"><span class="pre">NamedContextRelationship</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship" title="filip.models.ngsi_ld.context.ContextRelationship"><span class="pre">ContextRelationship</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.validate_relationship"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.validate_relationship" title="Permalink to this definition"></a></dt>
+<dd><p>Validates a relationship. A relationship is valid if it points to an existing
+entity. Otherwise, it is considered invalid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relationship</strong> – relationship to validate,assumed to be property or relationship</p></li>
+<li><p><strong>value</strong> (<em>since there is no geoproperty with string</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>True if the relationship is valid, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

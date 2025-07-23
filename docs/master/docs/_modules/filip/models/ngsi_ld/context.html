@@ -82,6 +82,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">geojson_pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Point</span><span class="p">,</span>
     <span class="n">MultiPoint</span><span class="p">,</span>
@@ -525,7 +526,7 @@
         <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="ContextLDEntityKeyValues.to_normalized"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.to_normalized">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextLDEntityKeyValues.to_entity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.to_entity">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the entity to a normalized representation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -910,7 +911,17 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No context in entity&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">context</span></div></div>
+            <span class="k">return</span> <span class="n">context</span></div>
+
+<div class="viewcode-block" id="ContextLDEntity.to_keyvalues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.to_keyvalues">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_keyvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">:</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_properties</span><span class="p">()</span>
+        <span class="n">rels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_relationships</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">prop</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">for</span> <span class="n">rel</span> <span class="ow">in</span> <span class="n">rels</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">rel</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">rel</span><span class="o">.</span><span class="n">object</span>
+        <span class="k">return</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="o">**</span><span class="n">result</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ActionTypeLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ActionTypeLD</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
