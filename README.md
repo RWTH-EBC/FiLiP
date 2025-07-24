@@ -262,8 +262,23 @@ how you can contribute to this project.
 * Daniel Nikolay
 
 ## References
+If you use FiLiP in your work, please cite the JOSS paper:
+```bibtex
+@article{Storek2024,
+doi = {10.21105/joss.06953},
+url = {https://doi.org/10.21105/joss.06953},
+year = {2024},
+publisher = {The Open Journal},
+volume = {9},
+number = {101},
+pages = {6953},
+author = {Storek, Thomas and Du, Junsong and Blechmann, Sebastian and Streblow, Rita and Müller, Dirk},
+title = {FiLiP: A python software development kit (SDK) for accelerating the development of services based on FIWARE IoT platform},
+journal = {Journal of Open Source Software}
+} 
+```
 
-We presented or applied the library in the following publications:
+We also want to refer to publications that presented or applied the library:
 
 - S. Blechmann, I. Sowa, M. H. Schraven, R. Streblow, D. Müller & A. Monti. Open source platform application for smart building and smart grid controls. Automation in Construction 145 (2023), 104622. ISSN: 0926-5805. https://doi.org/10.1016/j.autcon.2022.104622        
 
