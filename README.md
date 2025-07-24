@@ -243,27 +243,47 @@ We use unittests to write our test cases.
 To test the source code of the library in our CI workflow, the CI 
 executes all tests located in the `tests`-directory and prefixed with `test_` .
 
-## How to contribute
+## Contributing
 
-Please see our [contribution guide](./CONTRIBUTING.md) for more details on 
-how you can contribute to this project.
+#### Bug Reports & Feature Requests
+The best way to report a bug or request a new feature is to open an issue. Please use one of the available issue templates and provide as much detail as possible.
+
+#### Submitting Pull Requests
+We warmly welcome code contributions! If you're planning to contribute, please first read our [Contribution Guide](./CONTRIBUTING.md) for details on our development workflow, coding standards, and how to submit a pull request.
+
+For other inquiries, you can still contact us via [ebc-tools@eonerc.rwth-aachen.de](mailto:ebc-tools@eonerc.rwth-aachen.de).
 
 ## Authors
 
 * [Thomas Storek](https://github.com/tstorek) 
 * [Junsong Du](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
-* [Sebastian Blechmann](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~carjd/Blechmann-Sebastian/)
 
 ## Alumni
 
 * Jeff Reding
 * Felix Rehmann
 * Daniel Nikolay
+* Sebastian Blechmann
 
 ## References
+If you use FiLiP in your work, please cite the JOSS paper:
+```bibtex
+@article{Storek2024,
+doi = {10.21105/joss.06953},
+url = {https://doi.org/10.21105/joss.06953},
+year = {2024},
+publisher = {The Open Journal},
+volume = {9},
+number = {101},
+pages = {6953},
+author = {Storek, Thomas and Du, Junsong and Blechmann, Sebastian and Streblow, Rita and Müller, Dirk},
+title = {FiLiP: A python software development kit (SDK) for accelerating the development of services based on FIWARE IoT platform},
+journal = {Journal of Open Source Software}
+} 
+```
 
-We presented or applied the library in the following publications:
+We also want to refer to publications that presented or applied the library:
 
 - S. Blechmann, I. Sowa, M. H. Schraven, R. Streblow, D. Müller & A. Monti. Open source platform application for smart building and smart grid controls. Automation in Construction 145 (2023), 104622. ISSN: 0926-5805. https://doi.org/10.1016/j.autcon.2022.104622        
 

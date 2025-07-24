@@ -23,7 +23,7 @@ Following steps will be checked:
 - [ ] Check dependencies in `setup.py`, especially when a new library is introduced
 - [ ] Check other information in `setup.py`
 
-After that, this can this branch will be merged the branch to `master` with a commit message containing `[PYPI-RELEASE]`
+After that, create a pull request and merge it (merge commit) to `master` branch with a commit message containing `[PYPI-RELEASE]`.
 
 
 **Additional Context**
