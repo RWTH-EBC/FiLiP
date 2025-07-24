@@ -243,23 +243,28 @@ We use unittests to write our test cases.
 To test the source code of the library in our CI workflow, the CI 
 executes all tests located in the `tests`-directory and prefixed with `test_` .
 
-## How to contribute
+## Contributing
 
-Please see our [contribution guide](./CONTRIBUTING.md) for more details on 
-how you can contribute to this project.
+#### Bug Reports & Feature Requests
+The best way to report a bug or request a new feature is to open an issue. Please use one of the available issue templates and provide as much detail as possible.
+
+#### Submitting Pull Requests
+We warmly welcome code contributions! If you're planning to contribute, please first read our [Contribution Guide](./CONTRIBUTING.md) for details on our development workflow, coding standards, and how to submit a pull request.
+
+For other inquiries, you can still contact us via [ebc-tools@eonerc.rwth-aachen.de](mailto:ebc-tools@eonerc.rwth-aachen.de).
 
 ## Authors
 
 * [Thomas Storek](https://github.com/tstorek) 
 * [Junsong Du](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/) (corresponding)
 * [Saira Bano](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/)
-* [Sebastian Blechmann](https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~carjd/Blechmann-Sebastian/)
 
 ## Alumni
 
 * Jeff Reding
 * Felix Rehmann
 * Daniel Nikolay
+* Sebastian Blechmann
 
 ## References
 If you use FiLiP in your work, please cite the JOSS paper:
