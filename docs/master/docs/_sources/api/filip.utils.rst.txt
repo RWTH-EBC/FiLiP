@@ -28,10 +28,26 @@ filip.utils.datetime module
    :undoc-members:
    :show-inheritance:
 
+filip.utils.filter module
+-------------------------
+
+.. automodule:: filip.utils.filter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 filip.utils.geo\_ql module
 --------------------------
 
 .. automodule:: filip.utils.geo_ql
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+filip.utils.iot module
+----------------------
+
+.. automodule:: filip.utils.iot
    :members:
    :undoc-members:
    :show-inheritance:

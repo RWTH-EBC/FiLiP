@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_ld package &mdash; FiLiP 0.6.3 documentation</title>
+  <title>filip.models.ngsi_ld package &mdash; FiLiP 0.7.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -343,19 +343,35 @@ not allowed to be used as attribute names.</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="filip.models.ngsi_ld.context.ContextLDEntity.context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span> <span class="pre">(Optional[Union[str,</span> <span class="pre">List[str],</span> <span class="pre">Dict]])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.createdAt" title="filip.models.ngsi_ld.context.ContextLDEntity.createdAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createdAt</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.id" title="filip.models.ngsi_ld.context.ContextLDEntity.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.modifiedAt" title="filip.models.ngsi_ld.context.ContextLDEntity.modifiedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modifiedAt</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.observationSpace" title="filip.models.ngsi_ld.context.ContextLDEntity.observationSpace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observationSpace</span> <span class="pre">(filip.models.ngsi_ld.context.ContextGeoProperty</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.operationSpace" title="filip.models.ngsi_ld.context.ContextLDEntity.operationSpace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">operationSpace</span> <span class="pre">(filip.models.ngsi_ld.context.ContextGeoProperty</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.type" title="filip.models.ngsi_ld.context.ContextLDEntity.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(str)</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_id</span></code> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="filip.models.ngsi_ld.context.ContextLDEntity.return_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_context</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span></code></p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_id</span></code> » <a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.id" title="filip.models.ngsi_ld.context.ContextLDEntity.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="filip.models.ngsi_ld.context.ContextLDEntity.return_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_context</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="filip.models.ngsi_ld.context.ContextLDEntity.context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.context">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"> <span class="pre">(alias</span> <span class="pre">'&#64;context')</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="Permalink to this definition"></a></dt>
+<dd><p>The &#64;context in JSON-LD is used to expand terms, provided as short hand strings, to concepts, specified as URIs, and vice versa, to compact URIs into terms The main implication of NGSI-LD API is that if the &#64;context is a compound one, i.e. an &#64;context which references multiple individual &#64;context, served by resources behind different URIs, then a wrapper &#64;context has to be created and hosted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="filip.models.ngsi_ld.context.ContextLDEntity.return_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_context</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.createdAt">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createdAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.createdAt" title="Permalink to this definition"></a></dt>
@@ -365,6 +381,25 @@ not allowed to be used as attribute names.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>min_length</strong> = 1</p></li>
 <li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.id">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.id" title="Permalink to this definition"></a></dt>
+<dd><p>Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.the id should be structured according to the urn naming scheme.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+<dt class="field-even">Validated by<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_id</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -394,6 +429,20 @@ not allowed to be used as attribute names.</p>
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.operationSpace">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">operationSpace</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextGeoProperty" title="filip.models.ngsi_ld.context.ContextGeoProperty"><span class="pre">ContextGeoProperty</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.operationSpace" title="Permalink to this definition"></a></dt>
 <dd><p>The geospatial Property representing the geographic location in which an Entity,e.g. an actuator is active. For example, a crane can have a certain operation space.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.type" title="Permalink to this definition"></a></dt>
+<dd><p>Id of an entity in an NGSI context broker. Allowed characters are the ones in the plain ASCII set, except the following ones: control characters, whitespace, &amp;, ?, / and #.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -528,7 +577,7 @@ If mode is ‘python’, the output may contain non-JSON-serializable Python obj
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.ContextLDEntity.return_context">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">return_context</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">context</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntity.return_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">return_context</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextLDEntity.context" title="filip.models.ngsi_ld.context.ContextLDEntity.context"><em class="xref py py-obj"><span class="pre">context</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/context.html#ContextLDEntity.return_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.context.ContextLDEntity.return_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -933,10 +982,28 @@ should be specified as the URN. The existence of this entity is not assumed.</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.datasetId" title="filip.models.ngsi_ld.context.NamedContextGeoProperty.datasetId"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datasetId</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.name" title="filip.models.ngsi_ld.context.NamedContextGeoProperty.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.observedAt" title="filip.models.ngsi_ld.context.NamedContextGeoProperty.observedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observedAt</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.type" title="filip.models.ngsi_ld.context.NamedContextGeoProperty.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.value" title="filip.models.ngsi_ld.context.NamedContextGeoProperty.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(Optional[Union[ContextGeoPropertyValue,</span> <span class="pre">Point,</span> <span class="pre">LineString,</span> <span class="pre">Polygon,</span> <span class="pre">MultiPoint,</span> <span class="pre">MultiPolygon,</span> <span class="pre">MultiLineString]])</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextGeoProperty.datasetId">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasetId</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.datasetId" title="Permalink to this definition"></a></dt>
+<dd><p>It allows identifying a set or group of property values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextGeoProperty.name">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.name" title="Permalink to this definition"></a></dt>
@@ -949,6 +1016,31 @@ should be specified as the URN. The existence of this entity is not assumed.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextGeoProperty.observedAt">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observedAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.observedAt" title="Permalink to this definition"></a></dt>
+<dd><p>Representing a timestamp for the incoming value of the property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextGeoProperty.type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GeoProperty'</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextGeoProperty.value">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextGeoPropertyValue" title="filip.models.ngsi_ld.context.ContextGeoPropertyValue"><span class="pre">ContextGeoPropertyValue</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Point</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LineString</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Polygon</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MultiPoint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MultiPolygon</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MultiLineString</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextGeoProperty.value" title="Permalink to this definition"></a></dt>
+<dd><p>the actual data</p>
 </dd></dl>
 
 </dd></dl>
@@ -968,12 +1060,64 @@ as the current_speed property of the car-104 entity.</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.createdAt" title="filip.models.ngsi_ld.context.NamedContextProperty.createdAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createdAt</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.datasetId" title="filip.models.ngsi_ld.context.NamedContextProperty.datasetId"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datasetId</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.modifiedAt" title="filip.models.ngsi_ld.context.NamedContextProperty.modifiedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modifiedAt</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.name" title="filip.models.ngsi_ld.context.NamedContextProperty.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.observedAt" title="filip.models.ngsi_ld.context.NamedContextProperty.observedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observedAt</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.type" title="filip.models.ngsi_ld.context.NamedContextProperty.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.unitCode" title="filip.models.ngsi_ld.context.NamedContextProperty.unitCode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unitCode</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.value" title="filip.models.ngsi_ld.context.NamedContextProperty.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span> <span class="pre">(Optional[Union[Union[float,</span> <span class="pre">int,</span> <span class="pre">bool,</span> <span class="pre">str,</span> <span class="pre">List,</span> <span class="pre">Dict[str,</span> <span class="pre">Any]],</span> <span class="pre">List[Union[float,</span> <span class="pre">int,</span> <span class="pre">bool,</span> <span class="pre">str,</span> <span class="pre">List,</span> <span class="pre">Dict[str,</span> <span class="pre">Any]]]]])</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.check_property_type" title="filip.models.ngsi_ld.context.ContextProperty.check_property_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_property_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextProperty.type" title="filip.models.ngsi_ld.context.NamedContextProperty.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
+</ul>
+</dd>
 </dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.createdAt">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createdAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.createdAt" title="Permalink to this definition"></a></dt>
+<dd><p>Representing a timestamp for the creation time of the property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.datasetId">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasetId</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.datasetId" title="Permalink to this definition"></a></dt>
+<dd><p>It allows identifying a set or group of property values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.modifiedAt">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">modifiedAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.modifiedAt" title="Permalink to this definition"></a></dt>
+<dd><p>Representing a timestamp for the last modification of the property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.name">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.name" title="Permalink to this definition"></a></dt>
@@ -986,6 +1130,52 @@ as the current_speed property of the car-104 entity.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.observedAt">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observedAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.observedAt" title="Permalink to this definition"></a></dt>
+<dd><p>Representing a timestamp for the incoming value of the property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Property'</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.type" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextProperty.check_property_type" title="filip.models.ngsi_ld.context.ContextProperty.check_property_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_property_type</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.unitCode">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unitCode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.unitCode" title="Permalink to this definition"></a></dt>
+<dd><p>Representing the unit of the value. Should be part of the defined units by the UN/ECE Recommendation No. 21https://unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextProperty.value">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextProperty.value" title="Permalink to this definition"></a></dt>
+<dd><p>the actual data</p>
 </dd></dl>
 
 </dd></dl>
@@ -1006,12 +1196,33 @@ The location could be modeled as located_in the entity Room-001.</p>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextRelationship.datasetId" title="filip.models.ngsi_ld.context.NamedContextRelationship.datasetId"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datasetId</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 <li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextRelationship.name" title="filip.models.ngsi_ld.context.NamedContextRelationship.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span> <span class="pre">(str)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextRelationship.object" title="filip.models.ngsi_ld.context.NamedContextRelationship.object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span> <span class="pre">(Optional[Union[Union[float,</span> <span class="pre">int,</span> <span class="pre">bool,</span> <span class="pre">str,</span> <span class="pre">List,</span> <span class="pre">Dict[str,</span> <span class="pre">Any]],</span> <span class="pre">List[Union[float,</span> <span class="pre">int,</span> <span class="pre">bool,</span> <span class="pre">str,</span> <span class="pre">List,</span> <span class="pre">Dict[str,</span> <span class="pre">Any]]]]])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextRelationship.observedAt" title="filip.models.ngsi_ld.context.NamedContextRelationship.observedAt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observedAt</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextRelationship.type" title="filip.models.ngsi_ld.context.NamedContextRelationship.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span> <span class="pre">(Optional[str])</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-odd">Validators<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextRelationship.check_relationship_type" title="filip.models.ngsi_ld.context.ContextRelationship.check_relationship_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_relationship_type</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_ld.context.NamedContextRelationship.type" title="filip.models.ngsi_ld.context.NamedContextRelationship.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
+</ul>
+</dd>
 </dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextRelationship.datasetId">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasetId</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextRelationship.datasetId" title="Permalink to this definition"></a></dt>
+<dd><p>It allows identifying a set or group of property values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextRelationship.name">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextRelationship.name" title="Permalink to this definition"></a></dt>
@@ -1021,6 +1232,38 @@ The location could be modeled as located_in the entity Room-001.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>min_length</strong> = 1</p></li>
 <li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextRelationship.object">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">object</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextRelationship.object" title="Permalink to this definition"></a></dt>
+<dd><p>the actual object id</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextRelationship.observedAt">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observedAt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextRelationship.observedAt" title="Permalink to this definition"></a></dt>
+<dd><p>Representing a timestamp for the incoming value of the property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Constraints<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_length</strong> = 1</p></li>
+<li><p><strong>max_length</strong> = 256</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_ld.context.NamedContextRelationship.type">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Relationship'</span></em><a class="headerlink" href="#filip.models.ngsi_ld.context.NamedContextRelationship.type" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_ld.context.ContextRelationship.check_relationship_type" title="filip.models.ngsi_ld.context.ContextRelationship.check_relationship_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_relationship_type</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -1603,7 +1846,7 @@ will be used to resolve the temporal query. If not specified, the default is
 
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_uri</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt"><em class="xref py py-obj"><span class="pre">endTimeAt</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt"><em class="xref py py-obj"><span class="pre">timeAt</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/subscriptions.html#TemporalQuery.check_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_uri</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt"><em class="xref py py-obj"><span class="pre">timeAt</span></em></a><em class="property"><span class="pre">,</span> </em><a class="reference internal" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt" title="filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt"><em class="xref py py-obj"><span class="pre">endTimeAt</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_ld/subscriptions.html#TemporalQuery.check_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models package &mdash; FiLiP 0.6.3 documentation</title>
+  <title>filip.models package &mdash; FiLiP 0.7.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -47,24 +47,33 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">API Documentation</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="filip.clients.html">filip.clients package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">filip.models package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.models.base">filip.models.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.models.mqtt">filip.models.mqtt module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.models">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.html">filip.clients package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">filip.models package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html">filip.models.ngsi_ld package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_v2.html">filip.models.ngsi_v2 package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="filip.semantics.html">filip.semantics package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="filip.utils.html">filip.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.models.base">filip.models.base module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.DataType"><code class="docutils literal notranslate"><span class="pre">DataType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.FiwareHeader"><code class="docutils literal notranslate"><span class="pre">FiwareHeader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.FiwareHeaderSecure"><code class="docutils literal notranslate"><span class="pre">FiwareHeaderSecure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.FiwareLDHeader"><code class="docutils literal notranslate"><span class="pre">FiwareLDHeader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.LogLevel"><code class="docutils literal notranslate"><span class="pre">LogLevel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.NgsiVersion"><code class="docutils literal notranslate"><span class="pre">NgsiVersion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.PaginationMethod"><code class="docutils literal notranslate"><span class="pre">PaginationMethod</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-filip.config">filip.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#filip-types-module">filip.types module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-filip">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.models.mqtt">filip.models.mqtt module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.mqtt.IoTAMQTTMessageType"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTMessageType</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.html">filip.semantics package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.utils.html">filip.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
@@ -106,6 +115,186 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="filip.models.ngsi_ld.html">filip.models.ngsi_ld package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filip.models.ngsi_ld.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.models.ngsi_ld.html#module-filip.models.ngsi_ld.base">filip.models.ngsi_ld.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.GeoQuery"><code class="docutils literal notranslate"><span class="pre">GeoQuery</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.GeoQuery.coordinates"><code class="docutils literal notranslate"><span class="pre">GeoQuery.coordinates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.GeoQuery.geometry"><code class="docutils literal notranslate"><span class="pre">GeoQuery.geometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.GeoQuery.geoproperty"><code class="docutils literal notranslate"><span class="pre">GeoQuery.geoproperty</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.GeoQuery.georel"><code class="docutils literal notranslate"><span class="pre">GeoQuery.georel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.validate_ngsi_ld_query"><code class="docutils literal notranslate"><span class="pre">validate_ngsi_ld_query()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.models.ngsi_ld.html#module-filip.models.ngsi_ld.context">filip.models.ngsi_ld.context module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD"><code class="docutils literal notranslate"><span class="pre">ActionTypeLD</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD.CREATE"><code class="docutils literal notranslate"><span class="pre">ActionTypeLD.CREATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD.DELETE"><code class="docutils literal notranslate"><span class="pre">ActionTypeLD.DELETE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD.UPDATE"><code class="docutils literal notranslate"><span class="pre">ActionTypeLD.UPDATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD.UPSERT"><code class="docutils literal notranslate"><span class="pre">ActionTypeLD.UPSERT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoProperty"><code class="docutils literal notranslate"><span class="pre">ContextGeoProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoProperty.datasetId"><code class="docutils literal notranslate"><span class="pre">ContextGeoProperty.datasetId</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoProperty.observedAt"><code class="docutils literal notranslate"><span class="pre">ContextGeoProperty.observedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoProperty.type"><code class="docutils literal notranslate"><span class="pre">ContextGeoProperty.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoProperty.value"><code class="docutils literal notranslate"><span class="pre">ContextGeoProperty.value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoPropertyValue"><code class="docutils literal notranslate"><span class="pre">ContextGeoPropertyValue</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoPropertyValue.type"><code class="docutils literal notranslate"><span class="pre">ContextGeoPropertyValue.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextGeoPropertyValue.check_geoproperty_value"><code class="docutils literal notranslate"><span class="pre">ContextGeoPropertyValue.check_geoproperty_value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.createdAt"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.createdAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.modifiedAt"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.modifiedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.observationSpace"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.observationSpace</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.operationSpace"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.operationSpace</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_geo_properties"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.add_geo_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_properties"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.add_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.add_relationships"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.add_relationships()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.delete_properties"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.delete_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.delete_relationships"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.delete_relationships()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_context"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.get_context()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_model_fields_set"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.get_model_fields_set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_properties"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.get_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.get_relationships"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.get_relationships()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.model_dump"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.model_dump()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.return_context"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.return_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity.to_keyvalues"><code class="docutils literal notranslate"><span class="pre">ContextLDEntity.to_keyvalues()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityBase"><code class="docutils literal notranslate"><span class="pre">ContextLDEntityBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityBase.context"><code class="docutils literal notranslate"><span class="pre">ContextLDEntityBase.context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityBase.id"><code class="docutils literal notranslate"><span class="pre">ContextLDEntityBase.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityBase.type"><code class="docutils literal notranslate"><span class="pre">ContextLDEntityBase.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><code class="docutils literal notranslate"><span class="pre">ContextLDEntityKeyValues</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues.to_entity"><code class="docutils literal notranslate"><span class="pre">ContextLDEntityKeyValues.to_entity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty"><code class="docutils literal notranslate"><span class="pre">ContextProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.createdAt"><code class="docutils literal notranslate"><span class="pre">ContextProperty.createdAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.datasetId"><code class="docutils literal notranslate"><span class="pre">ContextProperty.datasetId</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.modifiedAt"><code class="docutils literal notranslate"><span class="pre">ContextProperty.modifiedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.observedAt"><code class="docutils literal notranslate"><span class="pre">ContextProperty.observedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.type"><code class="docutils literal notranslate"><span class="pre">ContextProperty.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.unitCode"><code class="docutils literal notranslate"><span class="pre">ContextProperty.unitCode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.value"><code class="docutils literal notranslate"><span class="pre">ContextProperty.value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.check_property_type"><code class="docutils literal notranslate"><span class="pre">ContextProperty.check_property_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty.get_model_fields_set"><code class="docutils literal notranslate"><span class="pre">ContextProperty.get_model_fields_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship"><code class="docutils literal notranslate"><span class="pre">ContextRelationship</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship.datasetId"><code class="docutils literal notranslate"><span class="pre">ContextRelationship.datasetId</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship.object"><code class="docutils literal notranslate"><span class="pre">ContextRelationship.object</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship.observedAt"><code class="docutils literal notranslate"><span class="pre">ContextRelationship.observedAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship.type"><code class="docutils literal notranslate"><span class="pre">ContextRelationship.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship.check_relationship_type"><code class="docutils literal notranslate"><span class="pre">ContextRelationship.check_relationship_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.DataTypeLD"><code class="docutils literal notranslate"><span class="pre">DataTypeLD</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.DataTypeLD.GEOPROPERTY"><code class="docutils literal notranslate"><span class="pre">DataTypeLD.GEOPROPERTY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.DataTypeLD.PROPERTY"><code class="docutils literal notranslate"><span class="pre">DataTypeLD.PROPERTY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.DataTypeLD.RELATIONSHIP"><code class="docutils literal notranslate"><span class="pre">DataTypeLD.RELATIONSHIP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.MessageLD"><code class="docutils literal notranslate"><span class="pre">MessageLD</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.MessageLD.data"><code class="docutils literal notranslate"><span class="pre">MessageLD.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.MessageLD.subscriptionId"><code class="docutils literal notranslate"><span class="pre">MessageLD.subscriptionId</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextGeoProperty"><code class="docutils literal notranslate"><span class="pre">NamedContextGeoProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextGeoProperty.name"><code class="docutils literal notranslate"><span class="pre">NamedContextGeoProperty.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextProperty"><code class="docutils literal notranslate"><span class="pre">NamedContextProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextProperty.name"><code class="docutils literal notranslate"><span class="pre">NamedContextProperty.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextRelationship"><code class="docutils literal notranslate"><span class="pre">NamedContextRelationship</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextRelationship.name"><code class="docutils literal notranslate"><span class="pre">NamedContextRelationship.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.PropertyFormat"><code class="docutils literal notranslate"><span class="pre">PropertyFormat</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.PropertyFormat.DICT"><code class="docutils literal notranslate"><span class="pre">PropertyFormat.DICT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.PropertyFormat.LIST"><code class="docutils literal notranslate"><span class="pre">PropertyFormat.LIST</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.UpdateLD"><code class="docutils literal notranslate"><span class="pre">UpdateLD</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.UpdateLD.entities"><code class="docutils literal notranslate"><span class="pre">UpdateLD.entities</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.models.ngsi_ld.html#module-filip.models.ngsi_ld.subscriptions">filip.models.ngsi_ld.subscriptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint"><code class="docutils literal notranslate"><span class="pre">Endpoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.accept"><code class="docutils literal notranslate"><span class="pre">Endpoint.accept</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.notifierInfo"><code class="docutils literal notranslate"><span class="pre">Endpoint.notifierInfo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.receiverInfo"><code class="docutils literal notranslate"><span class="pre">Endpoint.receiverInfo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.uri"><code class="docutils literal notranslate"><span class="pre">Endpoint.uri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.check_notifier_info"><code class="docutils literal notranslate"><span class="pre">Endpoint.check_notifier_info</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.check_uri"><code class="docutils literal notranslate"><span class="pre">Endpoint.check_uri</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.EntityInfo"><code class="docutils literal notranslate"><span class="pre">EntityInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.EntityInfo.id"><code class="docutils literal notranslate"><span class="pre">EntityInfo.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.EntityInfo.idPattern"><code class="docutils literal notranslate"><span class="pre">EntityInfo.idPattern</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.EntityInfo.type"><code class="docutils literal notranslate"><span class="pre">EntityInfo.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.KeyValuePair"><code class="docutils literal notranslate"><span class="pre">KeyValuePair</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.KeyValuePair.key"><code class="docutils literal notranslate"><span class="pre">KeyValuePair.key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.KeyValuePair.value"><code class="docutils literal notranslate"><span class="pre">KeyValuePair.value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams"><code class="docutils literal notranslate"><span class="pre">NotificationParams</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.attributes"><code class="docutils literal notranslate"><span class="pre">NotificationParams.attributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.endpoint"><code class="docutils literal notranslate"><span class="pre">NotificationParams.endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.format"><code class="docutils literal notranslate"><span class="pre">NotificationParams.format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.lastFailure"><code class="docutils literal notranslate"><span class="pre">NotificationParams.lastFailure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.lastNotification"><code class="docutils literal notranslate"><span class="pre">NotificationParams.lastNotification</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.lastSuccess"><code class="docutils literal notranslate"><span class="pre">NotificationParams.lastSuccess</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.status"><code class="docutils literal notranslate"><span class="pre">NotificationParams.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams.timesSent"><code class="docutils literal notranslate"><span class="pre">NotificationParams.timesSent</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.csf"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.csf</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.description"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.entities"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.entities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.expiresAt"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.expiresAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.geoQ"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.geoQ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.id"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.isActive"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.isActive</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.lang"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.lang</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.notification"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.notification</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.notificationTrigger"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.notificationTrigger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.q"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.subscriptionName"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.subscriptionName</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.temporalQ"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.temporalQ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.throttling"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.throttling</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.timeInterval"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.timeInterval</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.type"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.watchedAttributes"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.watchedAttributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_q"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.check_q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling"><code class="docutils literal notranslate"><span class="pre">SubscriptionLD.check_throttling</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery"><code class="docutils literal notranslate"><span class="pre">TemporalQuery</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.endTimeAt"><code class="docutils literal notranslate"><span class="pre">TemporalQuery.endTimeAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.timeAt"><code class="docutils literal notranslate"><span class="pre">TemporalQuery.timeAt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.timeproperty"><code class="docutils literal notranslate"><span class="pre">TemporalQuery.timeproperty</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.timerel"><code class="docutils literal notranslate"><span class="pre">TemporalQuery.timerel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_passwords_match"><code class="docutils literal notranslate"><span class="pre">TemporalQuery.check_passwords_match</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri"><code class="docutils literal notranslate"><span class="pre">TemporalQuery.check_uri</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="filip.models.ngsi_ld.html#module-filip.models.ngsi_ld">Module contents</a></li>
 </ul>
 </li>

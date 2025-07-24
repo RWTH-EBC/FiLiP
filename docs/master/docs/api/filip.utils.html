@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.utils package &mdash; FiLiP 0.6.3 documentation</title>
+  <title>filip.utils package &mdash; FiLiP 0.7.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -47,28 +47,74 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">API Documentation</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="filip.clients.html">filip.clients package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="filip.models.html">filip.models package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="filip.semantics.html">filip.semantics package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">filip.utils package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils.cleanup">filip.utils.cleanup module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils.data">filip.utils.data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils.datetime">filip.utils.datetime module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils.geo_ql">filip.utils.geo_ql module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils.model_generation">filip.utils.model_generation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils.simple_ql">filip.utils.simple_ql module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils.validators">filip.utils.validators module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-filip.utils">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.html">filip.clients package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.models.html">filip.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.html">filip.semantics package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">filip.utils package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.cleanup">filip.utils.cleanup module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.cleanup.clean_test"><code class="docutils literal notranslate"><span class="pre">clean_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.cleanup.clear_all"><code class="docutils literal notranslate"><span class="pre">clear_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.cleanup.clear_context_broker"><code class="docutils literal notranslate"><span class="pre">clear_context_broker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.cleanup.clear_context_broker_ld"><code class="docutils literal notranslate"><span class="pre">clear_context_broker_ld()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.cleanup.clear_iot_agent"><code class="docutils literal notranslate"><span class="pre">clear_iot_agent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.cleanup.clear_quantumleap"><code class="docutils literal notranslate"><span class="pre">clear_quantumleap()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.data">filip.utils.data module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.data.load_datapackage"><code class="docutils literal notranslate"><span class="pre">load_datapackage()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-filip.config">filip.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#filip-types-module">filip.types module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-filip">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.datetime">filip.utils.datetime module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.datetime.convert_datetime_to_iso_8601_with_z_suffix"><code class="docutils literal notranslate"><span class="pre">convert_datetime_to_iso_8601_with_z_suffix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.datetime.transform_to_utc_datetime"><code class="docutils literal notranslate"><span class="pre">transform_to_utc_datetime()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.filter">filip.utils.filter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.filter.filter_device_list"><code class="docutils literal notranslate"><span class="pre">filter_device_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.filter.filter_group_list"><code class="docutils literal notranslate"><span class="pre">filter_group_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.filter.filter_subscriptions_by_entity"><code class="docutils literal notranslate"><span class="pre">filter_subscriptions_by_entity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.geo_ql">filip.utils.geo_ql module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.iot">filip.utils.iot module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.iot.filter_device_list"><code class="docutils literal notranslate"><span class="pre">filter_device_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.model_generation">filip.utils.model_generation module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.model_generation.create_context_entity_model"><code class="docutils literal notranslate"><span class="pre">create_context_entity_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.model_generation.create_data_model_file"><code class="docutils literal notranslate"><span class="pre">create_data_model_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.simple_ql">filip.utils.simple_ql module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.simple_ql.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.simple_ql.QueryStatement"><code class="docutils literal notranslate"><span class="pre">QueryStatement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.simple_ql.QueryString"><code class="docutils literal notranslate"><span class="pre">QueryString</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils.validators">filip.utils.validators module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.FiwareRegex"><code class="docutils literal notranslate"><span class="pre">FiwareRegex</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.ignore_none_input"><code class="docutils literal notranslate"><span class="pre">ignore_none_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.match_regex"><code class="docutils literal notranslate"><span class="pre">match_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_escape_character_free"><code class="docutils literal notranslate"><span class="pre">validate_escape_character_free()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_expression_language"><code class="docutils literal notranslate"><span class="pre">validate_expression_language()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_attribute_name_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_attribute_name_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_attribute_value_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_attribute_value_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_datatype_standard"><code class="docutils literal notranslate"><span class="pre">validate_fiware_datatype_standard()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_datatype_string_protect"><code class="docutils literal notranslate"><span class="pre">validate_fiware_datatype_string_protect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_service"><code class="docutils literal notranslate"><span class="pre">validate_fiware_service()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_service_path"><code class="docutils literal notranslate"><span class="pre">validate_fiware_service_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_standard_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_standard_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_fiware_string_protect_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_string_protect_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_http_url"><code class="docutils literal notranslate"><span class="pre">validate_http_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_jexl_expression"><code class="docutils literal notranslate"><span class="pre">validate_jexl_expression()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_mqtt_topic"><code class="docutils literal notranslate"><span class="pre">validate_mqtt_topic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.utils.validators.validate_mqtt_url"><code class="docutils literal notranslate"><span class="pre">validate_mqtt_url()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-filip.utils">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
@@ -299,9 +345,94 @@ filip.data named by the &lt;filename&gt;.hdf.</p>
 </dd></dl>
 
 </section>
+<section id="module-filip.utils.filter">
+<span id="filip-utils-filter-module"></span><h2>filip.utils.filter module<a class="headerlink" href="#module-filip.utils.filter" title="Permalink to this heading"></a></h2>
+<p>Filter functions to keep client code clean and easy to use.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.filter.filter_device_list">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.filter.</span></span><span class="sig-name descname"><span class="pre">filter_device_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/filter.html#filter_device_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.filter.filter_device_list" title="Permalink to this definition"></a></dt>
+<dd><p>Filter the given device list based on conditions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>devices</strong> – device list that need to be filtered</p></li>
+<li><p><strong>device_ids</strong> – A list of device_id as filter condition</p></li>
+<li><p><strong>entity_names</strong> – A list of entity_name (e.g. entity_id) as filter condition.</p></li>
+<li><p><strong>entity_types</strong> – A list of entity_type as filter condition</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matching devices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.filter.filter_group_list">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.filter.</span></span><span class="sig-name descname"><span class="pre">filter_group_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikeys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/filter.html#filter_group_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.filter.filter_group_list" title="Permalink to this definition"></a></dt>
+<dd><p>Filter service group based on resource and apikey.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group_list</strong> – The list of service groups that need to be filtered</p></li>
+<li><p><strong>resources</strong> – see ServiceGroup model</p></li>
+<li><p><strong>apikeys</strong> – see ServiceGroup</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: a single service group or Not Found Error</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.filter.filter_subscriptions_by_entity">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.filter.</span></span><span class="sig-name descname"><span class="pre">filter_subscriptions_by_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subscriptions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Subscription" title="filip.models.ngsi_v2.subscriptions.Subscription"><span class="pre">Subscription</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Subscription" title="filip.models.ngsi_v2.subscriptions.Subscription"><span class="pre">Subscription</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/filter.html#filter_subscriptions_by_entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.filter.filter_subscriptions_by_entity" title="Permalink to this definition"></a></dt>
+<dd><p>Function that filters subscriptions based on the entity id or id pattern
+and entity type or type pattern. The function can be used in two ways,
+wither pass list of subscriptions to filter based on entity or directly pass
+client information to filter subscriptions in a single request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity_id</strong> – Id of the entity to be matched</p></li>
+<li><p><strong>entity_type</strong> – Type of the entity to be matched</p></li>
+<li><p><strong>url</strong> – Url of the context broker service</p></li>
+<li><p><strong>fiware_header</strong> – Fiware header of the tenant</p></li>
+<li><p><strong>subscriptions</strong> – List of subscriptions to filter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of subscriptions by entity</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-filip.utils.geo_ql">
 <span id="filip-utils-geo-ql-module"></span><h2>filip.utils.geo_ql module<a class="headerlink" href="#module-filip.utils.geo_ql" title="Permalink to this heading"></a></h2>
 <p>Implementation of geo query language</p>
+</section>
+<section id="module-filip.utils.iot">
+<span id="filip-utils-iot-module"></span><h2>filip.utils.iot module<a class="headerlink" href="#module-filip.utils.iot" title="Permalink to this heading"></a></h2>
+<p>Helper functions to handle the devices related with the IoT Agent</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.iot.filter_device_list">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.iot.</span></span><span class="sig-name descname"><span class="pre">filter_device_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/iot.html#filter_device_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.iot.filter_device_list" title="Permalink to this definition"></a></dt>
+<dd><p>Filter the given device list based on conditions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>devices</strong> – device list that need to be filtered</p></li>
+<li><p><strong>device_ids</strong> – A list of device_id as filter condition</p></li>
+<li><p><strong>entity_names</strong> – A list of entity_name (e.g. entity_id) as filter condition.</p></li>
+<li><p><strong>entity_types</strong> – A list of entity_type as filter condition</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matching devices</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-filip.utils.model_generation">
 <span id="filip-utils-model-generation-module"></span><h2>filip.utils.model_generation module<a class="headerlink" href="#module-filip.utils.model_generation" title="Permalink to this heading"></a></h2>

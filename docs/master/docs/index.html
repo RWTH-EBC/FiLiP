@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FiLiP &mdash; FiLiP 0.6.3 documentation</title>
+  <title>FiLiP &mdash; FiLiP 0.7.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -69,7 +69,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id21">Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#running-examples">Running examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#authors">Authors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#alumni">Alumni</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
@@ -383,10 +383,11 @@ IoT Devices and store historic data.</p>
 To test the source code of the library in our CI workflow, the CI
 executes all tests located in the <code class="docutils literal notranslate"><span class="pre">tests</span></code>-directory and prefixed with <code class="docutils literal notranslate"><span class="pre">test_</span></code> .</p>
 </section>
-<section id="how-to-contribute">
-<h2>How to contribute<a class="headerlink" href="#how-to-contribute" title="Permalink to this heading"></a></h2>
-<p>Please see our <a class="reference external" href="./CONTRIBUTING.md">contribution guide</a> for more details on
-how you can contribute to this project.</p>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h2>
+<p>The best way to report a bug or request a new feature is to open an issue. Please use one of the available issue templates and provide as much detail as possible.</p>
+<p>We warmly welcome code contributions! If you’re planning to contribute, please first read our <a class="reference external" href="./CONTRIBUTING.md">Contribution Guide</a> for details on our development workflow, coding standards, and how to submit a pull request.</p>
+<p>For other inquiries, you can still contact us via <a class="reference external" href="mailto:ebc-tools&#37;&#52;&#48;eonerc&#46;rwth-aachen&#46;de">ebc-tools<span>&#64;</span>eonerc<span>&#46;</span>rwth-aachen<span>&#46;</span>de</a>.</p>
 </section>
 <section id="authors">
 <h2>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h2>
@@ -394,7 +395,6 @@ how you can contribute to this project.</p>
 <li><p><a class="reference external" href="https://github.com/tstorek">Thomas Storek</a></p></li>
 <li><p><a class="reference external" href="https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/">Junsong Du</a> (corresponding)</p></li>
 <li><p><a class="reference external" href="https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/">Saira Bano</a></p></li>
-<li><p><a class="reference external" href="https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Team2/~carjd/Blechmann-Sebastian/">Sebastian Blechmann</a></p></li>
 </ul>
 </section>
 <section id="alumni">
@@ -403,11 +403,27 @@ how you can contribute to this project.</p>
 <li><p>Jeff Reding</p></li>
 <li><p>Felix Rehmann</p></li>
 <li><p>Daniel Nikolay</p></li>
+<li><p>Sebastian Blechmann</p></li>
 </ul>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this heading"></a></h2>
-<p>We presented or applied the library in the following publications:</p>
+<p>If you use FiLiP in your work, please cite the JOSS paper:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Storek2024</span><span class="p">,</span>
+<span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.21105/joss.06953}</span><span class="p">,</span>
+<span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.21105/joss.06953}</span><span class="p">,</span>
+<span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2024}</span><span class="p">,</span>
+<span class="na">publisher</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{The Open Journal}</span><span class="p">,</span>
+<span class="na">volume</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{9}</span><span class="p">,</span>
+<span class="na">number</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{101}</span><span class="p">,</span>
+<span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{6953}</span><span class="p">,</span>
+<span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Storek, Thomas and Du, Junsong and Blechmann, Sebastian and Streblow, Rita and Müller, Dirk}</span><span class="p">,</span>
+<span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{FiLiP: A python software development kit (SDK) for accelerating the development of services based on FIWARE IoT platform}</span><span class="p">,</span>
+<span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Journal of Open Source Software}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We also want to refer to publications that presented or applied the library:</p>
 <ul class="simple">
 <li><ol class="upperalpha simple" start="19">
 <li><p>Blechmann, I. Sowa, M. H. Schraven, R. Streblow, D. Müller &amp; A. Monti. Open source platform application for smart building and smart grid controls. Automation in Construction 145 (2023), 104622. ISSN: 0926-5805. <a class="reference external" href="https://doi.org/10.1016/j.autcon.2022.104622">https://doi.org/10.1016/j.autcon.2022.104622</a></p></li>

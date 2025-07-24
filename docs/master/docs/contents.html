@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation for FILiP &mdash; FiLiP 0.6.3 documentation</title>
+  <title>Documentation for FILiP &mdash; FiLiP 0.7.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -106,7 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="index.html#id21">Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#running-examples">Running examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#testing">Testing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#how-to-contribute">How to contribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#contributing">Contributing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#authors">Authors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#alumni">Alumni</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#references">References</a></li>
@@ -118,61 +118,132 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/index.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/filip.clients.html">filip.clients package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.html#module-filip.clients.base_http_client">filip.clients.base_http_client module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.html#module-filip.clients">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/filip.clients.html">filip.clients package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.clients.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.mqtt.html">filip.clients.mqtt package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.ngsi_ld.html">filip.clients.ngsi_ld package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.ngsi_v2.html">filip.clients.ngsi_v2 package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/filip.models.html">filip.models package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#module-filip.models.base">filip.models.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#module-filip.models.mqtt">filip.models.mqtt module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#module-filip.models">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.clients.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.clients.html#module-filip.clients.base_http_client">filip.clients.base_http_client module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.html#filip.clients.base_http_client.BaseHttpClient"><code class="docutils literal notranslate"><span class="pre">BaseHttpClient</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.html#filip.clients.base_http_client.NgsiURLVersion"><code class="docutils literal notranslate"><span class="pre">NgsiURLVersion</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/filip.semantics.html">filip.semantics package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#filip-semantics-semantics-manager-module">filip.semantics.semantics_manager module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#filip-semantics-semantics-models-module">filip.semantics.semantics_models module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#module-filip.semantics.vocabulary_configurator">filip.semantics.vocabulary_configurator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#module-filip.semantics">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.clients.html#module-filip.clients.exceptions">filip.clients.exceptions module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.clients.html#filip.clients.exceptions.BaseHttpClientException"><code class="docutils literal notranslate"><span class="pre">BaseHttpClientException</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html">filip.utils package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.cleanup">filip.utils.cleanup module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.data">filip.utils.data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.datetime">filip.utils.datetime module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.geo_ql">filip.utils.geo_ql module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.model_generation">filip.utils.model_generation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.simple_ql">filip.utils.simple_ql module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.validators">filip.utils.validators module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#module-filip.utils">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.clients.html#module-filip.clients">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="api/filip.models.html">filip.models package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.models.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.ngsi_ld.html">filip.models.ngsi_ld package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.ngsi_v2.html">filip.models.ngsi_v2 package</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/index.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/index.html#module-filip.config">filip.config module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/index.html#filip.config.Settings"><code class="docutils literal notranslate"><span class="pre">Settings</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/index.html#filip.config.Settings.CB_URL"><code class="docutils literal notranslate"><span class="pre">Settings.CB_URL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/index.html#filip.config.Settings.FIWARE_SERVICE"><code class="docutils literal notranslate"><span class="pre">Settings.FIWARE_SERVICE</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/index.html#filip.config.Settings.IOTA_URL"><code class="docutils literal notranslate"><span class="pre">Settings.IOTA_URL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/index.html#filip.config.Settings.LD_CB_URL"><code class="docutils literal notranslate"><span class="pre">Settings.LD_CB_URL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/index.html#filip.config.Settings.LD_MQTT_BROKER_URL"><code class="docutils literal notranslate"><span class="pre">Settings.LD_MQTT_BROKER_URL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/index.html#filip.config.Settings.MQTT_BROKER_URL"><code class="docutils literal notranslate"><span class="pre">Settings.MQTT_BROKER_URL</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/index.html#filip.config.Settings.QL_URL"><code class="docutils literal notranslate"><span class="pre">Settings.QL_URL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.models.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.models.html#module-filip.models.base">filip.models.base module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.base.DataType"><code class="docutils literal notranslate"><span class="pre">DataType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.base.FiwareHeader"><code class="docutils literal notranslate"><span class="pre">FiwareHeader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.base.FiwareHeaderSecure"><code class="docutils literal notranslate"><span class="pre">FiwareHeaderSecure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.base.FiwareLDHeader"><code class="docutils literal notranslate"><span class="pre">FiwareLDHeader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.base.LogLevel"><code class="docutils literal notranslate"><span class="pre">LogLevel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.base.NgsiVersion"><code class="docutils literal notranslate"><span class="pre">NgsiVersion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.base.PaginationMethod"><code class="docutils literal notranslate"><span class="pre">PaginationMethod</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.models.html#module-filip.models.mqtt">filip.models.mqtt module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.models.html#filip.models.mqtt.IoTAMQTTMessageType"><code class="docutils literal notranslate"><span class="pre">IoTAMQTTMessageType</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/index.html#filip-types-module">filip.types module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/index.html#module-filip">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.models.html#module-filip.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/filip.semantics.html">filip.semantics package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.semantics.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.ontology_parser.html">filip.semantics.ontology_parser package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.vocabulary.html">filip.semantics.vocabulary package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.semantics.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.semantics.html#filip-semantics-semantics-manager-module">filip.semantics.semantics_manager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.semantics.html#filip-semantics-semantics-models-module">filip.semantics.semantics_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.semantics.html#module-filip.semantics.vocabulary_configurator">filip.semantics.vocabulary_configurator module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#filip.semantics.vocabulary_configurator.ParsingException"><code class="docutils literal notranslate"><span class="pre">ParsingException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.semantics.html#filip.semantics.vocabulary_configurator.VocabularyConfigurator"><code class="docutils literal notranslate"><span class="pre">VocabularyConfigurator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.semantics.html#module-filip.semantics">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/filip.utils.html">filip.utils package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.cleanup">filip.utils.cleanup module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.cleanup.clean_test"><code class="docutils literal notranslate"><span class="pre">clean_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.cleanup.clear_all"><code class="docutils literal notranslate"><span class="pre">clear_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.cleanup.clear_context_broker"><code class="docutils literal notranslate"><span class="pre">clear_context_broker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.cleanup.clear_context_broker_ld"><code class="docutils literal notranslate"><span class="pre">clear_context_broker_ld()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.cleanup.clear_iot_agent"><code class="docutils literal notranslate"><span class="pre">clear_iot_agent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.cleanup.clear_quantumleap"><code class="docutils literal notranslate"><span class="pre">clear_quantumleap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.data">filip.utils.data module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.data.load_datapackage"><code class="docutils literal notranslate"><span class="pre">load_datapackage()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.datetime">filip.utils.datetime module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.datetime.convert_datetime_to_iso_8601_with_z_suffix"><code class="docutils literal notranslate"><span class="pre">convert_datetime_to_iso_8601_with_z_suffix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.datetime.transform_to_utc_datetime"><code class="docutils literal notranslate"><span class="pre">transform_to_utc_datetime()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.filter">filip.utils.filter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.filter.filter_device_list"><code class="docutils literal notranslate"><span class="pre">filter_device_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.filter.filter_group_list"><code class="docutils literal notranslate"><span class="pre">filter_group_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.filter.filter_subscriptions_by_entity"><code class="docutils literal notranslate"><span class="pre">filter_subscriptions_by_entity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.geo_ql">filip.utils.geo_ql module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.iot">filip.utils.iot module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.iot.filter_device_list"><code class="docutils literal notranslate"><span class="pre">filter_device_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.model_generation">filip.utils.model_generation module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.model_generation.create_context_entity_model"><code class="docutils literal notranslate"><span class="pre">create_context_entity_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.model_generation.create_data_model_file"><code class="docutils literal notranslate"><span class="pre">create_data_model_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.simple_ql">filip.utils.simple_ql module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.simple_ql.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.simple_ql.QueryStatement"><code class="docutils literal notranslate"><span class="pre">QueryStatement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.simple_ql.QueryString"><code class="docutils literal notranslate"><span class="pre">QueryString</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils.validators">filip.utils.validators module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.FiwareRegex"><code class="docutils literal notranslate"><span class="pre">FiwareRegex</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.ignore_none_input"><code class="docutils literal notranslate"><span class="pre">ignore_none_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.match_regex"><code class="docutils literal notranslate"><span class="pre">match_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_escape_character_free"><code class="docutils literal notranslate"><span class="pre">validate_escape_character_free()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_expression_language"><code class="docutils literal notranslate"><span class="pre">validate_expression_language()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_attribute_name_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_attribute_name_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_attribute_value_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_attribute_value_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_datatype_standard"><code class="docutils literal notranslate"><span class="pre">validate_fiware_datatype_standard()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_datatype_string_protect"><code class="docutils literal notranslate"><span class="pre">validate_fiware_datatype_string_protect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_service"><code class="docutils literal notranslate"><span class="pre">validate_fiware_service()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_service_path"><code class="docutils literal notranslate"><span class="pre">validate_fiware_service_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_standard_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_standard_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_fiware_string_protect_regex"><code class="docutils literal notranslate"><span class="pre">validate_fiware_string_protect_regex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_http_url"><code class="docutils literal notranslate"><span class="pre">validate_http_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_jexl_expression"><code class="docutils literal notranslate"><span class="pre">validate_jexl_expression()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_mqtt_topic"><code class="docutils literal notranslate"><span class="pre">validate_mqtt_topic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/filip.utils.html#filip.utils.validators.validate_mqtt_url"><code class="docutils literal notranslate"><span class="pre">validate_mqtt_url()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/filip.utils.html#module-filip.utils">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
@@ -199,7 +270,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="about/index.html">About FiLiP</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="about/history.html">Version History</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="about/history.html#v0-6-x">v0.6.x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="about/history.html#v0-7-0">v0.7.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="about/history.html#v0-6-3">v0.6.3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="about/history.html#v0-6-2">v0.6.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="about/history.html#v0-6-1">v0.6.1</a></li>
