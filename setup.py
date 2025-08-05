@@ -73,7 +73,7 @@ setuptools.setup(
         "semantics": ["igraph~=0.11.2"],
         "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
-        ":python_version >= '3.9'": ["pandas>=2.1.4,<2.3.0"],
+        ":python_version >= '3.9'": ["pandas>=2.1.4,<2.4.0"],
     },
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.8",
