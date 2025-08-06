@@ -163,7 +163,7 @@ This would mean an unnecessary development overhead.
 Therefore, FiLiP currently only covers the APIs of the following GEs:
 
 - NGSIv2 Context Broker for managing context data. We use its 
-  reference implementation ORION for testing.
+  reference implementation ORION for testing. There is also warning in Filip if you are using an old version of ORION which could have breaking changes.
     - [documentation](https://fiware-orion.readthedocs.io/en/master/)
     - [github](https://github.com/telefonicaid/fiware-orion)
     - [swagger](https://swagger.lab.fiware.org/)
