@@ -65,9 +65,7 @@ class Settings(BaseSettings):
         default="filip", validation_alias=AliasChoices("FIWARE_SERVICE")
     )
 
-    MINIMUM_ORION_VERSION: str = Field(
-        default="3.6.0", validation_alias=AliasChoices("MINIMUM_ORION_VERSION")
-    )
+    MINIMUM_ORION_VERSION: str = "3.6.0"
 
 
 # create settings object
