@@ -1,20 +1,12 @@
 How to run tests
 ================
-We implement our test using Python unittests.
-Currently, we do not have automatic testing in our CI.
-This is still work in progress.
-However, we do testing locally.
-Easiest way to run out implemented tests to follow this instructions
+We use Python's `unittest` framework for implementing our tests, with Continuous Integration (CI) set up to automate the testing process.
+While CI ensures all tests are run automatically, it may take some time to complete.
+For quicker feedback during development, we recommend that developers run tests locally.
+
+To run the tests locally, follow these simple steps:
 
 1. clone the repo
-2. prepare and `.env.filip` file with the following content:
-
-```
-CB_URL="http://yourContextBrokerHost:Port"
-IOTA_URL="http://yourIoTAgentHost:Port"
-QL_URL="http://yourQuantumleapHost:Port"
-```  
-
-3. Put the file next to the testing scenarios
-4. Run the files in the development environment of your choice
-
+2. prepare `.env` file from the `TEMPLATE_ENV`
+3. Put the file under this folder, i.e., "tests"
+4. Run tests in the development environment of your choice

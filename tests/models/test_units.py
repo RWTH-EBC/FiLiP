@@ -1,13 +1,9 @@
 """
 Test for filip.models.units
 """
+
 from unittest import TestCase
-from filip.models.ngsi_v2.units import \
-    Unit, \
-    Units, \
-    UnitCode, \
-    UnitText, \
-    load_units
+from filip.models.ngsi_v2.units import Unit, Units, UnitCode, UnitText, load_units
 
 
 class TestUnitCodes(TestCase):
@@ -15,8 +11,7 @@ class TestUnitCodes(TestCase):
     def setUp(self):
         self.units_data = load_units()
         self.units = Units()
-        self.unit = {"code": "C58",
-                     "name": "newton second per metre"}
+        self.unit = {"code": "C58", "name": "newton second per metre"}
 
     def test_unit_code(self):
         """
@@ -43,7 +38,8 @@ class TestUnitCodes(TestCase):
             None
         """
         unit = Unit(**self.unit)
-        unit_from_json = Unit.parse_raw(unit.json(by_alias=True))
+        json_data = unit.model_dump_json(by_alias=False)
+        unit_from_json = Unit.model_validate_json(json_data=json_data)
         self.assertEqual(unit, unit_from_json)
 
     def test_units(self):
@@ -56,8 +52,7 @@ class TestUnitCodes(TestCase):
         units = Units()
         self.assertEqual(self.units_data.Name.to_list(), units.keys())
         self.assertEqual(self.units_data.Name.to_list(), units.names)
-        self.assertEqual(self.units_data.CommonCode.to_list(),
-                         units.keys(by_code=True))
+        self.assertEqual(self.units_data.CommonCode.to_list(), units.keys(by_code=True))
         self.assertEqual(self.units_data.CommonCode.to_list(), units.codes)
 
         # check get or __getitem__, respectively
@@ -69,8 +64,7 @@ class TestUnitCodes(TestCase):
 
         # check serialization
         for v in units.values():
-            v.json(indent=2)
-
+            v.model_dump_json(indent=2)
 
     def test_unit_validator(self):
         """
@@ -79,7 +73,6 @@ class TestUnitCodes(TestCase):
             None
         """
         unit_data = self.unit.copy()
-        unit_data['name'] = "celcius"
+        unit_data["name"] = "celcius"
         with self.assertRaises(ValueError):
             Unit(**unit_data)
-

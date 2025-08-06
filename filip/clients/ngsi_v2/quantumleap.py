@@ -1,27 +1,32 @@
 """
 TimeSeries Module for QuantumLeap API Client
 """
+
 import logging
 import time
 from math import inf
 from collections import deque
-from itertools import count
+from itertools import count, chain
 from typing import Dict, List, Union, Deque, Optional
 from urllib.parse import urljoin
 import requests
-from pydantic import parse_obj_as, AnyHttpUrl
+from pydantic import AnyHttpUrl
+from pydantic.type_adapter import TypeAdapter
 from filip import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.subscriptions import Message
-from filip.models.ngsi_v2.timeseries import \
-    AggrPeriod, \
-    AggrMethod, \
-    AggrScope, \
-    AttributeValues, \
-    TimeSeries, \
-    TimeSeriesHeader
-from filip.utils.validators import validate_http_url
+from filip.models.ngsi_ld.context import MessageLD
+from filip.models.ngsi_v2.timeseries import (
+    AggrPeriod,
+    AggrMethod,
+    AggrScope,
+    AttributeValues,
+    TimeSeries,
+    TimeSeriesHeader,
+)
+from filip.clients.exceptions import BaseHttpClientException
+
 
 logger = logging.getLogger(__name__)
 
@@ -41,18 +46,19 @@ class QuantumLeapClient(BaseHttpClient):
         **kwargs:
     """
 
-    def __init__(self,
-                 url: str = None,
-                 *,
-                 session: requests.Session = None,
-                 fiware_header: FiwareHeader = None,
-                 **kwargs):
+    def __init__(
+        self,
+        url: str = None,
+        *,
+        session: requests.Session = None,
+        fiware_header: FiwareHeader = None,
+        **kwargs,
+    ):
         # set service url
         url = url or settings.QL_URL
-        super().__init__(url=url,
-                         session=session,
-                         fiware_header=fiware_header,
-                         **kwargs)
+        super().__init__(
+            url=url, session=session, fiware_header=fiware_header, **kwargs
+        )
 
     # META API ENDPOINTS
     def get_version(self) -> Dict:
@@ -62,15 +68,17 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/version')
+        url = urljoin(self.base_url, "version")
         try:
-            res = self.get(url=url)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(
+                message=err.response, response=err.response
+            ) from err
 
     def get_health(self) -> Dict:
         """
@@ -85,15 +93,17 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, '/health')
+        url = urljoin(self.base_url, "health")
         try:
-            res = self.get(url=url)
+            res = self.get(url=url, headers=self.headers)
             if res.ok:
                 return res.json()
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             self.logger.error(err)
-            raise
+            raise BaseHttpClientException(
+                message=err.response.text, response=err.response
+            ) from err
 
     def post_config(self):
         """
@@ -103,51 +113,47 @@ class QuantumLeapClient(BaseHttpClient):
         raise NotImplementedError("Endpoint to be implemented..")
 
     # INPUT API ENDPOINTS
-    def post_notification(self, notification: Message):
+    def post_notification(self, notification: Union[Message, MessageLD]):
         """
         Notify QuantumLeap the arrival of a new NGSI notification.
 
         Args:
             notification: Notification Message Object
         """
-        url = urljoin(self.base_url, '/v2/notify')
+        url = urljoin(self.base_url, "v2/notify")
         headers = self.headers.copy()
         data = []
         for entity in notification.data:
-            data.append(entity.dict(exclude_unset=True,
-                                    exclude_defaults=True,
-                                    exclude_none=True))
-        data_set = {
-            "data": data,
-            "subscriptionId": notification.subscriptionId
-        }
+            data.append(entity.model_dump(exclude_none=True))
+        data_set = {"data": data, "subscriptionId": notification.subscriptionId}
 
         try:
-            res = self.post(
-                url=url,
-                headers=headers,
-                json=data_set)
+            res = self.post(url=url, headers=headers, json=data_set)
             if res.ok:
                 self.logger.debug(res.text)
             else:
                 res.raise_for_status()
         except requests.exceptions.RequestException as err:
-            msg = f"Could not post notification for subscription id " \
-                  f"{notification.subscriptionId}"
+            msg = (
+                f"Could not post notification for subscription id "
+                f"{notification.subscriptionId}"
+            )
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
-    def post_subscription(self,
-                          cb_url: Union[AnyHttpUrl, str],
-                          ql_url: Union[AnyHttpUrl, str],
-                          entity_type: str = None,
-                          entity_id: str = None,
-                          id_pattern: str = None,
-                          attributes: str = None,
-                          observed_attributes: str = None,
-                          notified_attributes: str = None,
-                          throttling: int = None,
-                          time_index_attribute: str = None):
+    def post_subscription(
+        self,
+        cb_url: Union[AnyHttpUrl, str],
+        ql_url: Union[AnyHttpUrl, str],
+        entity_type: str = None,
+        entity_id: str = None,
+        id_pattern: str = None,
+        attributes: str = None,
+        observed_attributes: str = None,
+        notified_attributes: str = None,
+        throttling: int = None,
+        time_index_attribute: str = None,
+    ):
         """
         Subscribe QL to process Orion notifications of certain type.
         This endpoint simplifies the creation of the subscription in orion
@@ -185,51 +191,13 @@ class QuantumLeapClient(BaseHttpClient):
                 used as a
             time index.
         """
-        headers = self.headers.copy()
-        params = {}
-        url = urljoin(self.base_url, '/v2/subscribe')
-        validate_http_url(cb_url)
-        cb_url = urljoin(cb_url, '/v2')
-        params.update({'orionUrl': cb_url.encode('utf-8')})
+        raise DeprecationWarning(
+            "Subscription endpoint of Quantumleap API is "
+            "deprecated, use the ORION subscription endpoint "
+            "instead"
+        )
 
-        validate_http_url(ql_url)
-        ql_url = urljoin(ql_url, '/v2')
-        params.update({'quantumleapUrl': ql_url.encode('utf-8')})
-
-        if entity_type:
-            params.update({'entityType': entity_type})
-        if entity_id:
-            params.update({'entityId': entity_id})
-        if id_pattern:
-            params.update({'idPattern': id_pattern})
-        if attributes:
-            params.update({'attributes': attributes})
-        if observed_attributes:
-            params.update({'observedAttributes': observed_attributes})
-        if notified_attributes:
-            params.update({'notifiedAttributes': notified_attributes})
-        if throttling or throttling == 0:
-            if throttling >= 0 and type(throttling) == int:
-                params.update({'throttling': throttling})
-            else:
-                raise TypeError("Throttling must be a positive integer or zero")
-        if time_index_attribute:
-            params.update({'timeIndexAttribute': time_index_attribute})
-
-        try:
-            res = self.post(url=url, headers=headers, params=params)
-            if res.ok:
-                msg = "Subscription created successfully!"
-                self.logger.info(msg)
-
-            res.raise_for_status()
-        except requests.exceptions.RequestException as err:
-            msg = "Could not create subscription."
-            self.log_error(err=err, msg=msg)
-            raise
-
-    def delete_entity(self, entity_id: str,
-                      entity_type: Optional[str] = None) -> str:
+    def delete_entity(self, entity_id: str, entity_type: Optional[str] = None) -> str:
         """
         Given an entity (with type and id), delete all its historical records.
 
@@ -245,10 +213,10 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             The entity_id of entity that is deleted.
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
+        url = urljoin(self.base_url, f"v2/entities/{entity_id}")
         headers = self.headers.copy()
         if entity_type is not None:
-            params = {'type': entity_type}
+            params = {"type": entity_type}
         else:
             params = {}
 
@@ -262,13 +230,11 @@ class QuantumLeapClient(BaseHttpClient):
         while counter < 10:
             self.delete(url=url, headers=headers, params=params)
             try:
-                self.get_entity_by_id(entity_id=entity_id,
-                                      entity_type=entity_type)
+                self.get_entity_by_id(entity_id=entity_id, entity_type=entity_type)
             except requests.exceptions.RequestException as err:
-                self.logger.info("Entity id '%s' successfully deleted!",
-                                 entity_id)
+                self.logger.info("Entity id '%s' successfully deleted!", entity_id)
                 return entity_id
-            time.sleep(counter*5)
+            time.sleep(counter * 5)
             counter += 1
 
         msg = f"Could not delete QL entity of id {entity_id}"
@@ -284,40 +250,43 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Entity type of the entities deleted.
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}')
+        url = urljoin(self.base_url, f"v2/types/{entity_type}")
         headers = self.headers.copy()
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
-                self.logger.info("Entities of type '%s' successfully deleted!",
-                                 entity_type)
+                self.logger.info(
+                    "Entities of type '%s' successfully deleted!", entity_type
+                )
                 return entity_type
             res.raise_for_status()
         except requests.exceptions.RequestException as err:
             msg = f"Could not delete entities of type {entity_type}"
             self.log_error(err=err, msg=msg)
-            raise
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     # QUERY API ENDPOINTS
-    def __query_builder(self,
-                        url,
-                        *,
-                        entity_id: str = None,
-                        options: str = None,
-                        entity_type: str = None,
-                        aggr_method: Union[str, AggrMethod] = None,
-                        aggr_period: Union[str, AggrPeriod] = None,
-                        from_date: str = None,
-                        to_date: str = None,
-                        last_n: int = None,
-                        limit: int = 10000,
-                        offset: int = 0,
-                        georel: str = None,
-                        geometry: str = None,
-                        coords: str = None,
-                        attrs: str = None,
-                        aggr_scope: Union[str, AggrScope] = None
-                        ) -> Deque[Dict]:
+    def __query_builder(
+        self,
+        url,
+        *,
+        entity_id: str = None,
+        id_pattern: str = None,
+        options: str = None,
+        entity_type: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = 0,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        attrs: str = None,
+        aggr_scope: Union[str, AggrScope] = None,
+    ) -> Deque[Dict]:
         """
         Private Function to call respective API endpoints, chops large
         requests into multiple single requests and merges the
@@ -345,10 +314,17 @@ class QuantumLeapClient(BaseHttpClient):
             coords:
             attrs:
             aggr_scope:
+            id_pattern (str): The pattern covering the entity ids for which
+                to subscribe. The pattern follow regular expressions (POSIX
+                Extendede) e.g. ".*", "Room.*". Detail information:
+                https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions
 
         Returns:
             Dict
         """
+        assert (
+            id_pattern is None or entity_id is None
+        ), "Cannot have both id and idPattern as parameter."
         params = {}
         headers = self.headers.copy()
         max_records_per_request = 10000
@@ -356,19 +332,19 @@ class QuantumLeapClient(BaseHttpClient):
         res_q: Deque[Dict] = deque([])
 
         if options:
-            params.update({'options': options})
+            params.update({"options": options})
         if entity_type:
-            params.update({'type': entity_type})
+            params.update({"type": entity_type})
         if aggr_method:
             aggr_method = AggrMethod(aggr_method)
-            params.update({'aggrMethod': aggr_method.value})
+            params.update({"aggrMethod": aggr_method.value})
         if aggr_period:
             aggr_period = AggrPeriod(aggr_period)
-            params.update({'aggrPeriod': aggr_period.value})
+            params.update({"aggrPeriod": aggr_period.value})
         if from_date:
-            params.update({'fromDate': from_date})
+            params.update({"fromDate": from_date})
         if to_date:
-            params.update({'toDate': to_date})
+            params.update({"toDate": to_date})
         # These values are required for the integrated pagination mechanism
         # maximum items per request
         if limit is None:
@@ -376,38 +352,40 @@ class QuantumLeapClient(BaseHttpClient):
         if offset is None:
             offset = 0
         if georel:
-            params.update({'georel': georel})
+            params.update({"georel": georel})
         if coords:
-            params.update({'coords': coords})
+            params.update({"coords": coords})
         if geometry:
-            params.update({'geometry': geometry})
+            params.update({"geometry": geometry})
         if attrs:
-            params.update({'attrs': attrs})
+            params.update({"attrs": attrs})
         if aggr_scope:
             aggr_scope = AggrScope(aggr_scope)
-            params.update({'aggr_scope': aggr_scope.value})
+            params.update({"aggr_scope": aggr_scope.value})
         if entity_id:
-            params.update({'id': entity_id})
+            params.update({"id": entity_id})
+        if id_pattern:
+            params.update({"idPattern": id_pattern})
 
         # This loop will chop large requests into smaller junks.
         # The individual functions will then merge the final response models
         for i in count(0, max_records_per_request):
             try:
-                params['offset'] = offset + i
+                params["offset"] = offset + i
 
-                params['limit'] = min(limit - i, max_records_per_request)
-                if params['limit'] <= 0:
+                params["limit"] = min(limit - i, max_records_per_request)
+                if params["limit"] <= 0:
                     break
 
                 if last_n:
-                    params['lastN'] = min(last_n - i, max_records_per_request)
-                    if params['lastN'] <= 0:
+                    params["lastN"] = min(last_n - i, max_records_per_request)
+                    if params["lastN"] <= 0:
                         break
 
                 res = self.get(url=url, params=params, headers=headers)
 
                 if res.ok:
-                    self.logger.debug('Received: %s', res.json())
+                    self.logger.debug("Received: %s", res.json())
 
                     # revert append direction when using last_n
                     if last_n:
@@ -417,26 +395,33 @@ class QuantumLeapClient(BaseHttpClient):
                 res.raise_for_status()
 
             except requests.exceptions.RequestException as err:
-                if err.response.status_code == 404 and \
-                        err.response.json().get('error') == 'Not Found' and \
-                        len(res_q) > 0:
+                if (
+                    err.response.status_code == 404
+                    and err.response.json().get("error") == "Not Found"
+                    and len(res_q) > 0
+                ):
                     break
                 else:
                     msg = "Could not load entity data"
                     self.log_error(err=err, msg=msg)
-                    raise
+                    raise BaseHttpClientException(
+                        message=msg, response=err.response
+                    ) from err
 
         self.logger.info("Successfully retrieved entity data")
         return res_q
 
     # v2/entities
-    def get_entities(self, *,
-                     entity_type: str = None,
-                     from_date: str = None,
-                     to_date: str = None,
-                     limit: int = 10000,
-                     offset: int = None
-                     ) -> List[TimeSeriesHeader]:
+    def get_entities(
+        self,
+        *,
+        entity_type: str = None,
+        id_pattern: str = None,
+        from_date: str = None,
+        to_date: str = None,
+        limit: int = 10000,
+        offset: int = None,
+    ) -> List[TimeSeriesHeader]:
         """
         Get list of all available entities and their context information
         about EntityType and last update date.
@@ -447,6 +432,10 @@ class QuantumLeapClient(BaseHttpClient):
                 when required. If used to resolve ambiguity for the given
                 entityId, make sure the given entityId exists for this
                 entityType.
+            id_pattern (str): The pattern covering the entity ids for which
+                to subscribe. The pattern follow regular expressions (POSIX
+                Extendede) e.g. ".*", "Room.*". Detail information:
+                https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions
             from_date (str): The starting date and time (inclusive) from which
                 the context information is queried. Must be in ISO8601 format
                 (e.g., 2018-01-05T15:44:34)
@@ -460,34 +449,39 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             List of TimeSeriesHeader
         """
-        url = urljoin(self.base_url, 'v2/entities')
-        res = self.__query_builder(url=url,
-                                   entity_type=entity_type,
-                                   from_date=from_date,
-                                   to_date=to_date,
-                                   limit=limit,
-                                   offset=offset)
-        return parse_obj_as(List[TimeSeriesHeader], res[0])
+        url = urljoin(self.base_url, "v2/entities")
+        res = self.__query_builder(
+            url=url,
+            id_pattern=id_pattern,
+            entity_type=entity_type,
+            from_date=from_date,
+            to_date=to_date,
+            limit=limit,
+            offset=offset,
+        )
+
+        ta = TypeAdapter(List[TimeSeriesHeader])
+        return ta.validate_python(res[0])
 
     # /entities/{entityId}
-    def get_entity_by_id(self,
-                         entity_id: str,
-                         *,
-                         attrs: str = None,
-                         entity_type: str = None,
-                         aggr_method: Union[str, AggrMethod] = None,
-                         aggr_period: Union[str, AggrPeriod] = None,
-                         from_date: str = None,
-                         to_date: str = None,
-                         last_n: int = None,
-                         limit: int = 10000,
-                         offset: int = None,
-                         georel: str = None,
-                         geometry: str = None,
-                         coords: str = None,
-                         options: str = None
-                         ) -> TimeSeries:
-
+    def get_entity_by_id(
+        self,
+        entity_id: str,
+        *,
+        attrs: str = None,
+        entity_type: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+    ) -> TimeSeries:
         """
         History of N attributes of a given entity instance
         For example, query max water level of the central tank throughout the
@@ -566,46 +560,49 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             TimeSeries
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}')
-        res_q = self.__query_builder(url=url,
-                                     attrs=attrs,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords)
+        url = urljoin(self.base_url, f"v2/entities/{entity_id}")
+        res_q = self.__query_builder(
+            url=url,
+            attrs=attrs,
+            options=options,
+            entity_type=entity_type,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+        )
         # merge response chunks
-        res = TimeSeries.parse_obj(res_q.popleft())
+        res = TimeSeries.model_validate(res_q.popleft())
         for item in res_q:
-            res.extend(TimeSeries.parse_obj(item))
+            res.extend(TimeSeries.model_validate(item))
 
         return res
 
     # /entities/{entityId}/value
-    def get_entity_values_by_id(self,
-                                entity_id: str,
-                                *,
-                                attrs: str = None,
-                                entity_type: str = None,
-                                aggr_method: Union[str, AggrMethod] = None,
-                                aggr_period: Union[str, AggrPeriod] = None,
-                                from_date: str = None,
-                                to_date: str = None,
-                                last_n: int = None,
-                                limit: int = 10000,
-                                offset: int = None,
-                                georel: str = None,
-                                geometry: str = None,
-                                coords: str = None,
-                                options: str = None
-                                ) -> TimeSeries:
+    def get_entity_values_by_id(
+        self,
+        entity_id: str,
+        *,
+        attrs: str = None,
+        entity_type: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+    ) -> TimeSeries:
         """
         History of N attributes (values only) of a given entity instance
         For example, query the average pressure, temperature and humidity (
@@ -636,21 +633,23 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}/value')
-        res_q = self.__query_builder(url=url,
-                                     attrs=attrs,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords)
+        url = urljoin(self.base_url, f"v2/entities/{entity_id}/value")
+        res_q = self.__query_builder(
+            url=url,
+            attrs=attrs,
+            options=options,
+            entity_type=entity_type,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+        )
 
         # merge response chunks
         res = TimeSeries(entityId=entity_id, **res_q.popleft())
@@ -660,23 +659,24 @@ class QuantumLeapClient(BaseHttpClient):
         return res
 
     # /entities/{entityId}/attrs/{attrName}
-    def get_entity_attr_by_id(self,
-                              entity_id: str,
-                              attr_name: str,
-                              *,
-                              entity_type: str = None,
-                              aggr_method: Union[str, AggrMethod] = None,
-                              aggr_period: Union[str, AggrPeriod] = None,
-                              from_date: str = None,
-                              to_date: str = None,
-                              last_n: int = None,
-                              limit: int = 10000,
-                              offset: int = None,
-                              georel: str = None,
-                              geometry: str = None,
-                              coords: str = None,
-                              options: str = None
-                              ) -> TimeSeries:
+    def get_entity_attr_by_id(
+        self,
+        entity_id: str,
+        attr_name: str,
+        *,
+        entity_type: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+    ) -> TimeSeries:
         """
         History of an attribute of a given entity instance
         For example, query max water level of the central tank throughout the
@@ -707,53 +707,61 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/entities/{entity_id}/attrs'
-                                     f'/{attr_name}')
-        req_q = self.__query_builder(url=url,
-                                     entity_id=entity_id,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords)
+        url = urljoin(self.base_url, f"v2/entities/{entity_id}/attrs" f"/{attr_name}")
+        req_q = self.__query_builder(
+            url=url,
+            entity_id=entity_id,
+            options=options,
+            entity_type=entity_type,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+        )
 
         # merge response chunks
         first = req_q.popleft()
-        res = TimeSeries(entityId=entity_id,
-                         index=first.get('index'),
-                         attributes=[AttributeValues(**first)])
+        res = TimeSeries(
+            entityId=entity_id,
+            index=first.get("index"),
+            attributes=[AttributeValues(**first)],
+        )
         for item in req_q:
-            res.extend(TimeSeries(entityId=entity_id,
-                                  index=item.get('index'),
-                                  attributes=[AttributeValues(**item)]))
+            res.extend(
+                TimeSeries(
+                    entityId=entity_id,
+                    index=item.get("index"),
+                    attributes=[AttributeValues(**item)],
+                )
+            )
 
         return res
 
     # /entities/{entityId}/attrs/{attrName}/value
-    def get_entity_attr_values_by_id(self,
-                                     entity_id: str,
-                                     attr_name: str,
-                                     *,
-                                     entity_type: str = None,
-                                     aggr_method: Union[str, AggrMethod] = None,
-                                     aggr_period: Union[str, AggrPeriod] = None,
-                                     from_date: str = None,
-                                     to_date: str = None,
-                                     last_n: int = None,
-                                     limit: int = 10000,
-                                     offset: int = None,
-                                     georel: str = None,
-                                     geometry: str = None,
-                                     coords: str = None,
-                                     options: str = None
-                                     ) -> TimeSeries:
+    def get_entity_attr_values_by_id(
+        self,
+        entity_id: str,
+        attr_name: str,
+        *,
+        entity_type: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+    ) -> TimeSeries:
         """
         History of an attribute (values only) of a given entity instance
         Similar to the previous, but focusing on the values regardless of the
@@ -783,164 +791,192 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'v2/entities/{entity_id}/attrs'
-                                     f'/{attr_name}/value')
-        res_q = self.__query_builder(url=url,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords)
+        url = urljoin(
+            self.base_url, f"v2/entities/{entity_id}/attrs" f"/{attr_name}/value"
+        )
+        res_q = self.__query_builder(
+            url=url,
+            options=options,
+            entity_type=entity_type,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+        )
         # merge response chunks
         first = res_q.popleft()
         res = TimeSeries(
             entityId=entity_id,
-            index=first.get('index'),
-            attributes=[AttributeValues(attrName=attr_name,
-                                        values=first.get('values'))])
+            index=first.get("index"),
+            attributes=[
+                AttributeValues(attrName=attr_name, values=first.get("values"))
+            ],
+        )
         for item in res_q:
             res.extend(
                 TimeSeries(
                     entityId=entity_id,
-                    index=item.get('index'),
-                    attributes=[AttributeValues(attrName=attr_name,
-                                                values=item.get('values'))]))
+                    index=item.get("index"),
+                    attributes=[
+                        AttributeValues(attrName=attr_name, values=item.get("values"))
+                    ],
+                )
+            )
 
         return res
 
     # /types/{entityType}
-    def get_entity_by_type(self,
-                           entity_type: str,
-                           *,
-                           attrs: str = None,
-                           entity_id: str = None,
-                           aggr_method: Union[str, AggrMethod] = None,
-                           aggr_period: Union[str, AggrPeriod] = None,
-                           from_date: str = None,
-                           to_date: str = None,
-                           last_n: int = None,
-                           limit: int = 10000,
-                           offset: int = None,
-                           georel: str = None,
-                           geometry: str = None,
-                           coords: str = None,
-                           options: str = None,
-                           aggr_scope: Union[str, AggrScope] = None
-                           ) -> List[TimeSeries]:
+    def get_entity_by_type(
+        self,
+        entity_type: str,
+        *,
+        attrs: str = None,
+        entity_id: str = None,
+        id_pattern: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+        aggr_scope: Union[str, AggrScope] = None,
+    ) -> List[TimeSeries]:
         """
         History of N attributes of N entities of the same type.
         For example, query the average pressure, temperature and humidity of
         this month in all the weather stations.
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}')
-        res_q = self.__query_builder(url=url,
-                                     entity_id=entity_id,
-                                     attrs=attrs,
-                                     options=options,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     aggr_scope=aggr_scope)
+        url = urljoin(self.base_url, f"v2/types/{entity_type}")
+        res_q = self.__query_builder(
+            url=url,
+            entity_id=entity_id,
+            id_pattern=id_pattern,
+            attrs=attrs,
+            options=options,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+            aggr_scope=aggr_scope,
+        )
 
         # merge chunks of response
-        res = [TimeSeries(entityType=entity_type, **item)
-               for item in res_q.popleft().get('entities')]
+        res = [
+            TimeSeries(entityType=entity_type, **item)
+            for item in res_q.popleft().get("entities")
+        ]
 
         for chunk in res_q:
-            chunk = [TimeSeries(entityType=entity_type, **item)
-                     for item in chunk.get('entities')]
+            chunk = [
+                TimeSeries(entityType=entity_type, **item)
+                for item in chunk.get("entities")
+            ]
             for new, old in zip(chunk, res):
                 old.extend(new)
 
         return res
 
     # /types/{entityType}/value
-    def get_entity_values_by_type(self,
-                                  entity_type: str,
-                                  *,
-                                  attrs: str = None,
-                                  entity_id: str = None,
-                                  aggr_method: Union[str, AggrMethod] = None,
-                                  aggr_period: Union[str, AggrPeriod] = None,
-                                  from_date: str = None,
-                                  to_date: str = None,
-                                  last_n: int = None,
-                                  limit: int = 10000,
-                                  offset: int = None,
-                                  georel: str = None,
-                                  geometry: str = None,
-                                  coords: str = None,
-                                  options: str = None,
-                                  aggr_scope: Union[str, AggrScope] = None
-                                  ) -> List[TimeSeries]:
+    def get_entity_values_by_type(
+        self,
+        entity_type: str,
+        *,
+        attrs: str = None,
+        entity_id: str = None,
+        id_pattern: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+        aggr_scope: Union[str, AggrScope] = None,
+    ) -> List[TimeSeries]:
         """
         History of N attributes (values only) of N entities of the same type.
         For example, query the average pressure, temperature and humidity (
         values only, no metadata) of this month in
         all the weather stations.
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}/value')
-        res_q = self.__query_builder(url=url,
-                                     entity_id=entity_id,
-                                     attrs=attrs,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     aggr_scope=aggr_scope)
+        url = urljoin(self.base_url, f"v2/types/{entity_type}/value")
+        res_q = self.__query_builder(
+            url=url,
+            entity_id=entity_id,
+            id_pattern=id_pattern,
+            attrs=attrs,
+            options=options,
+            entity_type=entity_type,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+            aggr_scope=aggr_scope,
+        )
         # merge chunks of response
-        res = [TimeSeries(entityType=entity_type, **item)
-               for item in res_q.popleft().get('values')]
+        res = [
+            TimeSeries(entityType=entity_type, **item)
+            for item in res_q.popleft().get("values")
+        ]
 
         for chunk in res_q:
-            chunk = [TimeSeries(entityType=entity_type, **item)
-                     for item in chunk.get('values')]
+            chunk = [
+                TimeSeries(entityType=entity_type, **item)
+                for item in chunk.get("values")
+            ]
             for new, old in zip(chunk, res):
                 old.extend(new)
 
         return res
 
     # /types/{entityType}/attrs/{attrName}
-    def get_entity_attr_by_type(self,
-                                entity_type: str,
-                                attr_name: str,
-                                *,
-                                entity_id: str = None,
-                                aggr_method: Union[str, AggrMethod] = None,
-                                aggr_period: Union[str, AggrPeriod] = None,
-                                from_date: str = None,
-                                to_date: str = None,
-                                last_n: int = None,
-                                limit: int = 10000,
-                                offset: int = None,
-                                georel: str = None,
-                                geometry: str = None,
-                                coords: str = None,
-                                options: str = None,
-                                aggr_scope: Union[str, AggrScope] = None
-                                ) -> List[TimeSeries]:
+    def get_entity_attr_by_type(
+        self,
+        entity_type: str,
+        attr_name: str,
+        *,
+        entity_id: str = None,
+        id_pattern: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+        aggr_scope: Union[str, AggrScope] = None,
+    ) -> List[TimeSeries]:
         """
         History of an attribute of N entities of the same type.
         For example, query the pressure measurements of this month in all the
@@ -980,70 +1016,82 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs'
-                                     f'/{attr_name}')
-        res_q = self.__query_builder(url=url,
-                                     entity_id=entity_id,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     aggr_scope=aggr_scope)
+        url = urljoin(self.base_url, f"v2/types/{entity_type}/attrs" f"/{attr_name}")
+        res_q = self.__query_builder(
+            url=url,
+            entity_id=entity_id,
+            id_pattern=id_pattern,
+            options=options,
+            entity_type=entity_type,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+            aggr_scope=aggr_scope,
+        )
 
         # merge chunks of response
         first = res_q.popleft()
-        res = [TimeSeries(index=item.get('index'),
-                          entityType=entity_type,
-                          entityId=item.get('entityId'),
-                          attributes=[
-                              AttributeValues(
-                                  attrName=first.get('attrName'),
-                                  values=item.get('values'))])
-               for item in first.get('entities')]
+        res = [
+            TimeSeries(
+                index=item.get("index"),
+                entityType=entity_type,
+                entityId=item.get("entityId"),
+                attributes=[
+                    AttributeValues(
+                        attrName=first.get("attrName"), values=item.get("values")
+                    )
+                ],
+            )
+            for item in first.get("entities")
+        ]
 
         for chunk in res_q:
-            chunk = [TimeSeries(index=item.get('index'),
-                                entityType=entity_type,
-                                entityId=item.get('entityId'),
-                                attributes=[
-                                    AttributeValues(
-                                        attrName=chunk.get('attrName'),
-                                        values=item.get('values'))])
-                     for item in chunk.get('entities')]
+            chunk = [
+                TimeSeries(
+                    index=item.get("index"),
+                    entityType=entity_type,
+                    entityId=item.get("entityId"),
+                    attributes=[
+                        AttributeValues(
+                            attrName=chunk.get("attrName"), values=item.get("values")
+                        )
+                    ],
+                )
+                for item in chunk.get("entities")
+            ]
             for new, old in zip(chunk, res):
                 old.extend(new)
 
         return res
 
     # /types/{entityType}/attrs/{attrName}/value
-    def get_entity_attr_values_by_type(self,
-                                       entity_type: str,
-                                       attr_name: str,
-                                       *,
-                                       entity_id: str = None,
-                                       aggr_method: Union[
-                                           str, AggrMethod] = None,
-                                       aggr_period: Union[
-                                           str, AggrPeriod] = None,
-                                       from_date: str = None,
-                                       to_date: str = None,
-                                       last_n: int = None,
-                                       limit: int = 10000,
-                                       offset: int = None,
-                                       georel: str = None,
-                                       geometry: str = None,
-                                       coords: str = None,
-                                       options: str = None,
-                                       aggr_scope: Union[str, AggrScope] = None
-                                       ) -> List[TimeSeries]:
+    def get_entity_attr_values_by_type(
+        self,
+        entity_type: str,
+        attr_name: str,
+        *,
+        entity_id: str = None,
+        id_pattern: str = None,
+        aggr_method: Union[str, AggrMethod] = None,
+        aggr_period: Union[str, AggrPeriod] = None,
+        from_date: str = None,
+        to_date: str = None,
+        last_n: int = None,
+        limit: int = 10000,
+        offset: int = None,
+        georel: str = None,
+        geometry: str = None,
+        coords: str = None,
+        options: str = None,
+        aggr_scope: Union[str, AggrScope] = None,
+    ) -> List[TimeSeries]:
         """
         History of an attribute (values only) of N entities of the same type.
         For example, query the average pressure (values only, no metadata) of
@@ -1075,43 +1123,186 @@ class QuantumLeapClient(BaseHttpClient):
         Returns:
             Response Model
         """
-        url = urljoin(self.base_url, f'/v2/types/{entity_type}/attrs/'
-                                     f'{attr_name}/value')
-        res_q = self.__query_builder(url=url,
-                                     entity_id=entity_id,
-                                     options=options,
-                                     entity_type=entity_type,
-                                     aggr_method=aggr_method,
-                                     aggr_period=aggr_period,
-                                     from_date=from_date,
-                                     to_date=to_date,
-                                     last_n=last_n,
-                                     limit=limit,
-                                     offset=offset,
-                                     georel=georel,
-                                     geometry=geometry,
-                                     coords=coords,
-                                     aggr_scope=aggr_scope)
+        url = urljoin(
+            self.base_url, f"v2/types/{entity_type}/attrs/" f"{attr_name}/value"
+        )
+        res_q = self.__query_builder(
+            url=url,
+            entity_id=entity_id,
+            id_pattern=id_pattern,
+            options=options,
+            entity_type=entity_type,
+            aggr_method=aggr_method,
+            aggr_period=aggr_period,
+            from_date=from_date,
+            to_date=to_date,
+            last_n=last_n,
+            limit=limit,
+            offset=offset,
+            georel=georel,
+            geometry=geometry,
+            coords=coords,
+            aggr_scope=aggr_scope,
+        )
 
         # merge chunks of response
-        res = [TimeSeries(index=item.get('index'),
-                          entityType=entity_type,
-                          entityId=item.get('entityId'),
-                          attributes=[
-                              AttributeValues(attrName=attr_name,
-                                              values=item.get('values'))])
-               for item in res_q.popleft().get('values')]
+        res = [
+            TimeSeries(
+                index=item.get("index"),
+                entityType=entity_type,
+                entityId=item.get("entityId"),
+                attributes=[
+                    AttributeValues(attrName=attr_name, values=item.get("values"))
+                ],
+            )
+            for item in res_q.popleft().get("values")
+        ]
 
         for chunk in res_q:
-            chunk = [TimeSeries(index=item.get('index'),
-                                entityType=entity_type,
-                                entityId=item.get('entityId'),
-                                attributes=[
-                                    AttributeValues(attrName=attr_name,
-                                                    values=item.get('values'))])
-                     for item in chunk.get('values')]
+            chunk = [
+                TimeSeries(
+                    index=item.get("index"),
+                    entityType=entity_type,
+                    entityId=item.get("entityId"),
+                    attributes=[
+                        AttributeValues(attrName=attr_name, values=item.get("values"))
+                    ],
+                )
+                for item in chunk.get("values")
+            ]
+
+            for new, old in zip(chunk, res):
+                old.extend(new)
+        return res
+
+    # v2/attrs
+    def get_entity_by_attrs(
+        self,
+        *,
+        entity_type: str = None,
+        from_date: str = None,
+        to_date: str = None,
+        limit: int = 10000,
+        offset: int = None,
+    ) -> List[TimeSeries]:
+        """
+        Get list of timeseries data grouped by each existing attribute name.
+        The timeseries data include all entities corresponding to each
+        attribute name as well as the index and values of this attribute in
+        this entity.
+
+        Args:
+            entity_type (str): Comma-separated list of entity types whose data
+                are to be included in the response. Use only one (no comma)
+                when required. If used to resolve ambiguity for the given
+                entityId, make sure the given entityId exists for this
+                entityType.
+            from_date (str): The starting date and time (inclusive) from which
+                the context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34)
+            to_date (str): The final date and time (inclusive) from which the
+                context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34).
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
+            offset (int): Offset for the results.
+
+        Returns:
+            List of TimeSeriesEntities
+        """
+        url = urljoin(self.base_url, "v2/attrs")
+        res_q = self.__query_builder(
+            url=url,
+            entity_type=entity_type,
+            from_date=from_date,
+            to_date=to_date,
+            limit=limit,
+            offset=offset,
+        )
+        first = res_q.popleft()
+
+        res = chain.from_iterable(
+            map(lambda x: self.transform_attr_response_model(x), first.get("attrs"))
+        )
+        for chunk in res_q:
+            chunk = chain.from_iterable(
+                map(lambda x: self.transform_attr_response_model(x), chunk.get("attrs"))
+            )
 
             for new, old in zip(chunk, res):
                 old.extend(new)
 
-        return res
+        return list(res)
+
+    # v2/attrs/{attr_name}
+    def get_entity_by_attr_name(
+        self,
+        *,
+        attr_name: str,
+        entity_type: str = None,
+        from_date: str = None,
+        to_date: str = None,
+        limit: int = 10000,
+        offset: int = None,
+    ) -> List[TimeSeries]:
+        """
+        Get list of all entities containing this attribute name, as well as
+        getting the index and values of this attribute in every corresponding
+        entity.
+
+        Args:
+            attr_name (str): The attribute name in interest.
+            entity_type (str): Comma-separated list of entity types whose data
+                are to be included in the response. Use only one (no comma)
+                when required. If used to resolve ambiguity for the given
+                entityId, make sure the given entityId exists for this
+                entityType.
+            from_date (str): The starting date and time (inclusive) from which
+                the context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34)
+            to_date (str): The final date and time (inclusive) from which the
+                context information is queried. Must be in ISO8601 format
+                (e.g., 2018-01-05T15:44:34).
+            limit (int): Maximum number of results to be retrieved.
+                Default value : 10000
+            offset (int): Offset for the results.
+
+        Returns:
+            List of TimeSeries
+        """
+        url = urljoin(self.base_url, f"/v2/attrs/{attr_name}")
+        res_q = self.__query_builder(
+            url=url,
+            entity_type=entity_type,
+            from_date=from_date,
+            to_date=to_date,
+            limit=limit,
+            offset=offset,
+        )
+
+        first = res_q.popleft()
+        res = self.transform_attr_response_model(first)
+
+        for chunk in res_q:
+            chunk = self.transform_attr_response_model(chunk)
+            for new, old in zip(chunk, res):
+                old.extend(new)
+        return list(res)
+
+    def transform_attr_response_model(self, attr_response):
+        res = []
+        attr_name = attr_response.get("attrName")
+        for entity_group in attr_response.get("types"):
+            timeseries = map(
+                lambda entity: TimeSeries(
+                    entityId=entity.get("entityId"),
+                    entityType=entity_group.get("entityType"),
+                    index=entity.get("index"),
+                    attributes=[
+                        AttributeValues(attrName=attr_name, values=entity.get("values"))
+                    ],
+                ),
+                entity_group.get("entities"),
+            )
+            res.append(timeseries)
+        return chain.from_iterable(res)

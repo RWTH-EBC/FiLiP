@@ -21,9 +21,10 @@ class StatementType(str, Enum):
     A statement is either a leaf and holds an iri/label or it is a combination
     of leafs with or / and
     """
-    OR = 'or'
-    AND = 'and'
-    LEAF = 'leaf'
+
+    OR = "or"
+    AND = "and"
+    LEAF = "leaf"
 
 
 class TargetStatement(BaseModel):
@@ -43,20 +44,20 @@ class TargetStatement(BaseModel):
 
     target_data_value: Optional[str] = Field(
         default=None,
-        description="Holds the value if the relation is a hasValue (LEAF only)")
-    target_iri: str = Field(
-        default="",
-        description="The IRI of the target (LEAF only)")
-    target_statements: List['TargetStatement'] = Field(
+        description="Holds the value if the relation is a hasValue (LEAF only)",
+    )
+    target_iri: str = Field(default="", description="The IRI of the target (LEAF only)")
+    target_statements: List["TargetStatement"] = Field(
         default=[],
         description="The targetstatements that are combined with this "
-                    "targetstatement (and/or only)"
+        "targetstatement (and/or only)",
     )
-    type: StatementType = Field(default=StatementType.LEAF,
-                                description="Statement types")
+    type: StatementType = Field(
+        default=StatementType.LEAF, description="Statement types"
+    )
 
     def set_target(self, target_iri: str, target_data_value: str = None):
-        """ Set target for this statement and make it a LEAF statement
+        """Set target for this statement and make it a LEAF statement
 
         Args:
             target_iri (str): iri of the target (class or datatype iri)
@@ -136,7 +137,7 @@ class TargetStatement(BaseModel):
                                     counter += 1
                 return result
 
-    def to_string(self, vocabulary: 'Vocabulary') -> str:
+    def to_string(self, vocabulary: "Vocabulary") -> str:
         """Get a string representation of the targetstatment
 
         Args:
@@ -159,8 +160,7 @@ class TargetStatement(BaseModel):
 
             return result
 
-    def is_fulfilled_by_iri_value(self, value: str, ancestor_values: List[str]) \
-            -> bool:
+    def is_fulfilled_by_iri_value(self, value: str, ancestor_values: List[str]) -> bool:
         """
         Test if a set of values fulfills the targetstatement;
         Only for objectRelations
@@ -190,8 +190,7 @@ class TargetStatement(BaseModel):
                 return True
         return False
 
-    def is_fulfilled_by_data_value(self, value: str, vocabulary: 'Vocabulary') \
-            -> bool:
+    def is_fulfilled_by_data_value(self, value: str, vocabulary: "Vocabulary") -> bool:
         """
         Test if a set of values fulfills the targetstatement;
         Only for dataRelations
@@ -208,13 +207,14 @@ class TargetStatement(BaseModel):
             return value == self.target_data_value
 
         from .vocabulary import IdType
+
         if not vocabulary.is_id_of_type(self.target_iri, IdType.datatype):
             return False
         else:
             datatype = vocabulary.get_datatype(self.target_iri)
             return datatype.value_is_valid(value)
 
-    def retrieve_label(self, vocabulary: 'Vocabulary') -> str:
+    def retrieve_label(self, vocabulary: "Vocabulary") -> str:
         """Get the label of the target_iri. Only logical for Leaf statements
 
         Args:
@@ -231,10 +231,8 @@ class TargetStatement(BaseModel):
         return ""
 
     def get_dependency_statements(
-            self,
-            vocabulary: 'Vocabulary',
-            ontology_iri: str,
-            class_iri: str) -> List[DependencyStatement]:
+        self, vocabulary: "Vocabulary", ontology_iri: str, class_iri: str
+    ) -> List[DependencyStatement]:
         """
         Get a list of all pointers/iris that are not contained in the
         vocabulary. Purging is done in class
@@ -255,40 +253,46 @@ class TargetStatement(BaseModel):
             if self.target_data_value is None:
                 # check if predefined datatype
                 if not vocabulary.iri_is_predefined_datatype(self.target_iri):
-                    found = self.target_iri in vocabulary.classes or \
-                            self.target_iri in vocabulary.datatypes or \
-                            self.target_iri in vocabulary.individuals
+                    found = (
+                        self.target_iri in vocabulary.classes
+                        or self.target_iri in vocabulary.datatypes
+                        or self.target_iri in vocabulary.individuals
+                    )
                     statements.append(
                         DependencyStatement(
                             type="Relation Target",
                             class_iri=class_iri,
                             dependency_iri=self.target_iri,
-                            fulfilled=found)
+                            fulfilled=found,
+                        )
                     )
         else:
             for target_statement in self.target_statements:
                 statements.extend(
                     target_statement.get_dependency_statements(
-                        vocabulary, ontology_iri, class_iri))
+                        vocabulary, ontology_iri, class_iri
+                    )
+                )
         return statements
 
 
 # target_statements is a forward reference, so that the class can refer to
 # itself this forward reference need to be resolved after the class has fully
 # loaded
-TargetStatement.update_forward_refs()
+TargetStatement.model_rebuild()
 
 
 class RestrictionType(str, Enum):
     """RestrictionTypes, as defined for OWL"""
-    _init_ = 'value __doc__'
 
-    some = 'some', 'at least 1 value of that target'
-    only = 'only', 'only value of that target'
-    min = 'min', 'min n values of that target'
-    max = 'max', 'max n values of that target'
-    exactly = 'exactly', 'exactly n values of that target'
-    value = 'value', 'predefined value'
+    _init_ = "value __doc__"
+
+    some = "some", "at least 1 value of that target"
+    only = "only", "only value of that target"
+    min = "min", "min n values of that target"
+    max = "max", "max n values of that target"
+    exactly = "exactly", "exactly n values of that target"
+    value = "value", "predefined value"
 
 
 class Relation(BaseModel):
@@ -303,21 +307,21 @@ class Relation(BaseModel):
     inherit it
     """
 
-    id: str = Field(description="Unique generated Relation ID, "
-                                "for internal use")
+    id: str = Field(description="Unique generated Relation ID, " "for internal use")
     restriction_type: RestrictionType = Field(
-        default=None,
-        description="Restriction type of this relation")
+        default=None, description="Restriction type of this relation"
+    )
     restriction_cardinality: int = Field(
-        default=-1,
-        description="Only needed for min, max, equaly states the 'n'")
+        default=-1, description="Only needed for min, max, equaly states the 'n'"
+    )
     property_iri: str = Field(
-        default="",
-        description="IRI of the property (data- or object-)")
+        default="", description="IRI of the property (data- or object-)"
+    )
     target_statement: TargetStatement = Field(
         default=None,
         description="Complex statement which classes/datatype_catalogue "
-                    "are allowed/required")
+        "are allowed/required",
+    )
 
     def get_targets(self) -> List[List[str]]:
         """Get all targets specified in the target statement in AND-OR Notation
@@ -327,8 +331,8 @@ class Relation(BaseModel):
         """
         return self.target_statement.get_all_targets()
 
-    def to_string(self, vocabulary: 'Vocabulary') -> str:
-        """ Get a string representation of the relation
+    def to_string(self, vocabulary: "Vocabulary") -> str:
+        """Get a string representation of the relation
 
         Args:
             vocabulary (Vocabulary): Vocabulary of this project
@@ -338,15 +342,21 @@ class Relation(BaseModel):
         """
 
         if self.restriction_cardinality == -1:
-            return "{} {}".format(self.restriction_type, self.target_statement.
-                                  to_string(vocabulary))
+            return "{} {}".format(
+                self.restriction_type, self.target_statement.to_string(vocabulary)
+            )
         else:
-            return self.restriction_type + " " + \
-                   str(self.restriction_cardinality) + " " \
-                   + self.target_statement.to_string(vocabulary)
+            return (
+                self.restriction_type
+                + " "
+                + str(self.restriction_cardinality)
+                + " "
+                + self.target_statement.to_string(vocabulary)
+            )
 
-    def is_restriction_fulfilled(self, number_of_fulfilling_values: int,
-                                 total_number_of_values: int) -> bool:
+    def is_restriction_fulfilled(
+        self, number_of_fulfilling_values: int, total_number_of_values: int
+    ) -> bool:
         """Test if the restriction type is fulfilled by comparing the number of
         fulfilling values against the total
         number of values given
@@ -366,21 +376,18 @@ class Relation(BaseModel):
         if self.restriction_type == RestrictionType.only:
             return number_of_fulfilling_values == total_number_of_values
         if self.restriction_type == RestrictionType.min:
-            return number_of_fulfilling_values >= \
-                   (int)(self.restriction_cardinality)
+            return number_of_fulfilling_values >= (int)(self.restriction_cardinality)
         if self.restriction_type == RestrictionType.max:
-            return number_of_fulfilling_values <= \
-                   (int)(self.restriction_cardinality)
+            return number_of_fulfilling_values <= (int)(self.restriction_cardinality)
         if self.restriction_type == RestrictionType.exactly:
-            return number_of_fulfilling_values == \
-                   (int)(self.restriction_cardinality)
+            return number_of_fulfilling_values == (int)(self.restriction_cardinality)
         if self.restriction_type == RestrictionType.value:
             return number_of_fulfilling_values >= 1
 
     def get_dependency_statements(
-            self, vocabulary: 'Vocabulary', ontology_iri: str, class_iri: str) \
-            -> List[DependencyStatement]:
-        """ Get a list of all pointers/iris that are not contained in the
+        self, vocabulary: "Vocabulary", ontology_iri: str, class_iri: str
+    ) -> List[DependencyStatement]:
+        """Get a list of all pointers/iris that are not contained in the
             vocabulary
             Purging is done in class
 
@@ -395,22 +402,34 @@ class Relation(BaseModel):
         """
         statements = []
 
-        found = self.property_iri in vocabulary.object_properties or \
-                self.property_iri in vocabulary.data_properties
+        found = (
+            self.property_iri in vocabulary.object_properties
+            or self.property_iri in vocabulary.data_properties
+        )
 
-        statements.append(DependencyStatement(type="Relation Property",
-                                              class_iri=class_iri,
-                                              dependency_iri=self.property_iri,
-                                              fulfilled=found))
+        statements.append(
+            DependencyStatement(
+                type="Relation Property",
+                class_iri=class_iri,
+                dependency_iri=self.property_iri,
+                fulfilled=found,
+            )
+        )
 
-        statements.extend(self.target_statement.get_dependency_statements(
-            vocabulary, ontology_iri, class_iri))
+        statements.extend(
+            self.target_statement.get_dependency_statements(
+                vocabulary, ontology_iri, class_iri
+            )
+        )
 
         return statements
 
     def is_fulfilled_with_iris(
-            self, vocabulary: 'Vocabulary', values: List[str],
-            ancestor_values: List[List[str]]) -> bool:
+        self,
+        vocabulary: "Vocabulary",
+        values: List[str],
+        ancestor_values: List[List[str]],
+    ) -> bool:
         """Test if a set of values fulfills the rules of the relation
 
         Args:
@@ -424,14 +443,15 @@ class Relation(BaseModel):
         number_of_fulfilling_values = 0
         for i in range(len(values)):
             if self.target_statement.is_fulfilled_by_iri_value(
-                    values[i], ancestor_values[i]):
+                values[i], ancestor_values[i]
+            ):
                 number_of_fulfilling_values += 1
 
-        return self.is_restriction_fulfilled(number_of_fulfilling_values,
-                                             len(values))
+        return self.is_restriction_fulfilled(number_of_fulfilling_values, len(values))
 
-    def is_fulfilled_with_values(self, vocabulary: 'Vocabulary',
-                                 values: List[str]) -> bool:
+    def is_fulfilled_with_values(
+        self, vocabulary: "Vocabulary", values: List[str]
+    ) -> bool:
         """Test if a set of values fulfills the rules of the relation.
         Used if property is a data property
 
@@ -445,15 +465,12 @@ class Relation(BaseModel):
         number_of_fulfilling_values = 0
 
         for i in range(len(values)):
-            if self.target_statement.is_fulfilled_by_data_value(values[i],
-                                                                vocabulary):
+            if self.target_statement.is_fulfilled_by_data_value(values[i], vocabulary):
                 number_of_fulfilling_values += 1
 
-        return self.is_restriction_fulfilled(number_of_fulfilling_values,
-                                             len(values))
+        return self.is_restriction_fulfilled(number_of_fulfilling_values, len(values))
 
-    def get_all_possible_target_class_iris(self, vocabulary: 'Vocabulary') \
-            -> Set[str]:
+    def get_all_possible_target_class_iris(self, vocabulary: "Vocabulary") -> Set[str]:
         """Get a set of class iris that are possible values for an
         objectRelation
 
@@ -476,14 +493,12 @@ class Relation(BaseModel):
             for class_ in vocabulary.get_classes():
                 if class_.is_child_of_all_classes(target_list):
                     possible_class_iris.add(class_.iri)
-                    children = vocabulary.get_class_by_iri(class_.iri). \
-                        child_class_iris
+                    children = vocabulary.get_class_by_iri(class_.iri).child_class_iris
                     possible_class_iris.update(children)
 
         return possible_class_iris
 
-    def get_possible_enum_target_values(self, vocabulary: 'Vocabulary') -> \
-            List[str]:
+    def get_possible_enum_target_values(self, vocabulary: "Vocabulary") -> List[str]:
         """Get all allowed enum target values for a data relation
 
         Args:
@@ -495,9 +510,9 @@ class Relation(BaseModel):
         targets: List[List[str]] = self.target_statement.get_all_targets()
 
         from .vocabulary import IdType
+
         # methode only makes sense for data relations
-        if not vocabulary.is_id_of_type(self.property_iri,
-                                        IdType.data_property):
+        if not vocabulary.is_id_of_type(self.property_iri, IdType.data_property):
             return []
 
         res = []
@@ -532,7 +547,7 @@ class Relation(BaseModel):
 
         return iris
 
-    def export_rule(self, vocabulary: 'Vocabulary') -> (str, str):
+    def export_rule(self, vocabulary: "Vocabulary") -> (str, str):
         """Get the rule as string
 
         Args:
@@ -549,8 +564,9 @@ class Relation(BaseModel):
                 new_list.append(vocabulary.get_label_for_entity_iri(iri))
 
         if (int)(self.restriction_cardinality) > 0:
-            return f'"{self.restriction_type.value}|' \
-                   f'{self.restriction_cardinality}"', targets
+            return (
+                f'"{self.restriction_type.value}|' f'{self.restriction_cardinality}"',
+                targets,
+            )
         else:
             return f'"{self.restriction_type.value}"', targets
-

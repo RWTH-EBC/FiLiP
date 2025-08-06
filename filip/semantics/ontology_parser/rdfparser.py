@@ -9,16 +9,30 @@ import rdflib
 
 from filip.models.base import LogLevel
 from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
-from filip.semantics.vocabulary import Source, IdType, \
-    Vocabulary,RestrictionType, ObjectProperty, DataProperty, Relation, \
-    TargetStatement, StatementType, DatatypeType, Datatype, Class, Individual
+from filip.semantics.vocabulary import (
+    Source,
+    IdType,
+    Vocabulary,
+    RestrictionType,
+    ObjectProperty,
+    DataProperty,
+    Relation,
+    TargetStatement,
+    StatementType,
+    DatatypeType,
+    Datatype,
+    Class,
+    Individual,
+)
 
 
-specifier_base_iris = ["http://www.w3.org/2002/07/owl",
-                       "http://www.w3.org/1999/02/22-rdf-syntax-ns",
-                       "http://www.w3.org/XML/1998/namespace",
-                       "http://www.w3.org/2001/XMLSchema",
-                       "http://www.w3.org/2000/01/rdf-schema"]
+specifier_base_iris = [
+    "http://www.w3.org/2002/07/owl",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns",
+    "http://www.w3.org/XML/1998/namespace",
+    "http://www.w3.org/2001/XMLSchema",
+    "http://www.w3.org/2000/01/rdf-schema",
+]
 """
 Defines a set of base iris, that describe elements that belong to the 
 description language not the ontology itself
@@ -30,13 +44,14 @@ class Tags(str, Enum):
     Collection of tags used as structures in ontologies, that were used more
     than once in the rdfparser code
     """
-    rdf_type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-    owl_intersection = 'http://www.w3.org/2002/07/owl#intersectionOf',
-    owl_union = 'http://www.w3.org/2002/07/owl#unionOf',
-    owl_one_of = 'http://www.w3.org/2002/07/owl#oneOf',
-    owl_individual = 'http://www.w3.org/2002/07/owl#NamedIndividual',
-    owl_on_class = 'http://www.w3.org/2002/07/owl#onClass',
-    owl_on_data_range = 'http://www.w3.org/2002/07/owl#onDataRange'
+
+    rdf_type = ("http://www.w3.org/1999/02/22-rdf-syntax-ns#type",)
+    owl_intersection = ("http://www.w3.org/2002/07/owl#intersectionOf",)
+    owl_union = ("http://www.w3.org/2002/07/owl#unionOf",)
+    owl_one_of = ("http://www.w3.org/2002/07/owl#oneOf",)
+    owl_individual = ("http://www.w3.org/2002/07/owl#NamedIndividual",)
+    owl_on_class = ("http://www.w3.org/2002/07/owl#onClass",)
+    owl_on_data_range = "http://www.w3.org/2002/07/owl#onDataRange"
 
 
 def get_iri_from_uriref(uriref: rdflib.URIRef) -> str:
@@ -54,12 +69,12 @@ def get_iri_from_uriref(uriref: rdflib.URIRef) -> str:
 def get_base_out_of_iri(iri: str) -> str:
     """Give an iri, returns an the ontology base name
 
-       Args:
-           iri
+    Args:
+        iri
 
-       Returns:
-           str
-       """
+    Returns:
+        str
+    """
     if "#" in iri:
         index = iri.find("#")
         return iri[:index]
@@ -74,15 +89,16 @@ class RdfParser:
     """
     Class that parses a given source into a vocabulary.
     """
+
     def __init__(self):
         self.current_source = None
         """Current source which is parsed, used for Log entries"""
         self.current_class_iri = None
         """Iri of class which is currently parsed, used for Log entries"""
 
-    def _add_logging_information(self, level: LogLevel,
-                                 entity_type: IdType, entity_iri: str,
-                                 msg: str):
+    def _add_logging_information(
+        self, level: LogLevel, entity_type: IdType, entity_iri: str, msg: str
+    ):
         """Add an entry to the parsing log
 
         Args:
@@ -95,12 +111,14 @@ class RdfParser:
             None
         """
         if self.current_source is not None:
-            self.current_source.add_parsing_log_entry(level, entity_type,
-                                                      entity_iri, msg)
+            self.current_source.add_parsing_log_entry(
+                level, entity_type, entity_iri, msg
+            )
 
-    def parse_source_into_vocabulary(self, source: Source,
-                                     vocabulary: Vocabulary) -> bool:
-        """ Parse a Source into the given vocabulary
+    def parse_source_into_vocabulary(
+        self, source: Source, vocabulary: Vocabulary
+    ) -> bool:
+        """Parse a Source into the given vocabulary
         Args:
             source (Source)
             vocabulary (Vocabulary)
@@ -123,9 +141,12 @@ class RdfParser:
 
         g.parse(data=source.content, format="turtle")
 
-        ontology_nodes = list(g.subjects(
-            object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#Ontology"),
-            predicate=rdflib.term.URIRef(Tags.rdf_type.value)))
+        ontology_nodes = list(
+            g.subjects(
+                object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#Ontology"),
+                predicate=rdflib.term.URIRef(Tags.rdf_type.value),
+            )
+        )
 
         # a source may have no ontology iri defined
         # if wanted on this place more info about the ontology can be extracted
@@ -138,9 +159,10 @@ class RdfParser:
 
         return True
 
-    def _is_object_defined_by_other_source(self, a: rdflib.term,
-                                           graph: rdflib.Graph) -> bool:
-        """ Test if the term is defined outside the current source
+    def _is_object_defined_by_other_source(
+        self, a: rdflib.term, graph: rdflib.Graph
+    ) -> bool:
+        """Test if the term is defined outside the current source
 
         Args:
             a (rdflib.term): Term to check
@@ -152,13 +174,17 @@ class RdfParser:
 
         # if an object is defined by an other source it carries the predicate
         # ("isDefinedBy"). Then don't parse the object
-        defined_tags = list(graph.objects(
-            subject=a, predicate=rdflib.term.URIRef(
-                "http://www.w3.org/2000/01/rdf-schema#isDefinedBy")))
+        defined_tags = list(
+            graph.objects(
+                subject=a,
+                predicate=rdflib.term.URIRef(
+                    "http://www.w3.org/2000/01/rdf-schema#isDefinedBy"
+                ),
+            )
+        )
         return len(defined_tags) > 0
 
-    def _parse_to_vocabulary(self, graph: rdflib.Graph,
-                             voc_builder: VocabularyBuilder):
+    def _parse_to_vocabulary(self, graph: rdflib.Graph, voc_builder: VocabularyBuilder):
         """Parse an graph that was extracted from a TTL file into the vocabulary
 
         Args:
@@ -172,9 +198,9 @@ class RdfParser:
 
         # OWLClasses
         for a in graph.subjects(
-                object=rdflib.term.URIRef(
-                    "http://www.w3.org/2002/07/owl#Class"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
+            object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#Class"),
+            predicate=rdflib.term.URIRef(Tags.rdf_type.value),
+        ):
 
             if isinstance(a, rdflib.term.BNode):
                 pass
@@ -193,8 +219,10 @@ class RdfParser:
         # Class properties
         found_class_iris = set()
         for class_node in graph.subjects(
-                predicate=rdflib.term.URIRef(
-                    "http://www.w3.org/2000/01/rdf-schema#subClassOf")):
+            predicate=rdflib.term.URIRef(
+                "http://www.w3.org/2000/01/rdf-schema#subClassOf"
+            )
+        ):
 
             class_iri = get_iri_from_uriref(class_node)
             found_class_iris.add(class_iri)
@@ -202,26 +230,29 @@ class RdfParser:
         for class_iri in found_class_iris:
             # parent class / relation parsing
             for sub in graph.objects(
-                    subject=rdflib.term.URIRef(class_iri),
-                    predicate=rdflib.term.URIRef
-                        ('http://www.w3.org/2000/01/rdf-schema#subClassOf')):
+                subject=rdflib.term.URIRef(class_iri),
+                predicate=rdflib.term.URIRef(
+                    "http://www.w3.org/2000/01/rdf-schema#subClassOf"
+                ),
+            ):
                 self.current_class_iri = class_iri  # used only for logging
-                self._parse_subclass_term(graph=graph,
-                                          voc_builder=voc_builder,
-                                          node=sub,
-                                          class_iri=class_iri)
+                self._parse_subclass_term(
+                    graph=graph, voc_builder=voc_builder, node=sub, class_iri=class_iri
+                )
 
         # OWlObjectProperties
         for a in graph.subjects(
-                object=rdflib.term.URIRef(
-                    "http://www.w3.org/2002/07/owl#ObjectProperty"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
+            object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#ObjectProperty"),
+            predicate=rdflib.term.URIRef(Tags.rdf_type.value),
+        ):
 
             if isinstance(a, rdflib.term.BNode):
-                self._add_logging_information(LogLevel.WARNING,
-                                              IdType.object_property,
-                                              "unknown",
-                                              "Found unparseable statement")
+                self._add_logging_information(
+                    LogLevel.WARNING,
+                    IdType.object_property,
+                    "unknown",
+                    "Found unparseable statement",
+                )
 
             else:
                 # defined in other source -> ignore
@@ -234,27 +265,36 @@ class RdfParser:
                 voc_builder.add_object_property(obj_prop)
                 # extract inverse properties, it can be multiple but only
                 # URIRefs allowed no union/intersection
-                for inverse_iri_node in graph.objects(subject=a,
-                        predicate=rdflib.term.URIRef(
-                        'http://www.w3.org/2002/07/owl#inverseOf')):
+                for inverse_iri_node in graph.objects(
+                    subject=a,
+                    predicate=rdflib.term.URIRef(
+                        "http://www.w3.org/2002/07/owl#inverseOf"
+                    ),
+                ):
                     if isinstance(inverse_iri_node, rdflib.term.BNode):
                         self._add_logging_information(
-                            LogLevel.CRITICAL, IdType.object_property, iri,
-                            "Complex inverseProperty statements aren't allowed")
+                            LogLevel.CRITICAL,
+                            IdType.object_property,
+                            iri,
+                            "Complex inverseProperty statements aren't allowed",
+                        )
                     else:
                         inverse_iri = get_iri_from_uriref(inverse_iri_node)
                         obj_prop.add_inverse_property_iri(inverse_iri)
 
         # OWlDataProperties
         for a in graph.subjects(
-                object=rdflib.term.URIRef(
-                    "http://www.w3.org/2002/07/owl#DatatypeProperty"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
+            object=rdflib.term.URIRef("http://www.w3.org/2002/07/owl#DatatypeProperty"),
+            predicate=rdflib.term.URIRef(Tags.rdf_type.value),
+        ):
 
             if isinstance(a, rdflib.term.BNode):
-                self._add_logging_information(LogLevel.WARNING,
-                                              IdType.data_property, "unknown",
-                                             "Found unparseable statement")
+                self._add_logging_information(
+                    LogLevel.WARNING,
+                    IdType.data_property,
+                    "unknown",
+                    "Found unparseable statement",
+                )
 
             else:
                 # defined in other source -> ignore
@@ -271,16 +311,16 @@ class RdfParser:
         # the predefined are automatically added at the start
         # of post processing
         for a in graph.subjects(
-                object=rdflib.term.URIRef(
-                    "http://www.w3.org/2000/01/rdf-schema#Datatype"),
-                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
+            object=rdflib.term.URIRef("http://www.w3.org/2000/01/rdf-schema#Datatype"),
+            predicate=rdflib.term.URIRef(Tags.rdf_type.value),
+        ):
 
             if isinstance(a, rdflib.term.BNode):
                 # self._add_logging_information(LogLevel.WARNING,
                 #                              IdType.datatype, "unknown",
                 #                              "Found unparseable statement")
                 pass
-                #e.g: :
+                # e.g: :
                 # customDataType4 rdf:type rdfs:Datatype ;
                 # owl:equivalentClass [ rdf:type rdfs:Datatype ;....
                 # the second Datatype triggers this if condition,
@@ -307,19 +347,24 @@ class RdfParser:
 
                 enum_values = []
                 for equivalent_class in graph.objects(
-                        subject=a,
-                        predicate=rdflib.term.URIRef(
-                            "http://www.w3.org/2002/07/owl#equivalentClass")):
+                    subject=a,
+                    predicate=rdflib.term.URIRef(
+                        "http://www.w3.org/2002/07/owl#equivalentClass"
+                    ),
+                ):
 
                     if isinstance(equivalent_class, rdflib.term.URIRef):
                         # points to an other defined datatype, ignore
                         pass
                     else:
                         # is a bNode and points to owl:oneOf
-                        enum_literals = self.\
-                            _extract_objects_out_of_single_combination(
-                                graph, equivalent_class, accept_and=False,
-                                accept_or=False, accept_one_of=True)
+                        enum_literals = self._extract_objects_out_of_single_combination(
+                            graph,
+                            equivalent_class,
+                            accept_and=False,
+                            accept_or=False,
+                            accept_one_of=True,
+                        )
                         for literal in enum_literals:
                             enum_values.append(str(literal))
                 datatype.enum_values = enum_values
@@ -331,13 +376,17 @@ class RdfParser:
         # OWLIndividuals
 
         for a in graph.subjects(
-                object=rdflib.term.URIRef(Tags.owl_individual.value),
-                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
+            object=rdflib.term.URIRef(Tags.owl_individual.value),
+            predicate=rdflib.term.URIRef(Tags.rdf_type.value),
+        ):
 
             if isinstance(a, rdflib.term.BNode):
-                self._add_logging_information(LogLevel.WARNING,
-                                              IdType.individual, "unknown",
-                                             "Found unparseable statement")
+                self._add_logging_information(
+                    LogLevel.WARNING,
+                    IdType.individual,
+                    "unknown",
+                    "Found unparseable statement",
+                )
 
             else:
                 # defined in other source -> ignore
@@ -345,22 +394,22 @@ class RdfParser:
                     continue
 
                 iri, label, comment = self._extract_annotations(graph, a)
-                objects = graph.objects(subject=a,
-                                        predicate=
-                                        rdflib.term.URIRef(Tags.rdf_type.value))
+                objects = graph.objects(
+                    subject=a, predicate=rdflib.term.URIRef(Tags.rdf_type.value)
+                )
                 # superclasses = types
                 types = []
                 for object in objects:
-                    if not object == \
-                           rdflib.term.URIRef(Tags.owl_individual.value):
-                        types.extend(self.
-                            _extract_objects_out_of_layered_combination(
-                                        graph, object, True, False))
+                    if not object == rdflib.term.URIRef(Tags.owl_individual.value):
+                        types.extend(
+                            self._extract_objects_out_of_layered_combination(
+                                graph, object, True, False
+                            )
+                        )
 
                 individual = Individual(iri=iri, label=label, comment=comment)
                 for type in types:
-                    individual.parent_class_iris.append(
-                        get_iri_from_uriref(type))
+                    individual.parent_class_iris.append(get_iri_from_uriref(type))
                 voc_builder.add_individual(individual=individual)
 
         # As seen for example in the bricks ontology an individual can be
@@ -370,11 +419,10 @@ class RdfParser:
         # as we may not have loaded all dependencies we can not simply look it
         # up in vocabulary
         # -> getbase uri of statement and filter all known specifier uris
-        for sub in graph.subjects(
-                predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
-            for obj in graph.objects(subject=sub,
-                                     predicate=
-                                     rdflib.term.URIRef(Tags.rdf_type.value)):
+        for sub in graph.subjects(predicate=rdflib.term.URIRef(Tags.rdf_type.value)):
+            for obj in graph.objects(
+                subject=sub, predicate=rdflib.term.URIRef(Tags.rdf_type.value)
+            ):
 
                 if isinstance(obj, rdflib.term.BNode):
                     continue
@@ -382,20 +430,17 @@ class RdfParser:
 
                 obj_base_iri = get_base_out_of_iri(iri=obj_iri)
                 if obj_base_iri not in specifier_base_iris:
-                    iri, label, comment = \
-                        self._extract_annotations(graph, sub)
+                    iri, label, comment = self._extract_annotations(graph, sub)
                     if not voc_builder.entity_is_known(iri):
-                        iri, label, comment = \
-                            self._extract_annotations(graph, sub)
-                        individual = Individual(iri=iri,
-                                                label=label,
-                                                comment=comment)
+                        iri, label, comment = self._extract_annotations(graph, sub)
+                        individual = Individual(iri=iri, label=label, comment=comment)
                         individual.parent_class_iris.append(obj_iri)
                         voc_builder.add_individual(individual)
 
-    def _extract_annotations(self, graph: rdflib.Graph,
-                             node: rdflib.term.URIRef) -> Tuple[str, str, str]:
-        """ Extract out of a node term the owl annotations (iri, label, comment)
+    def _extract_annotations(
+        self, graph: rdflib.Graph, node: rdflib.term.URIRef
+    ) -> Tuple[str, str, str]:
+        """Extract out of a node term the owl annotations (iri, label, comment)
 
         Args:
             graph (rdflib.graph): Graph describing ontology
@@ -410,9 +455,13 @@ class RdfParser:
 
         return iri, label, comment
 
-    def _parse_subclass_term(self, graph: rdflib.Graph,
-                             voc_builder: VocabularyBuilder,
-                             node: rdflib.term, class_iri: str):
+    def _parse_subclass_term(
+        self,
+        graph: rdflib.Graph,
+        voc_builder: VocabularyBuilder,
+        node: rdflib.term,
+        class_iri: str,
+    ):
         """Parse a subclass term of the given node and class_iri
 
         Args:
@@ -461,21 +510,31 @@ class RdfParser:
             # Combination of statements
             if rdflib.term.URIRef(Tags.owl_intersection.value) in predicates:
                 objects = self._extract_objects_out_of_single_combination(
-                    graph, node, True, False)
+                    graph, node, True, False
+                )
                 for object in objects:
-                    self._parse_subclass_term(graph=graph,
-                                              voc_builder=voc_builder,
-                                              node=object, class_iri=class_iri)
+                    self._parse_subclass_term(
+                        graph=graph,
+                        voc_builder=voc_builder,
+                        node=object,
+                        class_iri=class_iri,
+                    )
 
             elif rdflib.term.URIRef(Tags.owl_union.value) in predicates:
                 self._add_logging_information(
-                    LogLevel.CRITICAL, IdType.class_, class_iri,
-                    "Relation statements combined with or")
+                    LogLevel.CRITICAL,
+                    IdType.class_,
+                    class_iri,
+                    "Relation statements combined with or",
+                )
 
             elif rdflib.term.URIRef(Tags.owl_one_of.value) in predicates:
                 self._add_logging_information(
-                    LogLevel.CRITICAL, IdType.class_, class_iri,
-                    "Relation statements combined with oneOf")
+                    LogLevel.CRITICAL,
+                    IdType.class_,
+                    class_iri,
+                    "Relation statements combined with oneOf",
+                )
 
             # Relation statement
             else:
@@ -488,23 +547,31 @@ class RdfParser:
                     if predicates[i] == rdflib.term.URIRef(Tags.rdf_type.value):
                         rdf_type = get_iri_from_uriref(objects[i])
                     elif predicates[i] == rdflib.term.URIRef(
-                            "http://www.w3.org/2002/07/owl#onProperty"):
+                        "http://www.w3.org/2002/07/owl#onProperty"
+                    ):
                         owl_on_property = get_iri_from_uriref(objects[i])
                     else:
-                        additional_statements[
-                            get_iri_from_uriref(predicates[i])] = objects[i]
+                        additional_statements[get_iri_from_uriref(predicates[i])] = (
+                            objects[i]
+                        )
 
                 relation_is_ok = True
                 if not rdf_type == "http://www.w3.org/2002/07/owl#Restriction":
                     self._add_logging_information(
-                        LogLevel.CRITICAL, IdType.class_, class_iri,
-                        "Class has an unknown subClass statement")
+                        LogLevel.CRITICAL,
+                        IdType.class_,
+                        class_iri,
+                        "Class has an unknown subClass statement",
+                    )
                     relation_is_ok = False
 
                 if owl_on_property == "":
                     self._add_logging_information(
-                        LogLevel.CRITICAL, IdType.class_, class_iri,
-                        "Class has a relation without a property")
+                        LogLevel.CRITICAL,
+                        IdType.class_,
+                        class_iri,
+                        "Class has a relation without a property",
+                    )
                     relation_is_ok = False
 
                 # object or data relation?
@@ -520,34 +587,38 @@ class RdfParser:
 
                     # go through the additional statement to figure out the
                     # targetIRI and the restrictionType/cardinality
-                    self._parse_relation_type(graph, relation,
-                                              additional_statements)
+                    self._parse_relation_type(graph, relation, additional_statements)
 
         # parent-class statement or empty list element
         else:
             # owlThing is the root object, but it is not declared as a class
             # in the file to prevent None pointer when looking up parents,
             # a class that has a parent owlThing simply has no parents
-            if not get_iri_from_uriref(node) == \
-                   "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil":
+            if (
+                not get_iri_from_uriref(node)
+                == "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+            ):
                 # ignore empty lists
-                if not get_iri_from_uriref(node) == \
-                       "http://www.w3.org/2002/07/owl#Thing":
-                    voc_builder.vocabulary.\
-                        get_class_by_iri(class_iri).parent_class_iris.\
-                        append(get_iri_from_uriref(node))
+                if (
+                    not get_iri_from_uriref(node)
+                    == "http://www.w3.org/2002/07/owl#Thing"
+                ):
+                    voc_builder.vocabulary.get_class_by_iri(
+                        class_iri
+                    ).parent_class_iris.append(get_iri_from_uriref(node))
 
-    def _parse_relation_type(self, graph: rdflib.Graph,
-                             relation: Relation, statements: {}):
+    def _parse_relation_type(
+        self, graph: rdflib.Graph, relation: Relation, statements: {}
+    ):
         """
         Parse the relation type and depending on the result the
         cardinality or value of relation
-        
+
         Args:
             graph: underlying ontology graph
             relation: Relation object into which the information are saved
             statements: Ontology statements concerning the relation
-        
+
         Returns:
             None
         """
@@ -555,57 +626,65 @@ class RdfParser:
         for statement in statements:
             if statement == "http://www.w3.org/2002/07/owl#someValuesFrom":
                 relation.restriction_type = RestrictionType.some
-                self._parse_relation_values(graph, relation,
-                                            statements[statement])
+                self._parse_relation_values(graph, relation, statements[statement])
             elif statement == "http://www.w3.org/2002/07/owl#allValuesFrom":
                 relation.restriction_type = RestrictionType.only
-                self._parse_relation_values(graph, relation,
-                                            statements[statement])
+                self._parse_relation_values(graph, relation, statements[statement])
             elif statement == "http://www.w3.org/2002/07/owl#hasValue":
                 relation.restriction_type = RestrictionType.value
                 # has Value can only point to a single value
-                self._parse_has_value(graph, relation,
-                                      statements[statement])
+                self._parse_has_value(graph, relation, statements[statement])
             elif statement == "http://www.w3.org/2002/07/owl#maxCardinality":
                 relation.restriction_type = RestrictionType.max
-                self._parse_cardinality(graph, relation, statement,
-                                        statements, treated_statements)
+                self._parse_cardinality(
+                    graph, relation, statement, statements, treated_statements
+                )
             elif statement == "http://www.w3.org/2002/07/owl#minCardinality":
                 relation.restriction_type = RestrictionType.min
-                self._parse_cardinality(graph, relation, statement,
-                                        statements, treated_statements)
+                self._parse_cardinality(
+                    graph, relation, statement, statements, treated_statements
+                )
             elif statement == "http://www.w3.org/2002/07/owl#cardinality":
                 relation.restriction_type = RestrictionType.exactly
-                self._parse_cardinality(graph,  relation, statement,
-                                        statements, treated_statements)
-            elif statement == \
-                    "http://www.w3.org/2002/07/owl#maxQualifiedCardinality":
+                self._parse_cardinality(
+                    graph, relation, statement, statements, treated_statements
+                )
+            elif statement == "http://www.w3.org/2002/07/owl#maxQualifiedCardinality":
                 relation.restriction_type = RestrictionType.max
-                self._parse_cardinality(graph, relation, statement,
-                                        statements, treated_statements)
-            elif statement == \
-                    "http://www.w3.org/2002/07/owl#minQualifiedCardinality":
+                self._parse_cardinality(
+                    graph, relation, statement, statements, treated_statements
+                )
+            elif statement == "http://www.w3.org/2002/07/owl#minQualifiedCardinality":
                 relation.restriction_type = RestrictionType.min
-                self._parse_cardinality(graph, relation, statement,
-                                        statements, treated_statements)
-            elif statement == \
-                    "http://www.w3.org/2002/07/owl#qualifiedCardinality":
+                self._parse_cardinality(
+                    graph, relation, statement, statements, treated_statements
+                )
+            elif statement == "http://www.w3.org/2002/07/owl#qualifiedCardinality":
                 relation.restriction_type = RestrictionType.exactly
-                self._parse_cardinality(graph, relation, statement,
-                                        statements, treated_statements)
+                self._parse_cardinality(
+                    graph, relation, statement, statements, treated_statements
+                )
 
             treated_statements.append(statement)
 
         for statement in statements:
             if statement not in treated_statements:
                 self._add_logging_information(
-                  LogLevel.CRITICAL, IdType.class_, self.current_class_iri,
-                  "Relation with property {} has an untreated restriction "
-                  "{}".format(relation.property_iri, statement))
+                    LogLevel.CRITICAL,
+                    IdType.class_,
+                    self.current_class_iri,
+                    "Relation with property {} has an untreated restriction "
+                    "{}".format(relation.property_iri, statement),
+                )
 
-    def _parse_cardinality(self, graph: rdflib.Graph,
-                           relation: Relation, statement, statements,
-                           treated_statements):
+    def _parse_cardinality(
+        self,
+        graph: rdflib.Graph,
+        relation: Relation,
+        statement,
+        statements,
+        treated_statements,
+    ):
         """Parse the cardinality of a relation
 
         Args:
@@ -641,19 +720,21 @@ class RdfParser:
 
             relation.restriction_cardinality = statements[statement].value
             datatype = "http://www.w3.org/2001/XMLSchema#string"
-            target_statement = TargetStatement(type=StatementType.LEAF,
-                                               target_iri=datatype)
+            target_statement = TargetStatement(
+                type=StatementType.LEAF, target_iri=datatype
+            )
             relation.target_statement = target_statement
 
-    def _parse_has_value(self, graph: rdflib.Graph, relation: Relation,
-                         node: rdflib.term):
+    def _parse_has_value(
+        self, graph: rdflib.Graph, relation: Relation, node: rdflib.term
+    ):
         """Parse the value of a relation
 
         Args:
            graph: underlying ontology graph
            relation: Relation object into which the information are saved
            node: (complex) Graph node containing the value
-        
+
         Returns:
            None
         """
@@ -665,10 +746,12 @@ class RdfParser:
                 IdType.class_,
                 self.current_class_iri,
                 f"In hasValue relation with property {relation.property_iri} "
-                f"target is a complex expression")
+                f"target is a complex expression",
+            )
 
-    def _parse_relation_values(self, graph: rdflib.Graph,
-                               relation: Relation, node: rdflib.term):
+    def _parse_relation_values(
+        self, graph: rdflib.Graph, relation: Relation, node: rdflib.term
+    ):
         """
         Parse the value of a relation out of a node that can be complex;
         consisting out of a combination of multiple other nodes
@@ -692,23 +775,27 @@ class RdfParser:
 
                 current_statement.set_target(target_iri=target_iri)
             else:
-                if rdflib.term.URIRef(Tags.owl_intersection.value) in \
-                        graph.predicates(subject=current_term):
+                if rdflib.term.URIRef(Tags.owl_intersection.value) in graph.predicates(
+                    subject=current_term
+                ):
 
                     current_statement.type = StatementType.AND
-                elif rdflib.term.URIRef(Tags.owl_union.value) in \
-                        graph.predicates(subject=current_term):
+                elif rdflib.term.URIRef(Tags.owl_union.value) in graph.predicates(
+                    subject=current_term
+                ):
 
                     current_statement.type = StatementType.OR
                 else:
                     current_statement.set_target(
                         target_iri="Target statement has no iri",
-                        target_data_value=str(current_term))
+                        target_data_value=str(current_term),
+                    )
 
                     continue
 
                 child_nodes = self._extract_objects_out_of_single_combination(
-                    graph, current_term, True, True)
+                    graph, current_term, True, True
+                )
                 for child_node in child_nodes:
                     new_statement = TargetStatement()
                     current_statement.target_statements.append(new_statement)
@@ -721,11 +808,14 @@ class RdfParser:
     # this methode extracts all objects of a single layered intersection,
     # if the intersection contains further intersections these are contained in
     # the result list as BNode
-    def _extract_objects_out_of_single_combination(self, graph: rdflib.Graph,
-                                                   node: rdflib.term.BNode,
-                                                   accept_and: bool,
-                                                   accept_or: bool,
-                                                   accept_one_of: bool = False):
+    def _extract_objects_out_of_single_combination(
+        self,
+        graph: rdflib.Graph,
+        node: rdflib.term.BNode,
+        accept_and: bool,
+        accept_or: bool,
+        accept_one_of: bool = False,
+    ):
         """
         An intersection/union is a basic list, it consits out of a chain of
         bnode,where each bnode has the "first"and "rest" predicate,
@@ -753,28 +843,36 @@ class RdfParser:
         # the passed startnode needs to contain an intersection or a union
         # both at the same time should not be possible
         start_node = None
-        if rdflib.term.URIRef(Tags.owl_intersection.value) \
-                in predicates:
+        if rdflib.term.URIRef(Tags.owl_intersection.value) in predicates:
             if accept_and:
-                start_node = next(graph.objects(
-                    subject=node,
-                    predicate=rdflib.term.URIRef(Tags.owl_intersection.value)))
-        elif rdflib.term.URIRef(Tags.owl_union.value) \
-                in predicates:
+                start_node = next(
+                    graph.objects(
+                        subject=node,
+                        predicate=rdflib.term.URIRef(Tags.owl_intersection.value),
+                    )
+                )
+        elif rdflib.term.URIRef(Tags.owl_union.value) in predicates:
             if accept_or:
-                start_node = next(graph.objects(
-                    subject=node,
-                    predicate=rdflib.term.URIRef(Tags.owl_union.value)))
-        elif rdflib.term.URIRef(Tags.owl_one_of.value) \
-                in predicates:
+                start_node = next(
+                    graph.objects(
+                        subject=node, predicate=rdflib.term.URIRef(Tags.owl_union.value)
+                    )
+                )
+        elif rdflib.term.URIRef(Tags.owl_one_of.value) in predicates:
             if accept_one_of:
-                start_node = next(graph.objects(
-                    subject=node,
-                    predicate=rdflib.term.URIRef(Tags.owl_one_of.value)))
+                start_node = next(
+                    graph.objects(
+                        subject=node,
+                        predicate=rdflib.term.URIRef(Tags.owl_one_of.value),
+                    )
+                )
         else:
             self._add_logging_information(
-                LogLevel.CRITICAL, IdType.class_, self.current_class_iri,
-                f"Intern Error - invalid {node} passed to list extraction")
+                LogLevel.CRITICAL,
+                IdType.class_,
+                self.current_class_iri,
+                f"Intern Error - invalid {node} passed to list extraction",
+            )
 
         result = []
         rest = start_node
@@ -782,21 +880,36 @@ class RdfParser:
             return []
 
         while not rest == rdflib.term.URIRef(
-                'http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'):
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+        ):
 
-            first = next(graph.objects(predicate=rdflib.term.URIRef(
-                'http://www.w3.org/1999/02/22-rdf-syntax-ns#first'),
-                subject=rest))
+            first = next(
+                graph.objects(
+                    predicate=rdflib.term.URIRef(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#first"
+                    ),
+                    subject=rest,
+                )
+            )
             result.append(first)
-            rest = next(graph.objects(predicate=rdflib.term.URIRef(
-                        'http://www.w3.org/1999/02/22-rdf-syntax-ns#rest'),
-                                      subject=rest))
+            rest = next(
+                graph.objects(
+                    predicate=rdflib.term.URIRef(
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"
+                    ),
+                    subject=rest,
+                )
+            )
 
         return result
 
     def _extract_objects_out_of_layered_combination(
-            self, graph: rdflib.Graph, node: rdflib.term.BNode,
-            accept_and: bool, accept_or: bool) -> List[rdflib.term.URIRef]:
+        self,
+        graph: rdflib.Graph,
+        node: rdflib.term.BNode,
+        accept_and: bool,
+        accept_or: bool,
+    ) -> List[rdflib.term.URIRef]:
         """Extract all nodes out of a complex combination
 
         Args:
@@ -818,7 +931,9 @@ class RdfParser:
             if isinstance(node, rdflib.term.URIRef):
                 result.append(node)
             else:
-                queue.extend(self._extract_objects_out_of_single_combination
-                             (graph, node, accept_and, accept_or))
+                queue.extend(
+                    self._extract_objects_out_of_single_combination(
+                        graph, node, accept_and, accept_or
+                    )
+                )
         return result
-

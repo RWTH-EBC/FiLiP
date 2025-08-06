@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+  # Using black mirror since it's 2x faster https://black.readthedocs.io/en/stable/integrations/source_version_control.html
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.10.0
+    hooks:
+      - id: black
+        # Specifying the latest version of Python supported by Filip
+        language_version: python
