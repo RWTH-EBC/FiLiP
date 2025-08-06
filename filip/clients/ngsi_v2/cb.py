@@ -177,10 +177,10 @@ class ContextBrokerClient(BaseHttpClient):
         the current filip version
         """
         orion_version = self.get_version()["orion"]["version"]
-        if version.parse(orion_version) < version.parse(settings.minimum_orion_version):
+        if version.parse(orion_version) < version.parse(settings.MINIMUM_ORION_VERSION):
             warnings.warn(
                 f"You are using orion version {orion_version}. There was a breaking change in Orion Version "
-                f"{settings.minimum_orion_version}, therefore functionality is not assured when using "
+                f"{settings.MINIMUM_ORION_VERSION}, therefore functionality is not assured when using "
                 f"version {orion_version}."
             )
 
