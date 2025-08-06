@@ -169,7 +169,8 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise RequestException(response=err.response) from err
+            msg = f"Fetch version fails, reason: {err.args}"
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def _check_correct_cb_version(self) -> None:
         """
