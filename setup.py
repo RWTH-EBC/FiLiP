@@ -17,7 +17,7 @@ INSTALL_REQUIRES = [
     "pydantic-settings>=2.0.0,<2.3.0",
     "geojson_pydantic~=1.0.2",
     "stringcase>=1.2.0",
-    "rdflib~=6.0.0",
+    "rdflib>=6.0.0,<=6.1.1",
     "regex~=2023.10.3",
     "requests~=2.32.0",
     "rapidfuzz~=3.4.0",
