@@ -1,5 +1,6 @@
 """Setup.py script for the FiLiP-Library"""
 
+import re
 import setuptools
 
 # read the contents of your README file
@@ -30,7 +31,19 @@ INSTALL_REQUIRES = [
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = "0.7.0"
+
+def get_version():
+    init_py = Path(__file__).parent.joinpath("filip", "__init__.py")
+    with open(init_py, "r") as f:
+        content = f.read()
+    # Using a regular expression to find the version string
+    match = re.search(r"^__version__\s*=\s*['\"]([^'\"]*)['\"]", content, re.M)
+    if match:
+        return match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+
+VERSION = get_version()
 
 setuptools.setup(
     name="filip",
