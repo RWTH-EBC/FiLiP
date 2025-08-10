@@ -1,3 +1,6 @@
+### v0.7.1
+- update: relax rdflib requirements to allow rdflib<=6.1.1 ([#446](https://github.com/RWTH-EBC/FiLiP/issues/446))
+
 ### v0.7.0
 - add: flag to decide on whether ignore invalid entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
 - add: system params like ``lastSuccess`` to notification model ([#441](https://github.com/RWTH-EBC/FiLiP/pull/441))
