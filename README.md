@@ -112,7 +112,7 @@ pip install -U filip[tutorials]
 
 #### Install semantics module (optional)
 
-If you want to use the optional [semantics module](filip/semantics), use the following command (This will install the libraries that only required for the semantics module):
+If you want to use the optional [semantics module](filip/semantics), use the following command. This will install the libraries (e.g., `igraph` and `rdflib`) that only required for the semantics module):
 ````
 pip install -U filip[semantics]
 ````
