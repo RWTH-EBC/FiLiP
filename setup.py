@@ -18,7 +18,6 @@ INSTALL_REQUIRES = [
     "pydantic-settings>=2.0.0,<2.3.0",
     "geojson_pydantic~=1.0.2",
     "stringcase>=1.2.0",
-    "rdflib>=6.0.0,<=6.1.1",
     "regex~=2023.10.3",
     "requests~=2.32.0",
     "rapidfuzz~=3.4.0",
@@ -83,7 +82,7 @@ setuptools.setup(
     # optional modules
     extras_require={
         "development": ["pre-commit~=4.0.1"],
-        "semantics": ["igraph~=0.11.2"],
+        "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
         "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
         ":python_version >= '3.9'": ["pandas>=2.1.4,<2.4.0"],
