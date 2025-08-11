@@ -1,3 +1,6 @@
+### v0.7.2
+- update: move rdflib requirement to ``semantics`` extras
+
 ### v0.7.1
 - update: relax rdflib requirements to allow rdflib<=6.1.1 ([#446](https://github.com/RWTH-EBC/FiLiP/issues/446))
 
