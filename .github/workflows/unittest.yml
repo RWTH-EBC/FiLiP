@@ -105,7 +105,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel
-          pip install . # Install current package
+          pip install .[semantics] # Install current package
           pip install pytest
           if [[ "${{ matrix.run_coverage }}" == "true" ]]; then
             pip install coverage coverage-badge
