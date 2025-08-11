@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.semantics.ontology_parser package &mdash; FiLiP 0.7.1 documentation</title>
+  <title>filip.semantics.ontology_parser package &mdash; FiLiP 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -133,122 +133,8 @@ be transferred</p></li>
 </dd></dl>
 
 </section>
-<section id="module-filip.semantics.ontology_parser.rdfparser">
-<span id="filip-semantics-ontology-parser-rdfparser-module"></span><h2>filip.semantics.ontology_parser.rdfparser module<a class="headerlink" href="#module-filip.semantics.ontology_parser.rdfparser" title="Permalink to this heading"></a></h2>
-<p>Module contains the RDFParser that can create a Vocabulary object out of a
-given ontology</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">RdfParser</span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#RdfParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Class that parses a given source into a vocabulary.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser.current_class_iri">
-<span class="sig-name descname"><span class="pre">current_class_iri</span></span><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser.current_class_iri" title="Permalink to this definition"></a></dt>
-<dd><p>Iri of class which is currently parsed, used for Log entries</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser.current_source">
-<span class="sig-name descname"><span class="pre">current_source</span></span><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser.current_source" title="Permalink to this definition"></a></dt>
-<dd><p>Current source which is parsed, used for Log entries</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.RdfParser.parse_source_into_vocabulary">
-<span class="sig-name descname"><span class="pre">parse_source_into_vocabulary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source" title="filip.semantics.vocabulary.source.Source"><span class="pre">Source</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vocabulary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary" title="filip.semantics.vocabulary.vocabulary.Vocabulary"><span class="pre">Vocabulary</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#RdfParser.parse_source_into_vocabulary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.RdfParser.parse_source_into_vocabulary" title="Permalink to this definition"></a></dt>
-<dd><p>Parse a Source into the given vocabulary
-:param source:
-:type source: Source
-:param vocabulary:
-:type vocabulary: Vocabulary</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool, True if success, False if Error occurred, as an invalid File</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">Tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#Tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
-<p>Collection of tags used as structures in ontologies, that were used more
-than once in the rdfparser code</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_individual">
-<span class="sig-name descname"><span class="pre">owl_individual</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#NamedIndividual'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_individual" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_intersection">
-<span class="sig-name descname"><span class="pre">owl_intersection</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#intersectionOf'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_intersection" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_on_class">
-<span class="sig-name descname"><span class="pre">owl_on_class</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#onClass'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_on_class" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_on_data_range">
-<span class="sig-name descname"><span class="pre">owl_on_data_range</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#onDataRange'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_on_data_range" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_one_of">
-<span class="sig-name descname"><span class="pre">owl_one_of</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#oneOf'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_one_of" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.owl_union">
-<span class="sig-name descname"><span class="pre">owl_union</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/2002/07/owl#unionOf'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.owl_union" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.Tags.rdf_type">
-<span class="sig-name descname"><span class="pre">rdf_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.Tags.rdf_type" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.get_base_out_of_iri">
-<span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">get_base_out_of_iri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#get_base_out_of_iri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.get_base_out_of_iri" title="Permalink to this definition"></a></dt>
-<dd><p>Give an iri, returns an the ontology base name</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>iri</strong> – </p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.get_iri_from_uriref">
-<span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">get_iri_from_uriref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uriref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">URIRef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/semantics/ontology_parser/rdfparser.html#get_iri_from_uriref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.get_iri_from_uriref" title="Permalink to this definition"></a></dt>
-<dd><p>Give an Uriref object, returns an iri</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uriref</strong> – Object describing the iri</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="filip.semantics.ontology_parser.rdfparser.specifier_base_iris">
-<span class="sig-prename descclassname"><span class="pre">filip.semantics.ontology_parser.rdfparser.</span></span><span class="sig-name descname"><span class="pre">specifier_base_iris</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['http://www.w3.org/2002/07/owl',</span> <span class="pre">'http://www.w3.org/1999/02/22-rdf-syntax-ns',</span> <span class="pre">'http://www.w3.org/XML/1998/namespace',</span> <span class="pre">'http://www.w3.org/2001/XMLSchema',</span> <span class="pre">'http://www.w3.org/2000/01/rdf-schema']</span></em><a class="headerlink" href="#filip.semantics.ontology_parser.rdfparser.specifier_base_iris" title="Permalink to this definition"></a></dt>
-<dd><p>Defines a set of base iris, that describe elements that belong to the
-description language not the ontology itself</p>
-</dd></dl>
-
+<section id="filip-semantics-ontology-parser-rdfparser-module">
+<h2>filip.semantics.ontology_parser.rdfparser module<a class="headerlink" href="#filip-semantics-ontology-parser-rdfparser-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-filip.semantics.ontology_parser.vocabulary_builder">
 <span id="filip-semantics-ontology-parser-vocabulary-builder-module"></span><h2>filip.semantics.ontology_parser.vocabulary_builder module<a class="headerlink" href="#module-filip.semantics.ontology_parser.vocabulary_builder" title="Permalink to this heading"></a></h2>
