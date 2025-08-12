@@ -9,7 +9,7 @@
 [![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg     )](https://doi.org/10.21105/joss.06953    )
 
-FiLiP (Fiware Library for Python) is a python Software Development Kit (SDK) for 
+FiLiP (<ins>FI</ins>WARE <ins>Li</ins>brary for <ins>P</ins>ython) is a python Software Development Kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
 Enablers (GEs) as backend.
 
@@ -112,7 +112,7 @@ pip install -U filip[tutorials]
 
 #### Install semantics module (optional)
 
-If you want to use the optional [semantics module](filip/semantics), use the following command (This will install the libraries that only required for the semantics module):
+If you want to use the optional [semantics module](filip/semantics), use the following command. This will install the libraries (e.g., `igraph` and `rdflib`) that only required for the semantics module):
 ````
 pip install -U filip[semantics]
 ````

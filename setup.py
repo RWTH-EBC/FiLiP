@@ -1,5 +1,6 @@
 """Setup.py script for the FiLiP-Library"""
 
+import re
 import setuptools
 
 # read the contents of your README file
@@ -17,7 +18,6 @@ INSTALL_REQUIRES = [
     "pydantic-settings>=2.0.0,<2.3.0",
     "geojson_pydantic~=1.0.2",
     "stringcase>=1.2.0",
-    "rdflib~=6.0.0",
     "regex~=2023.10.3",
     "requests~=2.32.0",
     "rapidfuzz~=3.4.0",
@@ -30,7 +30,19 @@ INSTALL_REQUIRES = [
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = "0.7.0"
+
+def get_version():
+    init_py = Path(__file__).parent.joinpath("filip", "__init__.py")
+    with open(init_py, "r") as f:
+        content = f.read()
+    # Using a regular expression to find the version string
+    match = re.search(r"^__version__\s*=\s*['\"]([^'\"]*)['\"]", content, re.M)
+    if match:
+        return match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+
+VERSION = get_version()
 
 setuptools.setup(
     name="filip",
@@ -70,7 +82,7 @@ setuptools.setup(
     # optional modules
     extras_require={
         "development": ["pre-commit~=4.0.1"],
-        "semantics": ["igraph~=0.11.2"],
+        "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
         "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
         ":python_version < '3.9'": ["pandas~=1.3.5"],
         ":python_version >= '3.9'": ["pandas>=2.1.4,<2.4.0"],

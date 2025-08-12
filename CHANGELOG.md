@@ -1,5 +1,11 @@
-### v0.7.1
+### v0.7.x
 - add: warning if ``Orion`` version is not supported ([#200](https://github.com/RWTH-EBC/FiLiP/issues/200))
+
+### v0.7.2
+- update: move rdflib requirement to ``semantics`` extras
+
+### v0.7.1
+- update: relax rdflib requirements to allow rdflib<=6.1.1 ([#446](https://github.com/RWTH-EBC/FiLiP/issues/446))
 
 ### v0.7.0
 - add: flag to decide on whether ignore invalid entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
