@@ -935,7 +935,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 0,
-                "statement": 16,
+                "statement": 17,
                 "warning": 0
             },
             "filip.custom_types": {
@@ -1016,18 +1016,18 @@
                 "filip"
             ],
             "pydantic": [
-                "tests.config",
-                "tests.test_config",
+                "filip.custom_types",
                 "filip.config",
-                "filip.custom_types"
+                "tests.test_config",
+                "tests.config"
             ],
             "pydantic_settings": [
-                "tests.config",
-                "filip.config"
+                "filip.config",
+                "tests.config"
             ],
             "dotenv": [
-                "tests.config",
-                "filip.config"
+                "filip.config",
+                "tests.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
@@ -1060,11 +1060,11 @@
         "fatal": 0,
         "info": 0,
         "refactor": 1,
-        "statement": 110,
+        "statement": 111,
         "warning": 2,
         "global_note": 0,
         "nb_duplicated_lines": 9,
-        "percent_duplicated_lines": 2.4390243902439024
+        "percent_duplicated_lines": 2.4258760107816713
     },
     "previous": {
         "bad_names": {
@@ -1098,7 +1098,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 0,
-                "statement": 16,
+                "statement": 17,
                 "warning": 0
             },
             "filip.custom_types": {
@@ -1179,18 +1179,18 @@
                 "filip"
             ],
             "pydantic": [
-                "tests.config",
-                "tests.test_config",
+                "filip.custom_types",
                 "filip.config",
-                "filip.custom_types"
+                "tests.test_config",
+                "tests.config"
             ],
             "pydantic_settings": [
-                "tests.config",
-                "filip.config"
+                "filip.config",
+                "tests.config"
             ],
             "dotenv": [
-                "tests.config",
-                "filip.config"
+                "filip.config",
+                "tests.config"
             ],
             "typing_extensions": [
                 "filip.custom_types"
@@ -1223,10 +1223,10 @@
         "fatal": 0,
         "info": 0,
         "refactor": 1,
-        "statement": 110,
+        "statement": 111,
         "warning": 2,
-        "global_note": 9.09090909090909,
+        "global_note": 9.0990990990991,
         "nb_duplicated_lines": 9,
-        "percent_duplicated_lines": 2.4390243902439024
+        "percent_duplicated_lines": 2.4258760107816713
     }
 }

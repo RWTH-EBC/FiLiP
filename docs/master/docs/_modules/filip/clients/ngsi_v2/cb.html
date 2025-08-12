@@ -87,6 +87,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">inf</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">packaging.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span> <span class="k">as</span> <span class="n">parse_version</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">packaging</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositiveInt</span><span class="p">,</span> <span class="n">PositiveFloat</span><span class="p">,</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">ValidationError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic.type_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAdapter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
@@ -161,6 +162,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_correct_cb_version</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__pagination</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -245,7 +247,21 @@
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Fetch version fails, reason: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_correct_cb_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether the used Orion version is greater or equal than the minimum required orion version of</span>
+<span class="sd">        the current filip version</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">orion_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_version</span><span class="p">()[</span><span class="s2">&quot;orion&quot;</span><span class="p">][</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">orion_version</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">MINIMUM_ORION_VERSION</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;You are using orion version </span><span class="si">{</span><span class="n">orion_version</span><span class="si">}</span><span class="s2">. There was a breaking change in Orion Version &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">MINIMUM_ORION_VERSION</span><span class="si">}</span><span class="s2">, therefore functionality is not assured when using &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;version </span><span class="si">{</span><span class="n">orion_version</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_resources"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_resources">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_resources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
