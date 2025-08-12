@@ -1,3 +1,6 @@
+### v0.7.x
+- update: error handling for get devices list
+
 ### v0.7.2
 - update: move rdflib requirement to ``semantics`` extras
 
