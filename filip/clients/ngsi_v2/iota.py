@@ -10,13 +10,18 @@ from typing import List, Dict, Set, TYPE_CHECKING, Union, Optional
 import warnings
 from urllib.parse import urljoin
 import requests
-from pydantic import AnyHttpUrl
+from pydantic import AnyHttpUrl, ValidationError
 from pydantic.type_adapter import TypeAdapter
 from filip.config import settings
 from filip.clients.base_http_client import BaseHttpClient
 from filip.clients.exceptions import BaseHttpClientException
 from filip.models.base import FiwareHeader
-from filip.models.ngsi_v2.iot import Device, ServiceGroup
+from filip.models.ngsi_v2.iot import (
+    Device,
+    ServiceGroup,
+    DeviceValidationList,
+    DeviceList,
+)
 
 from filip.utils.filter import filter_device_list, filter_group_list
 
@@ -369,7 +374,8 @@ class IoTAClient(BaseHttpClient):
         device_ids: Union[str, List[str]] = None,
         entity_names: Union[str, List[str]] = None,
         entity_types: Union[str, List[str]] = None,
-    ) -> List[Device]:
+        include_invalid: bool = False,
+    ) -> Union[List[Union[Device, DeviceList]], DeviceValidationList]:
         """
         Returns a list of all the devices in the device registry with all
         its data. The IoTAgent now only supports "limit" and "offset" as
@@ -391,7 +397,7 @@ class IoTAClient(BaseHttpClient):
             entity_types:
                 The entity_type of the device. If given, only the devices
                 with the specified entity_type will be returned
-
+            include_invalid: Specify if the returned list should also contain a list of invalid device IDs or not.
         Returns:
             List of matching devices
         """
@@ -413,13 +419,29 @@ class IoTAClient(BaseHttpClient):
         try:
             res = self.get(url=url, headers=headers, params=params)
             if res.ok:
-                ta = TypeAdapter(List[Device])
-                devices = ta.validate_python(res.json()["devices"])
-                # filter by device_ids, entity_names or entity_types
-                devices = filter_device_list(
-                    devices, device_ids, entity_names, entity_types
-                )
-                return devices
+                if include_invalid:
+                    valid_devices = []
+                    invalid_devices = []
+                    ta = TypeAdapter(Device)
+                    for device in res.json()["devices"]:
+                        try:
+                            valid_device = ta.validate_python(device)
+                            valid_devices.append(valid_device)
+                        except ValidationError:
+                            invalid_devices.append(device.get("device_id"))
+                    valid_devices = filter_device_list(
+                        valid_devices, device_ids, entity_names, entity_types
+                    )
+                    return DeviceValidationList.model_validate(
+                        {
+                            "devices": valid_devices,
+                            "invalid_devices": invalid_devices,
+                        }
+                    )
+                else:
+                    return DeviceList.model_validate(
+                        {"devices": res.json()["devices"]}
+                    ).devices
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
