@@ -11,22 +11,24 @@ import json
 from uuid import uuid4
 
 from filip.models.base import FiwareHeader, DataType
-from filip.clients.ngsi_v2 import \
-    ContextBrokerClient, \
-    IoTAClient
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.exceptions import BaseHttpClientException
-from filip.models.ngsi_v2.iot import \
-    ServiceGroup, \
-    Device, \
-    DeviceAttribute, \
-    DeviceCommand, \
-    LazyDeviceAttribute, \
-    StaticDeviceAttribute, ExpressionLanguage
-from filip.utils.cleanup import \
-    clear_all, \
-    clean_test, \
-    clear_context_broker, \
-    clear_iot_agent
+from filip.models.ngsi_v2.iot import (
+    ServiceGroup,
+    Device,
+    DeviceAttribute,
+    DeviceCommand,
+    LazyDeviceAttribute,
+    StaticDeviceAttribute,
+    ExpressionLanguage,
+    DeviceValidationList,
+)
+from filip.utils.cleanup import (
+    clear_all,
+    clean_test,
+    clear_context_broker,
+    clear_iot_agent,
+)
 from tests.config import settings
 
 logger = logging.getLogger(__name__)
@@ -55,7 +57,7 @@ class TestAgent(unittest.TestCase):
             "service_path": self.fiware_header.service_path,
             "entity_name": "test_entity",
             "entity_type": "test_entity_type",
-            #"timezone": "Europe/Berlin",
+            # "timezone": "Europe/Berlin",
             "timestamp": None,
             "apikey": "1234",
             "endpoint": None,
@@ -67,16 +69,20 @@ class TestAgent(unittest.TestCase):
         )
 
         self.client_wrong_port = IoTAClient(
-            url=str(settings.IOTA_JSON_URL.scheme) + "://" + str(settings.IOTA_JSON_URL.host) + ":9999/",
-            fiware_header=self.fiware_header)
+            url=str(settings.IOTA_JSON_URL.scheme)
+            + "://"
+            + str(settings.IOTA_JSON_URL.host)
+            + ":9999/",
+            fiware_header=self.fiware_header,
+        )
         self.client_wrong_path = IoTAClient(
-            url=str(settings.IOTA_JSON_URL.scheme) + "://" + str(settings.IOTA_JSON_URL.host) + ":4041/test_wrong_path",
-            fiware_header=self.fiware_header)
-        self.LOGLEVEL = ["ERROR",
-                         "DEBUG",
-                         "INFO",
-                         "WARN",
-                         "FATAL"]
+            url=str(settings.IOTA_JSON_URL.scheme)
+            + "://"
+            + str(settings.IOTA_JSON_URL.host)
+            + ":4041/test_wrong_path",
+            fiware_header=self.fiware_header,
+        )
+        self.LOGLEVEL = ["ERROR", "DEBUG", "INFO", "WARN", "FATAL"]
 
     def test_get_version(self):
         with IoTAClient(
@@ -425,32 +431,40 @@ class TestAgent(unittest.TestCase):
             )
             cb_client.close()
 
-    @clean_test(fiware_service=settings.FIWARE_SERVICE,
-                fiware_servicepath=settings.FIWARE_SERVICEPATH,
-                cb_url=settings.CB_URL,
-                iota_url=settings.IOTA_JSON_URL)
-
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+        iota_url=settings.IOTA_JSON_URL,
+    )
     def test_device_exceptions(self):
         """
         Test for exceptions when handling a Device
         """
-        with IoTAClient(url=settings.IOTA_JSON_URL, fiware_header=self.fiware_header) as client:
+        with IoTAClient(
+            url=settings.IOTA_JSON_URL, fiware_header=self.fiware_header
+        ) as client:
             device = Device(**self.device)
             client.post_device(device=device)
 
             with self.assertRaises(BaseHttpClientException) as context:
                 client.post_device(device=device)
-            self.assertEqual(json.loads(context.exception.response.text)["name"], "DUPLICATE_DEVICE_ID")
+            self.assertEqual(
+                json.loads(context.exception.response.text)["name"],
+                "DUPLICATE_DEVICE_ID",
+            )
 
-           # with self.assertRaises(BaseHttpClientException) as context:
-           #client.update_device(device=device, add=False)
-           #self.assertEqual(json.loads(context.exception.response.text)["name"], "ENTITY_GENERIC_ERROR")
+            # with self.assertRaises(BaseHttpClientException) as context:
+            # client.update_device(device=device, add=False)
+            # self.assertEqual(json.loads(context.exception.response.text)["name"], "ENTITY_GENERIC_ERROR")
 
             client.delete_device(device_id=device.device_id)
 
             with self.assertRaises(BaseHttpClientException) as context:
                 client.delete_device(device_id=device.device_id)
-            self.assertEqual(json.loads(context.exception.response.text)["name"], "DEVICE_NOT_FOUND")
+            self.assertEqual(
+                json.loads(context.exception.response.text)["name"], "DEVICE_NOT_FOUND"
+            )
 
     def test_service_group(self):
         """
@@ -625,11 +639,15 @@ class TestAgent(unittest.TestCase):
                 apikey="dummytest",
             )
             self.client.post_group(service_group=group_test)
-            response = self.client.get_group(resource=group_test.resource, apikey=group_test.apikey)
+            response = self.client.get_group(
+                resource=group_test.resource, apikey=group_test.apikey
+            )
             print("Successful get_group() response:", response)
 
             self.assertEqual(group_test, response)
-            self.client.delete_group(resource=group_test.resource, apikey=group_test.apikey)
+            self.client.delete_group(
+                resource=group_test.resource, apikey=group_test.apikey
+            )
         except BaseHttpClientException as e:
             self.fail(f"get_group() raised an exception unexpectedly: {e}")
 
@@ -643,7 +661,9 @@ class TestAgent(unittest.TestCase):
         # post group_test
         self.client.post_group(service_group=group_test)
         with self.assertRaises(BaseHttpClientException) as cm:
-            self.client_wrong_port.get_group(resource=group_test.resource, apikey=group_test.apikey)
+            self.client_wrong_port.get_group(
+                resource=group_test.resource, apikey=group_test.apikey
+            )
 
         print("Wrong port get_group() error message:", str(cm.exception))
         self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
@@ -686,7 +706,9 @@ class TestAgent(unittest.TestCase):
                 group_base, self.client.get_group(resource="/iot/json", apikey="base")
             )
             print("Successful update_group() attributes response:", response)
-            self.client.delete_group(resource=group_base.resource, apikey=group_base.apikey)
+            self.client.delete_group(
+                resource=group_base.resource, apikey=group_base.apikey
+            )
         except BaseHttpClientException as e:
             self.fail(f"get_version() raised an exception unexpectedly: {e}")
 
@@ -719,8 +741,9 @@ class TestAgent(unittest.TestCase):
     def test_delete_group_success(self):
         try:
             self.client.post_group(service_group=self.service_group1)
-            response = self.client.delete_group(resource=self.service_group1.resource,
-                                                apikey=self.service_group1.apikey)
+            response = self.client.delete_group(
+                resource=self.service_group1.resource, apikey=self.service_group1.apikey
+            )
             print("Successful delete_group() response:", response)
 
             self.assertEqual(None, response)
@@ -730,13 +753,16 @@ class TestAgent(unittest.TestCase):
     def test_delete_group_wrong_port(self):
         self.client.post_group(service_group=self.service_group1)
         with self.assertRaises(BaseHttpClientException) as cm:
-            self.client_wrong_port.delete_group(resource=self.service_group1.resource,
-                                                apikey=self.service_group1.apikey)
+            self.client_wrong_port.delete_group(
+                resource=self.service_group1.resource, apikey=self.service_group1.apikey
+            )
 
         print("Wrong port delete_group() error message:", str(cm.exception))
         self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
         # delete group
-        self.client.delete_group(resource=self.service_group1.resource, apikey=self.service_group1.apikey)
+        self.client.delete_group(
+            resource=self.service_group1.resource, apikey=self.service_group1.apikey
+        )
 
     def test_post_device_success(self):
         try:
@@ -758,7 +784,7 @@ class TestAgent(unittest.TestCase):
         try:
             response = self.client.get_device_list()
             print("Successful get_device_list() response:", response)
-            self.assertTrue(isinstance(response, list))
+            self.assertTrue(isinstance(response, (list, DeviceValidationList)))
         except BaseHttpClientException as e:
             self.fail(f"get_device_list() raised an exception unexpecdly: {e}")
 
@@ -793,15 +819,17 @@ class TestAgent(unittest.TestCase):
 
     def test_update_device_success(self):
         """
-                Test the methode: update_device of the iota client
-                """
+        Test the methode: update_device of the iota client
+        """
         try:
             device = Device(**self.device)
             device.endpoint = "http://test.com"
             device.transport = "MQTT"
 
             device.add_attribute(
-                DeviceAttribute(name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE)
+                DeviceAttribute(
+                    name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE
+                )
             )
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat1", value="test", type=DataType.TEXT)
@@ -832,7 +860,9 @@ class TestAgent(unittest.TestCase):
             device.delete_attribute(device.get_attribute("Att1"))
             device.delete_attribute(device.get_attribute("Com1"))
             device.add_attribute(
-                DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
+                DeviceAttribute(
+                    name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE
+                )
             )
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
@@ -947,7 +977,9 @@ class TestAgent(unittest.TestCase):
             device.transport = "MQTT"
 
             device.add_attribute(
-                DeviceAttribute(name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE)
+                DeviceAttribute(
+                    name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE
+                )
             )
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat1", value="test", type=DataType.TEXT)
@@ -978,7 +1010,9 @@ class TestAgent(unittest.TestCase):
             device.delete_attribute(device.get_attribute("Att1"))
             device.delete_attribute(device.get_attribute("Com1"))
             device.add_attribute(
-                DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
+                DeviceAttribute(
+                    name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE
+                )
             )
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
@@ -1087,13 +1121,14 @@ class TestAgent(unittest.TestCase):
         print("Wrong port get_loglevel_of_agent() error message:", str(cm.exception))
         self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
 
-
     def tearDown(self) -> None:
         """
         Cleanup test server
 
         """
         self.client.close()
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=settings.CB_URL,
-                  iota_url=settings.IOTA_JSON_URL)
+        clear_all(
+            fiware_header=self.fiware_header,
+            cb_url=settings.CB_URL,
+            iota_url=settings.IOTA_JSON_URL,
+        )
