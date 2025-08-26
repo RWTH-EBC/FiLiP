@@ -780,6 +780,98 @@ class TestAgent(unittest.TestCase):
         print("Wrong port error message:", str(cm.exception))
         self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
 
+    def test_get_device_list_with_invalid_entries(self):
+        """
+        Tests the behavior of get_device_list when the IoT Agent contains
+        invalid or malformed device entries. This test assumes the client library
+        can differentiate between valid models and raw invalid data, similar to
+        the entity example.
+        """
+
+        def post_device_request(data: str):
+            """
+            Helper function to send a raw POST request to the IoT Agent,
+            bypassing any client-side validation.
+            """
+            headers = {"Content-Type": "application/json"}
+            headers.update(self.fiware_header.model_dump(by_alias=True))
+            url = f"{settings.IOTA_URL}/iot/devices"
+
+            # The IoT Agent provisioning API expects a JSON body with a 'devices' key
+            payload = json.dumps({"devices": [json.loads(data)]})
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+            return response
+
+        def delete_device_request(device_id: str):
+            """
+            Helper function to send a raw DELETE request to the IoT Agent,
+            bypassing any client-side validation.
+            """
+            headers = {"Content-Type": "application/json"}
+            headers.update(self.fiware_header.model_dump(by_alias=True))
+            url = f"{settings.IOTA_URL}/iot/devices/{device_id}"
+
+            response = requests.request("DELETE", url, headers=headers)
+            return response
+
+        # 1. Define and send an invalid device to the IoT Agent.
+        # duplicated attributes
+        device_invalid = {
+            "device_id": "test:invalid_device:001",
+            "entity_type": "test",
+            "protocol": "IoTA-UL",
+            "transport": "MQTT",
+            "entity_name": "urn:ngsi-ld:Thing:invalid",
+            "attributes": [
+                {"object_id": "t", "name": "temperature", "type": "Number"},
+                {"object_id": "t", "name": "temperature", "type": "Number"},
+            ],
+        }
+
+        # Send the invalid device using the raw request helper
+        payload = json.dumps(device_invalid)
+        response = post_device_request(data=payload)
+        self.assertEqual(
+            response.status_code, 201, "Failed to provision invalid device"
+        )
+
+        # 2. Send dummy valid devices to the IoT Agent
+        devices_valid = [
+            Device(
+                device_id=f"test:valid_device:{i}",
+                entity_name=f"urn:ngsi-ld:Thing:valid{i}",
+                entity_type="Thing",
+                protocol="IoTA-UL",
+                transport="MQTT",
+            )
+            for i in range(5)
+        ]
+        self.client.post_devices(devices=devices_valid)
+
+        # 3. The invalid device should not block the whole request.
+        # The default call should only return valid, parsable devices.
+        devices_res = self.client.get_device_list()
+
+        # This call should return both valid and invalid entries, separated.
+        # NOTE: This assumes the client returns an object with '.devices' and
+        # '.invalid_devices' attributes, mirroring the entity example.
+        devices_res_all = self.client.get_device_list(include_invalid=True)
+
+        # 4. Assert the results are as expected
+        self.assertEqual(len(devices_res), len(devices_valid))
+        self.assertEqual(
+            (len(devices_res_all.devices) + len(devices_res_all.invalid_devices)),
+            (len(devices_valid) + 1),  # +1 for the single invalid device
+            "Mismatch in total count of valid and invalid devices",
+        )
+        self.assertEqual(len(devices_res_all.invalid_devices), 1)
+
+        # 5. Clean up all created devices
+        response = delete_device_request(device_id=device_invalid["device_id"])
+        for device in devices_valid:
+            self.client.delete_device(device_id=device.device_id)
+
     def test_get_device_list_success(self):
         try:
             response = self.client.get_device_list()
