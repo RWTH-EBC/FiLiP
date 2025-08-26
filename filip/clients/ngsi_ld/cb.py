@@ -510,22 +510,13 @@ class ContextBrokerLDClient(BaseHttpClient):
                 "attr_name if attr is of type "
                 "NamedContextAttribute or NamedContextRelationship"
             )
-
+            attr_name = attr.name
         url = urljoin(
             self.base_url, f"{self._url_version}/entities/{entity_id}/attrs/{attr_name}"
         )
-
-        jsonnn = {}
-        if isinstance(attr, list) or isinstance(attr, NamedContextProperty):
-            jsonnn = attr.model_dump(exclude={"name"}, exclude_none=True)
-        else:
-            prop = attr.model_dump()
-            for key, value in prop.items():
-                if value and value != "Property":
-                    jsonnn[key] = value
-
+        val = attr.value if "value" in attr.model_dump() else attr.object
         try:
-            res = self.patch(url=url, headers=headers, json=jsonnn)
+            res = self.patch(url=url, headers=headers, json={"value": val})
             if res.ok:
                 self.logger.info(
                     f"Attribute {attr_name} of {entity_id} successfully updated!"
