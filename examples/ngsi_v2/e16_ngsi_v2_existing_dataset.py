@@ -251,5 +251,6 @@ if __name__ == "__main__":
     # plot quantumleap data
     plot_vs_time(df_temperature["timestamp"], df_temperature["temperature"], "Temperature vs Simulation Time (QuantumLeap data)",
                  "Temperature (°C)")
-    plot_vs_time(df_fan_speed_setpoint["timestamp"], df_fan_speed_setpoint["fanSpeed"], "Fan Speed Setpoint vs Simulation Time (QuantumLeap data)",
+    plot_vs_time(df_fan_speed_setpoint["timestamp"],
+        df_fan_speed_setpoint["fanSpeed"], "Fan Speed Setpoint vs Simulation Time (QuantumLeap data)",
                  "Fan Speed Setpoint")
