@@ -16,6 +16,7 @@ from pydantic import (
     BaseModel,
     Field,
     AnyHttpUrl,
+    OnErrorOmit,
 )
 from filip.models.base import NgsiVersion, DataType
 from filip.models.ngsi_v2.base import (
@@ -734,3 +735,19 @@ class Device(DeviceSettings):
             None
         """
         self.delete_attribute(attribute=command)
+
+
+class DeviceList(DeviceSettings):
+    """
+    Collection model for a list of devices
+    """
+
+    devices: List[OnErrorOmit[Device]]
+
+
+class DeviceValidationList(DeviceList):
+    """
+    Collection model for a list of valid and invalid devices
+    """
+
+    invalid_devices: List[str]
