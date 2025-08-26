@@ -5,6 +5,7 @@ to the platform for further usage.
 
 In this example, we demonstrate with a sensor and an actuator: TemperatureSensor and CoolingCoil.
 """
+
 import time
 from typing import Optional, List
 import pandas as pd
@@ -21,8 +22,7 @@ import matplotlib.pyplot as plt
 SENSOR_DATA_FILE = "./e16_ngsi_v2_existing_dataset/sensor_data_1d.csv"
 ACTUATOR_DATA_FILE = "./e16_ngsi_v2_existing_dataset/actuator_data_1d.csv"
 
-FIWARE_SERVICEPATH="/test_dataset"
-
+FIWARE_SERVICEPATH = "/test_dataset"
 
 
 class TemperatureSensor(BaseModel):
@@ -46,7 +46,6 @@ class CoolingCoilFiware(CoolingCoil, ContextEntityKeyValues):
     type: str = "CoolingCoil"
 
 
-#def initialize_entities(cbc: ContextBrokerClient):
 def create_entities():
     """
     Create fiware entities based on the data model V2.
@@ -67,8 +66,7 @@ def create_entities():
     return entities
 
 
-
-def create_notifications(values: pd.Series, timestamps: pd.Series, entity ) -> list:
+def create_notifications(values: pd.Series, timestamps: pd.Series, entity) -> list:
     """
     Create NGSIv2 Message objects for QuantumLeap from single-column pd.Series of values and timestamps.
 
@@ -82,7 +80,9 @@ def create_notifications(values: pd.Series, timestamps: pd.Series, entity ) -> l
         List of Message objects ready for QuantumLeap
     """
     if len(values) != len(timestamps):
-        raise ValueError(f"Length mismatch: {len(values)} values vs {len(timestamps)} timestamps")
+        raise ValueError(
+            f"Length mismatch: {len(values)} values vs {len(timestamps)} timestamps"
+        )
 
     messages_temp = []
 
@@ -93,14 +93,13 @@ def create_notifications(values: pd.Series, timestamps: pd.Series, entity ) -> l
 
         entity_data = {}
 
-        attributes_dict = {
-            "fcuLvlSet" : "fanSpeed",
-            "TRm_degC" : "temperature"
-        }
-
+        attributes_dict = {"fcuLvlSet": "fanSpeed", "TRm_degC": "temperature"}
 
         # Use Series names as attribute keys
-        entity_data[attributes_dict[str(values.name)]] = {"type": "Number", "value": float(val)}
+        entity_data[attributes_dict[str(values.name)]] = {
+            "type": "Number",
+            "value": float(val),
+        }
         entity_data["timestamp"] = {"type": "DateTime", "value": ts}
 
         # Create ContextEntity
@@ -205,11 +204,10 @@ if __name__ == "__main__":
     )
 
     # clear existing data
-    ql = QuantumLeapClient(fiware_header=fiware_header,url=settings.QL_URL)
+    ql = QuantumLeapClient(fiware_header=fiware_header, url=settings.QL_URL)
     clear_quantumleap(ql_client=ql)
 
-
-    #entities[]  0: Sensor  1: Actuator
+    # entities[]  0: Sensor  1: Actuator
     entities = create_entities()
 
     # Load existing dataset from CSV
@@ -219,14 +217,17 @@ if __name__ == "__main__":
     temperature_measurements = sensor_df["TRm_degC"]  # numeric data
     temperature_timestamps = sensor_df["simulation_time"]
 
-    fan_speed_setpoints = actuator_df["fcuLvlSet"] # integer data
+    fan_speed_setpoints = actuator_df["fcuLvlSet"]  # integer data
     fan_speed_timestamps = actuator_df["simulation_time"]
 
-
-    #Send measurements to Quantumleap
-    messages = create_notifications(temperature_measurements, temperature_timestamps, entities[0] )
+    # Send measurements to Quantumleap
+    messages = create_notifications(
+        temperature_measurements, temperature_timestamps, entities[0]
+    )
     send_notifications(ql, messages)
-    messages = create_notifications(fan_speed_setpoints, fan_speed_timestamps, entities[1] )
+    messages = create_notifications(
+        fan_speed_setpoints, fan_speed_timestamps, entities[1]
+    )
     send_notifications(ql, messages)
 
     # wait for few seconds so data is available
@@ -237,20 +238,37 @@ if __name__ == "__main__":
     res_fan_speed_setpoint = ql.get_entity_values_by_id(entity_id=entities[1].id)
 
     # prepare queried data for plotting
-    df_temperature = prepare_dataframe(res_temperature.to_pandas(), "timestamp", "temperature")
-    df_fan_speed_setpoint = prepare_dataframe(res_fan_speed_setpoint.to_pandas(), "timestamp", "fanSpeed")
-
+    df_temperature = prepare_dataframe(
+        res_temperature.to_pandas(), "timestamp", "temperature"
+    )
+    df_fan_speed_setpoint = prepare_dataframe(
+        res_fan_speed_setpoint.to_pandas(), "timestamp", "fanSpeed"
+    )
 
     # plot original data
-    plot_vs_time(temperature_timestamps, temperature_measurements, "Temperature vs Simulation Time (Original data)",
-                 "Temperature (°C)")
-    plot_vs_time(fan_speed_timestamps, fan_speed_setpoints, "Fan Speed Setpoint vs Simulation Time (Original data)",
-                 "Fan Speed Setpoint")
-
+    plot_vs_time(
+        temperature_timestamps,
+        temperature_measurements,
+        "Temperature vs Simulation Time (Original data)",
+        "Temperature (°C)",
+    )
+    plot_vs_time(
+        fan_speed_timestamps,
+        fan_speed_setpoints,
+        "Fan Speed Setpoint vs Simulation Time (Original data)",
+        "Fan Speed Setpoint",
+    )
 
     # plot quantumleap data
-    plot_vs_time(df_temperature["timestamp"], df_temperature["temperature"], "Temperature vs Simulation Time (QuantumLeap data)",
-                 "Temperature (°C)")
-    plot_vs_time(df_fan_speed_setpoint["timestamp"],
-        df_fan_speed_setpoint["fanSpeed"], "Fan Speed Setpoint vs Simulation Time (QuantumLeap data)",
-                 "Fan Speed Setpoint")
+    plot_vs_time(
+        df_temperature["timestamp"],
+        df_temperature["temperature"],
+        "Temperature vs Simulation Time (QuantumLeap data)",
+        "Temperature (°C)",
+    )
+    plot_vs_time(
+        df_fan_speed_setpoint["timestamp"],
+        df_fan_speed_setpoint["fanSpeed"],
+        "Fan Speed Setpoint vs Simulation Time (QuantumLeap data)",
+        "Fan Speed Setpoint",
+    )
