@@ -94,6 +94,7 @@
     <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">Field</span><span class="p">,</span>
     <span class="n">AnyHttpUrl</span><span class="p">,</span>
+    <span class="n">OnErrorOmit</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">NgsiVersion</span><span class="p">,</span> <span class="n">DataType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -812,6 +813,22 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delete_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="n">command</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DeviceList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DeviceList</span><span class="p">(</span><span class="n">DeviceSettings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of devices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OnErrorOmit</span><span class="p">[</span><span class="n">Device</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="DeviceValidationList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceValidationList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DeviceValidationList</span><span class="p">(</span><span class="n">DeviceList</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of valid and invalid devices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">invalid_devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
 </pre></div>
 
            </div>

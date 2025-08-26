@@ -2168,6 +2168,98 @@ based on our best practice, following rules are checked</p>
 </dd></dl>
 
 <dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.iot.</span></span><span class="sig-name descname"><span class="pre">DeviceList</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/iot.html#DeviceList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceSettings" title="filip.models.ngsi_v2.iot.DeviceSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceSettings</span></code></a></p>
+<p>Collection model for a list of devices</p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.apikey" title="filip.models.ngsi_v2.iot.DeviceList.apikey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apikey</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.devices" title="filip.models.ngsi_v2.iot.DeviceList.devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">devices</span> <span class="pre">(List[OnErrorOmit[Device]])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.endpoint" title="filip.models.ngsi_v2.iot.DeviceList.endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">endpoint</span> <span class="pre">(Optional[AnyHttpUrl])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.explicitAttrs" title="filip.models.ngsi_v2.iot.DeviceList.explicitAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explicitAttrs</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceList.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(Optional[ExpressionLanguage])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.protocol" title="filip.models.ngsi_v2.iot.DeviceList.protocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">protocol</span> <span class="pre">(Optional[Union[PayloadProtocol,</span> <span class="pre">str]])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.timestamp" title="filip.models.ngsi_v2.iot.DeviceList.timestamp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timestamp</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.timezone" title="filip.models.ngsi_v2.iot.DeviceList.timezone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timezone</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.transport" title="filip.models.ngsi_v2.iot.DeviceList.transport"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transport</span> <span class="pre">(Optional[Union[TransportProtocol,</span> <span class="pre">str]])</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceList.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.apikey">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">apikey</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.apikey" title="Permalink to this definition"></a></dt>
+<dd><p>Optional Apikey key string to use instead of group apikey</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.devices">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">OnErrorOmit</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.endpoint">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">endpoint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AnyHttpUrl</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.endpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Endpoint where the device is going to receive commands, if any.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.explicitAttrs">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">explicitAttrs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.explicitAttrs" title="Permalink to this definition"></a></dt>
+<dd><p>optional boolean value, to support selective ignore of measures so that IOTA does not progress. If not specified default is false.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.expressionLanguage">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.expressionLanguage" title="Permalink to this definition"></a></dt>
+<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated. If it is set None, jexl is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.protocol">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">protocol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.PayloadProtocol" title="filip.models.ngsi_v2.iot.PayloadProtocol"><span class="pre">PayloadProtocol</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.protocol" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the device protocol, for its use with an IoT Manager.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.timestamp">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.timestamp" title="Permalink to this definition"></a></dt>
+<dd><p>Optional flag about whether or not to add the TimeInstant attribute to the device entity created, as well as a TimeInstant metadata to each attribute, with the current timestamp. With NGSI-LD, the Standard observedAt property-of-a-property is created instead.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.timezone">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timezone</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Europe/London'</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.timezone" title="Permalink to this definition"></a></dt>
+<dd><p>Time zone of the sensor if it has any</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.transport">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transport</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.TransportProtocol" title="filip.models.ngsi_v2.iot.TransportProtocol"><span class="pre">TransportProtocol</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.transport" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the device transport protocol, for the IoT Agents with multiple transport protocols.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceSettings">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.iot.</span></span><span class="sig-name descname"><span class="pre">DeviceSettings</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/iot.html#DeviceSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceSettings" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
@@ -2255,6 +2347,104 @@ based on our best practice, following rules are checked</p>
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceSettings.valid_expressionLanguage">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">valid_expressionLanguage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expressionLanguage</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceSettings.valid_expressionLanguage" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.iot.</span></span><span class="sig-name descname"><span class="pre">DeviceValidationList</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/iot.html#DeviceValidationList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceList" title="filip.models.ngsi_v2.iot.DeviceList"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceList</span></code></a></p>
+<p>Collection model for a list of valid and invalid devices</p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.apikey" title="filip.models.ngsi_v2.iot.DeviceValidationList.apikey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apikey</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.devices" title="filip.models.ngsi_v2.iot.DeviceValidationList.devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">devices</span> <span class="pre">(List[OnErrorOmit[Device]])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.endpoint" title="filip.models.ngsi_v2.iot.DeviceValidationList.endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">endpoint</span> <span class="pre">(Optional[AnyHttpUrl])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.explicitAttrs" title="filip.models.ngsi_v2.iot.DeviceValidationList.explicitAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explicitAttrs</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceValidationList.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(Optional[ExpressionLanguage])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices" title="filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invalid_devices</span> <span class="pre">(List[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.protocol" title="filip.models.ngsi_v2.iot.DeviceValidationList.protocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">protocol</span> <span class="pre">(Optional[Union[PayloadProtocol,</span> <span class="pre">str]])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.timestamp" title="filip.models.ngsi_v2.iot.DeviceValidationList.timestamp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timestamp</span> <span class="pre">(Optional[bool])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.timezone" title="filip.models.ngsi_v2.iot.DeviceValidationList.timezone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timezone</span> <span class="pre">(Optional[str])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.transport" title="filip.models.ngsi_v2.iot.DeviceValidationList.transport"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transport</span> <span class="pre">(Optional[Union[TransportProtocol,</span> <span class="pre">str]])</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.iot.DeviceValidationList.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceValidationList.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.apikey">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">apikey</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.apikey" title="Permalink to this definition"></a></dt>
+<dd><p>Optional Apikey key string to use instead of group apikey</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.devices">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">OnErrorOmit</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.endpoint">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">endpoint</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AnyHttpUrl</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.endpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Endpoint where the device is going to receive commands, if any.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.explicitAttrs">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">explicitAttrs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.explicitAttrs" title="Permalink to this definition"></a></dt>
+<dd><p>optional boolean value, to support selective ignore of measures so that IOTA does not progress. If not specified default is false.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.expressionLanguage">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expressionLanguage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.ExpressionLanguage" title="filip.models.ngsi_v2.iot.ExpressionLanguage"><span class="pre">ExpressionLanguage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ExpressionLanguage.JEXL</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.expressionLanguage" title="Permalink to this definition"></a></dt>
+<dd><p>optional boolean value, to set expression language used to compute expressions, possible values are: legacy or jexl, but legacy is deprecated. If it is set None, jexl is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="filip.utils.html#filip.utils.validators.validate_expression_language" title="filip.utils.validators.validate_expression_language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_expression_language</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invalid_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.protocol">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">protocol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.PayloadProtocol" title="filip.models.ngsi_v2.iot.PayloadProtocol"><span class="pre">PayloadProtocol</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.protocol" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the device protocol, for its use with an IoT Manager.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.timestamp">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.timestamp" title="Permalink to this definition"></a></dt>
+<dd><p>Optional flag about whether or not to add the TimeInstant attribute to the device entity created, as well as a TimeInstant metadata to each attribute, with the current timestamp. With NGSI-LD, the Standard observedAt property-of-a-property is created instead.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.timezone">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timezone</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Europe/London'</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.timezone" title="Permalink to this definition"></a></dt>
+<dd><p>Time zone of the sensor if it has any</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.transport">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transport</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#filip.models.ngsi_v2.iot.TransportProtocol" title="filip.models.ngsi_v2.iot.TransportProtocol"><span class="pre">TransportProtocol</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.transport" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the device transport protocol, for the IoT Agents with multiple transport protocols.</p>
+</dd></dl>
 
 </dd></dl>
 

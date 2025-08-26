@@ -1870,6 +1870,32 @@ based on our best practice, following rules are checked</p>
 </dd></dl>
 
 <dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.iot.</span></span><span class="sig-name descname"><span class="pre">DeviceList</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/iot.html#DeviceList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings" title="filip.models.ngsi_v2.iot.DeviceSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceSettings</span></code></a></p>
+<p>Collection model for a list of devices</p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceList.devices" title="filip.models.ngsi_v2.iot.DeviceList.devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">devices</span> <span class="pre">(List[filip.models.ngsi_v2.iot.Device])</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceList.devices">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">OnErrorOmit</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceList.devices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceSettings">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.iot.</span></span><span class="sig-name descname"><span class="pre">DeviceSettings</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/iot.html#DeviceSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceSettings" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
@@ -1956,6 +1982,32 @@ based on our best practice, following rules are checked</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceSettings.valid_expressionLanguage">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">valid_expressionLanguage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expressionLanguage</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceSettings.valid_expressionLanguage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.ngsi_v2.iot.</span></span><span class="sig-name descname"><span class="pre">DeviceValidationList</span></span><a class="reference internal" href="../_modules/filip/models/ngsi_v2/iot.html#DeviceValidationList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceList" title="filip.models.ngsi_v2.iot.DeviceList"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceList</span></code></a></p>
+<p>Collection model for a list of valid and invalid devices</p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices" title="filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invalid_devices</span> <span class="pre">(List[str])</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invalid_devices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.iot.DeviceValidationList.invalid_devices" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
