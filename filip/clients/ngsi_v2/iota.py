@@ -432,6 +432,9 @@ class IoTAClient(BaseHttpClient):
                     valid_devices = filter_device_list(
                         valid_devices, device_ids, entity_names, entity_types
                     )
+                    invalid_devices = filter_device_list(
+                        invalid_devices, device_ids, entity_names, entity_types
+                    )
                     return DeviceValidationList.model_validate(
                         {
                             "devices": valid_devices,
@@ -439,9 +442,14 @@ class IoTAClient(BaseHttpClient):
                         }
                     )
                 else:
-                    return DeviceList.model_validate(
-                        {"devices": res.json()["devices"]}
-                    ).devices
+                    return filter_device_list(
+                        devices=DeviceList.model_validate(
+                            {"devices": res.json()["devices"]}
+                        ).devices,
+                        device_ids=device_ids,
+                        entity_names=entity_names,
+                        entity_types=entity_types,
+                    )
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
