@@ -9,6 +9,7 @@ from copy import deepcopy
 from enum import Enum
 from math import inf
 from packaging.version import parse as parse_version
+from packaging import version
 from pydantic import PositiveInt, PositiveFloat, AnyHttpUrl, ValidationError
 from pydantic.type_adapter import TypeAdapter
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
@@ -83,6 +84,7 @@ class ContextBrokerClient(BaseHttpClient):
         super().__init__(
             url=url, session=session, fiware_header=fiware_header, **kwargs
         )
+        self._check_correct_cb_version()
 
     def __pagination(
         self,
@@ -167,7 +169,21 @@ class ContextBrokerClient(BaseHttpClient):
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
-            raise RequestException(response=err.response) from err
+            msg = f"Fetch version fails, reason: {err.args}"
+            raise BaseHttpClientException(message=msg, response=err.response) from err
+
+    def _check_correct_cb_version(self) -> None:
+        """
+        Checks whether the used Orion version is greater or equal than the minimum required orion version of
+        the current filip version
+        """
+        orion_version = self.get_version()["orion"]["version"]
+        if version.parse(orion_version) < version.parse(settings.MINIMUM_ORION_VERSION):
+            self.logger.warning(
+                f"You are using orion version {orion_version}. There was a breaking change in Orion Version "
+                f"{settings.MINIMUM_ORION_VERSION}, therefore functionality is not assured when using "
+                f"version {orion_version}."
+            )
 
     def get_resources(self) -> Dict:
         """

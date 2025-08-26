@@ -220,16 +220,8 @@ class TestClient(unittest.TestCase):
             iota_url=url_with_ssl_error,
             ql_url=url_with_ssl_error,
         )
-        client = HttpClient(config=config, fiware_header=self.fh)
-        #with self.assertRaises(requests.exceptions.SSLError):
         with self.assertRaises(BaseHttpClientException):
-            client.cb.post_entity(entity=ContextEntity(id="test", type="test"))
-        with self.assertRaises(BaseHttpClientException):
-            client.cb.patch_entity(entity=ContextEntity(id="test", type="test"))
-        with self.assertRaises(BaseHttpClientException):
-            client.iota.does_device_exists(device_id="test")
-        with self.assertRaises(BaseHttpClientException):
-            client.timeseries.get_version()
+            client = HttpClient(config=config, fiware_header=self.fh)
 
     def tearDown(self) -> None:
         """
