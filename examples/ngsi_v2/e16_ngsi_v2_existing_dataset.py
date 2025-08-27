@@ -7,7 +7,7 @@ In this example, we demonstrate with a sensor and an actuator: TemperatureSensor
 """
 
 import time
-from typing import Optional, List
+from typing import Optional, List, Union
 import pandas as pd
 from pydantic import BaseModel
 from filip.models.ngsi_v2.context import ContextEntityKeyValues, ContextEntity
@@ -67,7 +67,7 @@ def create_entities():
 
 
 def create_notifications(
-    values: pd.Series, timestamps: pd.Series | pd.DatetimeIndex, entity
+    values: pd.Series, timestamps: Union[pd.Series, pd.DatetimeIndex], entity
 ) -> list:
     """
     Create NGSIv2 Message objects for QuantumLeap from single-column pd.Series of values and timestamps.
