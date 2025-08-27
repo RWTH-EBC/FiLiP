@@ -225,15 +225,8 @@ if __name__ == "__main__":
     temperature_timestamps = pd.to_datetime(
         sensor_df["simulation_time"] + timestamp_ref, unit="s"
     )
-    # temperature_timestamps = pd.to_datetime(
-    #         sensor_df["simulation_time"] + timestamp_ref,
-    #     unit="s").isoformat()
 
     fan_speed_setpoints = actuator_df["fcuLvlSet"]  # integer data
-    # fan_speed_timestamps = actuator_df["simulation_time"] + timestamp_ref  # epoch time in seconds
-    # fan_speed_timestamps = pd.to_datetime(
-    #         actuator_df["simulation_time"] + timestamp_ref,
-    #     unit="s").isoformat()
     fan_speed_timestamps = pd.to_datetime(
         actuator_df["simulation_time"] + timestamp_ref, unit="s"
     )
