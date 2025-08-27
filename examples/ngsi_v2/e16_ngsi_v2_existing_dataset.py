@@ -16,7 +16,7 @@ from filip.clients.ngsi_v2 import QuantumLeapClient
 from filip.models.base import FiwareHeader
 from filip.models.ngsi_v2.subscriptions import Message
 from filip.utils.cleanup import clear_quantumleap
-
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
 SENSOR_DATA_FILE = "./e16_ngsi_v2_existing_dataset/sensor_data_1d.csv"
@@ -66,7 +66,9 @@ def create_entities():
     return entities
 
 
-def create_notifications(values: pd.Series, timestamps: pd.Series, entity) -> list:
+def create_notifications(
+    values: pd.Series, timestamps: pd.Series | pd.DatetimeIndex, entity
+) -> list:
     """
     Create NGSIv2 Message objects for QuantumLeap from single-column pd.Series of values and timestamps.
 
@@ -112,13 +114,15 @@ def create_notifications(values: pd.Series, timestamps: pd.Series, entity) -> li
     return messages_temp
 
 
-def plot_vs_time(timestamps, values, title, ylabel, marker="o"):
+def plot_on_ax(ax, timestamps, values, title, ylabel, marker="o"):
     """
-    Plot a series of values vs simulation time (seconds relative to first timestamp).
+    Plot a series of values on a given Matplotlib Axes.
 
     Parameters:
+        ax : matplotlib.axes.Axes
+            The Axes object to plot on.
         timestamps : list or array-like
-            Raw timestamps in seconds (numeric).
+            Raw timestamps.
         values : list or array-like
             Values corresponding to timestamps.
         title : str
@@ -128,22 +132,22 @@ def plot_vs_time(timestamps, values, title, ylabel, marker="o"):
         marker : str, optional
             Marker style for the plot (default: "o").
     """
+    # Ensure data is in pandas Series format and timestamps are datetime objects
+    ts = pd.to_datetime(pd.Series(timestamps))
 
-    ts = pd.Series(timestamps)
+    # Plot on the given Axes object using datetime for the x-axis
+    ax.plot(ts, values, marker=marker)
+    ax.set_title(title)
+    ax.set_xlabel("Time")  # Updated X-axis label
+    ax.set_ylabel(ylabel)
+    ax.grid(True)
 
-    # Handle datetime
-    if pd.api.types.is_datetime64_any_dtype(ts):
-        simulation_time_sec = (ts - ts.iloc[0]).dt.total_seconds()
-    else:
-        simulation_time_sec = ts - ts.iloc[0]
+    # Format the x-axis to display dates as 'YYYY-MM-DD HH:MM'
+    formatter = mdates.DateFormatter("%Y-%m-%d %H:%M")
+    ax.xaxis.set_major_formatter(formatter)
 
-    # Plot
-    plt.plot(simulation_time_sec, values, marker=marker)
-    plt.title(title)
-    plt.xlabel("Simulation Time (s)")
-    plt.ylabel(ylabel)
-    plt.grid(True)
-    plt.show()
+    # Rotate date labels for better readability
+    plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
 
 
 def send_notifications(client: "QuantumLeapClient", notifications: list["Message"]):
@@ -198,7 +202,7 @@ def prepare_dataframe(df, timestamp_col="timestamp", value_col="temperature"):
 
 
 if __name__ == "__main__":
-
+    ### 0. Prepare FIWARE client and load dataset
     fiware_header = FiwareHeader.model_validate(
         {"service": settings.FIWARE_SERVICE, "service_path": FIWARE_SERVICEPATH}
     )
@@ -211,32 +215,50 @@ if __name__ == "__main__":
     entities = create_entities()
 
     # Load existing dataset from CSV
-    sensor_df = pd.read_csv(SENSOR_DATA_FILE)
-    actuator_df = pd.read_csv(ACTUATOR_DATA_FILE)
+    sensor_df: pd.DataFrame = pd.read_csv(SENSOR_DATA_FILE)
+    actuator_df: pd.DataFrame = pd.read_csv(ACTUATOR_DATA_FILE)
+
+    # use current epoch time as reference
+    timestamp_ref = int(time.time())
 
     temperature_measurements = sensor_df["TRm_degC"]  # numeric data
-    temperature_timestamps = sensor_df["simulation_time"]
+    temperature_timestamps = pd.to_datetime(
+        sensor_df["simulation_time"] + timestamp_ref, unit="s"
+    )
+    # temperature_timestamps = pd.to_datetime(
+    #         sensor_df["simulation_time"] + timestamp_ref,
+    #     unit="s").isoformat()
 
     fan_speed_setpoints = actuator_df["fcuLvlSet"]  # integer data
-    fan_speed_timestamps = actuator_df["simulation_time"]
-
-    # Send measurements to Quantumleap
-    messages = create_notifications(
-        temperature_measurements, temperature_timestamps, entities[0]
+    # fan_speed_timestamps = actuator_df["simulation_time"] + timestamp_ref  # epoch time in seconds
+    # fan_speed_timestamps = pd.to_datetime(
+    #         actuator_df["simulation_time"] + timestamp_ref,
+    #     unit="s").isoformat()
+    fan_speed_timestamps = pd.to_datetime(
+        actuator_df["simulation_time"] + timestamp_ref, unit="s"
     )
+
+    ### 1. Upload existing dataset to FIWARE platform via QuantumLeap
+    messages = create_notifications(
+        values=temperature_measurements,
+        timestamps=temperature_timestamps,
+        entity=entities[0],
+    )
+    ### NOTE: All data of one entity can be collected and sent in one batch
     send_notifications(ql, messages)
     messages = create_notifications(
-        fan_speed_setpoints, fan_speed_timestamps, entities[1]
+        values=fan_speed_setpoints, timestamps=fan_speed_timestamps, entity=entities[1]
     )
     send_notifications(ql, messages)
 
     # wait for few seconds so data is available
     time.sleep(2)
 
-    # query data from quantumleap
+    ### 2. Query the uploaded data from QuantumLeap
     res_temperature = ql.get_entity_values_by_id(entity_id=entities[0].id)
     res_fan_speed_setpoint = ql.get_entity_values_by_id(entity_id=entities[1].id)
 
+    ### 3. Plot original data vs queried data from QuantumLeap
     # prepare queried data for plotting
     df_temperature = prepare_dataframe(
         res_temperature.to_pandas(), "timestamp", "temperature"
@@ -245,30 +267,54 @@ if __name__ == "__main__":
         res_fan_speed_setpoint.to_pandas(), "timestamp", "fanSpeed"
     )
 
-    # plot original data
-    plot_vs_time(
+    # Sensor Data
+    fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+    fig1.suptitle("Temperature Data Comparison", fontsize=16)
+
+    # Plot original data on the first subplot (top)
+    plot_on_ax(
+        ax1,
         temperature_timestamps,
         temperature_measurements,
-        "Temperature vs Simulation Time (Original data)",
+        "Original data",
         "Temperature (°C)",
     )
-    plot_vs_time(
+
+    # Plot QuantumLeap data on the second subplot (bottom)
+    plot_on_ax(
+        ax2,
+        df_temperature["timestamp"],
+        df_temperature["temperature"],
+        "QuantumLeap data",
+        "Temperature (°C)",
+    )
+
+    # Improve layout and show the plot
+    plt.tight_layout(rect=(0, 0.03, 1, 0.95))
+    plt.show()
+
+    # Actuator Data
+    fig2, (ax3, ax4) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+    fig2.suptitle("Fan Speed Data Comparison", fontsize=16)
+
+    # Plot original actuator data on the first subplot (top)
+    plot_on_ax(
+        ax3,
         fan_speed_timestamps,
         fan_speed_setpoints,
-        "Fan Speed Setpoint vs Simulation Time (Original data)",
+        "Original data",
         "Fan Speed Setpoint",
     )
 
-    # plot quantumleap data
-    plot_vs_time(
-        df_temperature["timestamp"],
-        df_temperature["temperature"],
-        "Temperature vs Simulation Time (QuantumLeap data)",
-        "Temperature (°C)",
-    )
-    plot_vs_time(
+    # Plot QuantumLeap actuator data on the second subplot (bottom)
+    plot_on_ax(
+        ax4,
         df_fan_speed_setpoint["timestamp"],
         df_fan_speed_setpoint["fanSpeed"],
-        "Fan Speed Setpoint vs Simulation Time (QuantumLeap data)",
+        "QuantumLeap data",
         "Fan Speed Setpoint",
     )
+
+    # Improve layout and show the plot
+    plt.tight_layout(rect=(0, 0.03, 1, 0.95))
+    plt.show()
