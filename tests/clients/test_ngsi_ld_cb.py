@@ -682,6 +682,49 @@ class TestContextBroker(unittest.TestCase):
         self.assertIn("new_prop", prop_dict)
         self.assertEqual(prop_dict["new_prop"], 55)
 
+    def test_patch_entity_attrs_falsy(self):
+        """
+        Update existing Entity attribute ID within an NGSI-LD system
+        Args:
+            - entityId(string): Entity Id; required
+            - attrId(string): Attribute Id; required
+        Returns:
+            - (204) No Content
+            - (400) Bad Request
+            - (404) Not Found
+        Tests:
+            - Post an entity with truthy attribute values
+            - Check entity is posted correctly
+            - Update attribute values to falsy
+            - Check that update goes through
+        """
+        attr_name = "falsy_value"
+        for i, v in enumerate(
+            [
+                ({}, {"key": "value"}),
+                ([], [1, 2, 3]),
+                ("", "not-empty"),
+                (0, 42),
+                (False, True),
+            ]
+        ):
+            falsy = v[0]
+            truthy = v[1]
+            attr = ContextProperty(value=truthy)
+            e = ContextLDEntity(id=f"urn:ngsi-ld:Falsy:falsy{i}", type="Falsy")
+            e.add_properties(attrs={attr_name: attr})
+
+            self.client.post_entity(entity=e)
+            e = self.client.get_entity(entity_id=e.id, options="keyValues")
+            self.assertEqual(e.model_dump()[attr_name], truthy)
+
+            attr.value = falsy
+            self.client.update_entity_attribute(
+                entity_id=e.id, attr=attr, attr_name=attr_name
+            )
+            e = self.client.get_entity(entity_id=e.id, options="keyValues")
+            self.assertEqual(e.model_dump()[attr_name], falsy)
+
     def test_patch_entity_attrs_attrId(self):
         """
         Update existing Entity attribute ID within an NGSI-LD system
