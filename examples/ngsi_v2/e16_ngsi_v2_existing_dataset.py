@@ -3,6 +3,15 @@ This example shows how to upload an existing dataset to a FIWARE-based platform.
 consider a simulation dataset in CSV format that contains sensor and actuator data. This dataset need to be provisioned
 to the platform for further usage.
 
+In this example we upload a small dataset of 1441 datapoints to the platform in two different ways:
+1. Each datapoint in a single process,
+2. All datapoints in one batch operation.
+At the end of the example, after querying the dataset from the platform ther is a plot comparing the original data
+against the downloaded data.
+
+NOTE:  Do not use big datasets for this exemple. This may slow down the upload significantly!
+(Maybe up to 2000 datapoints)
+
 In this example, we demonstrate with a sensor and an actuator: TemperatureSensor and CoolingCoil.
 """
 
@@ -108,10 +117,59 @@ def create_notifications(
         entity = ContextEntity(id=entity.id, type=entity.type, **entity_data)
 
         # Wrap in Message
-        message = Message(data=[entity], subscriptionId="test_dataset")
+        message = Message(data=[entity], subscriptionId="test_dataset_single")
         messages_temp.append(message)
 
     return messages_temp
+
+
+def create_notifications_batch(
+    values: pd.Series, timestamps: Union[pd.Series, pd.DatetimeIndex], entity
+) -> Message:
+    """
+    Create NGSIv2 Message object for QuantumLeap from single-column pd.Series of values and timestamps.
+
+    Args:
+        id: Entity ID
+        entity_type: Entity type (e.g., "TemperatureSensor")
+        values: pd.Series of measurements
+        timestamps: pd.Series of timestamps
+
+    Returns:
+        One Message object including all measurements ready for QuantumLeap
+    """
+    if len(values) != len(timestamps):
+        raise ValueError(
+            f"Length mismatch: {len(values)} values vs {len(timestamps)} timestamps"
+        )
+
+    entity_temp = []
+
+    ## this is only for testing to create longer value rows
+
+    for val, ts in zip(values, timestamps):
+        # Ensure timestamp is ISO string
+        if not isinstance(ts, str):
+            ts = pd.to_datetime(ts, unit="s").isoformat()
+
+        entity_data = {}
+
+        attributes_dict = {"fcuLvlSet": "fanSpeed", "TRm_degC": "temperature"}
+
+        # Use Series names as attribute keys
+        entity_data[attributes_dict[str(values.name)]] = {
+            "type": "Number",
+            "value": float(val),
+        }
+        entity_data["timestamp"] = {"type": "DateTime", "value": ts}
+
+        # Create ContextEntity
+        entity = ContextEntity(id=entity.id, type=entity.type, **entity_data)
+
+        # Wrap in Message
+        entity_temp.append(entity)
+    message = Message(data=entity_temp, subscriptionId="test_dataset_batch")
+    return message
 
 
 def plot_on_ax(ax, timestamps, values, title, ylabel, marker="o"):
@@ -166,6 +224,23 @@ def send_notifications(client: "QuantumLeapClient", notifications: list["Message
     """
     for message in notifications:
         client.post_notification(message)
+
+
+def send_notifications_batch(client: "QuantumLeapClient", message: Message):
+    """
+    Send a massage with a list of values to a QuantumLeap client.
+
+    Iterates through each message in the notifications list and posts it
+    using the provided QuantumLeap client.
+
+    Parameters:
+        client (QuantumLeapClient): An instance of the QuantumLeap client used to send notifications.
+        notifications (list[Message]): A list of Message objects to be sent.
+
+    Returns:
+        None
+    """
+    client.post_notification(message)
 
 
 def prepare_dataframe(df, timestamp_col="timestamp", value_col="temperature"):
@@ -237,14 +312,59 @@ if __name__ == "__main__":
         timestamps=temperature_timestamps,
         entity=entities[0],
     )
-    ### NOTE: All data of one entity can be collected and sent in one batch
+
+    # Time the single_process function needs to upload all the data
+    start_time_single = time.perf_counter()
     send_notifications(ql, messages)
+    end_time_single = time.perf_counter()
+    duration_single = end_time_single - start_time_single
+    print(
+        f"  -> single_process of uploading the temperatere measurement took: {duration_single:.4f} seconds"
+    )
+
     messages = create_notifications(
         values=fan_speed_setpoints, timestamps=fan_speed_timestamps, entity=entities[1]
     )
+    start_time_single = time.perf_counter()
     send_notifications(ql, messages)
+    end_time_single = time.perf_counter()
+    duration_single = end_time_single - start_time_single
+    print(
+        f"  -> single_process of uploading the fan speed setpoints took: {duration_single:.4f} seconds"
+    )
 
     # wait for few seconds so data is available
+    time.sleep(2)
+
+    clear_quantumleap(ql_client=ql)
+
+    ### NOTE: All data of one entity can be collected and sent in one batch operation
+    message = create_notifications_batch(
+        values=temperature_measurements,
+        timestamps=temperature_timestamps,
+        entity=entities[0],
+    )
+    start_time_batch = time.perf_counter()
+    send_notifications_batch(ql, message)
+    end_time_batch = time.perf_counter()
+
+    duration_batch = end_time_batch - start_time_batch
+    print(
+        f"  -> batch_process of uploading the temperatere measurement took:  {duration_batch:.4f} seconds"
+    )
+    time.sleep(2)
+
+    message = create_notifications_batch(
+        values=fan_speed_setpoints, timestamps=fan_speed_timestamps, entity=entities[1]
+    )
+    start_time_batch = time.perf_counter()
+    send_notifications_batch(ql, message)
+    end_time_batch = time.perf_counter()
+
+    duration_batch = end_time_batch - start_time_batch
+    print(
+        f"  -> batch_process of uploading the fan speed setpoints took:  {duration_batch:.4f} seconds"
+    )
     time.sleep(2)
 
     ### 2. Query the uploaded data from QuantumLeap
@@ -311,3 +431,5 @@ if __name__ == "__main__":
     # Improve layout and show the plot
     plt.tight_layout(rect=(0, 0.03, 1, 0.95))
     plt.show()
+
+    clear_quantumleap(ql_client=ql)
