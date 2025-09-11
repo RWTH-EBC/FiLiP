@@ -390,6 +390,35 @@ class TestContextBroker(unittest.TestCase):
         response = contextmanager.exception.response
         self.assertEqual(response.status_code, 400)
 
+    def test_pagination(self):
+        """
+        Test pagination for get entity list
+        """
+        # post 2000 entities
+        entities = [
+            ContextLDEntity(
+                id=f"urn:ngsi-ld:testPagination:{str(i)}", type=f"filip:test:pagination"
+            )
+            for i in range(0, 3000)
+        ]
+        self.client.entity_batch_operation(
+            action_type=ActionTypeLD.CREATE, entities=entities
+        )
+
+        # test with limit
+        entity_list = self.client.get_entity_list(limit=500)
+        self.assertEqual(len(entity_list), 500)
+
+        entity_list = self.client.get_entity_list(limit=1000)
+        self.assertEqual(len(entity_list), 1000)
+
+        # test with limit > 1000
+        entity_list = self.client.get_entity_list(limit=3000)
+        self.assertEqual(len(entity_list), 3000)
+
+        entity_list = self.client.get_entity_list(limit=5000)
+        self.assertEqual(len(entity_list), 3000)
+
     def test_different_context(self):
         """
         Get entities with different contexts.
