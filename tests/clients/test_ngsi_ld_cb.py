@@ -397,9 +397,9 @@ class TestContextBroker(unittest.TestCase):
         # post 2000 entities
         entities = [
             ContextLDEntity(
-                id=f"urn:ngsi-ld:testPagination:{str(i)}", type=f"filip:test:pagination"
+                id=f"urn:ngsi-ld:testPagination:{i}", type=f"filip:test:pagination"
             )
-            for i in range(0, 3000)
+            for i in range(3000)
         ]
         self.client.entity_batch_operation(
             action_type=ActionTypeLD.CREATE, entities=entities

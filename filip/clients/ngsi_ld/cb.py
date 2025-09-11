@@ -417,7 +417,6 @@ class ContextBrokerLDClient(BaseHttpClient):
             items = self.__pagination(
                 limit=limit, url=url, params=params, headers=headers
             )
-            # res = self.get(url=url, params=params, headers=headers)
 
             self.logger.info("Entity successfully retrieved!")
             # convert raw data to pydantic models
