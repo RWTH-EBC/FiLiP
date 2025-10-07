@@ -191,6 +191,9 @@
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;limit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># maximum items per request</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;limit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="c1"># add count option if not present</span>
+        <span class="k">if</span> <span class="s2">&quot;count&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">})</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">:</span>
             <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span>
@@ -203,12 +206,7 @@
             <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
                 <span class="n">items</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
                 <span class="c1"># do pagination</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span> <span class="o">==</span> <span class="n">NgsiURLVersion</span><span class="o">.</span><span class="n">v2_url</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-                    <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Fiware-Total-Count&quot;</span><span class="p">])</span>
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_version</span> <span class="o">==</span> <span class="n">NgsiURLVersion</span><span class="o">.</span><span class="n">ld_url</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-                    <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;NGSILD-Results-Count&quot;</span><span class="p">])</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;NGSILD-Results-Count&quot;</span><span class="p">])</span>
 
                 <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">limit</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
                     <span class="c1"># Establishing the offset from where entities are retrieved</span>
@@ -483,10 +481,6 @@
             <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;geoproperty&quot;</span><span class="p">:</span> <span class="n">geoproperty</span><span class="p">})</span>
         <span class="c1"># if csf:  # ContextSourceRegistration not supported yet</span>
         <span class="c1">#     params.update({&#39;csf&#39;: csf})</span>
-        <span class="k">if</span> <span class="n">limit</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;limit must be an integer value &lt;= 1000&quot;</span><span class="p">)</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="n">limit</span><span class="p">})</span>
         <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">options</span> <span class="o">!=</span> <span class="s2">&quot;keyValues&quot;</span> <span class="ow">and</span> <span class="n">options</span> <span class="o">!=</span> <span class="s2">&quot;sysAttrs&quot;</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -496,19 +490,20 @@
         <span class="c1"># params.update({&#39;local&#39;: &#39;true&#39;})</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Entity successfully retrieved!&quot;</span><span class="p">)</span>
-                <span class="n">entity_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">,</span> <span class="n">ContextLDEntityKeyValues</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">if</span> <span class="n">options</span> <span class="o">==</span> <span class="s2">&quot;keyValues&quot;</span><span class="p">:</span>
-                    <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span>
-                        <span class="n">ContextLDEntityKeyValues</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-                    <span class="p">]</span>
-                    <span class="k">return</span> <span class="n">entity_list</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()]</span>
-                    <span class="k">return</span> <span class="n">entity_list</span>
-            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="c1"># use pagination</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">})</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pagination</span><span class="p">(</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Entity successfully retrieved!&quot;</span><span class="p">)</span>
+            <span class="c1"># convert raw data to pydantic models</span>
+            <span class="k">if</span> <span class="n">options</span> <span class="o">==</span> <span class="s2">&quot;keyValues&quot;</span><span class="p">:</span>
+                <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ContextLDEntityKeyValues</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">entity_list</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">entity_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ContextLDEntity</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">entity_list</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not load entity matching</span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
