@@ -363,10 +363,10 @@ class ContextBrokerClient(BaseHttpClient):
                 be included in the response. The attributes are retrieved in
                 the order specified by this parameter. If this parameter is
                 not included, the attributes are retrieved in arbitrary
-                order. See "Filtering out attributes and metadata" section
+                order. See "Filtering out attributes and metadata" section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata
                 for more detail. Example: seatNumber.
             metadata: A list of metadata names to include in the response.
-                See "Filtering out attributes and metadata" section for more
+                See "Filtering out attributes and metadata" section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata for more
                 detail. Example: accuracy.
             order_by: Criteria for ordering results. See "Ordering Results"
                 section for details. Example: temperature,!speed.
@@ -510,7 +510,7 @@ class ContextBrokerClient(BaseHttpClient):
             attrs (List of Strings): List of attribute names whose data must be
                 included in the response. The attributes are retrieved in the
                 order specified by this parameter.
-                See "Filtering out attributes and metadata" section for more
+                See "Filtering out attributes and metadata" section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata for more
                 detail. If this parameter is not included, the attributes are
                 retrieved in arbitrary order, and all the attributes of the
                 entity are included in the response.
@@ -574,7 +574,7 @@ class ContextBrokerClient(BaseHttpClient):
             attrs (List of Strings): List of attribute names whose data must be
                 included in the response. The attributes are retrieved in the
                 order specified by this parameter.
-                See "Filtering out attributes and metadata" section for more
+                See "Filtering out attributes and metadata" section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata for more
                 detail. If this parameter is not included, the attributes are
                 retrieved in arbitrary order, and all the attributes of the
                 entity are included in the response. Example: temperature,
@@ -1118,7 +1118,7 @@ class ContextBrokerClient(BaseHttpClient):
             attr_name: Name of the attribute to be retrieved.
             entity_type (Optional): Type of the entity to retrieve
             metadata (Optional): A list of metadata names to include in the
-                response. See "Filtering out attributes and metadata" section
+                response. See "Filtering out attributes and metadata" section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata
                 for more detail.
 
         Returns:

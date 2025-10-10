@@ -315,7 +315,7 @@ class Notification(BaseModel):
     metadata: Optional[Any] = Field(
         default=None,
         description="List of metadata to be included in notification messages. "
-        'See "Filtering out attributes and metadata" section for '
+        'See "Filtering out attributes and metadata" section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata for '
         "more detail.",
     )
     onlyChangedAttrs: Optional[bool] = Field(

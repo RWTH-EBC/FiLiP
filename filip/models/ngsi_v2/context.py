@@ -736,7 +736,7 @@ class Query(BaseModel):
     metadata: Optional[List[str]] = Field(
         default=None,
         description="a list of metadata names to include in the response. "
-        'See "Filtering out attributes and metadata" section for '
+        'See "Filtering out attributes and metadata" section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata for '
         "more detail.",
     )
 
