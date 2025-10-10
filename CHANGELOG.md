@@ -1,6 +1,7 @@
 ### v0.7.x
 - update: error handling for get devices list ([#451](https://github.com/RWTH-EBC/FiLiP/pull/451))
 - add: warning if ``Orion`` version is not supported ([#200](https://github.com/RWTH-EBC/FiLiP/issues/200))
+- fix: added reference for filtering [#455](https://github.com/RWTH-EBC/FiLiP/issues/455) 
 
 ### v0.7.2
 - update: move rdflib requirement to ``semantics`` extras
