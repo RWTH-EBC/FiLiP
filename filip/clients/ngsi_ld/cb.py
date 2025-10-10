@@ -113,6 +113,9 @@ class ContextBrokerLDClient(BaseHttpClient):
             params["limit"] = 1000  # maximum items per request
         else:
             params["limit"] = limit
+        # add count option if not present
+        if "count" not in params:
+            params.update({"count": "true"})
 
         if self.session:
             session = self.session
@@ -125,12 +128,7 @@ class ContextBrokerLDClient(BaseHttpClient):
             if res.ok:
                 items = res.json()
                 # do pagination
-                if self._url_version == NgsiURLVersion.v2_url.value:
-                    count = int(res.headers["Fiware-Total-Count"])
-                elif self._url_version == NgsiURLVersion.ld_url.value:
-                    count = int(res.headers["NGSILD-Results-Count"])
-                else:
-                    count = 0
+                count = int(res.headers["NGSILD-Results-Count"])
 
                 while len(items) < limit and len(items) < count:
                     # Establishing the offset from where entities are retrieved
@@ -405,10 +403,6 @@ class ContextBrokerLDClient(BaseHttpClient):
             params.update({"geoproperty": geoproperty})
         # if csf:  # ContextSourceRegistration not supported yet
         #     params.update({'csf': csf})
-        if limit:
-            if limit > 1000:
-                raise ValueError("limit must be an integer value <= 1000")
-            params.update({"limit": limit})
         if options:
             if options != "keyValues" and options != "sysAttrs":
                 raise ValueError(
@@ -418,19 +412,20 @@ class ContextBrokerLDClient(BaseHttpClient):
         # params.update({'local': 'true'})
 
         try:
-            res = self.get(url=url, params=params, headers=headers)
-            if res.ok:
-                self.logger.info("Entity successfully retrieved!")
-                entity_list: List[Union[ContextLDEntity, ContextLDEntityKeyValues]] = []
-                if options == "keyValues":
-                    entity_list = [
-                        ContextLDEntityKeyValues(**item) for item in res.json()
-                    ]
-                    return entity_list
-                else:
-                    entity_list = [ContextLDEntity(**item) for item in res.json()]
-                    return entity_list
-            res.raise_for_status()
+            # use pagination
+            params.update({"count": "true"})
+            items = self.__pagination(
+                limit=limit, url=url, params=params, headers=headers
+            )
+
+            self.logger.info("Entity successfully retrieved!")
+            # convert raw data to pydantic models
+            if options == "keyValues":
+                entity_list = [ContextLDEntityKeyValues(**item) for item in items]
+                return entity_list
+            else:
+                entity_list = [ContextLDEntity(**item) for item in items]
+                return entity_list
         except requests.RequestException as err:
             msg = f"Could not load entity matching{params}"
             self.log_error(err=err, msg=msg)
@@ -510,22 +505,13 @@ class ContextBrokerLDClient(BaseHttpClient):
                 "attr_name if attr is of type "
                 "NamedContextAttribute or NamedContextRelationship"
             )
-
+            attr_name = attr.name
         url = urljoin(
             self.base_url, f"{self._url_version}/entities/{entity_id}/attrs/{attr_name}"
         )
-
-        jsonnn = {}
-        if isinstance(attr, list) or isinstance(attr, NamedContextProperty):
-            jsonnn = attr.model_dump(exclude={"name"}, exclude_none=True)
-        else:
-            prop = attr.model_dump()
-            for key, value in prop.items():
-                if value and value != "Property":
-                    jsonnn[key] = value
-
+        val = attr.value if "value" in attr.model_dump() else attr.object
         try:
-            res = self.patch(url=url, headers=headers, json=jsonnn)
+            res = self.patch(url=url, headers=headers, json={"value": val})
             if res.ok:
                 self.logger.info(
                     f"Attribute {attr_name} of {entity_id} successfully updated!"
