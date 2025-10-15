@@ -8,6 +8,9 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![build](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)](https://rwth-ebc.github.io/FiLiP/master/build/build.svg)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.06953/status.svg     )](https://doi.org/10.21105/joss.06953    )
+<br/>
+[![](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg)](https://www.fiware.org/developers/catalogue/)
+![Status](https://nexus.lab.fiware.org/repository/raw/public/badges/statuses/incubating.svg)
 
 FiLiP (<ins>FI</ins>WARE <ins>Li</ins>brary for <ins>P</ins>ython) is a python Software Development Kit (SDK) for 
 accelerating the development of web services that use Fiware's Generic 
@@ -30,6 +33,9 @@ features of requests.
 Furthermore, FiLiP is designed to help with the fast development of FIWARE-based 
 applications and avoid hundreds of lines of boilerplate, but it cannot 
 substitute learning the basic concepts behind the used FIWARE components.
+
+This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for the
+[Core Context Management](https://github.com/Fiware/catalogue/tree/master/core).
 
 ## General Motivation
 
