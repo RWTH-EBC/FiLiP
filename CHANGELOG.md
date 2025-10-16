@@ -1,8 +1,12 @@
-### v0.7.x
+### v0.7.3
 - update: error handling for get devices list ([#451](https://github.com/RWTH-EBC/FiLiP/pull/451))
+- update: link FIWARE badges in README.md ([#463](https://github.com/RWTH-EBC/FiLiP/pull/463))
+- fix: falsy value handling on update_entity_attribute ([#454](https://github.com/RWTH-EBC/FiLiP/pull/454))
 - add: warning if ``Orion`` version is not supported ([#200](https://github.com/RWTH-EBC/FiLiP/issues/200))
 - add: support pagination for get_entity_list of NGSI-LD ([#456](https://github.com/RWTH-EBC/FiLiP/pull/457))
-- fix: added reference for filtering ([#455](https://github.com/RWTH-EBC/FiLiP/issues/455))
+- add: version checker for correct cb version ([#200](https://github.com/RWTH-EBC/FiLiP/pull/200))
+- add: pagination for get entity list in NGSI-LD client ([#457](https://github.com/RWTH-EBC/FiLiP/pull/457))
+- add: new example for uploading existing dataset ([#453](https://github.com/RWTH-EBC/FiLiP/pull/453))
 
 ### v0.7.2
 - update: move rdflib requirement to ``semantics`` extras
