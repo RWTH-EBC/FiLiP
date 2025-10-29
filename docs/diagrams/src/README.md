@@ -6,4 +6,4 @@ To regenerate the diagrams for the project architecture, please execute ``update
 python update_architecture.py
 ```
 
-After that, you can use the [PlantUML Web Server](http://www.plantuml.com/plantuml/umla/) to generate the diagrams.
+After that, you can use the [PlantUML Web Server](http://www.plantuml.com/plantuml/uml/) to generate the diagrams.
