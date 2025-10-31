@@ -208,7 +208,9 @@ class QueryStatement(Tuple):
             QueryStatement
         """
         for op in Operator.list():
-            if re.fullmatch(rf"^\w((\w|[^&,?,/,#,\*,\s]\w)?)*{op}\w+$", string):
+            if re.fullmatch(
+                rf"^\w((\w|[^&,?,/,#,\*,\s]\w)?)*{op}([']?\w+[']?)$", string
+            ):
                 args = string.split(op)
                 if len(args) == 2:
                     if args[1].isnumeric():
