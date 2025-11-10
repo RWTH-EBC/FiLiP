@@ -40,6 +40,8 @@ from filip.models.ngsi_v2.subscriptions import (
     Subscription,
     Condition,
     Notification,
+    MqttCustom,
+    Subject,
 )
 from filip.models.ngsi_v2.iot import (
     Device,
@@ -988,6 +990,53 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(new_value, mqtt_agent.sub_message.data[0].temperature.value)
 
         mqtt_agent.clean_up()
+
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+    )
+    def test_duplicate_subscription(self):
+        """
+        Test that posting a duplicate subscription does not create multiple entries.
+
+        This test ensures that when the same subscription (with identical parameters)
+        is posted twice, the system recognizes it as a duplicate and does not create
+        a new subscription entry. Instead, it should return the same subscription ID.
+        """
+
+        # --- Step 1: Build a notification configuration ---
+        # Defines where and how notifications will be sent (MQTT in this case)
+        notification = Notification(
+            mqtt=MqttCustom(
+                url="mqtt://mqtt-broker:1883",
+                topic="does/not/matter",
+                user="testuser",
+                passwd="password123",
+            )
+        )
+
+        # --- Step 2: Define the subscription subject ---
+        # The subject specifies what entities or patterns the subscription applies to
+        subject = Subject(entities=[{"idPattern": ".*"}])
+
+        # --- Step 3: Create a subscription object ---
+        # Combines the subject and notification configuration into a full subscription
+        subscription = Subscription(notification=notification, subject=subject)
+
+        # --- Step 4: Post the same subscription twice ---
+        # The system should detect that the second request is a duplicate
+        subscription_id_1 = self.client.post_subscription(subscription)
+        subscription_id_2 = self.client.post_subscription(subscription)
+
+        # --- Step 5: Retrieve the list of all subscriptions ---
+        # Used to verify that no duplicate entries were created
+        all_subs = self.client.get_subscription_list()
+
+        # --- Step 6: Assertions ---
+        # Check that only one subscription exists and that both IDs match
+        assert len(all_subs) == 1, "Expected only one subscriptions to be created."
+        assert subscription_id_1 == subscription_id_2, "The ID should be the same."
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
