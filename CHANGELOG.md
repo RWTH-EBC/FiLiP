@@ -1,3 +1,6 @@
+### v0.7.x
+- fix: ignore password field while checking duplicated subscription ([#471](https://github.com/RWTH-EBC/FiLiP/pull/471))
+
 ### v0.7.3
 - update: error handling for get devices list ([#451](https://github.com/RWTH-EBC/FiLiP/pull/451))
 - update: link FIWARE badges in README.md ([#463](https://github.com/RWTH-EBC/FiLiP/pull/463))
