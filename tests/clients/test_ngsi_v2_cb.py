@@ -1008,7 +1008,7 @@ class TestContextBroker(unittest.TestCase):
         # --- Step 1: Build a notification configuration ---
         # Defines where and how notifications will be sent (MQTT in this case)
         notification = Notification(
-            mqtt=MqttCustom(
+            mqttCustom=MqttCustom(
                 url="mqtt://mqtt-broker:1883",
                 topic="does/not/matter",
                 user="testuser",
@@ -1035,7 +1035,7 @@ class TestContextBroker(unittest.TestCase):
 
         # --- Step 6: Assertions ---
         # Check that only one subscription exists and that both IDs match
-        assert len(all_subs) == 1, "Expected only one subscriptions to be created."
+        assert len(all_subs) == 1, "Expected only one subscription to be created."
         assert subscription_id_1 == subscription_id_2, "The ID should be the same."
 
     @clean_test(
