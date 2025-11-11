@@ -1565,23 +1565,30 @@
             <span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">},</span>
             <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;notification&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;lastSuccess&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;lastFailure&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;lastSuccess&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;lastFailure&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;mqtt&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;passwd&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;mqttCustom&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;passwd&quot;</span><span class="p">},</span>
                 <span class="p">}</span>
             <span class="p">},</span>
         <span class="p">)</span>
+
         <span class="k">for</span> <span class="n">ex_sub</span> <span class="ow">in</span> <span class="n">existing_subscriptions</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscription_dicts_are_equal</span><span class="p">(</span>
                 <span class="n">sub_dict</span><span class="p">,</span>
                 <span class="n">ex_sub</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
                     <span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">},</span>
                     <span class="n">exclude</span><span class="o">=</span><span class="p">{</span>
-                        <span class="s2">&quot;lastSuccess&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;lastFailure&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notification&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;lastSuccess&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;lastFailure&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;lastSuccessCode&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;lastFailureReason&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;mqtt&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;passwd&quot;</span><span class="p">},</span>
+                            <span class="s2">&quot;mqttCustom&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;passwd&quot;</span><span class="p">},</span>
+                        <span class="p">}</span>
                     <span class="p">},</span>
                 <span class="p">),</span>
             <span class="p">):</span>
