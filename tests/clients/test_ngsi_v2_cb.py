@@ -213,9 +213,11 @@ class TestContextBroker(unittest.TestCase):
             entities_by_type_pattern = client.get_entity_list(type_pattern=".*TypeA$")
             self.assertLess(len(entities_by_type_pattern), len(entities_all))
 
-            qs = QueryString(qs=[("presentValue", ">", 0)])
+            qs = QueryString(qs=[("presentValue", "==", 0)])
             entities_by_query = client.get_entity_list(q=qs)
             self.assertLess(len(entities_by_query), len(entities_all))
+            entities_by_query_string = client.get_entity_list(q="presentValue=='0'")
+            self.assertEqual(len(entities_by_query_string), len(entities_by_query))
 
             # test options
             for opt in list(AttrsFormat):
