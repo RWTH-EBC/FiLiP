@@ -164,18 +164,6 @@ class QueryStatement(Tuple):
                 raise TypeError("First argument must be a string!")
             if value[1] not in Operator.list():
                 raise TypeError("Invalid comparison operator!")
-            if value[1] not in [
-                Operator.EQUAL,
-                Operator.UNEQUAL,
-                Operator.MATCH_PATTERN,
-            ]:
-                try:
-                    float(value[2])
-                except ValueError as err:
-                    err.args += (
-                        "Invalid combination of operator and right " "hand side!",
-                    )
-                    raise
             return value
         elif isinstance(value, str):
             return cls.parse_str(value)

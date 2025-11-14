@@ -254,6 +254,8 @@ class TestContextBroker(unittest.TestCase):
                     color={"type": "Text", "value": "black"},
                     value={"type": "Number", "value": 5},
                     date={"type": "Text", "value": "2023-11-14T12:00:00"},
+                    timestamp={"type": "DateTime", "value": "2025-11-13T09:15:21Z"},
+                    name={"type": "Text", "value": "Alice"},
                 ),
                 ContextEntity(
                     id="e2",
@@ -261,6 +263,8 @@ class TestContextBroker(unittest.TestCase):
                     color={"type": "Text", "value": "yellow"},
                     value={"type": "Number", "value": 10},
                     date={"type": "Text", "value": "2023-11-15T13:30:00"},
+                    timestamp={"type": "DateTime", "value": "2025-11-14T09:15:21Z"},
+                    name={"type": "Text", "value": "Bob"},
                 ),
                 ContextEntity(
                     id="e3",
@@ -268,6 +272,8 @@ class TestContextBroker(unittest.TestCase):
                     color={"type": "Text", "value": "red"},
                     value={"type": "Number", "value": 20},
                     date={"type": "Text", "value": "2023-11-16T15:00:00"},
+                    timestamp={"type": "DateTime", "value": "2025-11-15T09:15:21Z"},
+                    name={"type": "Text", "value": "Charlie"},
                 ),
             ]
             client.update(action_type=ActionType.APPEND, entities=entities)
@@ -295,6 +301,56 @@ class TestContextBroker(unittest.TestCase):
             entities_apostroph = client.get_entity_list(q="color=='black'")
             self.assertEqual(len(entities_apostroph), 1)
             self.assertEqual(entities_apostroph[0].id, "e1")
+
+            # Test: string comparison with > and <
+            entities_name_gt = client.get_entity_list(q="name>'Bob'")
+            self.assertEqual(len(entities_name_gt), 1)
+            self.assertEqual(entities_name_gt[0].id, "e3")
+            entities_name_lt = client.get_entity_list(q="name<'Bob'")
+            self.assertEqual(len(entities_name_lt), 1)
+            self.assertEqual(entities_name_lt[0].id, "e1")
+            entities_name_ge = client.get_entity_list(q="name>='Bob'")
+            self.assertEqual(len(entities_name_ge), 2)
+            ids_name_ge = [e.id for e in entities_name_ge]
+            self.assertIn("e2", ids_name_ge)
+            self.assertIn("e3", ids_name_ge)
+            entities_name_le = client.get_entity_list(q="name<='Bob'")
+            self.assertEqual(len(entities_name_le), 2)
+            ids_name_le = [e.id for e in entities_name_le]
+            self.assertIn("e1", ids_name_le)
+            self.assertIn("e2", ids_name_le)
+
+            # Test: date comparison with > and <
+            entities_date_gt = client.get_entity_list(q="date>'2023-11-15T00:00:00'")
+            self.assertEqual(len(entities_date_gt), 2)
+            ids_date_gt = [e.id for e in entities_date_gt]
+            self.assertIn("e2", ids_date_gt)
+            self.assertIn("e3", ids_date_gt)
+            entities_date_lt = client.get_entity_list(q="date<'2023-11-15T00:00:00'")
+            self.assertEqual(len(entities_date_lt), 1)
+            self.assertEqual(entities_date_lt[0].id, "e1")
+            entities_date_ge = client.get_entity_list(q="date>='2023-11-15T13:30:00'")
+            self.assertEqual(len(entities_date_ge), 2)
+            ids_date_ge = [e.id for e in entities_date_ge]
+            self.assertIn("e2", ids_date_ge)
+            self.assertIn("e3", ids_date_ge)
+            entities_date_le = client.get_entity_list(q="date<='2023-11-15T13:30:00'")
+            self.assertEqual(len(entities_date_le), 2)
+            ids_date_le = [e.id for e in entities_date_le]
+            self.assertIn("e1", ids_date_le)
+            self.assertIn("e2", ids_date_le)
+
+            # Test: ISO 8601 date with Z
+            entities_timestamp_gt = client.get_entity_list(q="timestamp>2025-11-13")
+            self.assertEqual(len(entities_timestamp_gt), 3)
+            ids_timestamp_gt = [e.id for e in entities_timestamp_gt]
+            self.assertIn("e2", ids_timestamp_gt)
+            self.assertIn("e3", ids_timestamp_gt)
+            entities_timestamp_le = client.get_entity_list(q="timestamp<=2025-11-15")
+            self.assertEqual(len(entities_timestamp_le), 2)
+            ids_timestamp_le = [e.id for e in entities_timestamp_le]
+            self.assertIn("e1", ids_timestamp_le)
+            self.assertIn("e2", ids_timestamp_le)
 
             # Cleanup
             client.update(action_type=ActionType.DELETE, entities=entities)
@@ -843,7 +899,6 @@ class TestContextBroker(unittest.TestCase):
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
         cb_url=settings.CB_URL,
-        iota_url=settings.IOTA_JSON_URL,
     )
     def test_subscription_alterationtypes(self):
         """
