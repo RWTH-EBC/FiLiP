@@ -239,6 +239,71 @@ class TestContextBroker(unittest.TestCase):
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
         cb_url=settings.CB_URL,
     )
+    def test_query_string(self):
+        """
+        Test QueryString
+        """
+        with ContextBrokerClient(
+            url=settings.CB_URL, fiware_header=self.fiware_header
+        ) as client:
+            # Setup: create test entities
+            entities = [
+                ContextEntity(
+                    id="e1",
+                    type="Test",
+                    color={"type": "Text", "value": "black"},
+                    value={"type": "Number", "value": 5},
+                    date={"type": "Text", "value": "2023-11-14T12:00:00"},
+                ),
+                ContextEntity(
+                    id="e2",
+                    type="Test",
+                    color={"type": "Text", "value": "yellow"},
+                    value={"type": "Number", "value": 10},
+                    date={"type": "Text", "value": "2023-11-15T13:30:00"},
+                ),
+                ContextEntity(
+                    id="e3",
+                    type="Test",
+                    color={"type": "Text", "value": "red"},
+                    value={"type": "Number", "value": 20},
+                    date={"type": "Text", "value": "2023-11-16T15:00:00"},
+                ),
+            ]
+            client.update(action_type=ActionType.APPEND, entities=entities)
+
+            # test range operators >= and <=
+            entities_range = client.get_entity_list(q="value>=5;value<=10")
+            self.assertEqual(len(entities_range), 2)
+            ids_range = [e.id for e in entities_range]
+            self.assertIn("e1", ids_range)
+            self.assertIn("e2", ids_range)
+
+            # Test: ISO-datetime format
+            entities_date = client.get_entity_list(q="date=='2023-11-15T13:30:00'")
+            self.assertEqual(len(entities_date), 1)
+            self.assertEqual(entities_date[0].id, "e2")
+
+            # Test: OR clause with comma
+            entities_color = client.get_entity_list(q="color=='black','yellow'")
+            self.assertEqual(len(entities_color), 2)
+            ids_color = [e.id for e in entities_color]
+            self.assertIn("e1", ids_color)
+            self.assertIn("e2", ids_color)
+
+            # Test: single quotes
+            entities_apostroph = client.get_entity_list(q="color=='black'")
+            self.assertEqual(len(entities_apostroph), 1)
+            self.assertEqual(entities_apostroph[0].id, "e1")
+
+            # Cleanup
+            client.update(action_type=ActionType.DELETE, entities=entities)
+
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+    )
     def test_entity_operations(self):
         """
         Test entity operations of context broker client
