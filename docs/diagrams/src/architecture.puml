@@ -1,0 +1,68 @@
+@startwbs
+
+!theme materia
+skinparam BackgroundColor white
+
+<style>
+  Linecolor black
+  arrow {
+    LineColor #E53027
+  }
+node {
+    Padding 4
+    Margin 8
+    HorizontalAlignment center
+    LineColor #9B231E
+    LineThickness 2.0
+    BackgroundColor #E53027
+    FontColor white
+    FontName Roboto
+    FontStyle bold
+    RoundCorner 3
+    MaximumWidth 150
+}
+</style>
+* filip
+** config.py
+** clients
+*** base_http_client.py
+*** exceptions.py
+*** mqtt
+**** client.py
+**** encoder
+***** base_encoder.py
+***** json.py
+***** ulralight.py
+*** ngsi_ld
+**** cb.py
+*** ngsi_v2
+**** cb.py
+**** client.py
+**** iota.py
+**** quantumleap.py
+** models
+*** base.py
+*** mqtt.py
+*** ngsi_ld
+**** base.py
+**** context.py
+**** subscriptions.py
+*** ngsi_v2
+**** base.py
+**** context.py
+**** iot.py
+**** registrations.py
+**** subscriptions.py
+**** timeseries.py
+**** units.py
+** utils
+*** cleanup.py
+*** data.py
+*** datetime.py
+*** filter.py
+*** geo_ql.py
+*** iot.py
+*** model_generation.py
+*** simple_ql.py
+*** validators.py
+@endwbs

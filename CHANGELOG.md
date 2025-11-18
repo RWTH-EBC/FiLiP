@@ -1,4 +1,5 @@
-### v0.7.x
+### v0.7.4
+- fix: fixed outdated module overview diagram ([#467](https://github.com/RWTH-EBC/FiLiP/pull/467))
 - fix: ignore password field while checking duplicated subscription ([#471](https://github.com/RWTH-EBC/FiLiP/pull/471))
 
 ### v0.7.3
