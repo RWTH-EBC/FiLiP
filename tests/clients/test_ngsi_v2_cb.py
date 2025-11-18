@@ -298,9 +298,9 @@ class TestContextBroker(unittest.TestCase):
             self.assertIn("e2", ids_color)
 
             # Test: single quotes
-            entities_apostroph = client.get_entity_list(q="color=='black'")
-            self.assertEqual(len(entities_apostroph), 1)
-            self.assertEqual(entities_apostroph[0].id, "e1")
+            entities_apostrophe = client.get_entity_list(q="color=='black'")
+            self.assertEqual(len(entities_apostrophe), 1)
+            self.assertEqual(entities_apostrophe[0].id, "e1")
 
             # Test: string comparison with > and <
             entities_name_gt = client.get_entity_list(q="name>'Bob'")
