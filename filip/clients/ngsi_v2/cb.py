@@ -1487,23 +1487,30 @@ class ContextBrokerClient(BaseHttpClient):
             include={"subject", "notification"},
             exclude={
                 "notification": {
-                    "lastSuccess",
-                    "lastFailure",
-                    "lastSuccessCode",
-                    "lastFailureReason",
+                    "lastSuccess": True,
+                    "lastFailure": True,
+                    "lastSuccessCode": True,
+                    "lastFailureReason": True,
+                    "mqtt": {"passwd"},
+                    "mqttCustom": {"passwd"},
                 }
             },
         )
+
         for ex_sub in existing_subscriptions:
             if self._subscription_dicts_are_equal(
                 sub_dict,
                 ex_sub.model_dump(
                     include={"subject", "notification"},
                     exclude={
-                        "lastSuccess",
-                        "lastFailure",
-                        "lastSuccessCode",
-                        "lastFailureReason",
+                        "notification": {
+                            "lastSuccess": True,
+                            "lastFailure": True,
+                            "lastSuccessCode": True,
+                            "lastFailureReason": True,
+                            "mqtt": {"passwd"},
+                            "mqttCustom": {"passwd"},
+                        }
                     },
                 ),
             ):
