@@ -1,3 +1,6 @@
+### v0.7.x
+- fix: various bug fixes regarding query string and its regex ([#469](https://github.com/RWTH-EBC/FiLiP/pull/469))
+
 ### v0.7.3
 - update: error handling for get devices list ([#451](https://github.com/RWTH-EBC/FiLiP/pull/451))
 - update: link FIWARE badges in README.md ([#463](https://github.com/RWTH-EBC/FiLiP/pull/463))
