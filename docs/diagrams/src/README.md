@@ -1,6 +1,6 @@
 ## Scan project architecture
 
-To regenerate the diagrams for the project architecture, please execute ``update_architecture.py``, which will generate the plantuml text in the `architecture.puml` file.
+To regenerate the diagrams for the project architecture, please execute ``update_architecture.py``, which will generate the PlantUML text in the `architecture.puml` file.
 
 ```bash
 python update_architecture.py
