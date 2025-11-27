@@ -164,18 +164,6 @@ class QueryStatement(Tuple):
                 raise TypeError("First argument must be a string!")
             if value[1] not in Operator.list():
                 raise TypeError("Invalid comparison operator!")
-            if value[1] not in [
-                Operator.EQUAL,
-                Operator.UNEQUAL,
-                Operator.MATCH_PATTERN,
-            ]:
-                try:
-                    float(value[2])
-                except ValueError as err:
-                    err.args += (
-                        "Invalid combination of operator and right " "hand side!",
-                    )
-                    raise
             return value
         elif isinstance(value, str):
             return cls.parse_str(value)
@@ -208,7 +196,9 @@ class QueryStatement(Tuple):
             QueryStatement
         """
         for op in Operator.list():
-            if re.fullmatch(rf"^\w((\w|[^&,?,/,#,\*,\s]\w)?)*{op}\w+$", string):
+            if re.fullmatch(
+                rf"^\w(?:(?:\w|[^&,?,/,#,\*,\s]\w)?)*{op}[\w.,:'-]+$", string
+            ):
                 args = string.split(op)
                 if len(args) == 2:
                     if args[1].isnumeric():
@@ -219,6 +209,7 @@ class QueryStatement(Tuple):
                         return QueryStatement(args[0], op, right)
                     return QueryStatement(args[0], op, args[1])
                 raise ValueError
+        raise ValueError("Invalid query statement string!")
 
     def __str__(self):
         """Return str(self)."""
