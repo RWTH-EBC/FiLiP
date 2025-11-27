@@ -4,14 +4,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Coverage for filip/clients/ngsi_v2/cb.py: 80%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
-    <link rel="stylesheet" href="style_cb_a37fa487.css" type="text/css">
-    <script src="coverage_html_cb_cadff66e.js" defer></script>
+    <link rel="stylesheet" href="style_cb_8432e98f.css" type="text/css">
+    <script src="coverage_html_cb_bcae5fc4.js" defer></script>
 </head>
 <body class="pyfile">
 <header>
     <div class="content">
         <h1>
-            <span class="text">Coverage for </span><b>filip/clients/ngsi_v2/cb.py</b>:
+            <span class="text">Coverage for </span><b>filip&#8201;/&#8201;clients&#8201;/&#8201;ngsi_v2&#8201;/&#8201;cb.py</b>:
             <span class="pc_cov">80%</span>
         </h1>
         <aside id="help_panel_wrapper">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">686 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">551<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">135<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">552<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">134<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">122<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_5b5c6c23d4d80535_client_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.11.3">coverage.py v7.11.3</a>,
-            created at 2025-11-18 10:03 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
+            created at 2025-11-27 10:06 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -494,7 +494,7 @@
     <p class="mis show_mis"><span class="n"><a id="t412" href="#t412">412</a></span><span class="t">            <span class="nam">params</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="op">{</span><span class="str">"metadata"</span><span class="op">:</span> <span class="str">","</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">metadata</span><span class="op">)</span><span class="op">}</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t413" href="#t413">413</a></span><span class="t">        <span class="key">if</span> <span class="nam">q</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t414" href="#t414">414</a></span><span class="t">            <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">q</span><span class="op">,</span> <span class="nam">str</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t415" href="#t415">415</a></span><span class="t">                <span class="nam">q</span> <span class="op">=</span> <span class="nam">QueryString</span><span class="op">.</span><span class="nam">parse_str</span><span class="op">(</span><span class="nam">q</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t415" href="#t415">415</a></span><span class="t">                <span class="nam">q</span> <span class="op">=</span> <span class="nam">QueryString</span><span class="op">.</span><span class="nam">parse_str</span><span class="op">(</span><span class="nam">q</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t416" href="#t416">416</a></span><span class="t">            <span class="nam">params</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="op">{</span><span class="str">"q"</span><span class="op">:</span> <span class="nam">str</span><span class="op">(</span><span class="nam">q</span><span class="op">)</span><span class="op">}</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t417" href="#t417">417</a></span><span class="t">        <span class="key">if</span> <span class="nam">mq</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t418" href="#t418">418</a></span><span class="t">            <span class="nam">params</span><span class="op">.</span><span class="nam">update</span><span class="op">(</span><span class="op">{</span><span class="str">"mq"</span><span class="op">:</span> <span class="nam">str</span><span class="op">(</span><span class="nam">mq</span><span class="op">)</span><span class="op">}</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -2464,8 +2464,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_5b5c6c23d4d80535_client_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.11.3">coverage.py v7.11.3</a>,
-            created at 2025-11-18 10:03 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
+            created at 2025-11-27 10:06 +0000
         </p>
     </div>
 </footer>
