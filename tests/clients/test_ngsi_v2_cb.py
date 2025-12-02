@@ -1000,7 +1000,6 @@ class TestContextBroker(unittest.TestCase):
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
         cb_url=settings.CB_URL,
-        iota_url=settings.IOTA_JSON_URL,
     )
     def test_mqtt_subscriptions(self):
         mqtt_url = settings.MQTT_BROKER_URL
@@ -1126,39 +1125,64 @@ class TestContextBroker(unittest.TestCase):
         is posted twice, the system recognizes it as a duplicate and does not create
         a new subscription entry. Instead, it should return the same subscription ID.
         """
-
-        # --- Step 1: Build a notification configuration ---
         # Defines where and how notifications will be sent (MQTT in this case)
-        notification = Notification(
-            mqttCustom=MqttCustom(
-                url="mqtt://mqtt-broker:1883",
-                topic="does/not/matter",
-                user="testuser",
-                passwd="password123",
-            )
+        mqtt_custom = MqttCustom(
+            url="mqtt://mqtt-broker:1883",
+            topic="does/not/matter",
+            user="testuser",
+            passwd="password123",
         )
+        notification = Notification(mqttCustom=mqtt_custom)
 
-        # --- Step 2: Define the subscription subject ---
         # The subject specifies what entities or patterns the subscription applies to
         subject = Subject(entities=[{"idPattern": ".*"}])
 
-        # --- Step 3: Create a subscription object ---
         # Combines the subject and notification configuration into a full subscription
         subscription = Subscription(notification=notification, subject=subject)
 
-        # --- Step 4: Post the same subscription twice ---
-        # The system should detect that the second request is a duplicate
+        # Test case 1: subs with password in notification
         subscription_id_1 = self.client.post_subscription(subscription)
         subscription_id_2 = self.client.post_subscription(subscription)
+        self.assertEqual(
+            subscription_id_1, subscription_id_2
+        )  # "The ID should be the same."
 
-        # --- Step 5: Retrieve the list of all subscriptions ---
-        # Used to verify that no duplicate entries were created
-        all_subs = self.client.get_subscription_list()
+        # Test case 2: subs with different order in list
+        notification_1 = Notification(attrs=["a1", "a2", "a3"], mqttCustom=mqtt_custom)
+        subject_1 = Subject(
+            entities=[{"idPattern": ".*"}],
+            condition=Condition(attrs=["a1", "a2", "a3"]),
+        )
+        notification_2 = Notification(
+            attrs=["a2", "a1", "a3"], mqttCustom=mqtt_custom
+        )  # not created
+        notification_3 = Notification(
+            attrs=["a1", "a2"], mqttCustom=mqtt_custom
+        )  # created
+        subject_4 = Subject(
+            entities=[{"idPattern": ".*"}],
+            condition=Condition(attrs=["a2", "a1", "a3"]),
+        )  # not created
+        subject_5 = Subject(
+            entities=[{"idPattern": ".*"}], condition=Condition(attrs=["a2", "a1"])
+        )  # created
 
-        # --- Step 6: Assertions ---
-        # Check that only one subscription exists and that both IDs match
-        assert len(all_subs) == 1, "Expected only one subscription to be created."
-        assert subscription_id_1 == subscription_id_2, "The ID should be the same."
+        subscription_1 = Subscription(notification=notification_1, subject=subject_1)
+        subscription_2 = Subscription(notification=notification_2, subject=subject_1)
+        subscription_3 = Subscription(notification=notification_3, subject=subject_1)
+        subscription_4 = Subscription(notification=notification_1, subject=subject_4)
+        subscription_5 = Subscription(notification=notification_1, subject=subject_5)
+
+        # post 1
+        sub_id_1 = self.client.post_subscription(subscription_1)
+        sub_id_2 = self.client.post_subscription(subscription_2)
+        self.assertEqual(sub_id_1, sub_id_2)
+        sub_id_3 = self.client.post_subscription(subscription_3)
+        self.assertNotEqual(sub_id_1, sub_id_3)
+        sub_id_4 = self.client.post_subscription(subscription_4)
+        self.assertEqual(sub_id_1, sub_id_4)
+        sub_id_5 = self.client.post_subscription(subscription_5)
+        self.assertNotEqual(sub_id_1, sub_id_5)
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,

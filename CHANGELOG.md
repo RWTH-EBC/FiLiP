@@ -2,6 +2,7 @@
 - fix: various bug fixes regarding query string and its regex ([#469](https://github.com/RWTH-EBC/FiLiP/pull/469))
 - fix: fixed outdated module overview diagram ([#467](https://github.com/RWTH-EBC/FiLiP/pull/467))
 - fix: ignore password field while checking duplicated subscription ([#471](https://github.com/RWTH-EBC/FiLiP/pull/471))
+- update: ignore difference of the order of list elements while checking duplicated subscription ([#474](https://github.com/RWTH-EBC/FiLiP/pull/474))
 
 ### v0.7.3
 - update: error handling for get devices list ([#451](https://github.com/RWTH-EBC/FiLiP/pull/451))

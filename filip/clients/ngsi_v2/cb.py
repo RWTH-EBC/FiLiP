@@ -5,6 +5,7 @@ Context Broker Module for API Client
 from __future__ import annotations
 
 import copy
+import json
 from copy import deepcopy
 from enum import Enum
 from math import inf
@@ -2185,6 +2186,30 @@ class ContextBrokerClient(BaseHttpClient):
             override_metadata=override_metadata,
         )
 
+    @staticmethod
+    def compare_lists_ignore_order(list_a, list_b):
+        """
+        Compares two lists ignoring order.
+        Handles unhashable types like dictionaries and mixed types.
+        """
+        # 1. Quick check: if lengths differ, they are not equal
+        if len(list_a) != len(list_b):
+            return False
+
+        # 2. Define a helper to create a comparable string signature for any item
+        def get_canonical_key(item):
+            # For lists, we recursively sort them so nested lists are also order-independent
+            if isinstance(item, list):
+                return json.dumps(sorted(item, key=lambda x: get_canonical_key(x)))
+
+            # For everything else (int, str, dict, obj), just use the string representation
+            return str(item)
+
+        # 3. Sort both lists using the canonical key and compare
+        return sorted(list_a, key=get_canonical_key) == sorted(
+            list_b, key=get_canonical_key
+        )
+
     def _subscription_dicts_are_equal(self, first: dict, second: dict):
         """
         Check if two dictionaries and all sub-dictionaries are equal.
@@ -2227,150 +2252,25 @@ class ContextBrokerClient(BaseHttpClient):
                     continue
                 else:
                     return False
-            if v != ex_value:
-                self.logger.debug(f"Not equal fields for key {k}: ({v}, {ex_value})")
-                if (
-                    not _value_is_not_none(v)
-                    and not _value_is_not_none(ex_value)
-                    or k == "timesSent"
-                ):
+            elif isinstance(v, list) and isinstance(ex_value, list):
+                equal = self.compare_lists_ignore_order(v, ex_value)
+                if equal:
                     continue
-                return False
+                else:
+                    return False
+            else:
+                equal = v == ex_value
+                if equal:
+                    continue
+                else:
+                    self.logger.debug(
+                        f"Not equal fields for key {k}: ({v}, {ex_value})"
+                    )
+                    if (
+                        not _value_is_not_none(v)
+                        and not _value_is_not_none(ex_value)
+                        or k == "timesSent"
+                    ):
+                        continue
+                    return False
         return True
-
-
-#
-#
-#    def check_duplicate_subscription(self, subscription_body, limit: int = 20):
-#        """
-#        Function compares the subject of the subscription body, on whether a subscription
-#        already exists for a device / entity.
-#        :param subscription_body: the body of the new subscripton
-#        :param limit: pagination parameter, to set the number of
-#        subscriptions bodies the get request should grab
-#        :return: exists, boolean -> True, if such a subscription allready
-#        exists
-#        """
-#        exists = False
-#        subscription_subject = json.loads(subscription_body)["subject"]
-#        # Exact keys depend on subscription body
-#        try:
-#            subscription_url = json.loads(subscription_body)[
-#            "notification"]["httpCustom"]["url"]
-#        except KeyError:
-#            subscription_url = json.loads(subscription_body)[
-#            "notification"]["http"]["url"]
-#
-#        # If the number of subscriptions is larger then the limit,
-#        paginations methods have to be used
-#        url = self.url + '/v2/subscriptions?limit=' + str(limit) +
-#        '&options=count'
-#        response = self.session.get(url, headers=self.get_header())
-#
-#        sub_count = float(response.headers["Fiware-Total-Count"])
-#        response = json.loads(response.text)
-#        if sub_count >= limit:
-#            response = self.get_pagination(url=url, headers=self.get_header(),
-#                                           limit=limit, count=sub_count)
-#            response = json.loads(response)
-#
-#        for existing_subscription in response:
-#            # check whether the exact same subscriptions already exists
-#            if existing_subscription["subject"] == subscription_subject:
-#                exists = True
-#                break
-#            try:
-#                existing_url = existing_subscription["notification"][
-#                "http"]["url"]
-#            except KeyError:
-#                existing_url = existing_subscription["notification"][
-#                "httpCustom"]["url"]
-#            # check whether both subscriptions notify to the same path
-#            if existing_url != subscription_url:
-#                continue
-#            else:
-#                # iterate over all entities included in the subscription object
-#                for entity in subscription_subject["entities"]:
-#                    if 'type' in entity.keys():
-#                        subscription_type = entity['type']
-#                    else:
-#                        subscription_type = entity['typePattern']
-#                    if 'id' in entity.keys():
-#                        subscription_id = entity['id']
-#                    else:
-#                        subscription_id = entity["idPattern"]
-#                    # iterate over all entities included in the exisiting
-#                    subscriptions
-#                    for existing_entity in existing_subscription["subject"][
-#                    "entities"]:
-#                        if "type" in entity.keys():
-#                            type_existing = entity["type"]
-#                        else:
-#                            type_existing = entity["typePattern"]
-#                        if "id" in entity.keys():
-#                            id_existing = entity["id"]
-#                        else:
-#                            id_existing = entity["idPattern"]
-#                        # as the ID field is non optional, it has to match
-#                        # check whether the type match
-#                        # if the type field is empty, they match all types
-#                        if (type_existing == subscription_type) or\
-#                                ('*' in subscription_type) or \
-#                                ('*' in type_existing)\
-#                                or (type_existing == "") or (
-#                                subscription_type == ""):
-#                            # check if on of the subscriptions is a pattern,
-#                            or if they both refer to the same id
-#                            # Get the attrs first, to avoid code duplication
-#                            # last thing to compare is the attributes
-#                            # Assumption -> position is the same as the
-#                            entities _list
-#                            # i == j
-#                            i = subscription_subject["entities"].index(entity)
-#                            j = existing_subscription["subject"][
-#                            "entities"].index(existing_entity)
-#                            try:
-#                                subscription_attrs = subscription_subject[
-#                                "condition"]["attrs"][i]
-#                            except (KeyError, IndexError):
-#                                subscription_attrs = []
-#                            try:
-#                                existing_attrs = existing_subscription[
-#                                "subject"]["condition"]["attrs"][j]
-#                            except (KeyError, IndexError):
-#                                existing_attrs = []
-#
-#                            if (".*" in subscription_id) or ('.*' in
-#                            id_existing) or (subscription_id == id_existing):
-#                                # Attributes have to match, or the have to
-#                                be an empty array
-#                                if (subscription_attrs == existing_attrs) or
-#                                (subscription_attrs == []) or (existing_attrs == []):
-#                                        exists = True
-#                            # if they do not match completely or subscribe
-#                            to all ids they have to match up to a certain position
-#                            elif ("*" in subscription_id) or ('*' in
-#                            id_existing):
-#                                    regex_existing = id_existing.find('*')
-#                                    regex_subscription =
-#                                    subscription_id.find('*')
-#                                    # slice the strings to compare
-#                                    if (id_existing[:regex_existing] in
-#                                    subscription_id) or (subscription_id[:regex_subscription] in id_existing) or \
-#                                            (id_existing[regex_existing:] in
-#                                            subscription_id) or (subscription_id[regex_subscription:] in id_existing):
-#                                            if (subscription_attrs ==
-#                                            existing_attrs) or (subscription_attrs == []) or (existing_attrs == []):
-#                                                exists = True
-#                                            else:
-#                                                continue
-#                                    else:
-#                                        continue
-#                            else:
-#                                continue
-#                        else:
-#                            continue
-#                    else:
-#                        continue
-#        return exists
-#
