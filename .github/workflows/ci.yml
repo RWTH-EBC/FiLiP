@@ -14,3 +14,6 @@ jobs:
       BUILD_PACKAGE: true
       GENERATE_DOCUMENTATION: true
       GH_PAGES: true
+      FIWARE_TESTS: true
+      FIWARE_COVERAGE: true
+      FIWARE_DIRECTORY: './docker'
