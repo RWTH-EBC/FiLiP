@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.utils.filter &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../_static/jquery.js"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+      <script src="../../../_static/doctools.js"></script>
+      <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.utils.filter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.utils.filter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Filter functions to keep client code clean and easy to use.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.ngsi_v2</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextBrokerClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiwareHeader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.iot</span><span class="w"> </span><span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">ServiceGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.subscriptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Subscription</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestException</span>
+
+
+<div class="viewcode-block" id="filter_device_list"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.filter.filter_device_list">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">filter_device_list</span><span class="p">(</span>
+    <span class="n">devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">],</span>
+    <span class="n">device_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">entity_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">entity_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter the given device list based on conditions</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        devices: device list that need to be filtered</span>
+<span class="sd">        device_ids: A list of device_id as filter condition</span>
+<span class="sd">        entity_names: A list of entity_name (e.g. entity_id) as filter condition.</span>
+<span class="sd">        entity_types: A list of entity_type as filter condition</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of matching devices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_ids</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device_ids</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device_ids</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">device_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">device_ids</span><span class="p">]</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">device</span> <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span> <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">device_id</span> <span class="ow">in</span> <span class="n">device_ids</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;device_ids must be a string or a list of strings!&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">entity_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity_names</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">entity_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity_names</span><span class="p">]</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">device</span> <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span> <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">entity_name</span> <span class="ow">in</span> <span class="n">entity_names</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;entity_names must be a string or a list of strings!&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">entity_types</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity_types</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity_types</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">entity_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity_types</span><span class="p">]</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">device</span> <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span> <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">entity_type</span> <span class="ow">in</span> <span class="n">entity_types</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;entity_types must be a string or a list of strings!&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">devices</span></div>
+
+
+<div class="viewcode-block" id="filter_subscriptions_by_entity"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.filter.filter_subscriptions_by_entity">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">filter_subscriptions_by_entity</span><span class="p">(</span>
+    <span class="n">entity_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fiware_header</span><span class="p">:</span> <span class="n">FiwareHeader</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subscriptions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Subscription</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Subscription</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that filters subscriptions based on the entity id or id pattern</span>
+<span class="sd">    and entity type or type pattern. The function can be used in two ways,</span>
+<span class="sd">    wither pass list of subscriptions to filter based on entity or directly pass</span>
+<span class="sd">    client information to filter subscriptions in a single request.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        entity_id: Id of the entity to be matched</span>
+<span class="sd">        entity_type: Type of the entity to be matched</span>
+<span class="sd">        url: Url of the context broker service</span>
+<span class="sd">        fiware_header: Fiware header of the tenant</span>
+<span class="sd">        subscriptions: List of subscriptions to filter</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list of subscriptions by entity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">subscriptions</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">ContextBrokerClient</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">)</span>
+        <span class="n">subscriptions</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_subscription_list</span><span class="p">()</span>
+    <span class="n">filtered_subscriptions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span> <span class="n">subscriptions</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">subscription</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">entity_id</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">idPattern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">entity</span><span class="o">.</span><span class="n">idPattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">entity_id</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">entity_type</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">typePattern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">entity</span><span class="o">.</span><span class="n">typePattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">entity_type</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">filtered_subscriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subscription</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filtered_subscriptions</span></div>
+
+
+<div class="viewcode-block" id="filter_group_list"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.filter.filter_group_list">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">filter_group_list</span><span class="p">(</span>
+    <span class="n">group_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">],</span>
+    <span class="n">resources</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">apikeys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter service group based on resource and apikey.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        group_list: The list of service groups that need to be filtered</span>
+<span class="sd">        resources: see ServiceGroup model</span>
+<span class="sd">        apikeys: see ServiceGroup</span>
+
+<span class="sd">    Returns: a single service group or Not Found Error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">resources</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">resources</span> <span class="o">=</span> <span class="p">[</span><span class="n">resources</span><span class="p">]</span>
+            <span class="n">group_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">group_list</span> <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">resource</span> <span class="ow">in</span> <span class="n">resources</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;resources must be a string or a list of strings!&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">apikeys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">apikeys</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">apikeys</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">apikeys</span> <span class="o">=</span> <span class="p">[</span><span class="n">apikeys</span><span class="p">]</span>
+            <span class="n">group_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">group_list</span> <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">apikey</span> <span class="ow">in</span> <span class="n">apikeys</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;apikeys must be a string or a list of strings!&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">group_list</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

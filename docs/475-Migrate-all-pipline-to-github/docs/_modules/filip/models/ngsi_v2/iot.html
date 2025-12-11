@@ -1,0 +1,861 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.models.ngsi_v2.iot &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.models.ngsi_v2.iot</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.models.ngsi_v2.iot</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module contains models for accessing and interaction with FIWARE&#39;s IoT-Agents.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytz</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">field_validator</span><span class="p">,</span>
+    <span class="n">model_validator</span><span class="p">,</span>
+    <span class="n">ConfigDict</span><span class="p">,</span>
+    <span class="n">BaseModel</span><span class="p">,</span>
+    <span class="n">Field</span><span class="p">,</span>
+    <span class="n">AnyHttpUrl</span><span class="p">,</span>
+    <span class="n">OnErrorOmit</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">NgsiVersion</span><span class="p">,</span> <span class="n">DataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseAttribute</span><span class="p">,</span>
+    <span class="n">BaseValueAttribute</span><span class="p">,</span>
+    <span class="n">BaseNameAttribute</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span>
+    <span class="n">validate_fiware_datatype_standard</span><span class="p">,</span>
+    <span class="n">validate_jexl_expression</span><span class="p">,</span>
+    <span class="n">validate_expression_language</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_name_regex</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ExpressionLanguage"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ExpressionLanguage">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ExpressionLanguage</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Options for expression language</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LEGACY</span> <span class="o">=</span> <span class="s2">&quot;legacy&quot;</span>
+    <span class="n">JEXL</span> <span class="o">=</span> <span class="s2">&quot;jexl&quot;</span></div>
+
+
+<div class="viewcode-block" id="PayloadProtocol"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.PayloadProtocol">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PayloadProtocol</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Options for payload protocols</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IOTA_JSON</span> <span class="o">=</span> <span class="s2">&quot;IoTA-JSON&quot;</span>
+    <span class="n">IOTA_UL</span> <span class="o">=</span> <span class="s2">&quot;PDI-IoTA-UltraLight&quot;</span>
+    <span class="n">LORAWAN</span> <span class="o">=</span> <span class="s2">&quot;LoRaWAN&quot;</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.TransportProtocol">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TransportProtocol</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Options for transport protocols</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MQTT</span> <span class="o">=</span> <span class="s2">&quot;MQTT&quot;</span>
+    <span class="n">AMQP</span> <span class="o">=</span> <span class="s2">&quot;AMQP&quot;</span>
+    <span class="n">HTTP</span> <span class="o">=</span> <span class="s2">&quot;HTTP&quot;</span></div>
+
+
+<div class="viewcode-block" id="IoTABaseAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.IoTABaseAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">IoTABaseAttribute</span><span class="p">(</span><span class="n">BaseAttribute</span><span class="p">,</span> <span class="n">BaseNameAttribute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base model for device attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">expression</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;indicates that the value of the target attribute will &quot;</span>
+        <span class="s2">&quot;not be the plain value or the measurement, but an &quot;</span>
+        <span class="s2">&quot;expression based on a combination of the reported values. &quot;</span>
+        <span class="s2">&quot;See the Expression Language definition for details &quot;</span>
+        <span class="s2">&quot;(https://iotagent-node-lib.readthedocs.io/en/latest/&quot;</span>
+        <span class="s2">&quot;api.html#expression-language-support)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">entity_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;entity_name: the presence of this attribute indicates &quot;</span>
+        <span class="s2">&quot;that the value will not be stored in the original device &quot;</span>
+        <span class="s2">&quot;entity but in a new entity with an ID given by this &quot;</span>
+        <span class="s2">&quot;attribute. The type of this additional entity can be &quot;</span>
+        <span class="s2">&quot;configured with the entity_type attribute. If no type is &quot;</span>
+        <span class="s2">&quot;configured, the device entity type is used instead. &quot;</span>
+        <span class="s2">&quot;Entity names can be defined as expressions, using the &quot;</span>
+        <span class="s2">&quot;Expression Language definition &quot;</span>
+        <span class="s2">&quot;(https://iotagent-node-lib.readthedocs.io/en/latest/&quot;</span>
+        <span class="s2">&quot;api.html#expression-language-support). Allowed characters are&quot;</span>
+        <span class="s2">&quot; the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_entity_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;entity_name&quot;</span><span class="p">)(</span>
+        <span class="n">validate_fiware_datatype_standard</span>
+    <span class="p">)</span>
+    <span class="n">entity_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;configures the type of an alternative entity. &quot;</span>
+        <span class="s2">&quot;Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_entity_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;entity_type&quot;</span><span class="p">)(</span>
+        <span class="n">validate_fiware_datatype_standard</span>
+    <span class="p">)</span>
+    <span class="n">reverse</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;add bidirectionality expressions to the attribute. See &quot;</span>
+        <span class="s2">&quot;the bidirectionality transformation plugin in the &quot;</span>
+        <span class="s2">&quot;Data Mapping Plugins section for details. &quot;</span>
+        <span class="s2">&quot;(https://iotagent-node-lib.readthedocs.io/en/latest/api/&quot;</span>
+        <span class="s2">&quot;index.html#data-mapping-plugins)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BaseAttribute</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span></div>
+
+
+<div class="viewcode-block" id="DeviceAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DeviceAttribute</span><span class="p">(</span><span class="n">IoTABaseAttribute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for active device attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">object_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;name of the attribute as coming from the device.&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LazyDeviceAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.LazyDeviceAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">LazyDeviceAttribute</span><span class="p">(</span><span class="n">BaseNameAttribute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for lazy device attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The attribute type represents the NGSI value type of the &quot;</span>
+        <span class="s2">&quot;attribute value. Note that FIWARE NGSI has its own type &quot;</span>
+        <span class="s2">&quot;system for attribute values, so NGSI value types are not &quot;</span>
+        <span class="s2">&quot;the same as JSON types. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceCommand"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceCommand">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DeviceCommand</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for commands</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ID of the attribute in the target entity in the &quot;</span>
+        <span class="s2">&quot;Context Broker. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_attribute_name_regex</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;name of the type of the attribute in the target entity. &quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StaticDeviceAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.StaticDeviceAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StaticDeviceAttribute</span><span class="p">(</span><span class="n">IoTABaseAttribute</span><span class="p">,</span> <span class="n">BaseValueAttribute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for static device attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ServiceGroup"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ServiceGroup</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for device service group.</span>
+<span class="sd">    https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#service-group-api</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">service</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ServiceGroup of the devices of this type&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subservice</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Subservice of the devices of this type.&quot;</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;^/&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;string representing the Southbound resource that will be &quot;</span>
+        <span class="s2">&quot;used to assign a type to a device  (e.g.: pathname in the &quot;</span>
+        <span class="s2">&quot;southbound port).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">apikey</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;API Key string. It is a key used for devices belonging &quot;</span>
+        <span class="s2">&quot;to this service_group. If &quot;</span>
+        <span class="s2">&quot;, service_group does not use &quot;</span>
+        <span class="s2">&quot;apikey, but it must be specified.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional flag about whether or not to add the TimeInstant &quot;</span>
+        <span class="s2">&quot;attribute to the device entity created, as well as a &quot;</span>
+        <span class="s2">&quot;TimeInstant metadata to each attribute, with the current &quot;</span>
+        <span class="s2">&quot;timestamp. With NGSI-LD, the Standard observedAt &quot;</span>
+        <span class="s2">&quot;property-of-a-property is created instead.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">entity_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;name of the Entity type to assign to the group. &quot;</span>
+        <span class="s2">&quot;Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_entity_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;entity_type&quot;</span><span class="p">)(</span>
+        <span class="n">validate_fiware_datatype_standard</span>
+    <span class="p">)</span>
+    <span class="n">trust</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;trust token to use for secured access to the &quot;</span>
+        <span class="s2">&quot;Context Broker for this type of devices (optional; only &quot;</span>
+        <span class="s2">&quot;needed for secured scenarios).&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cbHost</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnyHttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Context Broker connection information. This options can &quot;</span>
+        <span class="s2">&quot;be used to override the global ones for specific types of &quot;</span>
+        <span class="s2">&quot;devices.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="ServiceGroup.validate_cbHost"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.validate_cbHost">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;cbHost&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_cbHost</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        convert cbHost to str</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            timezone</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="n">value</span></div>
+
+    <span class="n">lazy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">LazyDeviceAttribute</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of common lazy attributes of the device. For each &quot;</span>
+        <span class="s2">&quot;attribute, its name and type must be provided.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">commands</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DeviceCommand</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of common commands attributes of the device. For each &quot;</span>
+        <span class="s2">&quot;attribute, its name and type must be provided, additional &quot;</span>
+        <span class="s2">&quot;metadata is optional&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DeviceAttribute</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of common commands attributes of the device. For &quot;</span>
+        <span class="s2">&quot;each attribute, its name and type must be provided, &quot;</span>
+        <span class="s2">&quot;additional metadata is optional.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">static_attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StaticDeviceAttribute</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;this attributes will be added to all the entities of this &quot;</span>
+        <span class="s2">&quot;group &#39;as is&#39;, additional metadata is optional.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">internal_attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional section with free format, to allow specific &quot;</span>
+        <span class="s2">&quot;IoT Agents to store information along with the devices &quot;</span>
+        <span class="s2">&quot;in the Device Registry.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">expressionLanguage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExpressionLanguage</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">ExpressionLanguage</span><span class="o">.</span><span class="n">JEXL</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional boolean value, to set expression language used &quot;</span>
+        <span class="s2">&quot;to compute expressions, possible values are: &quot;</span>
+        <span class="s2">&quot;legacy or jexl, but legacy is deprecated. If it is set None, jexl is used.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_expressionLanguage</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;expressionLanguage&quot;</span><span class="p">)(</span>
+        <span class="n">validate_expression_language</span>
+    <span class="p">)</span>
+    <span class="n">explicitAttrs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional boolean value, to support selective ignore &quot;</span>
+        <span class="s2">&quot;of measures so that IOTA does not progress. If not &quot;</span>
+        <span class="s2">&quot;specified default is false.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">autoprovision</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional boolean: If false, autoprovisioned devices &quot;</span>
+        <span class="s2">&quot;(i.e. devices that are not created with an explicit &quot;</span>
+        <span class="s2">&quot;provision operation but when the first measure arrives) &quot;</span>
+        <span class="s2">&quot;are not allowed in this group. &quot;</span>
+        <span class="s2">&quot;Default (in the case of omitting the field) is true.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ngsiVersion</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NgsiVersion</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;v2&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional string value used in mixed mode to switch between&quot;</span>
+        <span class="s2">&quot; NGSI-v2 and NGSI-LD payloads. Possible values are: &quot;</span>
+        <span class="s2">&quot;v2 or ld. The default is v2. When not running in mixed &quot;</span>
+        <span class="s2">&quot;mode, this field is ignored.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">defaultEntityNameConjunction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional string value to set default conjunction string &quot;</span>
+        <span class="s2">&quot;used to compose a default entity_name when is not &quot;</span>
+        <span class="s2">&quot;provided at device provisioning time.&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceSettings"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DeviceSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for iot device settings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">timezone</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Europe/London&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Time zone of the sensor if it has any&quot;</span>
+    <span class="p">)</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional flag about whether or not to add the TimeInstant &quot;</span>
+        <span class="s2">&quot;attribute to the device entity created, as well as a &quot;</span>
+        <span class="s2">&quot;TimeInstant metadata to each attribute, with the current &quot;</span>
+        <span class="s2">&quot;timestamp. With NGSI-LD, the Standard observedAt &quot;</span>
+        <span class="s2">&quot;property-of-a-property is created instead.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">apikey</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional Apikey key string to use instead of group apikey&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnyHttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Endpoint where the device is going to receive commands, &quot;</span>
+        <span class="s2">&quot;if any.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">PayloadProtocol</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the device protocol, for its use with an &quot;</span> <span class="s2">&quot;IoT Manager.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">TransportProtocol</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the device transport protocol, for the IoT Agents &quot;</span>
+        <span class="s2">&quot;with multiple transport protocols.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">expressionLanguage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExpressionLanguage</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">ExpressionLanguage</span><span class="o">.</span><span class="n">JEXL</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional boolean value, to set expression language used &quot;</span>
+        <span class="s2">&quot;to compute expressions, possible values are: &quot;</span>
+        <span class="s2">&quot;legacy or jexl, but legacy is deprecated. If it is set None, jexl is used.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_expressionLanguage</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;expressionLanguage&quot;</span><span class="p">)(</span>
+        <span class="n">validate_expression_language</span>
+    <span class="p">)</span>
+    <span class="n">explicitAttrs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional boolean value, to support selective ignore &quot;</span>
+        <span class="s2">&quot;of measures so that IOTA does not progress. If not &quot;</span>
+        <span class="s2">&quot;specified default is false.&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Device"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Device</span><span class="p">(</span><span class="n">DeviceSettings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for iot devices.</span>
+<span class="sd">    https://iotagent-node-lib.readthedocs.io/en/latest/api/index.html#device-api</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Device ID that will be used to identify the device&quot;</span>
+    <span class="p">)</span>
+    <span class="n">service</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the service the device belongs to &quot;</span>
+        <span class="s2">&quot;(will be used in the fiware-service header).&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">service_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the subservice the device belongs to &quot;</span>
+        <span class="s2">&quot;(used in the fiware-servicepath header).&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">51</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;^/&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">entity_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the entity representing the device in &quot;</span>
+        <span class="s2">&quot;the Context Broker Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_entity_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;entity_name&quot;</span><span class="p">)(</span>
+        <span class="n">validate_fiware_datatype_standard</span>
+    <span class="p">)</span>
+    <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of the entity in the Context Broker. &quot;</span>
+        <span class="s2">&quot;Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_entity_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;entity_type&quot;</span><span class="p">)(</span>
+        <span class="n">validate_fiware_datatype_standard</span>
+    <span class="p">)</span>
+    <span class="n">lazy</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LazyDeviceAttribute</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of lazy attributes of the device&quot;</span>
+    <span class="p">)</span>
+    <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceCommand</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of commands of the device&quot;</span>
+    <span class="p">)</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceAttribute</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of active attributes of the device&quot;</span>
+    <span class="p">)</span>
+    <span class="n">static_attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StaticDeviceAttribute</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of static attributes to append to the entity. All the&quot;</span>
+        <span class="s2">&quot; updateContext requests to the CB will have this set of &quot;</span>
+        <span class="s2">&quot;attributes appended.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">internal_attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of internal attributes with free format for specific &quot;</span>
+        <span class="s2">&quot;IoT Agent configuration&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ngsiVersion</span><span class="p">:</span> <span class="n">NgsiVersion</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">NgsiVersion</span><span class="o">.</span><span class="n">v2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional string value used in mixed mode to switch between&quot;</span>
+        <span class="s2">&quot; NGSI-v2 and NGSI-LD payloads. Possible values are: &quot;</span>
+        <span class="s2">&quot;v2 or ld. The default is v2. When not running in &quot;</span>
+        <span class="s2">&quot;mixed mode, this field is ignored.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Device.validate_timezone"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.validate_timezone">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;timezone&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_timezone</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        validate timezone</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            timezone</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pytz</span><span class="o">.</span><span class="n">all_timezones</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="Device.validate_device_attributes_expression"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.validate_device_attributes_expression">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_device_attributes_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates device attributes expressions based on the expression language (JEXL or Legacy, where Legacy is</span>
+<span class="sd">        deprecated).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            self: The Device instance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The Device instance after validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expressionLanguage</span> <span class="o">==</span> <span class="n">ExpressionLanguage</span><span class="o">.</span><span class="n">JEXL</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">expression</span><span class="p">:</span>
+                    <span class="n">validate_jexl_expression</span><span class="p">(</span>
+                        <span class="n">attribute</span><span class="o">.</span><span class="n">expression</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span>
+                    <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">expressionLanguage</span> <span class="o">==</span> <span class="n">ExpressionLanguage</span><span class="o">.</span><span class="n">LEGACY</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No validation for legacy expression language of Device </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Device.validate_duplicated_device_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.validate_duplicated_device_attributes">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_duplicated_device_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether device has identical attributes</span>
+<span class="sd">        Args:</span>
+<span class="sd">            self: dict of Device instance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The dict of Device instance after validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">other_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]:</span>
+                <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="o">==</span> <span class="n">other_attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicated attributes found: </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Device.validate_device_attributes_name_object_id"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.validate_device_attributes_name_object_id">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_device_attributes_name_object_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the device regarding the behavior with devices attributes.</span>
+<span class="sd">        According to https://iotagent-node-lib.readthedocs.io/en/latest/api.html and</span>
+<span class="sd">        based on our best practice, following rules are checked</span>
+<span class="sd">            - name is required, but not necessarily unique</span>
+<span class="sd">            - object_id is not required, if given must be unique, i.e. not equal to any</span>
+<span class="sd">                existing object_id and name</span>
+<span class="sd">        Args:</span>
+<span class="sd">            self: dict of Device instance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The dict of Device instance after validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">other_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span>
+                    <span class="ow">and</span> <span class="n">other_attr</span><span class="o">.</span><span class="n">object_id</span>
+                    <span class="ow">and</span> <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span> <span class="o">==</span> <span class="n">other_attr</span><span class="o">.</span><span class="n">object_id</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;object_id </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">object_id</span><span class="si">}</span><span class="s2"> is not unique&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span> <span class="ow">and</span> <span class="n">attr</span><span class="o">.</span><span class="n">object_id</span> <span class="o">==</span> <span class="n">other_attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;object_id </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">object_id</span><span class="si">}</span><span class="s2"> is not unique&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Device.get_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.get_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attribute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">DeviceAttribute</span><span class="p">,</span> <span class="n">LazyDeviceAttribute</span><span class="p">,</span> <span class="n">StaticDeviceAttribute</span><span class="p">,</span> <span class="n">DeviceCommand</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attribute_name:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lazy</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">static_attributes</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">internal_attributes</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">attribute_name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">attribute</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">: Could not &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;find attribute with name </span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Device.add_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.add_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_attribute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">attribute</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">DeviceAttribute</span><span class="p">,</span> <span class="n">LazyDeviceAttribute</span><span class="p">,</span> <span class="n">StaticDeviceAttribute</span><span class="p">,</span> <span class="n">DeviceCommand</span>
+        <span class="p">],</span>
+        <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attribute:</span>
+<span class="sd">            update (bool): If &#39;True&#39; and attribute does already exists tries</span>
+<span class="sd">                to  update the attribute if not</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">DeviceAttribute</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span>
+                <span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;attributes&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">LazyDeviceAttribute</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lazy</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">lazy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;lazy&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lazy</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">StaticDeviceAttribute</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_attributes</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">static_attributes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;static_attributes&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">static_attributes</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">DeviceCommand</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;commands&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Device: </span><span class="si">%s</span><span class="s2">: Attribute already &quot;</span> <span class="s2">&quot;exists. Will update: </span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                    <span class="n">attribute</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;Device: </span><span class="si">%s</span><span class="s2">: Attribute already &quot;</span> <span class="s2">&quot;exists: </span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                    <span class="n">attribute</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="Device.update_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.update_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_attribute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">attribute</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">DeviceAttribute</span><span class="p">,</span> <span class="n">LazyDeviceAttribute</span><span class="p">,</span> <span class="n">StaticDeviceAttribute</span><span class="p">,</span> <span class="n">DeviceCommand</span>
+        <span class="p">],</span>
+        <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates existing device attribute</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attribute: Attribute to add to device configuration</span>
+<span class="sd">            append (bool): Adds attribute if not exist</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">DeviceAttribute</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">LazyDeviceAttribute</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lazy</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lazy</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">StaticDeviceAttribute</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_attributes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">static_attributes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">DeviceCommand</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">append</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Device: </span><span class="si">%s</span><span class="s2">: Could not find &quot;</span> <span class="s2">&quot;attribute: </span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                    <span class="n">attribute</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="n">attribute</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">: Could not find &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;attribute: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">attribute</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Device.delete_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.delete_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_attribute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">attribute</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">DeviceAttribute</span><span class="p">,</span> <span class="n">LazyDeviceAttribute</span><span class="p">,</span> <span class="n">StaticDeviceAttribute</span><span class="p">,</span> <span class="n">DeviceCommand</span>
+        <span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes attribute from device</span>
+<span class="sd">        Args:</span>
+<span class="sd">            attribute: ()</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">DeviceAttribute</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">LazyDeviceAttribute</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lazy</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">StaticDeviceAttribute</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">static_attributes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="o">==</span> <span class="n">DeviceCommand</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Device: </span><span class="si">%s</span><span class="s2">: Could not delete &quot;</span> <span class="s2">&quot;attribute: </span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                <span class="n">attribute</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">raise</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Device: </span><span class="si">%s</span><span class="s2">: Attribute deleted! </span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+            <span class="n">attribute</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Device.get_command"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.get_command">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Short for self.get_attributes</span>
+<span class="sd">        Args:</span>
+<span class="sd">            command_name (str):</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">attribute_name</span><span class="o">=</span><span class="n">command_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Device.add_command"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.add_command">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">DeviceCommand</span><span class="p">,</span> <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Short for self.add_attribute</span>
+<span class="sd">        Args:</span>
+<span class="sd">            command (DeviceCommand):</span>
+<span class="sd">            update (bool): Update command if it already exists</span>
+<span class="sd">        Returns:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="n">command</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="n">update</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Device.update_command"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.update_command">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">DeviceCommand</span><span class="p">,</span> <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Short for self.update_attribute</span>
+<span class="sd">        Args:</span>
+<span class="sd">            command:</span>
+<span class="sd">            append:</span>
+<span class="sd">        Returns:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="n">command</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Device.delete_command"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device.delete_command">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">DeviceCommand</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Short for self.delete_attribute</span>
+<span class="sd">        Args:</span>
+<span class="sd">            command:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="n">command</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DeviceList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DeviceList</span><span class="p">(</span><span class="n">DeviceSettings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of devices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OnErrorOmit</span><span class="p">[</span><span class="n">Device</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="DeviceValidationList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceValidationList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DeviceValidationList</span><span class="p">(</span><span class="n">DeviceList</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of valid and invalid devices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">invalid_devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

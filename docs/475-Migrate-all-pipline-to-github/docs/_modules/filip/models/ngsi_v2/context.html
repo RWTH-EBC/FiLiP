@@ -1,0 +1,958 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.models.ngsi_v2.context &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.models.ngsi_v2.context</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.models.ngsi_v2.context</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NGSIv2 models for context broker interaction</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">field_validator</span><span class="p">,</span>
+    <span class="n">ConfigDict</span><span class="p">,</span>
+    <span class="n">BaseModel</span><span class="p">,</span>
+    <span class="n">Field</span><span class="p">,</span>
+    <span class="n">model_validator</span><span class="p">,</span>
+    <span class="n">SerializeAsAny</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core.core_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">OnErrorOmit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EntityPattern</span><span class="p">,</span>
+    <span class="n">Expression</span><span class="p">,</span>
+    <span class="n">BaseAttribute</span><span class="p">,</span>
+    <span class="n">BaseValueAttribute</span><span class="p">,</span>
+    <span class="n">BaseNameAttribute</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_fiware_datatype_standard</span><span class="p">,</span>
+    <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_value_regex</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_name_regex</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="GetEntitiesOptions"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.GetEntitiesOptions">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">GetEntitiesOptions</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Options for queries&quot;&quot;&quot;</span>
+
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+
+    <span class="n">NORMALIZED</span> <span class="o">=</span> <span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="s2">&quot;Normalized message representation&quot;</span>
+    <span class="n">KEY_VALUES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;keyValues&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Key value message representation.&quot;</span>
+        <span class="s2">&quot;This mode represents the entity &quot;</span>
+        <span class="s2">&quot;attributes by their values only, leaving out &quot;</span>
+        <span class="s2">&quot;the information about type and metadata. &quot;</span>
+        <span class="s2">&quot;See example &quot;</span>
+        <span class="s2">&quot;below.&quot;</span>
+        <span class="s2">&quot;Example: &quot;</span>
+        <span class="s2">&quot;{&quot;</span>
+        <span class="s2">&quot;  &#39;id&#39;: &#39;R12345&#39;,&quot;</span>
+        <span class="s2">&quot;  &#39;type&#39;: &#39;Room&#39;,&quot;</span>
+        <span class="s2">&quot;  &#39;temperature&#39;: 22&quot;</span>
+        <span class="s2">&quot;}&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">VALUES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;values&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Key value message representation. &quot;</span>
+        <span class="s2">&quot;This mode represents the entity as an array of &quot;</span>
+        <span class="s2">&quot;attribute values. Information about id and type is &quot;</span>
+        <span class="s2">&quot;left out. See example below. The order of the &quot;</span>
+        <span class="s2">&quot;attributes in the array is specified by the attrs &quot;</span>
+        <span class="s2">&quot;URI param (e.g. attrs=branch,colour,engine). &quot;</span>
+        <span class="s2">&quot;If attrs is not used, the order is arbitrary. &quot;</span>
+        <span class="s2">&quot;Example:&quot;</span>
+        <span class="s2">&quot;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">UNIQUE</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;unique&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;unique mode. This mode is just like values mode, &quot;</span>
+        <span class="s2">&quot;except that values are not repeated&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PropertyFormat"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.PropertyFormat">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PropertyFormat</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format to decide if properties of ContextEntity class are returned as</span>
+<span class="sd">    List of NamedContextAttributes or as Dict of ContextAttributes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LIST</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span>
+    <span class="n">DICT</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span></div>
+
+
+<div class="viewcode-block" id="ContextAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextAttribute</span><span class="p">(</span><span class="n">BaseAttribute</span><span class="p">,</span> <span class="n">BaseValueAttribute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for an attribute is represented by a JSON object with the following</span>
+<span class="sd">    syntax:</span>
+
+<span class="sd">    The attribute value is specified by the value property, whose value may</span>
+<span class="sd">    be any JSON datatype.</span>
+
+<span class="sd">    The attribute NGSI type is specified by the type property, whose value</span>
+<span class="sd">    is a string containing the NGSI type.</span>
+
+<span class="sd">    The attribute metadata is specified by the metadata property. Its value</span>
+<span class="sd">    is another JSON object which contains a property per metadata element</span>
+<span class="sd">    defined (the name of the property is the name of the metadata element).</span>
+<span class="sd">    Each metadata element, in turn, is represented by a JSON object</span>
+<span class="sd">    containing the following properties:</span>
+
+<span class="sd">    Values of entity attributes. For adding it you need to nest it into a</span>
+<span class="sd">    dict in order to give it a name.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; data = {&quot;value&quot;: &lt;...&gt;,</span>
+<span class="sd">                    &quot;type&quot;: &lt;...&gt;,</span>
+<span class="sd">                    &quot;metadata&quot;: &lt;...&gt;}</span>
+<span class="sd">        &gt;&gt;&gt; attr = ContextAttribute(**data)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># although `type` is a required field in the NGSIv2 specification, it is</span>
+    <span class="c1"># set to optional here to allow for the possibility of setting</span>
+    <span class="c1"># default-types in child classes. Pydantic will raise the correct error</span>
+    <span class="c1"># and also exports the correct json-schema.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
+            <span class="nb">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NamedContextAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.NamedContextAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedContextAttribute</span><span class="p">(</span><span class="n">ContextAttribute</span><span class="p">,</span> <span class="n">BaseNameAttribute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context attributes are properties of context entities. For example, the</span>
+<span class="sd">    current speed of a car could be modeled as attribute current_speed of entity</span>
+<span class="sd">    car-104.</span>
+
+<span class="sd">    In the NGSI data model, attributes have an attribute name, an attribute type</span>
+<span class="sd">    an attribute value and metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ContextEntityKeyValues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityKeyValues</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base Model for an entity is represented by a JSON object with the following</span>
+<span class="sd">    syntax.</span>
+
+<span class="sd">    The entity id is specified by the object&#39;s id property, whose value</span>
+<span class="sd">    is a string containing the entity id.</span>
+
+<span class="sd">    The entity type is specified by the object&#39;s type property, whose value</span>
+<span class="sd">    is a string containing the entity&#39;s type name.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Entity Id&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of an entity in an NGSI context broker. Allowed &quot;</span>
+        <span class="s2">&quot;characters are the ones in the plain ASCII set, except &quot;</span>
+        <span class="s2">&quot;the following ones: control characters, &quot;</span>
+        <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;Bcn-Welt&quot;</span><span class="p">},</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_id</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_standard</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Entity Type&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Id of an entity in an NGSI context broker. &quot;</span>
+        <span class="s2">&quot;Allowed characters are the ones in the plain ASCII set, &quot;</span>
+        <span class="s2">&quot;except the following ones: control characters, &quot;</span>
+        <span class="s2">&quot;whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;Room&quot;</span><span class="p">},</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_standard</span><span class="p">)</span>
+
+    <span class="c1"># although `type` is a required field in the NGSIv2 specification, it is</span>
+    <span class="c1"># set to optional here to allow for the possibility of setting</span>
+    <span class="c1"># default-types in child classes. Pydantic will raise the correct error</span>
+    <span class="c1"># and also exports the correct json-schema.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+        <span class="c1"># this allows to set the type of the entity in child classes</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="nb">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># if this statement is reached not proper default-value for</span>
+                <span class="c1"># `type` was found and pydantic will raise the correct error</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># This will result in usual behavior</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validate_attributes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Validation of attributes</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate attribute name and value of the entity in keyvalues format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">validate_fiware_attribute_value_regex</span><span class="p">(</span><span class="n">attr_value</span><span class="p">)</span>
+            <span class="n">validate_fiware_attribute_name_regex</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="ContextEntityKeyValues.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues.get_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the attribute of the entity with the given name in</span>
+<span class="sd">        dict format</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="ContextEntityKeyValues.to_normalized"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValues.to_normalized">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">attr_type</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">DataType</span><span class="o">.</span><span class="n">NUMBER</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+                <span class="k">else</span> <span class="p">(</span>
+                    <span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="o">.</span><span class="n">value</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="n">DataType</span><span class="o">.</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">value</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">NamedContextAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">attr_type</span><span class="p">)</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="n">entity</span> <span class="o">=</span> <span class="n">ContextEntity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="n">entity</span><span class="o">.</span><span class="n">add_attributes</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entity</span></div></div>
+
+
+<div class="viewcode-block" id="ContextEntity"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntity</span><span class="p">(</span><span class="n">ContextEntityKeyValues</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context entities, or simply entities, are the center of gravity in the</span>
+<span class="sd">    FIWARE NGSI information model. An entity represents a thing, i.e., any</span>
+<span class="sd">    physical or logical object (e.g., a sensor, a person, a room, an issue in</span>
+<span class="sd">    a ticketing system, etc.). Each entity has an entity id.</span>
+<span class="sd">    Furthermore, the type system of FIWARE NGSI enables entities to have an</span>
+<span class="sd">    entity type. Entity types are semantic types; they are intended to describe</span>
+<span class="sd">    the type of thing represented by the entity. For example, a context</span>
+<span class="sd">    entity #with id sensor-365 could have the type temperatureSensor.</span>
+
+<span class="sd">    Each entity is uniquely identified by the combination of its id and type.</span>
+
+<span class="sd">    The entity id is specified by the object&#39;s id property, whose value</span>
+<span class="sd">    is a string containing the entity id.</span>
+
+<span class="sd">    The entity type is specified by the object&#39;s type property, whose value</span>
+<span class="sd">    is a string containing the entity&#39;s type name.</span>
+
+<span class="sd">    Entity attributes are specified by additional properties, whose names are</span>
+<span class="sd">    the name of the attribute and whose representation is described by the</span>
+<span class="sd">    &quot;ContextAttribute&quot;-model. Obviously, `id` and `type` are</span>
+<span class="sd">    not allowed as attribute names.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        &gt;&gt;&gt; data = {&#39;id&#39;: &#39;MyId&#39;,</span>
+<span class="sd">                    &#39;type&#39;: &#39;MyType&#39;,</span>
+<span class="sd">                    &#39;my_attr&#39;: {&#39;value&#39;: 20, &#39;type&#39;: &#39;Number&#39;}}</span>
+
+<span class="sd">        &gt;&gt;&gt; entity = ContextEntity(**data)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="c1"># although `type` is a required field in the NGSIv2 specification, it is</span>
+    <span class="c1"># set to optional here to allow for the possibility of setting</span>
+    <span class="c1"># default-types in child classes. Pydantic will raise the correct error</span>
+    <span class="c1"># and also exports the correct json-schema.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+        <span class="c1"># There is currently no validation for extra fields</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validate_attributes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="c1"># case where type is None to raise correct error message</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Validation of attributes</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate attributes of the entity if the attribute is not a model</span>
+<span class="sd">        field and the type is not already a subtype of ContextAttribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="c1"># validate_fiware_attribute_value_regex(key) not in cls.model_fields</span>
+                <span class="n">validate_fiware_attribute_name_regex</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">)</span>
+                <span class="c1"># key not in cls.model_fields</span>
+                <span class="c1"># and not isinstance(attr, ContextAttribute)</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">attrs</span>
+
+<div class="viewcode-block" id="ContextEntity.check_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.check_attributes">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether all model fields are of subtype of ContextAttribute to</span>
+<span class="sd">        ensure full functionality.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> must be a of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;type or subtype ContextAttribute&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="ContextEntity.check_attributes_after"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.check_attributes_after">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_attributes_after</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">model_extra</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">),</span> <span class="n">ContextAttribute</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> must be a of type or &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;subtype ContextAttribute. You most &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;likely tried to directly assign an &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;attribute without converting it to a &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;proper Attribute-Type!&quot;</span>
+                    <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">values</span></div>
+
+    <span class="c1"># API for attributes and commands</span>
+<div class="viewcode-block" id="ContextEntity.add_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.add_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_attributes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add attributes (properties, relationships) to entity</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attrs: Dict[str, ContextAttribute]: {NAME for attr : Attribute} or</span>
+<span class="sd">                   List[NamedContextAttribute]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">}))</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span>
+            <span class="p">}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContextEntity.get_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attributes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">whitelisted_attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DataType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">blacklisted_attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DataType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span><span class="p">,</span>
+        <span class="n">strict_data_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get attributes or a subset from the entity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            whitelisted_attribute_types: Optional list, if given only</span>
+<span class="sd">                attributes matching one of the types are returned</span>
+<span class="sd">            blacklisted_attribute_types: Optional list, if given all</span>
+<span class="sd">                attributes are returned that do not match a list entry</span>
+<span class="sd">            response_format: Wanted result format,</span>
+<span class="sd">                                List -&gt; list of NamedContextAttributes</span>
+<span class="sd">                                Dict -&gt; dict of {name: ContextAttribute}</span>
+<span class="sd">            strict_data_type: whether to restrict the data type to pre-defined</span>
+<span class="sd">                types, True by default.</span>
+<span class="sd">                True  -&gt; Only return the attributes with pre-defined types,</span>
+<span class="sd">                False -&gt; Do not restrict the data type.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError, if both a white and a black list is given</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List[NamedContextAttribute] or Dict[str, ContextAttribute]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response_format</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="p">(</span><span class="n">response_format</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">whitelisted_attribute_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">blacklisted_attribute_types</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Only whitelist or blacklist is allowed&quot;</span>
+
+        <span class="k">if</span> <span class="n">whitelisted_attribute_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attribute_types</span> <span class="o">=</span> <span class="n">whitelisted_attribute_types</span>
+        <span class="k">elif</span> <span class="n">blacklisted_attribute_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attribute_types</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">att_type</span>
+                <span class="k">for</span> <span class="n">att_type</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">DataType</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">att_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">blacklisted_attribute_types</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attribute_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">att_type</span> <span class="k">for</span> <span class="n">att_type</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">DataType</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="n">response_format</span> <span class="o">==</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">DICT</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">strict_data_type</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
+                    <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="n">att</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">attribute_types</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
+                <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">strict_data_type</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="n">NamedContextAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
+                    <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="n">att</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">attribute_types</span><span class="p">]</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="n">NamedContextAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
+                <span class="p">]</span></div>
+
+<div class="viewcode-block" id="ContextEntity.update_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.update_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_attribute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update attributes of an entity. Overwrite the current held value</span>
+<span class="sd">        for the attribute with the value contained in the corresponding given</span>
+<span class="sd">        attribute</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attrs: List of NamedContextAttributes,</span>
+<span class="sd">                   Dict of {attribute_name: ContextAttribute}</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NameError, if the attribute does not currently exist in the entity</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">attr</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">}))</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span>
+            <span class="p">}</span>
+
+        <span class="n">existing_attribute_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_attribute_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NameError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">attr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContextEntity.get_attribute_names"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attribute_names">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attribute_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a set with all attribute names of this entity</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Set[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="ContextEntity.delete_attributes"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.delete_attributes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_attributes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+        <span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the given attributes from the entity</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attrs:  - Dict {name: ContextAttribute}</span>
+<span class="sd">                    - List[NamedContextAttribute]</span>
+<span class="sd">                    - List[str] -&gt; names of attributes</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if one of the given attrs does not represent an</span>
+<span class="sd">                       existing argument</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">NamedContextAttribute</span><span class="p">):</span>
+                    <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContextEntity.get_attribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_attribute">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedContextAttribute</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the attribute of the entity with the given name</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attribute_name (str): Name of attribute</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError, if no attribute with given name exists</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            NamedContextAttribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">attribute_name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">attr</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; not in entity&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContextEntity.get_properties"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_properties">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all attributes of the entity that are not of type Relationship,</span>
+<span class="sd">        and are not auto generated command attributes</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response_format: Wanted result format,</span>
+<span class="sd">                                List -&gt; list of NamedContextAttributes</span>
+<span class="sd">                                Dict -&gt; dict of {name: ContextAttribute}</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [NamedContextAttribute] or {name: ContextAttribute}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pre_filtered_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">(</span>
+            <span class="n">blacklisted_attribute_types</span><span class="o">=</span><span class="p">[</span><span class="n">DataType</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">],</span>
+            <span class="n">response_format</span><span class="o">=</span><span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">all_command_attributes_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_commands</span><span class="p">():</span>
+            <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">c_status</span><span class="p">,</span> <span class="n">c_info</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_command_triple</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">all_command_attributes_names</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">c_status</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">c_info</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+
+        <span class="n">property_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">pre_filtered_attrs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_command_attributes_names</span><span class="p">:</span>
+                <span class="n">property_attributes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response_format</span> <span class="o">==</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">property_attributes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">p</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">}))</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">property_attributes</span>
+            <span class="p">}</span></div>
+
+<div class="viewcode-block" id="ContextEntity.get_relationships"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_relationships">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_relationships</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all relationships of the context entity</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response_format: Wanted result format,</span>
+<span class="sd">                                List -&gt; list of NamedContextAttributes</span>
+<span class="sd">                                Dict -&gt; dict of {name: ContextAttribute}</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [NamedContextAttribute] or {name: ContextAttribute}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">(</span>
+            <span class="n">whitelisted_attribute_types</span><span class="o">=</span><span class="p">[</span><span class="n">DataType</span><span class="o">.</span><span class="n">RELATIONSHIP</span><span class="p">],</span>
+            <span class="n">response_format</span><span class="o">=</span><span class="n">response_format</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContextEntity.get_commands"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_commands">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_commands</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">response_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PropertyFormat</span><span class="p">]</span> <span class="o">=</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextAttribute</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all commands of the context entity. Only works if the commands</span>
+<span class="sd">        were autogenerated by Fiware from an Device.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response_format: Wanted result format,</span>
+<span class="sd">                                List -&gt; list of NamedContextAttributes</span>
+<span class="sd">                                Dict -&gt; dict of {name: ContextAttribute}</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            [NamedContextAttribute] or {name: ContextAttribute}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># if an attribute with name n is a command, its type does not need to</span>
+        <span class="c1"># be COMMAND.</span>
+        <span class="c1"># But the attributes name_info (type: commandResult) and</span>
+        <span class="c1"># name_status(type: commandStatus) need to exist. (Autogenerated)</span>
+
+        <span class="c1"># Search all attributes of type commandStatus, check for each if a</span>
+        <span class="c1"># corresponding _info exists and if also a fitting attribute exists</span>
+        <span class="c1"># we know: that is a command.</span>
+
+        <span class="n">commands</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">status_attribute</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">(</span>
+            <span class="n">whitelisted_attribute_types</span><span class="o">=</span><span class="p">[</span><span class="n">DataType</span><span class="o">.</span><span class="n">COMMAND_STATUS</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">status_attribute</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">base_name</span> <span class="o">=</span> <span class="n">status_attribute</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">info_attribute</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_info&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">info_attribute</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">COMMAND_RESULT</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">attribute</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">base_name</span><span class="p">)</span>
+                <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">response_format</span> <span class="o">==</span> <span class="n">PropertyFormat</span><span class="o">.</span><span class="n">LIST</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">commands</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">cmd</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">ContextAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">cmd</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">}))</span>
+                <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">commands</span>
+            <span class="p">}</span></div>
+
+<div class="viewcode-block" id="ContextEntity.get_command_triple"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.get_command_triple">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_command_triple</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">command_attribute_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NamedContextAttribute</span><span class="p">,</span> <span class="n">NamedContextAttribute</span><span class="p">,</span> <span class="n">NamedContextAttribute</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns for a given command attribute name all three corresponding</span>
+<span class="sd">        attributes as triple</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            command_attribute_name: Name of the command attribute</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError, if the given name does not belong to a command attribute</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (Command, Command_status, Command_info)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_commands</span><span class="p">(</span><span class="n">response_format</span><span class="o">=</span><span class="n">PropertyFormat</span><span class="o">.</span><span class="n">DICT</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">command_attribute_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command &#39;</span><span class="si">{</span><span class="n">command_attribute_name</span><span class="si">}</span><span class="s2">&#39; not in commands&quot;</span><span class="p">)</span>
+
+        <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">command_attribute_name</span><span class="p">)</span>
+
+        <span class="c1"># as the given name was found as a valid command, we know that the</span>
+        <span class="c1"># status and info attributes exist correctly</span>
+        <span class="n">command_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command_attribute_name</span><span class="si">}</span><span class="s2">_status&quot;</span><span class="p">)</span>
+        <span class="n">command_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command_attribute_name</span><span class="si">}</span><span class="s2">_info&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">command</span><span class="p">,</span> <span class="n">command_status</span><span class="p">,</span> <span class="n">command_info</span></div>
+
+<div class="viewcode-block" id="ContextEntity.to_keyvalues"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.to_keyvalues">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_keyvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">attr</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">(</span>
+                <span class="n">response_format</span><span class="o">=</span><span class="n">PropertyFormat</span><span class="o">.</span><span class="n">DICT</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">entity</span> <span class="o">=</span> <span class="n">ContextEntityKeyValues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entity</span></div>
+
+<div class="viewcode-block" id="ContextEntity.to_normalized"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity.to_normalized">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;This method is not available in ContextEntity&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ContextEntityList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityList</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of context entities</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OnErrorOmit</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="ContextEntityKeyValuesList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValuesList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityKeyValuesList</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of context entities in key-values format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OnErrorOmit</span><span class="p">[</span><span class="n">ContextEntityKeyValues</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="ContextEntityValidationList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityValidationList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityValidationList</span><span class="p">(</span><span class="n">ContextEntityList</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of valid and invalid context entities</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">invalid_entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ContextEntityKeyValuesValidationList"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntityKeyValuesValidationList">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextEntityKeyValuesValidationList</span><span class="p">(</span><span class="n">ContextEntityKeyValuesList</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection model for a list of valid and invalid context entities in key-values format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">invalid_entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Query"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Query">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for queries</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EntityPattern</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;a list of entities to search for. Each element is &quot;</span>
+        <span class="s2">&quot;represented by a JSON object&quot;</span>
+    <span class="p">)</span>
+    <span class="n">attrs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of attributes to be provided &quot;</span>
+        <span class="s2">&quot;(if not specified, all attributes).&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">expression</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;An expression composed of q, mq, georel, geometry and &quot;</span> <span class="s2">&quot;coords&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;a list of metadata names to include in the response. &quot;</span>
+        <span class="s1">&#39;See &quot;Filtering out attributes and metadata&quot; section in https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata for &#39;</span>
+        <span class="s2">&quot;more detail.&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ActionType"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ActionType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ActionType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Options for queries</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+    <span class="n">APPEND</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;append&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;maps to POST /v2/entities (if the entity does not &quot;</span>
+        <span class="s2">&quot;already exist) or POST /v2/entities/&lt;id&gt;/attrs (if &quot;</span>
+        <span class="s2">&quot;the entity already exists). &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">APPEND_STRICT</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;appendStrict&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;maps to POST /v2/entities (if the &quot;</span>
+        <span class="s2">&quot;entity does not already exist) or POST &quot;</span>
+        <span class="s2">&quot;/v2/entities/&lt;id&gt;/attrs?options=append &quot;</span>
+        <span class="s2">&quot;(if the entity already exists).&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">UPDATE</span> <span class="o">=</span> <span class="s2">&quot;update&quot;</span><span class="p">,</span> <span class="s2">&quot;maps to PATCH /v2/entities/&lt;id&gt;/attrs.&quot;</span>
+    <span class="n">DELETE</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;delete&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;maps to DELETE /v2/entities/&lt;id&gt;/attrs/&lt;attrName&gt; on &quot;</span>
+        <span class="s2">&quot;every attribute included in the entity or to DELETE &quot;</span>
+        <span class="s2">&quot;/v2/entities/&lt;id&gt; if no attribute were included in &quot;</span>
+        <span class="s2">&quot;the entity.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">REPLACE</span> <span class="o">=</span> <span class="s2">&quot;replace&quot;</span><span class="p">,</span> <span class="s2">&quot;maps to PUT /v2/entities/&lt;id&gt;/attrs&quot;</span></div>
+
+
+<div class="viewcode-block" id="Update"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Update">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Update</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for update action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">action_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ActionType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;actionType&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;actionType, to specify the kind of update action to do: &quot;</span>
+        <span class="s2">&quot;either append, appendStrict, update, delete, or replace. &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">SerializeAsAny</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ContextEntity</span><span class="p">,</span> <span class="n">ContextEntityKeyValues</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;an array of entities, each entity specified using the &quot;</span>
+            <span class="s2">&quot;JSON entity representation format &quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Update.check_action_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Update.check_action_type">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;action_type&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_action_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        validates action_type</span>
+<span class="sd">        Args:</span>
+<span class="sd">            action: field action_type</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            action_type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ActionType</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Command"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Command">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Command</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for sending commands to IoT Devices.</span>
+<span class="sd">    Note that the command must be registered via an IoT-Agent. Internally</span>
+<span class="sd">    FIWARE uses its registration mechanism in order to connect the command</span>
+<span class="sd">    with an IoT-Device</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">DataType</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command must have the type command&quot;</span><span class="p">,</span>
+        <span class="c1"># const=True</span>
+    <span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Any json serializable command that will &quot;</span>
+        <span class="s2">&quot;be forwarded to the connected IoT device&quot;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Command.check_value"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Command.check_value">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if value is json serializable</span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: value field</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="sa">f</span><span class="s2">&quot;is not serializable&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div></div>
+
+
+<div class="viewcode-block" id="NamedCommand"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.NamedCommand">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for sending command to IoT-Device.</span>
+<span class="sd">    Extend :class: Command with command Name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the command&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_attribute_name_regex</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

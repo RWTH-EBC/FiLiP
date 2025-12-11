@@ -1,0 +1,965 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients.ngsi_v2.iota &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.clients.ngsi_v2.iota</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.clients.ngsi_v2.iota</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">IoT-Agent Module for API Client</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urljoin</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">ValidationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic.type_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAdapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.base_http_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHttpClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHttpClientException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiwareHeader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.iot</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Device</span><span class="p">,</span>
+    <span class="n">ServiceGroup</span><span class="p">,</span>
+    <span class="n">DeviceValidationList</span><span class="p">,</span>
+    <span class="n">DeviceList</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.filter</span><span class="w"> </span><span class="kn">import</span> <span class="n">filter_device_list</span><span class="p">,</span> <span class="n">filter_group_list</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.ngsi_v2.cb</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextBrokerClient</span>
+
+
+<div class="viewcode-block" id="IoTAClient"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">IoTAClient</span><span class="p">(</span><span class="n">BaseHttpClient</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Client for FIWARE IoT-Agents. The implementation follows the API</span>
+<span class="sd">    specifications from here:</span>
+<span class="sd">    https://iotagent-node-lib.readthedocs.io/en/latest/</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: Url of IoT-Agent</span>
+<span class="sd">        session (requests.Session):</span>
+<span class="sd">        fiware_header (FiwareHeader): fiware service and fiware service path</span>
+<span class="sd">        **kwargs (Optional): Optional arguments that ``request`` takes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fiware_header</span><span class="p">:</span> <span class="n">FiwareHeader</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># set service url</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="ow">or</span> <span class="n">settings</span><span class="o">.</span><span class="n">IOTA_URL</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ABOUT API</span>
+<div class="viewcode-block" id="IoTAClient.get_version"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_version">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets version of IoT Agent</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary with response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/about&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not retrieve version because of following reason: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+    <span class="c1"># SERVICE GROUP API</span>
+<div class="viewcode-block" id="IoTAClient.post_groups"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_groups">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_groups</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">service_groups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">]],</span>
+        <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a set of service groups for the given service and service_path.</span>
+<span class="sd">        The service_group and subservice information will taken from the</span>
+<span class="sd">        headers, overwriting any preexisting values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            service_groups (list of ServiceGroup): Service groups that will be</span>
+<span class="sd">            posted to the agent&#39;s API</span>
+<span class="sd">            update (bool): If service group already exists try to update its</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service_groups</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">service_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_groups</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">service_groups</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">service</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">group</span><span class="o">.</span><span class="n">service</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-service&quot;</span><span class="p">]</span>
+                <span class="p">),</span> <span class="s2">&quot;Service group service does not math fiware service&quot;</span>
+            <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">subservice</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">group</span><span class="o">.</span><span class="n">subservice</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-servicepath&quot;</span><span class="p">]</span>
+                <span class="p">),</span> <span class="s2">&quot;Service group subservice does not match fiware service path&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/services&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;services&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">group</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;service&quot;</span><span class="p">,</span> <span class="s2">&quot;subservice&quot;</span><span class="p">},</span> <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">service_groups</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Services successfully posted&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">409</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">service_groups</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;Trying to split bulk operation into &quot;</span> <span class="s2">&quot;single operations&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">service_groups</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">post_group</span><span class="p">(</span><span class="n">service_group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="n">update</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">update</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_group</span><span class="p">(</span><span class="n">service_group</span><span class="o">=</span><span class="n">service_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not post group because of following reason: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.post_group"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_group">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_group</span><span class="p">:</span> <span class="n">ServiceGroup</span><span class="p">,</span> <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Single service registration but using the bulk operation in background</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            service_group (ServiceGroup): Service that will be posted to the</span>
+<span class="sd">            agent&#39;s API</span>
+<span class="sd">            update (bool):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_groups</span><span class="p">(</span><span class="n">service_groups</span><span class="o">=</span><span class="p">[</span><span class="n">service_group</span><span class="p">],</span> <span class="n">update</span><span class="o">=</span><span class="n">update</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAClient.get_group_list"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_group_list">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_group_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves service_group groups from the database. If the servicepath</span>
+<span class="sd">        header has the wildcard expression, /\*, all the subservices for the</span>
+<span class="sd">        service_group are returned. The specific subservice parameters are</span>
+<span class="sd">        returned in any other case.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/services&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="n">ta</span> <span class="o">=</span> <span class="n">TypeAdapter</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">ta</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;services&quot;</span><span class="p">])</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not retrieve group list because of following reason: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.get_group"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_group">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">apikey</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceGroup</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves service_group groups from the database based on resource and</span>
+<span class="sd">        apikey</span>
+<span class="sd">        Args:</span>
+<span class="sd">            resource:</span>
+<span class="sd">            apikey:</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_list</span><span class="p">()</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">filter_group_list</span><span class="p">(</span>
+            <span class="n">group_list</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">resources</span><span class="o">=</span><span class="n">resource</span><span class="p">,</span> <span class="n">apikeys</span><span class="o">=</span><span class="n">apikey</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">group</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Service group with resource=</span><span class="si">{</span><span class="n">resource</span><span class="si">}</span><span class="s2"> and apikey=</span><span class="si">{</span><span class="n">apikey</span><span class="si">}</span><span class="s2"> was not found&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;There is a wierd error, try get_group_list() for debugging&quot;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAClient.update_groups"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_groups">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_groups</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">service_groups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ServiceGroup</span><span class="p">]],</span>
+        <span class="n">add</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bulk operation for service group update.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            fields:</span>
+<span class="sd">            service_groups:</span>
+<span class="sd">            add:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service_groups</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">service_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_groups</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">service_groups</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_group</span><span class="p">(</span><span class="n">service_group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span> <span class="n">add</span><span class="o">=</span><span class="n">add</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAClient.update_group"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_group">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_group</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">service_group</span><span class="p">:</span> <span class="n">ServiceGroup</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">add</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modifies the information for a service group configuration, identified</span>
+<span class="sd">        by the resource and apikey query parameters. Takes a service group body</span>
+<span class="sd">        as the payload. The body does not have to be complete: for incomplete</span>
+<span class="sd">        bodies, just the existing attributes will be updated</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            service_group (ServiceGroup): Service to update.</span>
+<span class="sd">            fields: Fields of the service_group to update. If &#39;None&#39; all allowed</span>
+<span class="sd">            fields will be updated</span>
+<span class="sd">            add:</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/services&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">service_group</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;resource&quot;</span><span class="p">,</span> <span class="s2">&quot;apikey&quot;</span><span class="p">})</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="n">service_group</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+                    <span class="n">include</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;service&quot;</span><span class="p">,</span> <span class="s2">&quot;subservice&quot;</span><span class="p">},</span> <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ServiceGroup updated!&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">add</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">post_group</span><span class="p">(</span><span class="n">service_group</span><span class="o">=</span><span class="n">service_group</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not update group because of following reason: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.delete_group"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.delete_group">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">apikey</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a service group in in the IoT-Agent</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            resource:</span>
+<span class="sd">            apikey:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/services&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;resource&quot;</span><span class="p">:</span> <span class="n">resource</span><span class="p">,</span> <span class="s2">&quot;apikey&quot;</span><span class="p">:</span> <span class="n">apikey</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;ServiceGroup with resource: &#39;</span><span class="si">%s</span><span class="s2">&#39; and &quot;</span>
+                    <span class="s2">&quot;apikey: &#39;</span><span class="si">%s</span><span class="s2">&#39; successfully deleted!&quot;</span><span class="p">,</span>
+                    <span class="n">resource</span><span class="p">,</span>
+                    <span class="n">apikey</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not delete ServiceGroup with resource &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">resource</span><span class="si">}</span><span class="s2">&#39; and apikey &#39;</span><span class="si">{</span><span class="n">apikey</span><span class="si">}</span><span class="s2">&#39; because of following reason: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+    <span class="c1"># DEVICE API</span>
+<div class="viewcode-block" id="IoTAClient.post_devices"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_devices">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_devices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">devices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Device</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">]],</span> <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post a device from the device registry. No payload is required</span>
+<span class="sd">        or received.</span>
+<span class="sd">        If a device already exists in can be updated with update = True</span>
+<span class="sd">        Args:</span>
+<span class="sd">            devices (list of Devices):</span>
+<span class="sd">            update (bool):  Whether if the device is already existent it</span>
+<span class="sd">            should be updated</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">devices</span><span class="p">]</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/devices&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;devices&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Devices successfully posted!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_devices</span><span class="p">(</span><span class="n">devices</span><span class="o">=</span><span class="n">devices</span><span class="p">,</span> <span class="n">add</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not post devices because of following reason: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.post_device"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.post_device">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">,</span> <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post a device configuration to the IoT-Agent</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device: IoT device configuration to send</span>
+<span class="sd">            update: update device if configuration already exists</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_devices</span><span class="p">(</span><span class="n">devices</span><span class="o">=</span><span class="p">[</span><span class="n">device</span><span class="p">],</span> <span class="n">update</span><span class="o">=</span><span class="n">update</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAClient.get_device_list"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_device_list">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_device_list</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">device_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">entity_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">entity_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">include_invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Device</span><span class="p">,</span> <span class="n">DeviceList</span><span class="p">]],</span> <span class="n">DeviceValidationList</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all the devices in the device registry with all</span>
+<span class="sd">        its data. The IoTAgent now only supports &quot;limit&quot; and &quot;offset&quot; as</span>
+<span class="sd">        request parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            limit:</span>
+<span class="sd">                if present, limits the number of devices returned in the</span>
+<span class="sd">                list. Must be a number between 1 and 1000.</span>
+<span class="sd">            offset:</span>
+<span class="sd">                if present, skip that number of devices from the original</span>
+<span class="sd">                query.</span>
+<span class="sd">            device_ids:</span>
+<span class="sd">                List of device_ids. If given, only devices with matching ids</span>
+<span class="sd">                will be returned</span>
+<span class="sd">            entity_names:</span>
+<span class="sd">                The entity_ids of the devices. If given, only the devices</span>
+<span class="sd">                with the specified entity_id will be returned</span>
+<span class="sd">            entity_types:</span>
+<span class="sd">                The entity_type of the device. If given, only the devices</span>
+<span class="sd">                with the specified entity_type will be returned</span>
+<span class="sd">            include_invalid: Specify if the returned list should also contain a list of invalid device IDs or not.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List of matching devices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;&#39;limit&#39; must be an integer between 1 and &quot;</span> <span class="s2">&quot;1000!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;limit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="k">if</span> <span class="n">offset</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;&#39;offset&#39; must be an integer!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;offset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">offset</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/devices&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">include_invalid</span><span class="p">:</span>
+                    <span class="n">valid_devices</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">invalid_devices</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">ta</span> <span class="o">=</span> <span class="n">TypeAdapter</span><span class="p">(</span><span class="n">Device</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;devices&quot;</span><span class="p">]:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">valid_device</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                            <span class="n">valid_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">valid_device</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="n">ValidationError</span><span class="p">:</span>
+                            <span class="n">invalid_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device_id&quot;</span><span class="p">))</span>
+                    <span class="n">valid_devices</span> <span class="o">=</span> <span class="n">filter_device_list</span><span class="p">(</span>
+                        <span class="n">valid_devices</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">,</span> <span class="n">entity_names</span><span class="p">,</span> <span class="n">entity_types</span>
+                    <span class="p">)</span>
+                    <span class="n">invalid_devices</span> <span class="o">=</span> <span class="n">filter_device_list</span><span class="p">(</span>
+                        <span class="n">invalid_devices</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">,</span> <span class="n">entity_names</span><span class="p">,</span> <span class="n">entity_types</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="n">DeviceValidationList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;devices&quot;</span><span class="p">:</span> <span class="n">valid_devices</span><span class="p">,</span>
+                            <span class="s2">&quot;invalid_devices&quot;</span><span class="p">:</span> <span class="n">invalid_devices</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">filter_device_list</span><span class="p">(</span>
+                        <span class="n">devices</span><span class="o">=</span><span class="n">DeviceList</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
+                            <span class="p">{</span><span class="s2">&quot;devices&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;devices&quot;</span><span class="p">]}</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">devices</span><span class="p">,</span>
+                        <span class="n">device_ids</span><span class="o">=</span><span class="n">device_ids</span><span class="p">,</span>
+                        <span class="n">entity_names</span><span class="o">=</span><span class="n">entity_names</span><span class="p">,</span>
+                        <span class="n">entity_types</span><span class="o">=</span><span class="n">entity_types</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Not able to retrieve the device list because of the following reason:&quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.get_device"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_device">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Device</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the information about a particular device.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device_id:</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            requests.RequestException, if device does not exist</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Device</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;iot/devices/</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Device</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Device &#39;</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&#39; was not found because of the following reason: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.update_device"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_device">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">,</span> <span class="n">add</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates a device from the device registry.</span>
+<span class="sd">        Adds, removes attributes from the device entry and changes</span>
+<span class="sd">        attributes values.</span>
+<span class="sd">        It does not change device settings (endpoint,..) and only adds</span>
+<span class="sd">        attributes to the corresponding entity, their it does not</span>
+<span class="sd">        change any attribute value and does not delete removed attributes</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device:</span>
+<span class="sd">            add (bool): If device not found add it</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;iot/devices/</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+                    <span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;attributes&quot;</span><span class="p">,</span> <span class="s2">&quot;lazy&quot;</span><span class="p">,</span> <span class="s2">&quot;commands&quot;</span><span class="p">,</span> <span class="s2">&quot;static_attributes&quot;</span><span class="p">},</span>
+                    <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Device &#39;</span><span class="si">%s</span><span class="s2">&#39; successfully updated!&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">add</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">post_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not update device &#39;</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&#39; because of the following reason: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.update_devices"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.update_devices">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_devices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">devices</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Device</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Device</span><span class="p">]],</span> <span class="n">add</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bulk operation for device update.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            devices:</span>
+<span class="sd">            add:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">devices</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">add</span><span class="o">=</span><span class="n">add</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IoTAClient.delete_device"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.delete_device">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_device</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">cb_url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">CB_URL</span><span class="p">,</span>
+        <span class="n">delete_entity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_entity_deletion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">cb_client</span><span class="p">:</span> <span class="n">ContextBrokerClient</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove a device from the device registry. No payload is required</span>
+<span class="sd">        or received.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device_id: str, ID of Device</span>
+<span class="sd">            delete_entity:  False -&gt; Only delete the device entry,</span>
+<span class="sd">                                     the automatically created and linked</span>
+<span class="sd">                                     context-entity will continue to</span>
+<span class="sd">                                     exist in Fiware</span>
+<span class="sd">                            True -&gt; Also delete the automatically</span>
+<span class="sd">                                    created and linked context-entity</span>
+<span class="sd">                                    If multiple devices are linked to this</span>
+<span class="sd">                                    entity, this operation is not executed and</span>
+<span class="sd">                                    an exception is raised</span>
+<span class="sd">            force_entity_deletion:</span>
+<span class="sd">                bool, if delete_entity is true and multiple devices are linked</span>
+<span class="sd">                to the linked entity, delete it and do not raise an error</span>
+<span class="sd">            cb_client (ContextBrokerClient):</span>
+<span class="sd">                Corresponding ContextBrokerClient object for entity manipulation</span>
+<span class="sd">            cb_url (AnyHttpUrl):</span>
+<span class="sd">                Url of the ContextBroker where the entity is found.</span>
+<span class="sd">                This will autogenerate an CB-Client, mirroring the information</span>
+<span class="sd">                of the IoTA-Client, e.g. FiwareHeader, and other headers</span>
+<span class="sd">                (not recommended!)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;iot/devices/</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+
+        <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Device &#39;</span><span class="si">%s</span><span class="s2">&#39; successfully deleted!&quot;</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not delete device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+
+        <span class="k">if</span> <span class="n">delete_entity</span><span class="p">:</span>
+            <span class="c1"># An entity can technically belong to multiple devices</span>
+            <span class="c1"># Only delete the entity if</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device_list</span><span class="p">(</span><span class="n">entity_names</span><span class="o">=</span><span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">entity_name</span><span class="p">])</span>
+
+            <span class="c1"># Zero because we count the remaining devices</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_entity_deletion</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The corresponding entity to the device &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> was not deleted because it is &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;linked to multiple devices. &quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cb_client_local</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.ngsi_v2</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextBrokerClient</span>
+
+                    <span class="k">if</span> <span class="n">cb_client</span><span class="p">:</span>
+                        <span class="n">cb_client_local</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cb_client</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                            <span class="s2">&quot;No `ContextBrokerClient` &quot;</span>
+                            <span class="s2">&quot;object provided! Will try to generate &quot;</span>
+                            <span class="s2">&quot;one. This usage is not recommended.&quot;</span>
+                        <span class="p">)</span>
+
+                        <span class="n">cb_client_local</span> <span class="o">=</span> <span class="n">ContextBrokerClient</span><span class="p">(</span>
+                            <span class="n">url</span><span class="o">=</span><span class="n">cb_url</span><span class="p">,</span>
+                            <span class="n">fiware_header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="p">,</span>
+                            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="n">cb_client_local</span><span class="o">.</span><span class="n">delete_entity</span><span class="p">(</span>
+                        <span class="n">entity_id</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">entity_name</span><span class="p">,</span> <span class="n">entity_type</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">entity_type</span>
+                    <span class="p">)</span>
+
+                <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="c1"># Do not throw an error</span>
+                    <span class="c1"># It is only important that the entity does not exist after</span>
+                    <span class="c1"># this methode, not if this methode actively deleted it</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">cb_client_local</span><span class="p">:</span>
+                    <span class="n">cb_client_local</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IoTAClient.patch_device"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.patch_device">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">patch_device</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">,</span>
+        <span class="n">patch_entity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cb_client</span><span class="p">:</span> <span class="n">ContextBrokerClient</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cb_url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">CB_URL</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates a device state in Fiware, if the device does not exist it</span>
+<span class="sd">        is created, else its values are updated.</span>
+<span class="sd">        If the device settings were changed the device and</span>
+<span class="sd">        entity are deleted and re-added.</span>
+
+<span class="sd">        If patch_entity is true the corresponding entity in the ContextBroker is</span>
+<span class="sd">        also correctly updated. Else only new attributes are added there.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device (Device): Device to be posted to /updated in Fiware</span>
+<span class="sd">            patch_entity (bool): If true the corresponding entity is</span>
+<span class="sd">                completely synced</span>
+<span class="sd">            cb_client (ContextBrokerClient):</span>
+<span class="sd">                Corresponding ContextBrokerClient object for entity manipulation</span>
+<span class="sd">            cb_url (AnyHttpUrl):</span>
+<span class="sd">                Url of the ContextBroker where the entity is found.</span>
+<span class="sd">                This will autogenerate an CB-Client, mirroring the information</span>
+<span class="sd">                of the IoTA-Client, e.g. FiwareHeader, and other headers</span>
+<span class="sd">                (not recommended!)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">live_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+            <span class="c1"># device does not exist yet, post it</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># if the device settings were changed we need to delete the device</span>
+        <span class="c1"># and repost it</span>
+        <span class="n">settings_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;device_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;service_path&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;entity_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;entity_type&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;apikey&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;endpoint&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;protocol&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;transport&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;expressionLanguage&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">live_settings</span> <span class="o">=</span> <span class="n">live_device</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="n">settings_dict</span><span class="p">)</span>
+        <span class="n">new_settings</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="n">settings_dict</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">live_settings</span> <span class="o">==</span> <span class="n">new_settings</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_device</span><span class="p">(</span>
+                <span class="n">device_id</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+                <span class="n">delete_entity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">force_entity_deletion</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">cb_client</span><span class="o">=</span><span class="n">cb_client</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># We are at a state where the device exists, but only attributes were</span>
+        <span class="c1"># changed.</span>
+        <span class="c1"># we need to update the device, and the context entry separately,</span>
+        <span class="c1"># as update device only takes over a part of the changes to the</span>
+        <span class="c1"># ContextBroker.</span>
+
+        <span class="c1"># update device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_device</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># update context entry</span>
+        <span class="c1"># 1. build context entity from information in device</span>
+        <span class="c1"># 2. patch it</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextEntity</span><span class="p">,</span> <span class="n">NamedContextAttribute</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">build_context_entity_from_device</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextEntity</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+
+            <span class="n">entity</span> <span class="o">=</span> <span class="n">ContextEntity</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">entity_name</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">entity_type</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">add_attributes</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="c1"># Command attribute will be registered by the device_update</span>
+                        <span class="n">NamedContextAttribute</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_info&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">COMMAND_RESULT</span>
+                        <span class="p">),</span>
+                        <span class="n">NamedContextAttribute</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_status&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">COMMAND_STATUS</span>
+                        <span class="p">),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">add_attributes</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">NamedContextAttribute</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">attribute</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="nb">type</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">STRUCTUREDVALUE</span><span class="p">,</span>
+                            <span class="n">metadata</span><span class="o">=</span><span class="n">attribute</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">for</span> <span class="n">static_attribute</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">static_attributes</span><span class="p">:</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">add_attributes</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">NamedContextAttribute</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">static_attribute</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="nb">type</span><span class="o">=</span><span class="n">static_attribute</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                            <span class="n">value</span><span class="o">=</span><span class="n">static_attribute</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                            <span class="n">metadata</span><span class="o">=</span><span class="n">static_attribute</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">entity</span>
+
+        <span class="k">if</span> <span class="n">patch_entity</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.ngsi_v2</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextBrokerClient</span>
+
+            <span class="k">if</span> <span class="n">cb_client</span><span class="p">:</span>
+                <span class="n">cb_client_local</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cb_client</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;No `ContextBrokerClient` object provided! &quot;</span>
+                    <span class="s2">&quot;Will try to generate one. &quot;</span>
+                    <span class="s2">&quot;This usage is not recommended.&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">cb_client_local</span> <span class="o">=</span> <span class="n">ContextBrokerClient</span><span class="p">(</span>
+                    <span class="n">url</span><span class="o">=</span><span class="n">cb_url</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+                <span class="p">)</span>
+
+            <span class="n">cb_client_local</span><span class="o">.</span><span class="n">override_entity</span><span class="p">(</span>
+                <span class="n">entity</span><span class="o">=</span><span class="n">build_context_entity_from_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">cb_client_local</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IoTAClient.does_device_exists"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.does_device_exists">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">does_device_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test if a device with the given id exists in Fiware</span>
+<span class="sd">        Args:</span>
+<span class="sd">            device_id (str)</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not check device status because of the following reason: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span>
+                    <span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="c1"># LOG API</span>
+<div class="viewcode-block" id="IoTAClient.get_loglevel_of_agent"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.get_loglevel_of_agent">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_loglevel_of_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get current loglevel of agent</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;admin/log&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-service&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-servicepath&quot;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not check for loglevel status because of the following reason: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
+
+<div class="viewcode-block" id="IoTAClient.change_loglevel_of_agent"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient.change_loglevel_of_agent">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">change_loglevel_of_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change current loglevel of agent</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            level:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">level</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;FATAL&quot;</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Given log level is not supported&quot;</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;admin/log&quot;</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_loglevel</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="n">level</span><span class="p">}</span>
+        <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-service&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-servicepath&quot;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">new_loglevel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Loglevel of agent at </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="s2">&quot;changed to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span>
+                    <span class="n">new_loglevel</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not change loglevel because of the following reason: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.models.ngsi_v2.registrations &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.models.ngsi_v2.registrations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.models.ngsi_v2.registrations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains NGSIv2 models for context registrations in the context</span>
+<span class="sd">broker.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">EntityPattern</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">Http</span><span class="p">,</span> <span class="n">Status</span>
+
+
+<div class="viewcode-block" id="ForwardingMode"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.registrations.ForwardingMode">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ForwardingMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;This provider does not support request forwarding.&quot;</span>
+    <span class="n">QUERY</span> <span class="o">=</span> <span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="s2">&quot;This provider only supports request forwarding to &quot;</span> <span class="s2">&quot;query data.&quot;</span>
+    <span class="n">UPDATE</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;update&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;This provider only supports request forwarding to &quot;</span> <span class="s2">&quot;update data.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;This provider supports both query and update forwarding &quot;</span>
+        <span class="s2">&quot;requests. (Default value)&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Provider"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.registrations.Provider">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Provider</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">http</span><span class="p">:</span> <span class="n">Http</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;It is used to convey parameters for providers that &quot;</span>
+        <span class="s2">&quot;deliver information through the HTTP protocol. (Only &quot;</span>
+        <span class="s2">&quot;protocol supported nowadays). It must contain a subfield &quot;</span>
+        <span class="s2">&quot;named url with the URL that serves as the endpoint that &quot;</span>
+        <span class="s2">&quot;offers the providing interface. The endpoint must not &quot;</span>
+        <span class="s2">&quot;include the protocol specific part (for instance &quot;</span>
+        <span class="s2">&quot;/v2/entities). &quot;</span>
+    <span class="p">)</span>
+    <span class="n">supportedForwardingMode</span><span class="p">:</span> <span class="n">ForwardingMode</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">ForwardingMode</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;It is used to convey the forwarding mode supported by &quot;</span>
+        <span class="s2">&quot;this context provider. By default all.&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ForwardingInformation"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.registrations.ForwardingInformation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ForwardingInformation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">timesSent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;(not editable, only present in GET operations): &quot;</span>
+        <span class="s2">&quot;Number of forwarding requests sent due to this &quot;</span>
+        <span class="s2">&quot;registration.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">lastForwarding</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;(not editable, only present in GET operations): &quot;</span>
+        <span class="s2">&quot;Last forwarding timestamp in ISO8601 format.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">lastFailure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;(not editable, only present in GET operations): &quot;</span>
+        <span class="s2">&quot;Last failure timestamp in ISO8601 format. Not present &quot;</span>
+        <span class="s2">&quot;if registration has never had a problem with forwarding.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">lastSuccess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;(not editable, only present in GET operations): &quot;</span>
+        <span class="s2">&quot;Timestamp in ISO8601 format for last successful &quot;</span>
+        <span class="s2">&quot;request forwarding. Not present if registration has &quot;</span>
+        <span class="s2">&quot;never had a successful notification.&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataProvided"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.registrations.DataProvided">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DataProvided</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for provided data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EntityPattern</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of objects, each one composed by an entity object&quot;</span>
+    <span class="p">)</span>
+    <span class="n">attrs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of attributes to be provided &quot;</span>
+        <span class="s2">&quot;(if not specified, all attributes)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">expression</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;By means of a filtering expression, allows to express &quot;</span>
+        <span class="s2">&quot;what is the scope of the data provided. Currently only &quot;</span>
+        <span class="s2">&quot;geographical scopes are supported &quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Registration"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.registrations.Registration">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Registration</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Context Registration allows to bind external context information</span>
+<span class="sd">    sources so that they can play the role of providers of certain subsets</span>
+<span class="sd">    (entities, attributes) of the context information space, including those</span>
+<span class="sd">    located at specific geographical areas.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Unique identifier assigned to the registration. &quot;</span>
+        <span class="s2">&quot;Automatically generated at creation time.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A free text used by the client to describe the &quot;</span> <span class="s2">&quot;registration.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;Relative Humidity Context Source&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">provider</span><span class="p">:</span> <span class="n">Provider</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Object that describes the context source registered.&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s1">&#39;&quot;http&quot;: {&quot;url&quot;: &quot;http://localhost:1234&quot;}&#39;</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">dataProvided</span><span class="p">:</span> <span class="n">DataProvided</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Object that describes the data provided by this source&quot;</span><span class="p">,</span>
+        <span class="n">json_schema_extra</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;example&quot;</span><span class="p">:</span> <span class="s2">&quot;{&quot;</span>
+            <span class="s1">&#39;   &quot;entities&quot;: [{&quot;id&quot;: &quot;room2&quot;, &quot;type&quot;: &quot;Room&quot;}],&#39;</span>
+            <span class="s1">&#39;   &quot;attrs&quot;: [&quot;relativeHumidity&quot;]&#39;</span>
+            <span class="s2">&quot;},&quot;</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Status</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Either active (for active registration) or inactive &quot;</span>
+        <span class="s2">&quot;(for inactive registration). If this field is not &quot;</span>
+        <span class="s2">&quot;provided at registration creation time, new registration &quot;</span>
+        <span class="s2">&quot;are created with the active status, which can be changed&quot;</span>
+        <span class="s2">&quot; by clients afterwards. For expired registration, this &quot;</span>
+        <span class="s2">&quot;attribute is set to expired (no matter if the client &quot;</span>
+        <span class="s2">&quot;updates it to active/inactive). Also, for subscriptions &quot;</span>
+        <span class="s2">&quot;experiencing problems with notifications, the status is &quot;</span>
+        <span class="s2">&quot;set to failed. As soon as the notifications start working &quot;</span>
+        <span class="s2">&quot;again, the status is changed back to active.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">expires</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Registration expiration date in ISO8601 format. &quot;</span>
+        <span class="s2">&quot;Permanent registrations must omit this field.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">forwardingInformation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ForwardingInformation</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Information related to the forwarding operations made &quot;</span>
+        <span class="s2">&quot;against the provider. Automatically provided by the &quot;</span>
+        <span class="s2">&quot;implementation, in the case such implementation supports &quot;</span>
+        <span class="s2">&quot;forwarding capabilities.&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

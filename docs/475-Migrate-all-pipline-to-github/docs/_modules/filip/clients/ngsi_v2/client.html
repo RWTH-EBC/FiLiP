@@ -1,0 +1,342 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients.ngsi_v2.client &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.clients.ngsi_v2.client</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.clients.ngsi_v2.client</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for FIWARE api client</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">AnyHttpUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPBasicAuth</span><span class="p">,</span> <span class="n">HTTPDigestAuth</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.base_http_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHttpClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiwareHeader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.ngsi_v2</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextBrokerClient</span><span class="p">,</span> <span class="n">IoTAClient</span><span class="p">,</span> <span class="n">QuantumLeapClient</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;client&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HttpClientConfig"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClientConfig">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">HttpClientConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Config class for http client</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cb_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnyHttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">CB_URL</span>
+    <span class="n">iota_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnyHttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">IOTA_URL</span>
+    <span class="n">ql_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AnyHttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">QL_URL</span>
+    <span class="n">auth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="HttpClient"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.client.HttpClient">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">HttpClient</span><span class="p">(</span><span class="n">BaseHttpClient</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Master client. This client contains all implemented sub clients based on</span>
+<span class="sd">    the principal of composition. Hence, each sub client is accessible from</span>
+<span class="sd">    this client, but they share a general config and if provided a session.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">HttpClientConfig</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fiware_header</span><span class="p">:</span> <span class="n">FiwareHeader</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for master client</span>
+<span class="sd">        Args:</span>
+<span class="sd">            config (Union[str, Path, Dict]): Configuration object</span>
+<span class="sd">            session (request.Session): Session object</span>
+<span class="sd">            fiware_header (FiwareHeader): Fiware header</span>
+<span class="sd">            **kwargs: Optional arguments that ``request`` takes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">HttpClientConfig</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">fiware_header</span><span class="o">=</span><span class="n">fiware_header</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># initialize sub clients</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cb</span> <span class="o">=</span> <span class="n">ContextBrokerClient</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">cb_url</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">fiware_header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">iota</span> <span class="o">=</span> <span class="n">IoTAClient</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">iota_url</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">fiware_header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span> <span class="o">=</span> <span class="n">QuantumLeapClient</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ql_url</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">fiware_header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># from here on deprecated?</span>
+        <span class="n">auth_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;basicauth&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__http_basic_auth</span><span class="p">,</span>
+            <span class="s2">&quot;digestauth&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__http_digest_auth</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1"># &#39;oauth2&#39;: self.__oauth2}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auth</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auth</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">auth_types</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_secrets_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auth</span><span class="p">[</span><span class="s2">&quot;secret&quot;</span><span class="p">])</span>
+            <span class="n">auth_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">auth</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]]()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;client_secret&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return current config&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+
+    <span class="nd">@config</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">HttpClientConfig</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a new config&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">HttpClientConfig</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">config_json</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">HttpClientConfig</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">HttpClientConfig</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return session certificate&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">cert</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">secrets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns secrets&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span>
+
+    <span class="nd">@secrets</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">secrets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set new secrets&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="nd">@secrets</span><span class="o">.</span><span class="n">deleter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">secrets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete secrets&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_secrets_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads credentials form secret file the path variable is pointing to.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: location of secrets-file</span>
+<span class="sd">        Returns:</span>
+<span class="sd">             None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading credentials from: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - does not exist&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EACCES</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - cannot be read&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - some other error&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__http_basic_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initiates a client using the basic authorization mechanism provided by</span>
+<span class="sd">        the requests package. The documentation of the package is located here:</span>
+<span class="sd">        https://requests.readthedocs.io/en/master/user/authentication/</span>
+<span class="sd">        The credentials must be provided via secret-file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__http_digest_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initiates a client using the digest authorization mechanism provided by</span>
+<span class="sd">        the requests package. The documentation of the package is located here:</span>
+<span class="sd">        https://requests.readthedocs.io/en/master/user/authentication/</span>
+<span class="sd">        The credentials must be provided via secret-file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPDigestAuth</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__secrets</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># def __oauth2(self):</span>
+    <span class="c1">#    &quot;&quot;&quot;</span>
+    <span class="c1">#    Initiates a oauthclient according to the workflows defined by OAuth2.0.</span>
+    <span class="c1">#    We use requests-oauthlib for this implementation. The documentation</span>
+    <span class="c1">#    of the package is located here:</span>
+    <span class="c1">#    https://requests-oauthlib.readthedocs.io/en/latest/index.html</span>
+    <span class="c1">#    The information for workflow selection must be provided via</span>
+    <span class="c1">#    filip-config. The credentials must be provided via secrets-file.</span>
+    <span class="c1">#    :return: None</span>
+    <span class="c1">#    &quot;&quot;&quot;</span>
+    <span class="c1">#    oauth2clients = {&#39;authorization_code&#39;: None,</span>
+    <span class="c1">#                     &#39;implicit&#39;: MobileApplicationClient,</span>
+    <span class="c1">#                     &#39;resource_owner_password_credentials&#39;:</span>
+    <span class="c1">#                         LegacyApplicationClient,</span>
+    <span class="c1">#                     &#39;client_credentials&#39;: BackendApplicationClient, }</span>
+    <span class="c1">#    try:</span>
+    <span class="c1">#        workflow = self.config[&#39;auth&#39;][&#39;workflow&#39;]</span>
+    <span class="c1">#    except KeyError:</span>
+    <span class="c1">#        logger.warning(f&quot;No workflow for OAuth2 defined! Default &quot;</span>
+    <span class="c1">#                       f&quot;workflow will used: Authorization Code Grant.&quot;</span>
+    <span class="c1">#                       f&quot;Other oauth2-workflows available are: &quot;</span>
+    <span class="c1">#                       f&quot;{oauth2clients.keys()}&quot;)</span>
+    <span class="c1">#        workflow = &#39;authorization_code_grant&#39;</span>
+    <span class="c1">#</span>
+    <span class="c1">#    oauthclient = oauth2clients[workflow](client_id=self.__secrets[</span>
+    <span class="c1">#        &#39;client_id&#39;])</span>
+    <span class="c1">#    self.session = OAuth2Session(client_id=None,</span>
+    <span class="c1">#                                 client=oauthclient,</span>
+    <span class="c1">#                                 auto_refresh_url=self.__secrets[</span>
+    <span class="c1">#                                     &#39;token_url&#39;],</span>
+    <span class="c1">#                                 auto_refresh_kwargs={</span>
+    <span class="c1">#                                     self.__secrets[&#39;client_id&#39;],</span>
+    <span class="c1">#                                     self.__secrets[&#39;client_secret&#39;]})</span>
+    <span class="c1">#</span>
+    <span class="c1">#    self.__token = self.session.fetch_token(</span>
+    <span class="c1">#        token_url=self.__secrets[&#39;token_url&#39;],</span>
+    <span class="c1">#        username=self.__secrets[&#39;username&#39;],</span>
+    <span class="c1">#        password=self.__secrets[&#39;password&#39;],</span>
+    <span class="c1">#        client_id=self.__secrets[&#39;client_id&#39;],</span>
+    <span class="c1">#        client_secret=self.__secrets[&#39;client_secret&#39;])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__token_saver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__token</span> <span class="o">=</span> <span class="n">token</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
