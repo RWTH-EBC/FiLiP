@@ -17,3 +17,4 @@ jobs:
       FIWARE_TESTS: true
       FIWARE_COVERAGE: true
       FIWARE_DIRECTORY: './docker'
+      PYTHON_PACKAGE_NAME: 'filip'
