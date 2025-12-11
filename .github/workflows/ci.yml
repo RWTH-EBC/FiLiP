@@ -6,6 +6,8 @@ on:
 jobs:
   ci:
     uses: RWTH-EBC/ci_templates/.github/workflows/ci_pipeline.yml@main
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       PYTHON_VERSION: "3.10"
       USE_PYLINT: true
