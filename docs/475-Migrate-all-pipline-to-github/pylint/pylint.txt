@@ -84,10 +84,10 @@ examples/basics/e01_http_clients.py:28:0: C0103: Constant name "service_path" do
 examples/basics/e02_baerer_token.py:15:0: C0103: Constant name "fiware_service" doesn't conform to UPPER_CASE naming style (invalid-name)
 examples/basics/e02_baerer_token.py:17:0: C0103: Constant name "fiware_service_path" doesn't conform to UPPER_CASE naming style (invalid-name)
 examples/basics/e02_baerer_token.py:20:0: C0103: Constant name "fiware_baerer_token" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module e05_ngsi_v2_context_registrations
+************* Module examples.ngsi_v2.e05_ngsi_v2_context_registrations
 examples/ngsi_v2/e05_ngsi_v2_context_registrations.py:105:0: C0301: Line too long (114/100) (line-too-long)
 examples/ngsi_v2/e05_ngsi_v2_context_registrations.py:87:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-************* Module e15_ngsi_v2_forecast_data_saving
+************* Module examples.ngsi_v2.e15_ngsi_v2_forecast_data_saving
 examples/ngsi_v2/e15_ngsi_v2_forecast_data_saving.py:62:4: C0103: Variable name "T" doesn't conform to snake_case naming style (invalid-name)
 examples/ngsi_v2/e15_ngsi_v2_forecast_data_saving.py:72:8: C0103: Variable name "T" doesn't conform to snake_case naming style (invalid-name)
 examples/ngsi_v2/e15_ngsi_v2_forecast_data_saving.py:166:4: E0401: Unable to import 'plotly.graph_objects' (import-error)
@@ -98,16 +98,16 @@ examples/ngsi_v2/e15_ngsi_v2_forecast_data_saving.py:192:25: E1136: Value 'tempe
 examples/ngsi_v2/e15_ngsi_v2_forecast_data_saving.py:198:17: R1735: Consider using '{"width": 4}' instead of a call to 'dict'. (use-dict-literal)
 examples/ngsi_v2/e15_ngsi_v2_forecast_data_saving.py:208:14: R1735: Consider using '{"tickangle": 45}' instead of a call to 'dict'. (use-dict-literal)
 examples/ngsi_v2/e15_ngsi_v2_forecast_data_saving.py:220:4: C0103: Constant name "query" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module e06_ngsi_v2_autogenerate_context_data_models
+************* Module examples.ngsi_v2.e06_ngsi_v2_autogenerate_context_data_models
 examples/ngsi_v2/e06_ngsi_v2_autogenerate_context_data_models.py:55:4: E0401: Unable to import 'examples.ngsi_v2.data_models.commons' (import-error)
 examples/ngsi_v2/e06_ngsi_v2_autogenerate_context_data_models.py:55:4: E0611: No name 'data_models' in module 'examples.ngsi_v2' (no-name-in-module)
-************* Module e12_ngsi_v2_use_case_models
+************* Module examples.ngsi_v2.e12_ngsi_v2_use_case_models
 examples/ngsi_v2/e12_ngsi_v2_use_case_models.py:12:0: E0401: Unable to import 'pydantic' (import-error)
 examples/ngsi_v2/e12_ngsi_v2_use_case_models.py:13:0: E0401: Unable to import 'pydantic.fields' (import-error)
 examples/ngsi_v2/e12_ngsi_v2_use_case_models.py:67:0: C0115: Missing class docstring (missing-class-docstring)
 examples/ngsi_v2/e12_ngsi_v2_use_case_models.py:77:0: C0115: Missing class docstring (missing-class-docstring)
 examples/ngsi_v2/e12_ngsi_v2_use_case_models.py:18:0: C0411: standard import "from pprint import pprint" should be placed before "from pydantic import ConfigDict, BaseModel" (wrong-import-order)
-************* Module e04_ngsi_v2_context_subscriptions_mqtt
+************* Module examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt
 examples/ngsi_v2/e04_ngsi_v2_context_subscriptions_mqtt.py:38:0: C0103: Constant name "mqtt_topic" doesn't conform to UPPER_CASE naming style (invalid-name)
 examples/ngsi_v2/e04_ngsi_v2_context_subscriptions_mqtt.py:101:4: C0116: Missing function or method docstring (missing-function-docstring)
 examples/ngsi_v2/e04_ngsi_v2_context_subscriptions_mqtt.py:102:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
@@ -136,7 +136,7 @@ examples/ngsi_v2/e04_ngsi_v2_context_subscriptions_mqtt.py:122:59: W0613: Unused
 examples/ngsi_v2/e04_ngsi_v2_context_subscriptions_mqtt.py:126:4: E0401: Unable to import 'paho.mqtt.client' (import-error)
 examples/ngsi_v2/e04_ngsi_v2_context_subscriptions_mqtt.py:156:4: C0103: Constant name "new_value" doesn't conform to UPPER_CASE naming style (invalid-name)
 examples/ngsi_v2/e04_ngsi_v2_context_subscriptions_mqtt.py:17:0: C0411: standard import "from urllib.parse import urlparse" should be placed before "from filip.config import settings" (wrong-import-order)
-************* Module e08_ngsi_v2_iota_paho_mqtt
+************* Module examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt
 examples/ngsi_v2/e08_ngsi_v2_iota_paho_mqtt.py:11:0: E0401: Unable to import 'paho.mqtt.client' (import-error)
 examples/ngsi_v2/e08_ngsi_v2_iota_paho_mqtt.py:119:4: W1201: Use lazy % formatting in logging functions (logging-not-lazy)
 examples/ngsi_v2/e08_ngsi_v2_iota_paho_mqtt.py:155:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
@@ -176,7 +176,7 @@ examples/ngsi_v2/e08_ngsi_v2_iota_paho_mqtt.py:267:12: C0103: Constant name "val
 examples/ngsi_v2/e08_ngsi_v2_iota_paho_mqtt.py:269:12: C0103: Constant name "value" doesn't conform to UPPER_CASE naming style (invalid-name)
 examples/ngsi_v2/e08_ngsi_v2_iota_paho_mqtt.py:281:8: W1201: Use lazy % formatting in logging functions (logging-not-lazy)
 examples/ngsi_v2/e08_ngsi_v2_iota_paho_mqtt.py:13:0: C0411: standard import "from urllib.parse import urlparse" should be placed before "import paho.mqtt.client as mqtt" (wrong-import-order)
-************* Module e13_ngsi_v2_secure_fiware_headers
+************* Module examples.ngsi_v2.e13_ngsi_v2_secure_fiware_headers
 examples/ngsi_v2/e13_ngsi_v2_secure_fiware_headers.py:2:0: C0301: Line too long (117/100) (line-too-long)
 examples/ngsi_v2/e13_ngsi_v2_secure_fiware_headers.py:25:0: C0301: Line too long (112/100) (line-too-long)
 examples/ngsi_v2/e13_ngsi_v2_secure_fiware_headers.py:168:0: C0301: Line too long (119/100) (line-too-long)
@@ -205,12 +205,12 @@ examples/ngsi_v2/e13_ngsi_v2_secure_fiware_headers.py:136:22: W0612: Unused vari
 examples/ngsi_v2/e13_ngsi_v2_secure_fiware_headers.py:59:8: W0201: Attribute 'data' defined outside __init__ (attribute-defined-outside-init)
 examples/ngsi_v2/e13_ngsi_v2_secure_fiware_headers.py:147:0: C0115: Missing class docstring (missing-class-docstring)
 examples/ngsi_v2/e13_ngsi_v2_secure_fiware_headers.py:161:66: C0209: Formatting a regular string which could be a f-string (consider-using-f-string)
-************* Module e15_ngsi_v2_use_sessions
+************* Module examples.ngsi_v2.e15_ngsi_v2_use_sessions
 examples/ngsi_v2/e15_ngsi_v2_use_sessions.py:11:0: E0401: Unable to import 'requests' (import-error)
 examples/ngsi_v2/e15_ngsi_v2_use_sessions.py:12:0: E0401: Unable to import 'urllib3' (import-error)
 examples/ngsi_v2/e15_ngsi_v2_use_sessions.py:13:0: E0401: Unable to import 'requests.adapters' (import-error)
 examples/ngsi_v2/e15_ngsi_v2_use_sessions.py:14:0: E0401: Unable to import 'urllib3' (import-error)
-************* Module e16_ngsi_v2_existing_dataset
+************* Module examples.ngsi_v2.e16_ngsi_v2_existing_dataset
 examples/ngsi_v2/e16_ngsi_v2_existing_dataset.py:2:0: C0301: Line too long (111/100) (line-too-long)
 examples/ngsi_v2/e16_ngsi_v2_existing_dataset.py:3:0: C0301: Line too long (119/100) (line-too-long)
 examples/ngsi_v2/e16_ngsi_v2_existing_dataset.py:9:0: C0301: Line too long (114/100) (line-too-long)
@@ -244,10 +244,10 @@ examples/ngsi_v2/e16_ngsi_v2_existing_dataset.py:225:8: W0621: Redefining name '
 examples/ngsi_v2/e16_ngsi_v2_existing_dataset.py:229:58: W0621: Redefining name 'message' from outer scope (line 342) (redefined-outer-name)
 examples/ngsi_v2/e16_ngsi_v2_existing_dataset.py:28:0: C0411: third party import "import matplotlib.dates as mdates" should be placed before "from filip.models.ngsi_v2.context import ContextEntityKeyValues, ContextEntity" (wrong-import-order)
 examples/ngsi_v2/e16_ngsi_v2_existing_dataset.py:29:0: C0411: third party import "import matplotlib.pyplot as plt" should be placed before "from filip.models.ngsi_v2.context import ContextEntityKeyValues, ContextEntity" (wrong-import-order)
-************* Module e03_ngsi_v2_context_subscriptions_http
+************* Module examples.ngsi_v2.e03_ngsi_v2_context_subscriptions_http
 examples/ngsi_v2/e03_ngsi_v2_context_subscriptions_http.py:34:0: C0301: Line too long (102/100) (line-too-long)
 examples/ngsi_v2/e03_ngsi_v2_context_subscriptions_http.py:63:4: C0103: Constant name "interesting_entity_id" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module e01_ngsi_v2_context_basics
+************* Module examples.ngsi_v2.e01_ngsi_v2_context_basics
 examples/ngsi_v2/e01_ngsi_v2_context_basics.py:115:0: C0301: Line too long (102/100) (line-too-long)
 examples/ngsi_v2/e01_ngsi_v2_context_basics.py:49:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
 examples/ngsi_v2/e01_ngsi_v2_context_basics.py:79:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
@@ -257,7 +257,7 @@ examples/ngsi_v2/e01_ngsi_v2_context_basics.py:95:4: W1203: Use lazy % formattin
 examples/ngsi_v2/e01_ngsi_v2_context_basics.py:102:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
 examples/ngsi_v2/e01_ngsi_v2_context_basics.py:109:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
 examples/ngsi_v2/e01_ngsi_v2_context_basics.py:114:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-************* Module e14_ngsi_v2_notification_based_command
+************* Module examples.ngsi_v2.e14_ngsi_v2_notification_based_command
 examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py:28:0: E0401: Unable to import 'paho.mqtt.client' (import-error)
 examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py:57:44: C0103: Argument name "reasonCode" doesn't conform to snake_case naming style (invalid-name)
 examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py:58:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
@@ -285,15 +285,15 @@ examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py:122:4: C0103: Constan
 examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py:123:4: C0103: Constant name "mqtt_topic_custom" doesn't conform to UPPER_CASE naming style (invalid-name)
 examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py:28:0: C0411: third party import "import paho.mqtt.client as mqtt" should be placed before "from filip.clients.ngsi_v2 import ContextBrokerClient" (wrong-import-order)
 examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py:29:0: C0411: standard import "import logging" should be placed before "import paho.mqtt.client as mqtt" (wrong-import-order)
-************* Module e10_ngsi_v2_quantumleap
+************* Module examples.ngsi_v2.e10_ngsi_v2_quantumleap
 examples/ngsi_v2/e10_ngsi_v2_quantumleap.py:108:16: W0702: No exception type(s) specified (bare-except)
 examples/ngsi_v2/e10_ngsi_v2_quantumleap.py:152:4: W0702: No exception type(s) specified (bare-except)
 examples/ngsi_v2/e10_ngsi_v2_quantumleap.py:160:4: W0702: No exception type(s) specified (bare-except)
 examples/ngsi_v2/e10_ngsi_v2_quantumleap.py:166:4: W0702: No exception type(s) specified (bare-except)
 examples/ngsi_v2/e10_ngsi_v2_quantumleap.py:172:4: W0702: No exception type(s) specified (bare-except)
-************* Module e07_ngsi_v2_iota_basics
+************* Module examples.ngsi_v2.e07_ngsi_v2_iota_basics
 examples/ngsi_v2/e07_ngsi_v2_iota_basics.py:19:0: C0411: standard import "from uuid import uuid4" should be placed before "from filip.clients.ngsi_v2 import IoTAClient" (wrong-import-order)
-************* Module e09_ngsi_v2_iota_filip_mqtt
+************* Module examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt
 examples/ngsi_v2/e09_ngsi_v2_iota_filip_mqtt.py:11:0: E0401: Unable to import 'paho.mqtt.client' (import-error)
 examples/ngsi_v2/e09_ngsi_v2_iota_filip_mqtt.py:104:4: C0116: Missing function or method docstring (missing-function-docstring)
 examples/ngsi_v2/e09_ngsi_v2_iota_filip_mqtt.py:104:38: C0103: Argument name "rc" doesn't conform to snake_case naming style (invalid-name)
@@ -337,12 +337,12 @@ examples/ngsi_v2/e09_ngsi_v2_iota_filip_mqtt.py:227:27: W0621: Redefining name '
 examples/ngsi_v2/e09_ngsi_v2_iota_filip_mqtt.py:226:27: W0613: Unused argument 'obj' (unused-argument)
 examples/ngsi_v2/e09_ngsi_v2_iota_filip_mqtt.py:227:8: W0612: Unused variable 'apikey' (unused-variable)
 examples/ngsi_v2/e09_ngsi_v2_iota_filip_mqtt.py:13:0: C0411: standard import "from urllib.parse import urlparse" should be placed before "import paho.mqtt.client as mqtt" (wrong-import-order)
-************* Module e11_ngsi_v2_context_specific_models
+************* Module examples.ngsi_v2.e11_ngsi_v2_context_specific_models
 examples/ngsi_v2/e11_ngsi_v2_context_specific_models.py:21:0: E0401: Unable to import 'pydantic' (import-error)
 examples/ngsi_v2/e11_ngsi_v2_context_specific_models.py:24:0: E0401: Unable to import 'pydantic.fields' (import-error)
 examples/ngsi_v2/e11_ngsi_v2_context_specific_models.py:77:23: W0622: Redefining built-in 'type' (redefined-builtin)
 examples/ngsi_v2/e11_ngsi_v2_context_specific_models.py:17:0: W0611: Unused import json (unused-import)
-************* Module e11_ngsi_v2_semantics.semantics_model_example
+************* Module semantics_model_example
 examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_model_example.py:9:0: W0105: String statement has no effect (pointless-string-statement)
 examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_model_example.py:13:0: C0413: Import "from filip.config import settings" should be placed at the top of the module (wrong-import-position)
 examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_model_example.py:44:4: W0401: Wildcard import models (wildcard-import)
@@ -352,9 +352,9 @@ examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_model_example.py:575:4: W0105: 
 examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_model_example.py:589:4: W0105: String statement has no effect (pointless-string-statement)
 examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_model_example.py:73:4: C0412: Imports from package filip are not grouped (ungrouped-imports)
 examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_model_example.py:44:4: W0614: Unused import(s) Thing, Tenant, HeatProducer, ColdProducer, AirProducer, Enum, Dict, Union, List, SemanticClass, SemanticIndividual, RelationField, DataField, SemanticDeviceClass, DeviceAttributeField, CommandField, SemanticsManager and InstanceRegistry from wildcard import of models (unused-wildcard-import)
-************* Module e11_ngsi_v2_semantics.semantics_vocabulary_example
+************* Module semantics_vocabulary_example
 examples/ngsi_v2/e11_ngsi_v2_semantics/semantics_vocabulary_example.py:58:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-************* Module e11_ngsi_v2_semantics.models
+************* Module models
 examples/ngsi_v2/e11_ngsi_v2_semantics/models.py:41:8: W0612: Unused variable 'is_initialised' (unused-variable)
 examples/ngsi_v2/e11_ngsi_v2_semantics/models.py:460:0: C0115: Missing class docstring (missing-class-docstring)
 examples/ngsi_v2/e11_ngsi_v2_semantics/models.py:635:0: C0115: Missing class docstring (missing-class-docstring)
@@ -2550,7 +2550,7 @@ if __name__ == "__main__":
     # ToDo: Create http subscriptions that get triggered by updates of your
     #  device attributes. Note that you can only post the subscription
     #  to the context broker.
-
+    # Subscription for weather station
     cbc.post_subscription(
         subscription=Subscription(
             subject=Subject(
@@ -2569,7 +2569,8 @@ if __name__ == "__main__":
             throttling=0,
         )
     )
- (duplicate-code)
+
+    # Subscription for zone temperature sensor (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_ld_cb_kv:[774:862]
 ==tests.clients.test_ngsi_ld_entity_batch_operation:[315:403]
@@ -2800,7 +2801,7 @@ print(TOPIC_CONTROLLER)
 # path to json-files to store entity data for follow-up exercises (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e05_ngsi_ld_quantumleap:[130:177]
-==e10_ngsi_v2_quantumleap:[117:164]
+==examples.ngsi_v2.e10_ngsi_v2_quantumleap:[117:164]
         )
 
     time.sleep(1)
@@ -2991,10 +2992,6 @@ IOTA_URL = "http://localhost:4041"
 MQTT_BROKER_HOST = "localhost"
 MQTT_BROKER_PORT = 1883
 
-# ToDo: Change the name of your service to something unique. If you run
-#  on a shared instance this very important in order to avoid user
-#  collisions. You will use this service through the whole tutorial.
-#  If you forget to change it an error will be raised!
 # FIWARE Service
 SERVICE = "filip_tutorial"
 SERVICE_PATH = "/"
@@ -3019,8 +3016,7 @@ if __name__ == "__main__":
     service_group1 = ServiceGroup(
         entity_type="Thing",
         resource="/iot/json",
-        apikey=APIKEY,
-        # ... (duplicate-code)
+        apikey=APIKEY, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data:[230:286]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[257:313]
@@ -3079,10 +3075,10 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     # wait until all data is available
     time.sleep(10)
 
-    # ToDo: Create a quantumleap client. (duplicate-code)
+    # Todo: Create a quantumleap client. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e06_ngsi_ld_use_case_models:[33:72]
-==e12_ngsi_v2_use_case_models:[32:71]
+==examples.ngsi_v2.e12_ngsi_v2_use_case_models:[32:71]
 class PostalAddress(BaseModel):
     """
     https://schema.org/PostalAddress
@@ -3135,7 +3131,6 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
-
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
@@ -3144,10 +3139,10 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # Create a loop that publishes a message every 0.3 seconds to the broker
-    # that holds the simulation time "sim_time" and the corresponding
-    # temperature "temperature". You may use the `object_id`
-    # or the attribute name as key in your payload.
+    # ToDo: Create a loop that publishes a message every 100 milliseconds
+    #  to the broker that holds the simulation time "sim_time" and the
+    #  corresponding temperature "temperature". You may use the `object_id`
+    #  or the attribute name as key in your payload.
     for t_sim in range(
         sim_model.t_start, sim_model.t_end + int(COM_STEP), int(COM_STEP)
     ):
@@ -3259,7 +3254,7 @@ if __name__ == "__main__":
     # ToDo: Create an MQTTv5 client with paho-mqtt. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e04_ngsi_ld_context_subscriptions_mqtt:[125:161]
-==e04_ngsi_v2_context_subscriptions_mqtt:[121:157]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[121:157]
     def on_disconnect(client, userdata, flags, reasonCode, properties=None):
         logger.info("MQTT Client disconnected with reasonCode " + str(reasonCode))
 
@@ -3455,14 +3450,36 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         clear_context_broker_ld(cb_ld_client=self.client)
         self.client.close()
 
-    @unittest.skip("Only for local testing environment")
-    def test_not_existing_tenant(self):
+    def test_post_entity(self):
         """
-        Test the expected behavior of the client when the tenant does not exist
-        This test will not be included in the CI/CD pipeline. For local testing please
-        comment out the decorator.
+        Post an entity.
+        Args:
+            - Entity{
+                @context: LdContext{}
+                location: GeoProperty{}
+                observationSpace: GeoProperty{}
+                operationSpace: GeoProperty{}
+                id: string($uri) required
+                type: Name(string) required
+                (NGSI-LD Name)
+                createdAt: string($date-time)
+                modifiedAt: string($date_time)
+                <*>: Property{}
+                     Relationship{}
+                     GeoProperty{}
+            }
+        Returns:
+            - (201) Created. Contains the resource URI of the created Entity
+            - (400) Bad request.
+            - (409) Already exists.
+            - (422) Unprocessable Entity.
+        Tests:
+            - Post an entity -> Does it return 201?
+            - Post an entity again -> Does it return 409?
+            - Post an entity without requires args -> Does it return 422?
+            - Post entity from class with default value
         """
-        # create uuid for the tenant (duplicate-code)
+        # create entity (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors:[25:68]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[25:68]
@@ -3543,8 +3560,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         entity_name="urn:ngsi-ld:WeatherStation:001",
         entity_type="WeatherStation",
         transport=TransportProtocol.MQTT,
-        protocol=PayloadProtocol.IOTA_JSON,
-        # ... (duplicate-code)
+        protocol=PayloadProtocol.IOTA_JSON, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_ld_cb_kv:[622:648]
 ==tests.clients.test_ngsi_ld_entity_batch_operation:[162:188]
@@ -3576,7 +3592,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         entities_update = [ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e06_ngsi_ld_use_case_models:[141:170]
-==e12_ngsi_v2_use_case_models:[133:162]
+==examples.ngsi_v2.e12_ngsi_v2_use_case_models:[133:162]
     )
     # validate with general model
     weather_station_2_general = WeatherStation.model_validate(
@@ -3734,9 +3750,7 @@ if __name__ == "__main__":
 
     # define lists to store historical data
     history_weather_station = []
-    history_zone_temperature_sensor = []
-
-    # create a service group with your api key (duplicate-code)
+    history_zone_temperature_sensor = [] (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_v2_cb:[2120:2144]
 ==tests.utils.test_filter:[76:101]
@@ -3932,36 +3946,35 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
                 return items
             res.raise_for_status()
 
-    # MANAGEMENT API
     def get_version(self) -> Dict:
         """
-        Gets version of IoT Agent
+        Gets version of Orion-LD context broker
         Returns:
             Dictionary with response
         """ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e11_ngsi_v2_semantics.models:[525:542]
 ==filip.semantics.ontology_parser.post_processer:[257:274]
-                    "0",
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                    "6",
-                    "7",
-                    "8",
-                    "9",
-                    "A",
-                    "B",
-                    "C",
-                    "D",
-                    "E",
-                    "F",
-                ], (duplicate-code)
+==models:[525:542]
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+        ], (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e08_ngsi_ld_notification_based_command:[37:67]
-==e14_ngsi_v2_notification_based_command:[42:72]
+==examples.ngsi_v2.e14_ngsi_v2_notification_based_command:[42:72]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -4044,13 +4057,13 @@ CB_URL = "http://localhost:1026"
 # ToDo: Enter your IoT-Agent host and port, e.g. http://localhost:4041.
 IOTA_URL = "http://localhost:4041"
 
-# ToDo: Change the name of your service to something unique. If you run
-#  on a shared instance this very is important in order to avoid user
-#  collisions. You will use this service through the whole tutorial.
-#  If you forget to change it, an error will be raised!
 # FIWARE-Service
 SERVICE = "filip_tutorial"
 # FIWARE-Service path
+# ToDo: Change the name of your service-path to something unique. If you run
+#  on a shared instance this is very important in order to avoid user
+#  collisions. You will use this service path through the whole tutorial.
+#  If you forget to change it, an error will be raised!
 SERVICE_PATH = "/"
 
 # ToDo: Change the APIKEY to something unique. This represents the "token"
@@ -4105,26 +4118,21 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.utils.test_clear:[66:86]
 ==tests.utils.test_filter:[36:51]
-            "description": "One subscription to rule them all",
-            "subject": {
-                "entities": [{"idPattern": ".*", "type": "Room"}],
-                "condition": {
-                    "attrs": ["temperature"],
-                    "expression": {"q": "temperature>40"},
+                "description": "One subscription to rule them all",
+                "subject": {
+                    "entities": [{"idPattern": ".*", "type": "Room"}],
+                    "condition": {
+                        "attrs": ["temperature"],
+                        "expression": {"q": "temperature>40"},
+                    },
                 },
-            },
-            "notification": {
-                "http": {"url": "http://localhost:1234"},
-                "attrs": ["temperature", "humidity"],
-            },
-            "expires": datetime.now(),
-            "throttling": 0,
-        }
-
-    def test_clear_context_broker(self):
-        """
-        Test for clearing context broker using context broker client
-        """ (duplicate-code)
+                "notification": {
+                    "http": {"url": "http://localhost:1234"},
+                    "attrs": ["temperature", "humidity"],
+                },
+                "expires": datetime.now(),
+                "throttling": 0,
+            } (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_v2_cb:[93:107]
 ==tests.utils.test_filter:[34:48]
@@ -4143,26 +4151,27 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
                     "attrs": ["temperature", "humidity"],
                 }, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e15_ngsi_v2_use_sessions:[33:49]
+==examples.ngsi_v2.e15_ngsi_v2_use_sessions:[33:49]
 ==tests.clients.test_ngsi_ld_cb:[63:78]
-        retry_strategy = Retry(
-            total=5,  # Maximum number of retries
-            backoff_factor=1,  # Exponential backoff (1, 2, 4, 8, etc.)
-            status_forcelist=[
-                429,
-                500,
-                502,
-                503,
-                504,
-            ],  # Retry on these HTTP status codes
-        )
-        # Set the HTTP adapter with retry strategy
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        session.mount("https://", adapter)
-        session.mount("http://", adapter) (duplicate-code)
+    retry_strategy = Retry(
+        total=5,  # Maximum number of retries
+        backoff_factor=1,  # Exponential backoff (1, 2, 4, 8, etc.)
+        status_forcelist=[
+            429,
+            500,
+            502,
+            503,
+            504,
+        ],  # Retry on these HTTP status codes
+    )
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+
+    # Option 2. set default headers for the session (e.g., for authentication) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e04_ngsi_ld_context_subscriptions_mqtt:[106:122]
-==e04_ngsi_v2_context_subscriptions_mqtt:[100:116]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[100:116]
     def on_connect(client, userdata, flags, reason_code, properties=None):
         if reason_code != 0:
             logger.error(
@@ -4268,10 +4277,10 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[274:296]
     mqttc.loop_start()
 
-    # ToDo: Create a loop that publishes a message every 100 milliseconds
-    #  to the broker that holds the simulation time `sim_time` and the
-    #  corresponding temperature `temperature`. You may use the `object_id`
-    #  or the attribute name as a key in your payload.
+    # Create a loop that publishes a message every 0.3 seconds to the broker
+    # that holds the simulation time "sim_time" and the corresponding
+    # temperature "temperature". You may use the `object_id`
+    # or the attribute name as key in your payload.
     for t_sim in range(
         sim_model.t_start, sim_model.t_end + int(COM_STEP), int(COM_STEP)
     ):
@@ -4281,13 +4290,13 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
             payload={"temperature": sim_model.t_amb, "sim_time": sim_model.t_sim},
         )
 
-        # ToDo: Publish the simulated zone temperature.
+        # publish the simulated zone temperature
         mqttc.publish(
             device_id=zone_temperature_sensor.device_id,
             payload={"temperature": sim_model.t_zone, "sim_time": sim_model.t_sim},
         )
 
-        # simulation step for the next loop (duplicate-code)
+        # publish the 'sim_time' for the heater device (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors:[204:222]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[228:246]
@@ -4327,21 +4336,21 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.models.test_ngsi_v2_subscriptions:[47:59]
 ==tests.utils.test_filter:[36:48]
-            "description": "One subscription to rule them all",
-            "subject": {
-                "entities": [{"idPattern": ".*", "type": "Room"}],
-                "condition": {
-                    "attrs": ["temperature"],
-                    "expression": {"q": "temperature>40"},
+                "description": "One subscription to rule them all",
+                "subject": {
+                    "entities": [{"idPattern": ".*", "type": "Room"}],
+                    "condition": {
+                        "attrs": ["temperature"],
+                        "expression": {"q": "temperature>40"},
+                    },
                 },
-            },
-            "notification": {
-                "http": {"url": "http://localhost:1234"},
-                "attrs": ["temperature", "humidity"],
-            }, (duplicate-code)
+                "notification": {
+                    "http": {"url": "http://localhost:1234"},
+                    "attrs": ["temperature", "humidity"],
+                }, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e08_ngsi_ld_notification_based_command:[77:98]
-==e14_ngsi_v2_notification_based_command:[81:101]
+==examples.ngsi_v2.e14_ngsi_v2_notification_based_command:[81:101]
         logger.info("MQTT client disconnected with reasonCode " + str(reasonCode))
 
     mqtt_client = mqtt.Client(
@@ -4360,9 +4369,8 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 
 
 def create_subscription(
-    cbc: ContextBrokerLDClient, entity_id: str, notification: NotificationParams
-):
- (duplicate-code)
+    cbc: ContextBrokerClient, entity_id: str, notification: Notification
+): (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e1_virtual_weatherstation.e1_virtual_weatherstation:[112:128]
 ==tutorials.ngsi_v2.e1_virtual_weatherstation.e1_virtual_weatherstation_solution:[123:139]
@@ -4443,6 +4451,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
@@ -4474,14 +4483,11 @@ if __name__ == "__main__":
 
     # # 1 Setup Client
     #
-    # create the client, for more details view the example: e01_http_clients.py
-    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
-
-    # ## 1.1 Store entities
-    # (duplicate-code)
+    # create the client
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e01_ngsi_v2_context_basics:[23:45]
-==e02_ngsi_v2_context_relationships:[18:42]
+==examples.ngsi_v2.e01_ngsi_v2_context_basics:[23:45]
+==examples.ngsi_v2.e02_ngsi_v2_context_relationships:[18:42]
 CB_URL = settings.CB_URL
 
 # You can also change the used Fiware service
@@ -4507,51 +4513,50 @@ if __name__ == "__main__":
     # ## 1.1 Store entities
     # (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[102:118]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[102:118]
 ==tests.clients.test_ngsi_v2_cb:[1901:1917]
-        attributes=[device_attr1],
-        static_attributes=[static_device_attr],
-        commands=[device_command],
-    )
+            attributes=[device_attr1],
+            static_attributes=[static_device_attr],
+            commands=[device_command],
+        )
 
-    # you can also add additional attributes via the Device API
-    device_attr2 = DeviceAttribute(
-        name="humidity",
-        object_id="h",
-        type="Number",
-        metadata={"unitText": {"value": "percent", "type": "Text"}},
-    )
+        device_attr2 = DeviceAttribute(
+            name="humidity",
+            object_id="h",
+            type="Number",
+            metadata={"unitText": {"value": "percent", "type": "Text"}},
+        )
 
-    device.add_attribute(attribute=device_attr2)
+        device.add_attribute(attribute=device_attr2)
 
-    # this will print our configuration that we will send (duplicate-code)
+        # Send device configuration to FIWARE via the IoT-Agent. We use the
+        # general ngsiv2 httpClient for this. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[125:140]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[125:140]
 ==tests.clients.test_ngsi_v2_cb:[1431:1445]
-    import paho.mqtt.client as mqtt
+        import paho.mqtt.client as mqtt
 
-    mqtt_client = mqtt.Client(
-        userdata=None,
-        protocol=mqtt.MQTTv5,
-        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-        transport="tcp",
-    )
-    # add callbacks to the mqtt-client
-    mqtt_client.on_connect = on_connect
-    mqtt_client.on_subscribe = on_subscribe
-    mqtt_client.on_message = on_message
-    mqtt_client.on_disconnect = on_disconnect
-
-    # connect to the mqtt-broker to receive the notifications message (duplicate-code)
+        mqtt_client = mqtt.Client(
+            userdata=None,
+            protocol=mqtt.MQTTv5,
+            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+            transport="tcp",
+        )
+        # add our callbacks to the client
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_subscribe = on_subscribe
+        mqtt_client.on_message = on_message
+        mqtt_client.on_disconnect = on_disconnect
+        # connect to the server (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e01_ngsi_v2_context_basics:[15:44]
-==e05_ngsi_v2_context_registrations:[16:48]
+==examples.ngsi_v2.e01_ngsi_v2_context_basics:[15:44]
+==examples.ngsi_v2.e05_ngsi_v2_context_registrations:[16:48]
 from filip.config import settings
 
 # ## Parameters
 #
-# To run this example you need a working Fiware v2 setup with a context-broker
-# You can set the address:
+# To run this example, you need a working Fiware v2 setup with a context-broker
+# You can set the address here:
 #
 # Host address of Context Broker
 CB_URL = settings.CB_URL
@@ -4571,13 +4576,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    # # 1 Creating models
-    #
-    # Create a building with a weather station as a context provider.
-    # We start by creating metadata. The other way round is also possible, but
-    # you have to use the api of the Context Entity Model.
 
-    # create unit metadata for the temperature sensor of the weather station (duplicate-code)
+    # # 1 Setup Client
+    #
+    # create the client, for more details view the example: e01_http_clients.py (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e5_iot_thermal_zone_control.e5_iot_thermal_zone_control_solution:[186:206]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data:[137:157]
@@ -4605,7 +4607,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 ==tutorials.ngsi_v2.e5_iot_thermal_zone_control.e5_iot_thermal_zone_control_solution:[67:91]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data:[52:77]
 MQTT_BROKER_URL_EXPOSED = "mqtt://localhost:1883"
-# ToDo: Enter your mqtt broker url, e.g. mqtt://mosquitto:1883.
+# ToDo: Enter your mqtt broker url, e.g mqtt://mosquitto:1883.
 MQTT_BROKER_URL_INTERNAL = "mqtt://mosquitto:1883"
 # ToDo: If required, enter your username and password.
 MQTT_USER = ""
@@ -4627,8 +4629,7 @@ APIKEY = "your_apikey"
 UNIQUE_ID = str(uuid4())
 TOPIC_CONTROLLER = f"fiware_workshop/{UNIQUE_ID}/controller"
 print(TOPIC_CONTROLLER)
-
-# path to read json-files from previous exercises (duplicate-code)
+# path to json-files to store entity data for follow-up exercises (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e5_iot_thermal_zone_control.e5_iot_thermal_zone_control:[175:195]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[139:159]
@@ -4637,21 +4638,21 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         devices=[weather_station, zone_temperature_sensor, heater],
         service_groups=[group],
     )
-    # set user data if required
+    # ToDo: Set user data if required.
     mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
+    # Implement a callback function that gets triggered when the
+    # command is sent to the device. The incoming command should update the
+    # heater attribute of the simulation model
 
-    # ToDo: Implement a callback function that gets triggered when the
-    #  command is sent to the device. The incoming command should update the
-    #  heater attribute of the simulation model.
     def on_command(client, obj, msg):
         """
         Callback for incoming commands
         """
-        # decode the message payload using the libraries builtin encoders
+        # Decode the message payload using the libraries builtin encoders
         apikey, device_id, payload = client.get_encoder(
             PayloadProtocol.IOTA_JSON
         ).decode_message(msg=msg)
-        # map the command value to the simulation (duplicate-code)
+ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e5_iot_thermal_zone_control.e5_iot_thermal_zone_control:[67:91]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[52:77]
@@ -4696,7 +4697,9 @@ if __name__ == "__main__":
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
     # clear the state of your service and scope
     clear_iot_agent(url=IOTA_URL, fiware_header=fiware_header)
-    clear_context_broker(url=CB_URL, fiware_header=fiware_header) (duplicate-code)
+    clear_context_broker(url=CB_URL, fiware_header=fiware_header)
+
+    # instantiate simulation model (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[193:206]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[258:271]
@@ -4709,10 +4712,10 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
+
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
-    mqttc.subscribe()
-    # create a non-blocking thread for mqtt communication (duplicate-code)
+    mqttc.subscribe() (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e1_virtual_weatherstation.e1_virtual_weatherstation_solution:[92:104]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[192:204]
@@ -4726,8 +4729,8 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
-
-    # ToDo: Print and subscribe to the weather station topic. (duplicate-code)
+    # subscribe to topics
+    # subscribe to all incoming command topics for the registered devices (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors:[72:89]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[92:107]
@@ -4894,7 +4897,17 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False (duplicate-code)
+                return False
+
+    def update_registration(self, registration: Registration):
+        """
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        """ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[119:130]
 ==filip.clients.ngsi_v2.cb:[124:135]
@@ -4951,9 +4964,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
-
- (duplicate-code)
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[384:394]
 ==filip.models.ngsi_v2.context:[149:159]
@@ -4976,15 +4987,16 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
         transport="tcp",
     )
-    # add callbacks to the client
+    # add callbacks to the mqtt-client
     mqtt_client.on_connect = on_connect
     mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_message = on_message
     mqtt_client.on_disconnect = on_disconnect
- (duplicate-code)
+
+    # connect to the mqtt-broker to receive the notifications message (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e01_ngsi_v2_context_basics:[27:45]
-==e07_ngsi_v2_iota_basics:[33:56]
+==examples.ngsi_v2.e01_ngsi_v2_context_basics:[27:45]
+==examples.ngsi_v2.e07_ngsi_v2_iota_basics:[33:56]
 SERVICE = "filip"
 # FIWARE-Service path
 SERVICE_PATH = "/example"
@@ -4995,24 +5007,19 @@ logging.basicConfig(
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S",
 )
-
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    # # 1 Setup IoTAClient
-    #
-    # First a client is initialised that provides access to our
-    # Fiware-server space.
-    #
-    # For more details about this step see e01_http_clients.py.
 
-    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
- (duplicate-code)
+    # # 1 Setup Client
+    #
+    # create the client, for more details view the example: e01_http_clients.py
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e02_ngsi_v2_context_relationships:[22:42]
-==e10_ngsi_v2_quantumleap:[27:50]
+==examples.ngsi_v2.e02_ngsi_v2_context_relationships:[22:42]
+==examples.ngsi_v2.e10_ngsi_v2_quantumleap:[27:50]
 SERVICE = "filip"
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = "/example"
 
 # Setting up logging
@@ -5024,16 +5031,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-
-    # # 1 Setup client and models
+    # ## 1 Setup
     #
+    # QuantumLeapClient and ContextBrokerClient are created to access
+    # FIWARE in the space given by the FiwareHeader.
+    #
+    # For more information see: e01_http_clients.py
+
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
 
-    # ## 1.1 Store entities
-    # (duplicate-code)
+    # clear all existing data (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[127:140]
-==e14_ngsi_v2_notification_based_command:[83:95]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[127:140]
+==examples.ngsi_v2.e14_ngsi_v2_notification_based_command:[83:95]
     mqtt_client = mqtt.Client(
         userdata=None,
         protocol=mqtt.MQTTv5,
@@ -5047,8 +5057,8 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     mqtt_client.on_disconnect = on_disconnect
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[141:155]
-==e08_ngsi_v2_iota_paho_mqtt:[233:245]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[141:155]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[233:245]
     mqtt_client.connect(
         host=mqtt_url.hostname,
         port=mqtt_url.port,
@@ -5058,12 +5068,14 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
+
+    # # 4 send new value via MQTT
+    #
     # create a non-blocking thread for mqtt communication
-    mqtt_client.loop_start()
- (duplicate-code)
+    mqtt_client.loop_start() (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e11_ngsi_v2_context_specific_models:[54:71]
-==e12_ngsi_v2_use_case_models:[52:66]
+==examples.ngsi_v2.e11_ngsi_v2_context_specific_models:[54:71]
+==examples.ngsi_v2.e12_ngsi_v2_use_case_models:[52:66]
         alias="addressLocality",
         default=None,
         description="The locality in which the street address is, and which is "
@@ -5076,14 +5088,11 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     )
 
 
-# Now, define a context specific attribute for the address. Here, we use the
-# previously defined address model as type for the value.
-# Furthermore, we set the default type of the attribute to "PostalAddress"
-# to give the user a type-hint. Your may also allow multiple types during
-# creation. (duplicate-code)
+# It is assumed that this kind of models exists in use case, which is simple and use case
+# specific. It describes basically, how does the data look like in the specific use case. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e02_ngsi_v2_context_relationships:[18:38]
-==e05_ngsi_v2_context_registrations:[24:48]
+==examples.ngsi_v2.e02_ngsi_v2_context_relationships:[18:38]
+==examples.ngsi_v2.e05_ngsi_v2_context_registrations:[24:48]
 CB_URL = settings.CB_URL
 
 # You can also change the used Fiware service
@@ -5191,15 +5200,15 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_v2_cb:[1806:1815]
 ==tests.models.test_ngsi_v2_subscriptions:[50:59]
-                "condition": {
-                    "attrs": ["temperature"],
-                    "expression": {"q": "temperature>40"},
+                    "condition": {
+                        "attrs": ["temperature"],
+                        "expression": {"q": "temperature>40"},
+                    },
                 },
-            },
-            "notification": {
-                "http": {"url": "http://localhost:1234"},
-                "attrs": ["temperature", "humidity"],
-            }, (duplicate-code)
+                "notification": {
+                    "http": {"url": "http://localhost:1234"},
+                    "attrs": ["temperature", "humidity"],
+                }, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[767:776]
 ==filip.clients.ngsi_v2.cb:[1648:1657]
@@ -5280,8 +5289,12 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
+    # # 1 Client setup
+    #
+    # Create the context broker client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
-    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header) (duplicate-code)
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    # Make sure that the database is clean (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e01_ngsi_ld_context_basics:[32:47]
 ==e04_ngsi_ld_context_subscriptions_mqtt:[42:57]
@@ -5301,24 +5314,22 @@ if __name__ == "__main__":
     cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e14_ngsi_v2_notification_based_command:[84:95]
+==examples.ngsi_v2.e14_ngsi_v2_notification_based_command:[84:95]
 ==tests.clients.test_ngsi_v2_cb:[1975:1988]
-            userdata=None,
-            protocol=mqtt.MQTTv5,
-            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-            transport="tcp",
-        )
-
-        # add our callbacks to the client
-        mqtt_client.on_connect = on_connect
-        mqtt_client.on_subscribe = on_subscribe
-        mqtt_client.on_message = on_message
-        mqtt_client.on_disconnect = on_disconnect
-
-        # extract the form the environment (duplicate-code)
+        userdata=None,
+        protocol=mqtt.MQTTv5,
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+        transport="tcp",
+    )
+    # add callbacks to the client
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_subscribe = on_subscribe
+    mqtt_client.on_message = on_message
+    mqtt_client.on_disconnect = on_disconnect
+ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[48:77]
-==e09_ngsi_v2_iota_filip_mqtt:[45:69]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[48:77]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[45:69]
 SERVICE_GROUP_APIKEY = "filip-example-service-group"
 
 
@@ -5344,8 +5355,8 @@ if __name__ == "__main__":
     # ## 1.2 Device configuration
     # (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e03_ngsi_v2_context_subscriptions_http:[39:53]
-==e04_ngsi_v2_context_subscriptions_mqtt:[40:55]
+==examples.ngsi_v2.e03_ngsi_v2_context_subscriptions_http:[39:53]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[40:55]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -5357,26 +5368,28 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # # 1 Client setup
     #
-    # Create the context broker client, for more details view the example: e01_http_clients.py
+    # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
-    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header) (duplicate-code)
+    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
+ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[128:140]
-==e08_ngsi_v2_iota_paho_mqtt:[221:232]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[128:140]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[221:232]
         userdata=None,
         protocol=mqtt.MQTTv5,
         callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
         transport="tcp",
     )
-    # bind callbacks to the client
+    # add callbacks to the mqtt-client
     mqtt_client.on_connect = on_connect
     mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_message = on_message
     mqtt_client.on_disconnect = on_disconnect
-    # connect to the server (duplicate-code)
+
+    # connect to the mqtt-broker to receive the notifications message (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e05_ngsi_v2_context_registrations:[28:48]
-==e10_ngsi_v2_quantumleap:[27:47]
+==examples.ngsi_v2.e05_ngsi_v2_context_registrations:[28:48]
+==examples.ngsi_v2.e10_ngsi_v2_quantumleap:[27:47]
 SERVICE = "filip"
 # FIWARE-Service path
 SERVICE_PATH = "/example"
@@ -5390,13 +5403,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    # ## 1 Setup
+    # # 1 Creating models
     #
-    # QuantumLeapClient and ContextBrokerClient are created to access
-    # FIWARE in the space given by the FiwareHeader.
-    #
-    # For more information see: e01_http_clients.py
- (duplicate-code)
+    # Create a building with a weather station as a context provider.
+    # We start by creating metadata. The other way round is also possible, but
+    # you have to use the api of the Context Entity Model.
+
+    # create unit metadata for the temperature sensor of the weather station (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e5_iot_thermal_zone_control.e5_iot_thermal_zone_control:[240:250]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[184:193]
@@ -5407,17 +5420,18 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
             state = 0
         else:
             update = False
-        # send the command to the heater entity
+
+        # ToDo: Send the command to the heater entity.
         if update: (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors:[185:201]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[274:290]
     mqttc.loop_start()
 
-    # Create a loop that publishes a message every 0.3 seconds to the broker
-    # that holds the simulation time "sim_time" and the corresponding
-    # temperature "temperature". You may use the `object_id`
-    # or the attribute name as key in your payload.
+    # ToDo: Create a loop that publishes a message every 100 milliseconds
+    #  to the broker that holds the simulation time `sim_time` and the
+    #  corresponding temperature `temperature`. You may use the `object_id`
+    #  or the attribute name as a key in your payload.
     for t_sim in range(
         sim_model.t_start, sim_model.t_end + int(COM_STEP), int(COM_STEP)
     ):
@@ -5427,7 +5441,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
             payload={"temperature": sim_model.t_amb, "sim_time": sim_model.t_sim},
         )
 
-        # publish the simulated zone temperature (duplicate-code)
+        # ToDo: Publish the simulated zone temperature. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e8_multientity_and_expression_language.e8_multientity_and_expression_language:[98:112]
 ==tutorials.ngsi_v2.e8_multientity_and_expression_language.e8_multientity_and_expression_language_solution:[104:117]
@@ -5443,8 +5457,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         entity_name="urn:ngsi-ld:WasteContainer:002",
         entity_type="WasteContainer",
         transport=TransportProtocol.MQTT,
-        protocol=PayloadProtocol.IOTA_JSON,
-        # ... (duplicate-code)
+        protocol=PayloadProtocol.IOTA_JSON, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e8_multientity_and_expression_language.e8_multientity_and_expression_language:[83:98]
 ==tutorials.ngsi_v2.e8_multientity_and_expression_language.e8_multientity_and_expression_language_solution:[79:93]
@@ -5531,43 +5544,44 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         )
         self.client.delete_entity_by_id(entity_id=temperature_sensor.id)
 
-    def test_add_attributes_entity(self):
+    def test_delete_entity(self):
         """
-        Append new Entity attributes to an existing Entity within an NGSI-LD system.
+        Removes an specific Entity from an NGSI-LD system.
         Args:
             - entityID(string): Entity ID; required
-            - options(string): Indicates that no attribute overwrite shall be performed.
-                Available values: noOverwrite
+            - type(string): Entity Type
         Returns:
-            - (204) No Content
-            - (207) Partial Success. Only the attributes included in the response payload were successfully appended.
-            - (400) Bad Request
-            - (404) Not Found
+            - (204) No Content. The entity was removed successfully.
+            - (400) Bad request.
+            - (404) Not found.
         Tests:
-            - Post an entity and add an attribute. Test if the attribute is added when Get is done.
-            - Try to add an attribute to an non existent entity -> Return 404
-            - Try to overwrite an attribute even though noOverwrite option is used
+            - Try to delete an non existent entity -> Does it return a Not found?
+            - Post an entity and try to delete the entity -> Does it return 204?
+            - Try to get to delete an deleted entity -> Does it return 404?
         """
+
         """
         Test 1:
-            post an entity with entity_ID and entity_type
-            add attribute to the entity with entity_ID
-            get entity with entity_ID and new attribute
-            Is new attribute not added to enitity ?
-                yes:
-                    Raise Error
+            delete entity with non existent entity_ID
+            If return != 404:
+                Raise Error
+
         Test 2:
-            add attribute to an non existent entity
-            Raise Error
+            post an entity with entity_ID and entity_type
+            delete entity with entity_ID
+            get entity list
+            If entity with entity_ID in entity list:
+                Raise Error
+
         Test 3:
-            post an entity with entity_ID, entity_type, entity_attribute
-            add attribute that already exists with noOverwrite
-                Raise Error
-            get entity and compare previous with entity attributes
-            If attributes are different?
-                Raise Error
+            delete entity with entity_ID
+                return != 404 ?
+                    yes:
+                        Raise Error
         """
-        """Test 1""" (duplicate-code)
+
+        """Test1"""
+        # try to delete nonexistent entity (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_ld_cb:[473:483]
 ==tests.clients.test_ngsi_ld_cb_kv:[237:247]
@@ -5635,7 +5649,6 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) > 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -5647,14 +5660,14 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[463:471]
 ==tests.models.test_ngsi_v2_context:[8:16]
-                        Point,
-                        MultiPoint,
-                        LineString,
-                        MultiLineString,
-                        Polygon,
-                        MultiPolygon,
-                        Feature,
-                        FeatureCollection, (duplicate-code)
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,
+    Feature,
+    FeatureCollection, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[169:178]
 ==filip.models.ngsi_v2.context:[37:46]
@@ -5692,11 +5705,8 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         "id": "urg:ngsi-ld:Sub:001",
         "type": "Subscription",
     }
-    # Generate Subscription object for validation
     sub = SubscriptionLD(**sub_example)
-
-    # Posting an example subscription for Room1. Make sure that you store the
-    # returned id because you might need it for later updates of the subscription. (duplicate-code)
+    # Posting an example subscription for Room1 (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e02_ngsi_ld_context_relationships:[26:42]
 ==e04_ngsi_ld_context_subscriptions_mqtt:[42:55]
@@ -5707,12 +5717,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 if __name__ == "__main__":
-    # # 1 Client setup
+
+    # # 1 Setup Client
     #
-    # create the client
-    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT) (duplicate-code)
+    # create the client, for more details view the example: e01_http_clients.py
+    fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
+
+    # ## 1.1 Store entities
+    # (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e01_ngsi_ld_context_basics:[25:39]
 ==e07_ngsi_ld_context_tenant:[13:26]
@@ -5743,15 +5756,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    # ## 1 Setup
+
+    # # 1 Setup Client
     #
-    # QuantumLeapClient and ContextBrokerClient are created to access
-    # FIWARE in the space given by the FiwareHeader.
-    #
-    # For more information see: e01_http_clients.py
- (duplicate-code)
+    # create the client (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e09_ngsi_v2_iota_filip_mqtt:[252:263]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[252:263]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[196:212]
         keepalive=60,
         bind_address="",
@@ -5759,37 +5769,19 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
+    # subscribe to topics
+    # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
+    # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # ## 4.2 Command
-    # (duplicate-code)
+    # ToDo: Create a loop that publishes a message every 100 milliseconds
+    #  to the broker that holds the simulation time `sim_time` and the
+    #  corresponding temperature `temperature`. You may use the `object_id`
+    #  or the attribute name as a key in your payload. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e01_ngsi_v2_context_basics:[32:45]
-==e09_ngsi_v2_iota_filip_mqtt:[49:69]
-logging.basicConfig(
-    level="INFO",
-    format="%(asctime)s %(name)s %(levelname)s: %(message)s",
-    datefmt="%d-%m-%Y %H:%M:%S",
-)
-
-logger = logging.getLogger(__name__)
-
-if __name__ == "__main__":
-
-    # # 1 Setup
-    #
-    # ## 1.1 FiwareHeader
-    #
-    # Since we want to use the multi-tenancy concept of fiware we always start
-    # with create a fiware header
-    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
-
-    # ## 1.2 Device configuration
-    # (duplicate-code)
-tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e02_ngsi_v2_context_relationships:[27:42]
-==e03_ngsi_v2_context_subscriptions_http:[39:52]
+==examples.ngsi_v2.e01_ngsi_v2_context_basics:[32:45]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[49:69]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -5797,14 +5789,32 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 if __name__ == "__main__":
-    # # 1 Client setup
+
+    # # 1 Setup Client
     #
-    # Create the context broker client, for more details view the example: e01_http_clients.py
+    # create the client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[234:243]
+==examples.ngsi_v2.e02_ngsi_v2_context_relationships:[27:42]
+==examples.ngsi_v2.e03_ngsi_v2_context_subscriptions_http:[39:52]
+logging.basicConfig(
+    level="INFO",
+    format="%(asctime)s %(name)s %(levelname)s: %(message)s",
+    datefmt="%d-%m-%Y %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
+if __name__ == "__main__":
+
+    # # 1 Setup client and models
+    #
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
+
+    # ## 1.1 Store entities
+    # (duplicate-code)
+tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[234:243]
 ==tutorials.ngsi_v2.e1_virtual_weatherstation.e1_virtual_weatherstation_solution:[94:104]
         host=mqtt_url.hostname,
         port=mqtt_url.port,
@@ -5817,20 +5827,20 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 
     # ToDo: Print and subscribe to the weather station topic. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[236:246]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[236:246]
 ==tests.clients.test_ngsi_v2_cb:[1991:2001]
-        keepalive=60,
-        bind_address="",
-        bind_port=0,
-        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-        properties=None,
-    )
-    # create a non-blocking thread for mqtt communication
-    mqtt_client.loop_start()
+            keepalive=60,
+            bind_address="",
+            bind_port=0,
+            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+            properties=None,
+        )
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
 
-    for attr in device.attributes: (duplicate-code)
+        for attr in device.attributes: (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[142:154]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[142:154]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[194:204]
         host=mqtt_url.hostname,
         port=mqtt_url.port,
@@ -5843,23 +5853,22 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[143:155]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[143:155]
 ==tests.clients.test_ngsi_v2_cb:[1447:1458]
-        port=mqtt_url.port,
-        keepalive=60,
-        bind_address="",
-        bind_port=0,
-        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-        properties=None,
-    )
+            port=mqtt_url.port,
+            keepalive=60,
+            bind_address="",
+            bind_port=0,
+            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+            properties=None,
+        )
 
-    # # 4 send new value via MQTT
-    #
-    # create a non-blocking thread for mqtt communication
-    mqtt_client.loop_start() (duplicate-code)
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
+ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[40:53]
-==e08_ngsi_v2_iota_paho_mqtt:[51:77]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[40:53]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[51:77]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -5875,7 +5884,7 @@ if __name__ == "__main__":
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e06_ngsi_ld_use_case_models:[83:102]
-==e12_ngsi_v2_use_case_models:[82:100]
+==examples.ngsi_v2.e12_ngsi_v2_use_case_models:[82:100]
         default="CustomModels:WeatherStation",
         # overwrite the title in the json-schema if necessary
         title="Type of the Weather Station",
@@ -5896,8 +5905,8 @@ if __name__ == "__main__":
     use_case_model = WeatherStation.model_json_schema()
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e11_ngsi_v2_context_specific_models:[41:49]
-==e12_ngsi_v2_use_case_models:[39:47]
+==examples.ngsi_v2.e11_ngsi_v2_context_specific_models:[41:49]
+==examples.ngsi_v2.e12_ngsi_v2_use_case_models:[39:47]
     address_country: str = Field(
         alias="addressCountry",
         description="County code according to ISO 3166-1-alpha-2",
@@ -5929,7 +5938,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         temp_start=TEMPERATURE_ZONE_START,
     )
 
-    # define lists to store historical data (duplicate-code)
+    # create clients and restore devices and groups from file (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e3_context_entities.e3_context_entities:[167:188]
 ==tutorials.ngsi_v2.e3_context_entities.e3_context_entities_solution:[192:213]
@@ -5961,15 +5970,14 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     iotac.post_groups(service_groups=groups)
     iotac.post_devices(devices=devices)
 
-    # ToDo: Retrieve all iot resources from the IoT-Agent.
     # get the group and device configurations from the server
     group = iotac.get_group(resource="/iot/json", apikey=APIKEY)
     weather_station = iotac.get_device(device_id="device:001")
     zone_temperature_sensor = iotac.get_device(device_id="device:002")
     heater = iotac.get_device(device_id="device:003")
 
-    # ToDo: Get context entities from the Context Broker
-    #  (exclude the IoT device ones). (duplicate-code)
+    # create a MQTTv5 client with paho-mqtt and the known groups and
+    # devices. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[127:139]
 ==tutorials.ngsi_v2.e7_semantic_iot.e7_semantic_iot_solutions:[84:97]
@@ -5977,15 +5985,14 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     iotac.post_groups(service_groups=groups)
     iotac.post_devices(devices=devices)
 
-    # ToDo: Retrieve all iot resources from the IoT-Agent.
     # get the group and device configurations from the server
     group = iotac.get_group(resource="/iot/json", apikey=APIKEY)
     weather_station = iotac.get_device(device_id="device:001")
     zone_temperature_sensor = iotac.get_device(device_id="device:002")
     heater = iotac.get_device(device_id="device:003")
 
-    # ToDo: Get context entities from the Context Broker
-    #  (exclude the IoT device ones). (duplicate-code)
+    # create a MQTTv5 client with paho-mqtt and the known groups and
+    # devices. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_ld_cb_kv:[548:555]
 ==tests.clients.test_ngsi_ld_entity_batch_operation:[88:95]
@@ -6053,15 +6060,15 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.clients.test_ngsi_v2_cb:[1447:1456]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[195:204]
-        port=mqtt_url.port,
-        keepalive=60,
-        bind_address="",
-        bind_port=0,
-        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-        properties=None,
-    )
-    # subscribe to topics
-    # subscribe to all incoming command topics for the registered devices (duplicate-code)
+            port=mqtt_url.port,
+            keepalive=60,
+            bind_address="",
+            bind_port=0,
+            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+            properties=None,
+        )
+
+        # create a non-blocking thread for mqtt communication (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tests.models.test_ngsi_ld_subscriptions:[27:34]
 ==tests.models.test_ngsi_v2_subscriptions:[36:43]
@@ -6139,6 +6146,23 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 
         return True
 
+    def is_logically_equivalent_to(
+        self,
+        datatype: "Datatype",
+        vocabulary: "Vocabulary",
+        old_vocabulary: "Vocabulary",
+    ) -> bool:
+        """Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        """
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[7:14]
@@ -6159,9 +6183,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    )
-
- (duplicate-code)
+    ) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e03_ngsi_ld_context_subscriptions_http:[98:105]
 ==e04_ngsi_ld_context_subscriptions_mqtt:[80:87]
@@ -6176,15 +6198,22 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 ==e01_ngsi_ld_context_basics:[29:39]
 ==e08_ngsi_ld_notification_based_command:[35:52]
 NGSILD_TENANT = "filip"
-
 # Setting up logging
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S",
 )
+
 logger = logging.getLogger(__name__)
- (duplicate-code)
+
+
+def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
+    """
+    This function sets up the MQTT actuator
+    """
+
+    def on_connect(client, userdata, flags, reasonCode, properties=None): (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e05_ngsi_ld_quantumleap:[29:39]
 ==e07_ngsi_ld_context_tenant:[14:26]
@@ -6199,7 +6228,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e09_ngsi_v2_iota_filip_mqtt:[252:259]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[252:259]
 ==tutorials.ngsi_v2.e6_timeseries_data.e6_timeseries_data_solution:[261:271]
         keepalive=60,
         bind_address="",
@@ -6209,18 +6238,19 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     )
     mqttc.subscribe() (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e09_ngsi_v2_iota_filip_mqtt:[149:156]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[149:156]
 ==tests.clients.test_ngsi_v2_cb:[1990:1998]
-        port=mqtt_broker_url.port,
-        keepalive=60,
-        bind_address="",
-        bind_port=0,
-        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-        properties=None,
-    ) (duplicate-code)
+            port=mqtt_broker_url.port,
+            keepalive=60,
+            bind_address="",
+            bind_port=0,
+            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+            properties=None,
+        )
+        # create a non-blocking thread for mqtt communication (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e03_ngsi_ld_context_subscriptions_http:[44:56]
-==e07_ngsi_v2_iota_basics:[38:54]
+==examples.ngsi_v2.e07_ngsi_v2_iota_basics:[38:54]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6239,7 +6269,7 @@ if __name__ == "__main__":
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e09_ngsi_ld_sysattrs:[27:36]
-==e10_ngsi_v2_quantumleap:[32:47]
+==examples.ngsi_v2.e10_ngsi_v2_quantumleap:[32:47]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6247,17 +6277,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-if __name__ == "__main__":
-    # ## 1 Setup
-    #
-    # QuantumLeapClient and ContextBrokerClient are created to access
-    # FIWARE in the space given by the FiwareHeader.
-    #
-    # For more information see: e01_http_clients.py
- (duplicate-code)
+
+if __name__ == "__main__": (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e01_ngsi_v2_context_basics:[32:44]
 ==e04_ngsi_ld_context_subscriptions_mqtt:[42:54]
+==examples.ngsi_v2.e01_ngsi_v2_context_basics:[32:44]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6265,14 +6289,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-if __name__ == "__main__":
 
-    # # 1 Setup Client
+if __name__ == "__main__":
+    # # 1 Client setup
     #
-    # create the client, for more details view the example: e01_http_clients.py (duplicate-code)
+    # create the client (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e02_ngsi_ld_context_relationships:[26:38]
-==e03_ngsi_v2_context_subscriptions_http:[39:51]
+==examples.ngsi_v2.e03_ngsi_v2_context_subscriptions_http:[39:51]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6287,7 +6311,7 @@ if __name__ == "__main__":
     # Create the context broker client, for more details view the example: e01_http_clients.py (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e01_ngsi_ld_context_basics:[32:44]
-==e02_ngsi_v2_context_relationships:[27:38]
+==examples.ngsi_v2.e02_ngsi_v2_context_relationships:[27:38]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6302,7 +6326,7 @@ if __name__ == "__main__":
     # create the client (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e05_ngsi_ld_quantumleap:[32:47]
-==e08_ngsi_v2_iota_paho_mqtt:[51:64]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[51:64]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6317,21 +6341,8 @@ if __name__ == "__main__":
     # Since we want to use the multi-tenancy concept of fiware we always start
     # with creating a fiware header (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[144:155]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[144:155]
 ==tests.clients.test_ngsi_v2_cb:[1991:2000]
-            keepalive=60,
-            bind_address="",
-            bind_port=0,
-            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
-        # create a non-blocking thread for mqtt communication
-        mqtt_client.loop_start()
- (duplicate-code)
-tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[143:154]
-==tests.clients.test_ngsi_v2_cb:[922:931]
-        port=mqtt_url.port,
         keepalive=60,
         bind_address="",
         bind_port=0,
@@ -6341,10 +6352,23 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 
     # # 4 send new value via MQTT
     #
-    # create a non-blocking thread for mqtt communication (duplicate-code)
+    # create a non-blocking thread for mqtt communication
+    mqtt_client.loop_start() (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e14_ngsi_v2_notification_based_command:[39:57]
-==e15_ngsi_v2_forecast_data_saving:[37:54]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[143:154]
+==tests.clients.test_ngsi_v2_cb:[922:931]
+                    port=mqtt_url.port,
+                    keepalive=60,
+                    bind_address="",
+                    bind_port=0,
+                    clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+                    properties=None,
+                )
+
+                # create a non-blocking thread for mqtt communication (duplicate-code)
+tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
+==examples.ngsi_v2.e14_ngsi_v2_notification_based_command:[39:57]
+==examples.ngsi_v2.e15_ngsi_v2_forecast_data_saving:[37:54]
 SERVICE_PATH = "/"
 
 # Setting up logging
@@ -6353,19 +6377,18 @@ logging.basicConfig(
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S",
 )
-
 logger = logging.getLogger(__name__)
 
 
-def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
+def temperature_forecast(current_temperature):
     """
-    This function sets up the MQTT actuator
-    """
-
-    def on_connect(client, userdata, flags, reasonCode, properties=None): (duplicate-code)
+    Calculate forecast examples
+    Args:
+        current_temperature: current temperature
+    """ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[40:52]
-==e05_ngsi_v2_context_registrations:[33:48]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[40:52]
+==examples.ngsi_v2.e05_ngsi_v2_context_registrations:[33:48]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6677,16 +6700,25 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if "#" in iri:
-        index = iri.find("#")
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind("/")
-        return iri[:index]
+        if "#" in iri:
+            index = iri.find("#")
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind("/")
+            return iri[:index]
 
- (duplicate-code)
+    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
+        """Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        """ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[159:166]
 ==filip.models.ngsi_v2.base:[361:369]
@@ -6696,6 +6728,7 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     ) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
@@ -6725,20 +6758,20 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     )
     valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e09_ngsi_v2_iota_filip_mqtt:[226:236]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[226:236]
 ==tests.clients.test_mqtt_client:[269:279]
-            apikey, device_id, payload = client.get_encoder(
-                PayloadProtocol.IOTA_JSON
-            ).decode_message(msg=msg)
+        apikey, device_id, payload = client.get_encoder(
+            PayloadProtocol.IOTA_JSON
+        ).decode_message(msg=msg)
 
-            # acknowledge a command. Here command are usually single
-            # messages. The first key is equal to the commands name.
-            client.publish(
-                device_id=device_id, command_name=next(iter(payload)), payload=payload
-            )
+        # acknowledge a command. Here command are usually single
+        # messages. The first key is equal to the commands name.
+        client.publish(
+            device_id=device_id, command_name=next(iter(payload)), payload=payload
+        )
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e09_ngsi_v2_iota_filip_mqtt:[15:21]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[15:21]
 ==tests.clients.test_mqtt_client:[9:15]
 from filip.models.ngsi_v2.iot import (
     Device,
@@ -6747,18 +6780,26 @@ from filip.models.ngsi_v2.iot import (
     ServiceGroup,
     PayloadProtocol, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e02_ngsi_v2_context_relationships:[27:34]
 ==e08_ngsi_ld_notification_based_command:[37:52]
+==examples.ngsi_v2.e02_ngsi_v2_context_relationships:[27:34]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S",
 )
+
 logger = logging.getLogger(__name__)
- (duplicate-code)
+
+
+def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
+    """
+    This function sets up the MQTT actuator
+    """
+
+    def on_connect(client, userdata, flags, reasonCode, properties=None): (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e07_ngsi_ld_context_tenant:[17:26]
-==e08_ngsi_v2_iota_paho_mqtt:[51:59]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[51:59]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6769,17 +6810,18 @@ logger = logging.getLogger(__name__)
 
 def silent_clear(cb): (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[236:243]
-==e09_ngsi_v2_iota_filip_mqtt:[252:258]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[236:243]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[252:258]
         keepalive=60,
         bind_address="",
         bind_port=0,
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
-    ) (duplicate-code)
+    )
+    # create a non-blocking thread for mqtt communication (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[14:20]
-==e09_ngsi_v2_iota_filip_mqtt:[14:20]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[14:20]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[14:20]
 from filip.models import FiwareHeader
 from filip.models.ngsi_v2.iot import (
     Device,
@@ -6787,8 +6829,8 @@ from filip.models.ngsi_v2.iot import (
     DeviceCommand,
     ServiceGroup, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[144:154]
-==e09_ngsi_v2_iota_filip_mqtt:[150:156]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[144:154]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[150:156]
         keepalive=60,
         bind_address="",
         bind_port=0,
@@ -6800,8 +6842,8 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
     #
     # create a non-blocking thread for mqtt communication (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e04_ngsi_v2_context_subscriptions_mqtt:[40:48]
-==e14_ngsi_v2_notification_based_command:[42:57]
+==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[40:48]
+==examples.ngsi_v2.e14_ngsi_v2_notification_based_command:[42:57]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6811,8 +6853,8 @@ logger = logging.getLogger(__name__)
 
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e11_ngsi_v2_context_specific_models:[112:124]
-==e12_ngsi_v2_use_case_models:[82:95]
+==examples.ngsi_v2.e11_ngsi_v2_context_specific_models:[112:124]
+==examples.ngsi_v2.e12_ngsi_v2_use_case_models:[82:95]
         default="CustomModels:WeatherStation",
         # overwrite the title in the json-schema if necessary
         title="Type of the Weather Station",
@@ -6824,11 +6866,10 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         frozen=True,
         # for more options see the pydantic documentation
     )
-
- (duplicate-code)
+    # add model specific attributes including their type. (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e05_ngsi_v2_context_registrations:[33:40]
-==e15_ngsi_v2_forecast_data_saving:[40:54]
+==examples.ngsi_v2.e05_ngsi_v2_context_registrations:[33:40]
+==examples.ngsi_v2.e15_ngsi_v2_forecast_data_saving:[40:54]
 logging.basicConfig(
     level="INFO",
     format="%(asctime)s %(name)s %(levelname)s: %(message)s",
@@ -6854,9 +6895,7 @@ SERVICE_PATH = "/"
 # ToDo: Change the APIKEY to something unique. This represents the "token"
 #  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
-APIKEY = "your_apikey"
-
-# path to json-files to device configuration data for follow-up exercises (duplicate-code)
+APIKEY = "your_apikey" (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e1_virtual_weatherstation.e1_virtual_weatherstation_solution:[56:61]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors_solution:[89:94]
@@ -6883,9 +6922,7 @@ SERVICE_PATH = "/"
 # ToDo: Change the APIKEY to something unique. This represents the "token"
 #  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
-APIKEY = "your_apikey"
-
-# path to json-files to device configuration data for follow-up exercises (duplicate-code)
+APIKEY = "your_apikey" (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==tutorials.ngsi_v2.e1_virtual_weatherstation.e1_virtual_weatherstation:[56:61]
 ==tutorials.ngsi_v2.e4_iot_thermal_zone_sensors.e4_iot_thermal_zone_sensors:[89:94]
@@ -6944,7 +6981,9 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:
+    def encode_msg(
+        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
+    ) -> str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
@@ -6978,10 +7017,8 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 ==filip.clients.ngsi_v2.cb:[1254:1259]
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
             params.update({"type": entity_type})
-
         try: (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[583:590]
@@ -6989,8 +7026,10 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
-            params.update({"type": entity_type}) (duplicate-code)
+            params.update({"type": entity_type})
+ (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[553:558]
 ==filip.clients.ngsi_v2.cb:[1984:1989]
@@ -7080,7 +7119,7 @@ from filip.models.base import FiwareLDHeader
 from filip.models.ngsi_ld.subscriptions import SubscriptionLD
 from filip.models.ngsi_ld.context import ( (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e09_ngsi_v2_iota_filip_mqtt:[89:94]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[89:94]
 ==tests.clients.test_mqtt_client:[57:62]
         device_id="my_ul_device",
         entity_name="my_ul_device",
@@ -7088,16 +7127,16 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
         protocol="PDI-IoTA-UltraLight",
         transport="MQTT", (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e09_ngsi_v2_iota_filip_mqtt:[78:83]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[78:83]
 ==tests.clients.test_mqtt_client:[46:51]
-            device_id="my_json_device",
-            entity_name="my_json_device",
-            entity_type="Thing",
-            protocol="IoTA-JSON",
-            transport="MQTT", (duplicate-code)
+        device_id="my_json_device",
+        entity_name="my_json_device",
+        entity_type="Thing",
+        protocol="IoTA-JSON",
+        transport="MQTT", (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
 ==e08_ngsi_ld_notification_based_command:[116:124]
-==e14_ngsi_v2_notification_based_command:[121:129]
+==examples.ngsi_v2.e14_ngsi_v2_notification_based_command:[121:129]
     mqtt_topic = "actuator/1"  # Topic for the actuator 1
     mqtt_topic_custom = "actuator/2"  # Topic for the actuator 2 (custom payload)
 
@@ -7107,8 +7146,8 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar li
 
     # Create entities for the actuators (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e13_ngsi_v2_secure_fiware_headers:[14:22]
-==e15_ngsi_v2_use_sessions:[19:27]
+==examples.ngsi_v2.e13_ngsi_v2_secure_fiware_headers:[14:22]
+==examples.ngsi_v2.e15_ngsi_v2_use_sessions:[19:27]
 urllib3.disable_warnings()
 session = requests.Session()
 CB_URL = settings.CB_URL
@@ -7118,7 +7157,7 @@ SERVICE = "filip"
 SERVICE_PATH = "/"
  (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[15:20]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[15:20]
 ==tests.clients.test_mqtt_client:[9:14]
 from filip.models.ngsi_v2.iot import (
     Device,
@@ -7126,25 +7165,25 @@ from filip.models.ngsi_v2.iot import (
     DeviceCommand,
     ServiceGroup, (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e08_ngsi_v2_iota_paho_mqtt:[32:46]
-==e09_ngsi_v2_iota_filip_mqtt:[31:45]
+==examples.ngsi_v2.e08_ngsi_v2_iota_paho_mqtt:[32:46]
+==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[31:45]
 CB_URL = settings.CB_URL
 # Host address of IoT-Agent
 IOTA_URL = settings.IOTA_URL
 # Host address of the MQTT-Broker
 MQTT_BROKER_URL = str(settings.MQTT_BROKER_URL)
 
-# You can here also change the used Fiware service
+# Here you can also change the used Fiware service
 # FIWARE-Service
 SERVICE = "filip"
 # FIWARE-Service path
 SERVICE_PATH = "/example"
 
 # You may also change the ApiKey Information
-# ApiKey of the ServiceGroup (duplicate-code)
+# ApiKey of the Device (duplicate-code)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0801: Similar lines in 2 files
-==e10_ngsi_v2_quantumleap:[11:27]
-==e15_ngsi_v2_forecast_data_saving:[19:35]
+==examples.ngsi_v2.e10_ngsi_v2_quantumleap:[11:27]
+==examples.ngsi_v2.e15_ngsi_v2_forecast_data_saving:[19:35]
 from filip.models.base import FiwareHeader
 from filip.clients.ngsi_v2 import ContextBrokerClient, QuantumLeapClient
 from filip.utils.cleanup import clear_all
@@ -7166,10 +7205,10 @@ tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic imp
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
-tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
-tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 

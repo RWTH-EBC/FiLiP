@@ -36,7 +36,7 @@
 
         <h2>Messages</h2>
         
-        <h3>Module <code>update_architecture</code> (<code>docs/diagrams/src/update_architecture.py</code>)</h3>
+        <h3>Module <code>docs.diagrams.src.update_architecture</code> (<code>docs/diagrams/src/update_architecture.py</code>)</h3>
         <table>
             <tr>
                 <th>Line</th>
@@ -14034,7 +14034,7 @@
             
         </table>
         
-        <h3>Module <code>filip_unittest.docker.generate-compose</code> (<code>filip_unittest/docker/generate-compose.py</code>)</h3>
+        <h3>Module <code>generate-compose</code> (<code>filip_unittest/docker/generate-compose.py</code>)</h3>
         <table>
             <tr>
                 <th>Line</th>
@@ -23052,10 +23052,6 @@ IOTA_URL = &#34;http://localhost:4041&#34;
 MQTT_BROKER_HOST = &#34;localhost&#34;
 MQTT_BROKER_PORT = 1883
 
-# ToDo: Change the name of your service to something unique. If you run
-#  on a shared instance this very important in order to avoid user
-#  collisions. You will use this service through the whole tutorial.
-#  If you forget to change it an error will be raised!
 # FIWARE Service
 SERVICE = &#34;filip_tutorial&#34;
 SERVICE_PATH = &#34;/&#34;
@@ -23080,8 +23076,7 @@ if __name__ == &#34;__main__&#34;:
     service_group1 = ServiceGroup(
         entity_type=&#34;Thing&#34;,
         resource=&#34;/iot/json&#34;,
-        apikey=APIKEY,
-        # ...</pre></td>
+        apikey=APIKEY,</pre></td>
             </tr>
             
             <tr>
@@ -23223,6 +23218,7 @@ class WeatherStation(BaseModel):
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
+
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
@@ -23231,10 +23227,10 @@ class WeatherStation(BaseModel):
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # ToDo: Create a loop that publishes a message every 100 milliseconds
-    #  to the broker that holds the simulation time &#34;sim_time&#34; and the
-    #  corresponding temperature &#34;temperature&#34;. You may use the `object_id`
-    #  or the attribute name as key in your payload.
+    # Create a loop that publishes a message every 0.3 seconds to the broker
+    # that holds the simulation time &#34;sim_time&#34; and the corresponding
+    # temperature &#34;temperature&#34;. You may use the `object_id`
+    # or the attribute name as key in your payload.
     for t_sim in range(
         sim_model.t_start, sim_model.t_end + int(COM_STEP), int(COM_STEP)
     ):
@@ -23275,6 +23271,7 @@ class WeatherStation(BaseModel):
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
+
     # subscribe to topics
     # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
@@ -23283,10 +23280,10 @@ class WeatherStation(BaseModel):
     # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # ToDo: Create a loop that publishes a message every 100 milliseconds
-    #  to the broker that holds the simulation time &#34;sim_time&#34; and the
-    #  corresponding temperature &#34;temperature&#34;. You may use the `object_id`
-    #  or the attribute name as key in your payload.
+    # Create a loop that publishes a message every 0.3 seconds to the broker
+    # that holds the simulation time &#34;sim_time&#34; and the corresponding
+    # temperature &#34;temperature&#34;. You may use the `object_id`
+    # or the attribute name as key in your payload.
     for t_sim in range(
         sim_model.t_start, sim_model.t_end + int(COM_STEP), int(COM_STEP)
     ):
@@ -23732,8 +23729,7 @@ APIKEY = &#34;your_apikey&#34;
         entity_name=&#34;urn:ngsi-ld:WeatherStation:001&#34;,
         entity_type=&#34;WeatherStation&#34;,
         transport=TransportProtocol.MQTT,
-        protocol=PayloadProtocol.IOTA_JSON,
-        # ...</pre></td>
+        protocol=PayloadProtocol.IOTA_JSON,</pre></td>
             </tr>
             
             <tr>
@@ -23975,7 +23971,9 @@ if __name__ == &#34;__main__&#34;:
 
     # define lists to store historical data
     history_weather_station = []
-    history_zone_temperature_sensor = []</pre></td>
+    history_zone_temperature_sensor = []
+
+    # create a service group with your api key</pre></td>
             </tr>
             
             <tr>
@@ -24043,10 +24041,7 @@ if __name__ == &#34;__main__&#34;:
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )
-
-
-# NGSIv2 entity models</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -24238,10 +24233,9 @@ from filip.models.ngsi_v2.subscriptions import (
                 return items
             res.raise_for_status()
 
-    # MANAGEMENT API
     def get_version(self) -&gt; Dict:
         &#34;&#34;&#34;
-        Gets version of IoT Agent
+        Gets version of Orion-LD context broker
         Returns:
             Dictionary with response
         &#34;&#34;&#34;</pre></td>
@@ -24257,23 +24251,23 @@ from filip.models.ngsi_v2.subscriptions import (
                 <td><pre>Similar lines in 2 files
 ==examples.ngsi_v2.e11_ngsi_v2_semantics.models:[525:542]
 ==filip.semantics.ontology_parser.post_processer:[257:274]
-                    &#34;0&#34;,
-                    &#34;1&#34;,
-                    &#34;2&#34;,
-                    &#34;3&#34;,
-                    &#34;4&#34;,
-                    &#34;5&#34;,
-                    &#34;6&#34;,
-                    &#34;7&#34;,
-                    &#34;8&#34;,
-                    &#34;9&#34;,
-                    &#34;A&#34;,
-                    &#34;B&#34;,
-                    &#34;C&#34;,
-                    &#34;D&#34;,
-                    &#34;E&#34;,
-                    &#34;F&#34;,
-                ],</pre></td>
+            &#34;0&#34;,
+            &#34;1&#34;,
+            &#34;2&#34;,
+            &#34;3&#34;,
+            &#34;4&#34;,
+            &#34;5&#34;,
+            &#34;6&#34;,
+            &#34;7&#34;,
+            &#34;8&#34;,
+            &#34;9&#34;,
+            &#34;A&#34;,
+            &#34;B&#34;,
+            &#34;C&#34;,
+            &#34;D&#34;,
+            &#34;E&#34;,
+            &#34;F&#34;,
+        ],</pre></td>
             </tr>
             
             <tr>
@@ -24790,18 +24784,18 @@ if __name__ == &#34;__main__&#34;:
                 <td><pre>Similar lines in 2 files
 ==tests.models.test_ngsi_v2_subscriptions:[47:59]
 ==tests.utils.test_filter:[36:48]
-            &#34;description&#34;: &#34;One subscription to rule them all&#34;,
-            &#34;subject&#34;: {
-                &#34;entities&#34;: [{&#34;idPattern&#34;: &#34;.*&#34;, &#34;type&#34;: &#34;Room&#34;}],
-                &#34;condition&#34;: {
-                    &#34;attrs&#34;: [&#34;temperature&#34;],
-                    &#34;expression&#34;: {&#34;q&#34;: &#34;temperature&gt;40&#34;},
+                &#34;description&#34;: &#34;One subscription to rule them all&#34;,
+                &#34;subject&#34;: {
+                    &#34;entities&#34;: [{&#34;idPattern&#34;: &#34;.*&#34;, &#34;type&#34;: &#34;Room&#34;}],
+                    &#34;condition&#34;: {
+                        &#34;attrs&#34;: [&#34;temperature&#34;],
+                        &#34;expression&#34;: {&#34;q&#34;: &#34;temperature&gt;40&#34;},
+                    },
                 },
-            },
-            &#34;notification&#34;: {
-                &#34;http&#34;: {&#34;url&#34;: &#34;http://localhost:1234&#34;},
-                &#34;attrs&#34;: [&#34;temperature&#34;, &#34;humidity&#34;],
-            },</pre></td>
+                &#34;notification&#34;: {
+                    &#34;http&#34;: {&#34;url&#34;: &#34;http://localhost:1234&#34;},
+                    &#34;attrs&#34;: [&#34;temperature&#34;, &#34;humidity&#34;],
+                },</pre></td>
             </tr>
             
             <tr>
@@ -25021,7 +25015,7 @@ CB_URL = settings.CB_URL
 # You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = &#34;filip&#34;
-# FIWARE-Service path
+# FIWARE-Servicepath
 SERVICE_PATH = &#34;/example&#34;
 
 # Setting up logging
@@ -25034,10 +25028,12 @@ logger = logging.getLogger(__name__)
 
 if __name__ == &#34;__main__&#34;:
 
-    # # 1 Setup Client
+    # # 1 Setup client and models
     #
-    # create the client, for more details view the example: e01_http_clients.py
-    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)</pre></td>
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
+
+    # ## 1.1 Store entities
+    #</pre></td>
             </tr>
             
             <tr>
@@ -25109,8 +25105,8 @@ from filip.config import settings
 
 # ## Parameters
 #
-# To run this example, you need a working Fiware v2 setup with a context-broker
-# You can set the address here:
+# To run this example you need a working Fiware v2 setup with a context-broker
+# You can set the address:
 #
 # Host address of Context Broker
 CB_URL = settings.CB_URL
@@ -25130,10 +25126,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == &#34;__main__&#34;:
-
-    # # 1 Setup Client
+    # # 1 Creating models
     #
-    # create the client, for more details view the example: e01_http_clients.py</pre></td>
+    # Create a building with a weather station as a context provider.
+    # We start by creating metadata. The other way round is also possible, but
+    # you have to use the api of the Context Entity Model.
+
+    # create unit metadata for the temperature sensor of the weather station</pre></td>
             </tr>
             
             <tr>
@@ -25151,21 +25150,21 @@ if __name__ == &#34;__main__&#34;:
         devices=[weather_station, zone_temperature_sensor, heater],
         service_groups=[group],
     )
-    # ToDo: Set user data if required.
+    # set user data if required
     mqttc.username_pw_set(username=MQTT_USER, password=MQTT_PW)
-    # Implement a callback function that gets triggered when the
-    # command is sent to the device. The incoming command should update the
-    # heater attribute of the simulation model
 
+    # ToDo: Implement a callback function that gets triggered when the
+    #  command is sent to the device. The incoming command should update the
+    #  heater attribute of the simulation model.
     def on_command(client, obj, msg):
         &#34;&#34;&#34;
         Callback for incoming commands
         &#34;&#34;&#34;
-        # Decode the message payload using the libraries builtin encoders
+        # decode the message payload using the libraries builtin encoders
         apikey, device_id, payload = client.get_encoder(
             PayloadProtocol.IOTA_JSON
         ).decode_message(msg=msg)
-</pre></td>
+        # map the command value to the simulation</pre></td>
             </tr>
             
             <tr>
@@ -25546,7 +25545,10 @@ class TestSubscriptions(unittest.TestCase):
         )
         self.http_url = &#34;https://test.de:80&#34;
         self.mqtt_url = &#34;mqtt://test.de:1883&#34;
-        self.mqtt_topic = &#34;/filip/testing&#34;</pre></td>
+        self.mqtt_topic = &#34;/filip/testing&#34;
+
+    def test_entity_pattern(self) -&gt; None:
+        &#34;&#34;&#34; &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -25568,17 +25570,7 @@ class TestSubscriptions(unittest.TestCase):
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        &#34;&#34;&#34;
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        &#34;&#34;&#34;</pre></td>
+                return False</pre></td>
             </tr>
             
             <tr>
@@ -25623,7 +25615,8 @@ from geojson_pydantic import (
     MultiPolygon,
     Feature,
     FeatureCollection,
-)</pre></td>
+)
+</pre></td>
             </tr>
             
             <tr>
@@ -25740,14 +25733,19 @@ logging.basicConfig(
     format=&#34;%(asctime)s %(name)s %(levelname)s: %(message)s&#34;,
     datefmt=&#34;%d-%m-%Y %H:%M:%S&#34;,
 )
+
 logger = logging.getLogger(__name__)
 
 if __name__ == &#34;__main__&#34;:
-
-    # # 1 Setup Client
+    # # 1 Setup IoTAClient
     #
-    # create the client, for more details view the example: e01_http_clients.py
-    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)</pre></td>
+    # First a client is initialised that provides access to our
+    # Fiware-server space.
+    #
+    # For more details about this step see e01_http_clients.py.
+
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
+</pre></td>
             </tr>
             
             <tr>
@@ -25798,13 +25796,12 @@ if __name__ == &#34;__main__&#34;:
         callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
         transport=&#34;tcp&#34;,
     )
-    # add callbacks to the mqtt-client
+    # add callbacks to the client
     mqtt_client.on_connect = on_connect
     mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_message = on_message
     mqtt_client.on_disconnect = on_disconnect
-
-    # connect to the mqtt-broker to receive the notifications message</pre></td>
+</pre></td>
             </tr>
             
             <tr>
@@ -25826,11 +25823,9 @@ if __name__ == &#34;__main__&#34;:
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
-
-    # # 4 send new value via MQTT
-    #
     # create a non-blocking thread for mqtt communication
-    mqtt_client.loop_start()</pre></td>
+    mqtt_client.loop_start()
+</pre></td>
             </tr>
             
             <tr>
@@ -25855,11 +25850,8 @@ if __name__ == &#34;__main__&#34;:
     )
 
 
-# Now, define a context specific attribute for the address. Here, we use the
-# previously defined address model as type for the value.
-# Furthermore, we set the default type of the attribute to &#34;PostalAddress&#34;
-# to give the user a type-hint. Your may also allow multiple types during
-# creation.</pre></td>
+# It is assumed that this kind of models exists in use case, which is simple and use case
+# specific. It describes basically, how does the data look like in the specific use case.</pre></td>
             </tr>
             
             <tr>
@@ -25877,7 +25869,7 @@ CB_URL = settings.CB_URL
 # You can also change the used Fiware service
 # FIWARE-Service
 SERVICE = &#34;filip&#34;
-# FIWARE-Servicepath
+# FIWARE-Service path
 SERVICE_PATH = &#34;/example&#34;
 
 # Setting up logging
@@ -25889,9 +25881,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == &#34;__main__&#34;:
+    # # 1 Creating models
+    #
+    # Create a building with a weather station as a context provider.
+    # We start by creating metadata. The other way round is also possible, but
+    # you have to use the api of the Context Entity Model.
 
-    # # 1 Setup client and models
-    #</pre></td>
+    # create unit metadata for the temperature sensor of the weather station</pre></td>
             </tr>
             
             <tr>
@@ -25937,7 +25933,8 @@ if __name__ == &#34;__main__&#34;:
         properties=None,
     )
 
-    # ToDo: Print and subscribe to the weather station topic.</pre></td>
+    # subscribe to topics
+    # subscribe to all incoming command topics for the registered devices</pre></td>
             </tr>
             
             <tr>
@@ -26147,8 +26144,7 @@ class IdType(str, Enum):
     MQTT_BROKER_URL: AnyUrl = Field(
         default=&#34;mqtt://127.0.0.1:1883&#34;,
         validation_alias=AliasChoices(&#34;MQTT_BROKER_URL&#34;, &#34;MQTT_URL&#34;, &#34;MQTT_BROKER&#34;),
-    )
-</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -26170,8 +26166,12 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == &#34;__main__&#34;:
+    # # 1 Client setup
+    #
+    # Create the context broker client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareLDHeader(ngsild_tenant=NGSILD_TENANT)
-    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)</pre></td>
+    cb_ld_client = ContextBrokerLDClient(url=LD_CB_URL, fiware_header=fiware_header)
+    # Make sure that the database is clean</pre></td>
             </tr>
             
             <tr>
@@ -26286,10 +26286,9 @@ logger = logging.getLogger(__name__)
 if __name__ == &#34;__main__&#34;:
     # # 1 Client setup
     #
-    # create the client, for more details view the example: e01_http_clients.py
+    # Create the context broker client, for more details view the example: e01_http_clients.py
     fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
-    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)
-</pre></td>
+    cb_client = ContextBrokerClient(url=CB_URL, fiware_header=fiware_header)</pre></td>
             </tr>
             
             <tr>
@@ -26338,13 +26337,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == &#34;__main__&#34;:
-    # # 1 Creating models
+    # ## 1 Setup
     #
-    # Create a building with a weather station as a context provider.
-    # We start by creating metadata. The other way round is also possible, but
-    # you have to use the api of the Context Entity Model.
-
-    # create unit metadata for the temperature sensor of the weather station</pre></td>
+    # QuantumLeapClient and ContextBrokerClient are created to access
+    # FIWARE in the space given by the FiwareHeader.
+    #
+    # For more information see: e01_http_clients.py
+</pre></td>
             </tr>
             
             <tr>
@@ -26446,8 +26445,7 @@ if __name__ == &#34;__main__&#34;:
         entity_name=&#34;urn:ngsi-ld:WasteContainer:001&#34;,
         entity_type=&#34;WasteContainer&#34;,
         transport=TransportProtocol.MQTT,
-        protocol=PayloadProtocol.IOTA_JSON,
-        # ...</pre></td>
+        protocol=PayloadProtocol.IOTA_JSON,</pre></td>
             </tr>
             
             <tr>
@@ -26703,6 +26701,7 @@ if __name__ == &#34;__main__&#34;:
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) &gt; 0:
+                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -26773,9 +26772,8 @@ if __name__ == &#34;__main__&#34;:
         properties=None,
     )
 
-    # # 4 send new value via MQTT
-    #
-    # create a non-blocking thread for mqtt communication</pre></td>
+    # subscribe to topics
+    # subscribe to all incoming command topics for the registered devices</pre></td>
             </tr>
             
             <tr>
@@ -26795,11 +26793,8 @@ if __name__ == &#34;__main__&#34;:
         &#34;id&#34;: &#34;urg:ngsi-ld:Sub:001&#34;,
         &#34;type&#34;: &#34;Subscription&#34;,
     }
-    # Generate Subscription object for validation
     sub = SubscriptionLD(**sub_example)
-
-    # Posting an example subscription for Room1. Make sure that you store the
-    # returned id because you might need it for later updates of the subscription.</pre></td>
+    # Posting an example subscription for Room1</pre></td>
             </tr>
             
             <tr>
@@ -26838,9 +26833,6 @@ if __name__ == &#34;__main__&#34;:
 ==examples.ngsi_ld.e01_ngsi_ld_context_basics:[25:39]
 ==examples.ngsi_ld.e07_ngsi_ld_context_tenant:[13:26]
 LD_CB_URL = settings.LD_CB_URL
-
-# You can also change the used Fiware service
-# NGSI-LD Tenant
 NGSILD_TENANT = &#34;filip&#34;
 
 # Setting up logging
@@ -26850,7 +26842,9 @@ logging.basicConfig(
     datefmt=&#34;%d-%m-%Y %H:%M:%S&#34;,
 )
 logger = logging.getLogger(__name__)
-</pre></td>
+
+
+def silent_clear(cb):</pre></td>
             </tr>
             
             <tr>
@@ -26874,13 +26868,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 if __name__ == &#34;__main__&#34;:
-    # ## 1 Setup
+
+    # # 1 Setup Client
     #
-    # QuantumLeapClient and ContextBrokerClient are created to access
-    # FIWARE in the space given by the FiwareHeader.
-    #
-    # For more information see: e01_http_clients.py
-</pre></td>
+    # create the client</pre></td>
             </tr>
             
             <tr>
@@ -26899,11 +26890,16 @@ if __name__ == &#34;__main__&#34;:
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
+    # subscribe to topics
+    # subscribe to all incoming command topics for the registered devices
     mqttc.subscribe()
+    # create a non-blocking thread for mqtt communication
     mqttc.loop_start()
 
-    # ## 4.2 Command
-    #</pre></td>
+    # ToDo: Create a loop that publishes a message every 100 milliseconds
+    #  to the broker that holds the simulation time `sim_time` and the
+    #  corresponding temperature `temperature`. You may use the `object_id`
+    #  or the attribute name as a key in your payload.</pre></td>
             </tr>
             
             <tr>
@@ -26921,21 +26917,14 @@ logging.basicConfig(
     format=&#34;%(asctime)s %(name)s %(levelname)s: %(message)s&#34;,
     datefmt=&#34;%d-%m-%Y %H:%M:%S&#34;,
 )
-
 logger = logging.getLogger(__name__)
 
 if __name__ == &#34;__main__&#34;:
 
-    # # 1 Setup
+    # # 1 Setup Client
     #
-    # ## 1.1 FiwareHeader
-    #
-    # Since we want to use the multi-tenancy concept of fiware we always start
-    # with create a fiware header
-    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
-
-    # ## 1.2 Device configuration
-    #</pre></td>
+    # create the client, for more details view the example: e01_http_clients.py
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)</pre></td>
             </tr>
             
             <tr>
@@ -26981,7 +26970,8 @@ if __name__ == &#34;__main__&#34;:
         clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
         properties=None,
     )
-    # create a non-blocking thread for mqtt communication</pre></td>
+
+    # ToDo: Print and subscribe to the weather station topic.</pre></td>
             </tr>
             
             <tr>
@@ -27038,17 +27028,18 @@ if __name__ == &#34;__main__&#34;:
                 <td><pre>Similar lines in 2 files
 ==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[143:155]
 ==tests.clients.test_ngsi_v2_cb:[1447:1458]
-            port=mqtt_url.port,
-            keepalive=60,
-            bind_address=&#34;&#34;,
-            bind_port=0,
-            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
+        port=mqtt_url.port,
+        keepalive=60,
+        bind_address=&#34;&#34;,
+        bind_port=0,
+        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+        properties=None,
+    )
 
-        # create a non-blocking thread for mqtt communication
-        mqtt_client.loop_start()
-</pre></td>
+    # # 4 send new value via MQTT
+    #
+    # create a non-blocking thread for mqtt communication
+    mqtt_client.loop_start()</pre></td>
             </tr>
             
             <tr>
@@ -27066,27 +27057,14 @@ logging.basicConfig(
     format=&#34;%(asctime)s %(name)s %(levelname)s: %(message)s&#34;,
     datefmt=&#34;%d-%m-%Y %H:%M:%S&#34;,
 )
-
 logger = logging.getLogger(__name__)
 
+
 if __name__ == &#34;__main__&#34;:
-
-    # # 1 FiwareHeader
-    # Since we want to use the multi-tenancy concept of fiware we always start
-    # with creating a fiware header
-    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)
-
-    # # 2 Setup
+    # # 1 Client setup
     #
-    # ## 2.1 Device creation
-    #
-    # First we create our device configuration using the models provided for
-    # filip.models.ngsi_v2.iot
-
-    # Creating an attribute for incoming measurements from e.g. a sensor. We
-    # add the metadata for units using the unit models. You will later
-    # notice that the library automatically augments the provided
-    # information about units.</pre></td>
+    # create the client, for more details view the example: e01_http_clients.py
+    fiware_header = FiwareHeader(service=SERVICE, service_path=SERVICE_PATH)</pre></td>
             </tr>
             
             <tr>
@@ -27116,8 +27094,7 @@ if __name__ == &#34;__main__&#34;:
     # Now we can export both the use case model and the FIWARE specific
     # models to json-schema files and share it with other stakeholders
     # or applications/services that need to use the data.
-    use_case_model = WeatherStation.model_json_schema()
-</pre></td>
+    use_case_model = WeatherStation.model_json_schema()</pre></td>
             </tr>
             
             <tr>
@@ -27683,14 +27660,13 @@ logger = logging.getLogger(__name__)
                 <td><pre>Similar lines in 2 files
 ==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[149:156]
 ==tests.clients.test_ngsi_v2_cb:[1990:1998]
-            port=mqtt_broker_url.port,
-            keepalive=60,
-            bind_address=&#34;&#34;,
-            bind_port=0,
-            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
-        # create a non-blocking thread for mqtt communication</pre></td>
+        port=mqtt_broker_url.port,
+        keepalive=60,
+        bind_address=&#34;&#34;,
+        bind_port=0,
+        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+        properties=None,
+    )</pre></td>
             </tr>
             
             <tr>
@@ -27738,8 +27714,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
-if __name__ == &#34;__main__&#34;:</pre></td>
+if __name__ == &#34;__main__&#34;:
+    # ## 1 Setup
+    #
+    # QuantumLeapClient and ContextBrokerClient are created to access
+    # FIWARE in the space given by the FiwareHeader.
+    #
+    # For more information see: e01_http_clients.py
+</pre></td>
             </tr>
             
             <tr>
@@ -27759,11 +27741,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 if __name__ == &#34;__main__&#34;:
-    # # 1 Client setup
+
+    # # 1 Setup Client
     #
-    # create the client</pre></td>
+    # create the client, for more details view the example: e01_http_clients.py</pre></td>
             </tr>
             
             <tr>
@@ -27783,11 +27765,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-if __name__ == &#34;__main__&#34;:
 
-    # # 1 Setup Client
+if __name__ == &#34;__main__&#34;:
+    # # 1 Client setup
     #
-    # create the client, for more details view the example: e01_http_clients.py</pre></td>
+    # Create the context broker client, for more details view the example: e01_http_clients.py</pre></td>
             </tr>
             
             <tr>
@@ -27850,17 +27832,15 @@ if __name__ == &#34;__main__&#34;:
                 <td><pre>Similar lines in 2 files
 ==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[144:155]
 ==tests.clients.test_ngsi_v2_cb:[1991:2000]
-        keepalive=60,
-        bind_address=&#34;&#34;,
-        bind_port=0,
-        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-        properties=None,
-    )
-
-    # # 4 send new value via MQTT
-    #
-    # create a non-blocking thread for mqtt communication
-    mqtt_client.loop_start()</pre></td>
+            keepalive=60,
+            bind_address=&#34;&#34;,
+            bind_port=0,
+            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+            properties=None,
+        )
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
+</pre></td>
             </tr>
             
             <tr>
@@ -27873,15 +27853,17 @@ if __name__ == &#34;__main__&#34;:
                 <td><pre>Similar lines in 2 files
 ==examples.ngsi_v2.e04_ngsi_v2_context_subscriptions_mqtt:[143:154]
 ==tests.clients.test_ngsi_v2_cb:[922:931]
-                    port=mqtt_url.port,
-                    keepalive=60,
-                    bind_address=&#34;&#34;,
-                    bind_port=0,
-                    clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-                    properties=None,
-                )
+        port=mqtt_url.port,
+        keepalive=60,
+        bind_address=&#34;&#34;,
+        bind_port=0,
+        clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+        properties=None,
+    )
 
-                # create a non-blocking thread for mqtt communication</pre></td>
+    # # 4 send new value via MQTT
+    #
+    # create a non-blocking thread for mqtt communication</pre></td>
             </tr>
             
             <tr>
@@ -27930,11 +27912,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 if __name__ == &#34;__main__&#34;:
-    # # 1 Client setup
+    # # 1 Creating models
     #
-    # create the client, for more details view the example: e01_http_clients.py</pre></td>
+    # Create a building with a weather station as a context provider.
+    # We start by creating metadata. The other way round is also possible, but
+    # you have to use the api of the Context Entity Model.
+
+    # create unit metadata for the temperature sensor of the weather station</pre></td>
             </tr>
             
             <tr>
@@ -28309,7 +28294,10 @@ from uuid import uuid4</pre></td>
         )
         self.http_url = &#34;https://test.de:80&#34;
         self.mqtt_url = &#34;mqtt://test.de:1883&#34;
-        self.mqtt_topic = &#34;/filip/testing&#34;</pre></td>
+        self.mqtt_topic = &#34;/filip/testing&#34;
+
+    def test_entity_pattern(self) -&gt; None:
+        &#34;&#34;&#34; &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -28386,7 +28374,6 @@ from uuid import uuid4</pre></td>
 ==filip.clients.ngsi_v2.cb:[1667:1673]
         )
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -28476,16 +28463,25 @@ from uuid import uuid4</pre></td>
                 <td><pre>Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if &#34;#&#34; in iri:
-        index = iri.find(&#34;#&#34;)
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind(&#34;/&#34;)
-        return iri[:index]
+        if &#34;#&#34; in iri:
+            index = iri.find(&#34;#&#34;)
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind(&#34;/&#34;)
+            return iri[:index]
 
-</pre></td>
+    def get_entity_by_iri(self, iri: str) -&gt; Union[None, Entity]:
+        &#34;&#34;&#34;Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -28504,7 +28500,6 @@ from uuid import uuid4</pre></td>
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )</pre></td>
             </tr>
             
@@ -28572,15 +28567,15 @@ from uuid import uuid4</pre></td>
                 <td><pre>Similar lines in 2 files
 ==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[226:236]
 ==tests.clients.test_mqtt_client:[269:279]
-        apikey, device_id, payload = client.get_encoder(
-            PayloadProtocol.IOTA_JSON
-        ).decode_message(msg=msg)
+            apikey, device_id, payload = client.get_encoder(
+                PayloadProtocol.IOTA_JSON
+            ).decode_message(msg=msg)
 
-        # acknowledge a command. Here command are usually single
-        # messages. The first key is equal to the commands name.
-        client.publish(
-            device_id=device_id, command_name=next(iter(payload)), payload=payload
-        )
+            # acknowledge a command. Here command are usually single
+            # messages. The first key is equal to the commands name.
+            client.publish(
+                device_id=device_id, command_name=next(iter(payload)), payload=payload
+            )
 </pre></td>
             </tr>
             
@@ -28617,16 +28612,8 @@ logging.basicConfig(
     format=&#34;%(asctime)s %(name)s %(levelname)s: %(message)s&#34;,
     datefmt=&#34;%d-%m-%Y %H:%M:%S&#34;,
 )
-
 logger = logging.getLogger(__name__)
-
-
-def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
-    &#34;&#34;&#34;
-    This function sets up the MQTT actuator
-    &#34;&#34;&#34;
-
-    def on_connect(client, userdata, flags, reasonCode, properties=None):</pre></td>
+</pre></td>
             </tr>
             
             <tr>
@@ -28723,16 +28710,9 @@ logging.basicConfig(
     format=&#34;%(asctime)s %(name)s %(levelname)s: %(message)s&#34;,
     datefmt=&#34;%d-%m-%Y %H:%M:%S&#34;,
 )
-
 logger = logging.getLogger(__name__)
 
-
-def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
-    &#34;&#34;&#34;
-    This function sets up the MQTT actuator
-    &#34;&#34;&#34;
-
-    def on_connect(client, userdata, flags, reasonCode, properties=None):</pre></td>
+</pre></td>
             </tr>
             
             <tr>
@@ -28756,8 +28736,7 @@ def set_up_mqtt_actuator(normal_topic: str, custom_topic: str):
         frozen=True,
         # for more options see the pydantic documentation
     )
-
-</pre></td>
+    # add model specific attributes including their type.</pre></td>
             </tr>
             
             <tr>
@@ -28776,7 +28755,14 @@ logging.basicConfig(
     datefmt=&#34;%d-%m-%Y %H:%M:%S&#34;,
 )
 logger = logging.getLogger(__name__)
-</pre></td>
+
+
+def temperature_forecast(current_temperature):
+    &#34;&#34;&#34;
+    Calculate forecast examples
+    Args:
+        current_temperature: current temperature
+    &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -28804,7 +28790,9 @@ SERVICE_PATH = &#34;/&#34;
 # ToDo: Change the APIKEY to something unique. This represents the &#34;token&#34;
 #  for IoT devices to connect (send/receive data) with the platform. In the
 #  context of MQTT, APIKEY is linked with the topic used for communication.
-APIKEY = &#34;your_apikey&#34;</pre></td>
+APIKEY = &#34;your_apikey&#34;
+
+# path to json-files to device configuration data for follow-up exercises</pre></td>
             </tr>
             
             <tr>
@@ -29034,8 +29022,10 @@ if __name__ == &#34;__main__&#34;:
 ==filip.clients.ngsi_v2.cb:[1254:1259]
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
+
         try:</pre></td>
             </tr>
             
@@ -29052,8 +29042,10 @@ if __name__ == &#34;__main__&#34;:
         url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
-            params.update({&#34;type&#34;: entity_type})</pre></td>
+            params.update({&#34;type&#34;: entity_type})
+</pre></td>
             </tr>
             
             <tr>
@@ -29270,11 +29262,11 @@ from filip.models.ngsi_ld.context import (</pre></td>
                 <td><pre>Similar lines in 2 files
 ==examples.ngsi_v2.e09_ngsi_v2_iota_filip_mqtt:[78:83]
 ==tests.clients.test_mqtt_client:[46:51]
-            device_id=&#34;my_json_device&#34;,
-            entity_name=&#34;my_json_device&#34;,
-            entity_type=&#34;Thing&#34;,
-            protocol=&#34;IoTA-JSON&#34;,
-            transport=&#34;MQTT&#34;,</pre></td>
+        device_id=&#34;my_json_device&#34;,
+        entity_name=&#34;my_json_device&#34;,
+        entity_type=&#34;Thing&#34;,
+        protocol=&#34;IoTA-JSON&#34;,
+        transport=&#34;MQTT&#34;,</pre></td>
             </tr>
             
             <tr>
@@ -29405,26 +29397,6 @@ QL_URL = settings.QL_URL
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
                 <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
@@ -29435,7 +29407,7 @@ QL_URL = settings.QL_URL
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
+                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
             </tr>
             
             <tr>
@@ -29445,7 +29417,7 @@ QL_URL = settings.QL_URL
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
             </tr>
             
             <tr>
@@ -29455,7 +29427,7 @@ QL_URL = settings.QL_URL
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.ontology_parser.post_processer -&gt; filip.semantics.vocabulary_configurator)</pre></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
             </tr>
             
             <tr>
@@ -29475,6 +29447,36 @@ QL_URL = settings.QL_URL
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
+                <td><pre>Cyclic import (filip.semantics.ontology_parser.post_processer -&gt; filip.semantics.vocabulary_configurator)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
                 <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
             </tr>
             
@@ -29485,7 +29487,7 @@ QL_URL = settings.QL_URL
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
             </tr>
             
         </table>
@@ -30519,7 +30521,7 @@ QL_URL = settings.QL_URL
             
             <tr>
                 <td>refactor</td>
-                <td>576</td>
+                <td>577</td>
             </tr>
             
             <tr>
@@ -31044,7 +31046,7 @@ QL_URL = settings.QL_URL
             
             <tr>
                 <td>cyclic-import</td>
-                <td>10</td>
+                <td>11</td>
             </tr>
             
         </table>
@@ -31448,12 +31450,12 @@ QL_URL = settings.QL_URL
             </tr>
             
             <tr>
-                <td>filip_unittest.docker.generate-compose</td>
+                <td>generate-compose</td>
                 <td>3</td>
             </tr>
             
             <tr>
-                <td>update_architecture</td>
+                <td>docs.diagrams.src.update_architecture</td>
                 <td>7</td>
             </tr>
             
@@ -31674,7 +31676,7 @@ QL_URL = settings.QL_URL
             
             <tr>
                 <td>tutorials.ngsi_v2.e5_iot_thermal_zone_control.__init__</td>
-                <td>255</td>
+                <td>256</td>
             </tr>
             
         </table>
@@ -32304,7 +32306,7 @@ QL_URL = settings.QL_URL
             
             <tr>
                 <td>tutorials/ngsi_v2/e5_iot_thermal_zone_control/__init__.py</td>
-                <td>255</td>
+                <td>256</td>
             </tr>
             
         </table>
