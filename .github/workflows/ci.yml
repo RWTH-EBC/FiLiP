@@ -16,5 +16,6 @@ jobs:
       GH_PAGES: true
       FIWARE_TESTS: true
       FIWARE_COVERAGE: true
-      FIWARE_DIRECTORY: './docker'
+      FIWARE_DIRECTORY: './filip_unittest/docker'
       PYTHON_PACKAGE_NAME: 'filip'
+      PYTHON_TEST_MATRIX: '["3.9", "3.10", "3.11", "3.12", "3.13"]'    #List of Python versions to run tests against as a matrix
