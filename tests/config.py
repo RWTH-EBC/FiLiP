@@ -34,7 +34,7 @@ class TestSettings(BaseSettings):
         ),
     )
     LD_CB_URL: AnyHttpUrl = Field(
-        default="http://localhost:1026",
+        default="http://localhost:1027",
         validation_alias=AliasChoices(
             "LD_ORION_URL", "LD_CB_URL", "ORION_LD_URL", "SCORPIO_URL", "STELLIO_URL"
         ),
