@@ -694,7 +694,10 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )</pre></td>
+    )
+
+
+# NGSIv2 entity models</pre></td>
             </tr>
             
             <tr>
@@ -800,17 +803,7 @@
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        &#34;&#34;&#34;
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        &#34;&#34;&#34;</pre></td>
+                return False</pre></td>
             </tr>
             
             <tr>
@@ -960,8 +953,6 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
-    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
-
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -1343,7 +1334,6 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1667:1673]
         )
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1514,11 +1504,8 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)
-
-</pre></td>
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
             </tr>
             
             <tr>
@@ -1605,10 +1592,8 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1254:1259]
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
-
         try:</pre></td>
             </tr>
             
@@ -1808,6 +1793,16 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
                 <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
             </tr>
             
@@ -1819,16 +1814,6 @@ from pydantic import (
                 <td>R0401</td>
                 <td></td>
                 <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -1878,7 +1863,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -1898,7 +1883,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
             </tr>
             
             <tr>
@@ -1908,7 +1893,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
             </tr>
             
         </table>
