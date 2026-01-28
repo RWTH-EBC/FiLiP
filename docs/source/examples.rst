@@ -1,1 +1,1 @@
-.. mdinclude::  ../../examples/README.md
+.. mdinclude::  ../../examples/README.sphinx.md

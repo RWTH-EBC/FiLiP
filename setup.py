@@ -1,67 +1,93 @@
 """Setup.py script for the FiLiP-Library"""
 
+import re
 import setuptools
 
 # read the contents of your README file
 from pathlib import Path
-readme_path = Path(__file__).parent.joinpath("README.md")
-LONG_DESCRIPTION = readme_path.read_text()
 
-INSTALL_REQUIRES = ['aenum',
-                    'datamodel_code_generator[http]>=0.11.16',
-                    'paho-mqtt>=1.6.1',
-                    'pandas>=1.2',
-                    'pandas-datapackage-reader>=0.18.0',
-                    'pydantic[dotenv]>=1.7.2',
-                    'PyYAML',
-                    'stringcase>=1.2.0',
-                    'igraph==0.9.8',
-                    'rdflib~=6.0.0',
-                    'regex',
-                    'requests',
-                    'rapidfuzz',
-                    'wget']
+readme_path = Path(__file__).parent.joinpath("README.md")
+LONG_DESCRIPTION = readme_path.read_text(encoding="utf-8")
+
+INSTALL_REQUIRES = [
+    "aenum~=3.1.15",
+    "datamodel_code_generator[http]~=0.25.0",
+    "paho-mqtt~=2.0.0",
+    "pandas_datapackage_reader~=0.18.0",
+    "pydantic>=2.6.0,<2.9.0",
+    "pydantic-settings>=2.0.0,<2.3.0",
+    "geojson_pydantic~=1.0.2",
+    "stringcase>=1.2.0",
+    "regex~=2023.10.3",
+    "requests~=2.32.0",
+    "rapidfuzz~=3.4.0",
+    "geojson-pydantic~=1.0.2",
+    "wget~=3.2",
+    "PyLD~=2.0.4",
+    "pyjexl~=0.3.0",
+    "packaging~=24.1",
+    "matplotlib~=3.9.4",
+]
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
-VERSION = '0.2.5'
+
+def get_version():
+    init_py = Path(__file__).parent.joinpath("filip", "__init__.py")
+    with open(init_py, "r") as f:
+        content = f.read()
+    # Using a regular expression to find the version string
+    match = re.search(r"^__version__\s*=\s*['\"]([^'\"]*)['\"]", content, re.M)
+    if match:
+        return match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+
+VERSION = get_version()
 
 setuptools.setup(
-    name='filip',
+    name="filip",
     version=VERSION,
-    author='RWTH Aachen University, E.ON Energy Research Center, Institute\
-        of Energy Efficient Buildings and Indoor Climate',
-    author_email='tstorek@eonerc.rwth-aachen.de',
-    description='[FI]WARE [Li]brary for [P]ython',
+    author="RWTH Aachen University, E.ON Energy Research Center, Institute\
+        of Energy Efficient Buildings and Indoor Climate",
+    author_email="ebc-tools@eonerc.rwth-aachen.de",
+    description="[FI]WARE [Li]brary for [P]ython",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/RWTH-EBC/filip",
     download_url=f"https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v{VERSION}.tar.gz",
     project_urls={
-        "Documentation":
-            "https://ebc.pages.rwth-aachen.de/EBC_all/github_ci/FiLiP/master/docs/index.html",
-        "Source":
-            "https://github.com/RWTH-EBC/filip",
-        "Download":
-            f"https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v{VERSION}.tar.gz"},
+        "Documentation": "https://rwth-ebc.github.io/FiLiP/master/docs/index.html",
+        "Source": "https://github.com/RWTH-EBC/filip",
+        "Download": f"https://github.com/RWTH-EBC/FiLiP/archive/refs/tags/v{VERSION}.tar.gz",
+    },
     # Specify the Python versions you support here. In particular, ensure
     # that you indicate whether you support Python 2, Python 3 or both.
-    classifiers=['Development Status :: 3 - Alpha',
-                 'Topic :: Scientific/Engineering',
-                 'Intended Audience :: Science/Research',
-                 'Programming Language :: Python :: 3.7',
-                 'Programming Language :: Python :: 3.8',
-                 'Programming Language :: Python :: 3.9',
-                 "License :: OSI Approved :: BSD License"],
-    keywords=['iot', 'fiware', 'semantic'],
-    packages=setuptools.find_packages(exclude=['tests',
-                                               'tests.*',
-                                               'img',
-                                               'tutorials.*',
-                                               'tutorials']),
-    package_data={'filip': ['data/unece-units/*.csv']},
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Topic :: Scientific/Engineering",
+        "Intended Audience :: Science/Research",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "License :: OSI Approved :: BSD License",
+    ],
+    keywords=["iot", "fiware", "semantic"],
+    packages=setuptools.find_packages(
+        exclude=["tests", "tests.*", "img", "tutorials.*", "tutorials"]
+    ),
+    package_data={"filip": ["data/unece-units/*.csv"]},
     setup_requires=SETUP_REQUIRES,
+    # optional modules
+    extras_require={
+        "development": ["pre-commit~=4.0.1"],
+        "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
+        "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
+        ":python_version < '3.9'": ["pandas~=1.3.5"],
+        ":python_version >= '3.9'": ["pandas>=2.1.4,<2.4.0"],
+    },
     install_requires=INSTALL_REQUIRES,
-    python_requires=">=3.7",
-
+    python_requires=">=3.8",
 )

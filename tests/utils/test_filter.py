@@ -1,6 +1,7 @@
 """
 Tests filter functions in filip.utils.filter
 """
+
 import unittest
 from datetime import datetime
 
@@ -24,59 +25,48 @@ class TestFilterFunctions(unittest.TestCase):
             None
         """
         self.fiware_header = FiwareHeader(
-            service=settings.FIWARE_SERVICE,
-            service_path=settings.FIWARE_SERVICEPATH)
+            service=settings.FIWARE_SERVICE, service_path=settings.FIWARE_SERVICEPATH
+        )
         self.url = settings.CB_URL
-        self.client = ContextBrokerClient(url=self.url,
-                                          fiware_header=self.fiware_header)
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=self.url)
-        self.subscription = Subscription.parse_obj({
-            "description": "One subscription to rule them all",
-            "subject": {
-                "entities": [
-                    {
-                        "idPattern": ".*",
-                        "type": "Room"
-                    }
-                ],
-                "condition": {
-                    "attrs": [
-                        "temperature"
-                    ],
-                    "expression": {
-                        "q": "temperature>40"
-                    }
-                }
-            },
-            "notification": {
-                "http": {
-                    "url": "http://localhost:1234"
+        self.client = ContextBrokerClient(
+            url=self.url, fiware_header=self.fiware_header
+        )
+        clear_all(fiware_header=self.fiware_header, cb_url=self.url)
+        self.subscription = Subscription.model_validate(
+            {
+                "description": "One subscription to rule them all",
+                "subject": {
+                    "entities": [{"idPattern": ".*", "type": "Room"}],
+                    "condition": {
+                        "attrs": ["temperature"],
+                        "expression": {"q": "temperature>40"},
+                    },
                 },
-                "attrs": [
-                    "temperature",
-                    "humidity"
-                ]
-            },
-            "expires": datetime.now(),
-            "throttling": 0
-        })
-        self.subscription.subject.entities[0] = EntityPattern(idPattern=".*",
-                                                              type="Room")
+                "notification": {
+                    "http": {"url": "http://localhost:1234"},
+                    "attrs": ["temperature", "humidity"],
+                },
+                "expires": datetime.now(),
+                "throttling": 0,
+            }
+        )
+        self.subscription.subject.entities[0] = EntityPattern(
+            idPattern=".*", type="Room"
+        )
 
     def test_filter_subscriptions_by_entity(self):
-        subscription_1 = self.subscription.copy()
+        subscription_1 = self.subscription.model_copy()
         self.client.post_subscription(subscription=subscription_1)
 
-        subscription_2 = self.subscription.copy()
-        subscription_2.subject.entities[0] = EntityPattern(idPattern=".*",
-                                                           type="Building")
+        subscription_2 = self.subscription.model_copy()
+        subscription_2.subject.entities[0] = EntityPattern(
+            idPattern=".*", type="Building"
+        )
         self.client.post_subscription(subscription=subscription_2)
 
-        filtered_sub = filter.filter_subscriptions_by_entity("test",
-                                                             "Building",
-                                                             self.url,
-                                                             self.fiware_header)
+        filtered_sub = filter.filter_subscriptions_by_entity(
+            "test", "Building", self.url, self.fiware_header
+        )
         self.assertGreater(len(filtered_sub), 0)
 
     def test_filter_device_list(self) -> None:
@@ -105,7 +95,7 @@ class TestFilterFunctions(unittest.TestCase):
                 service_path=settings.FIWARE_SERVICEPATH,
                 device_id=device_id,
                 entity_type=entity_type,
-                entity_name=entity_id
+                entity_name=entity_id,
             )
             devices.append(device)
 
@@ -116,65 +106,82 @@ class TestFilterFunctions(unittest.TestCase):
         self.assertEqual(len(filter.filter_device_list(devices)), len(devices))
 
         # test with entity type
-        self.assertEqual(len(filter.filter_device_list(
-            devices,
-            entity_types=[entity_type_1])),
-            10)
-        self.assertEqual(len(filter.filter_device_list(
-            devices,
-            entity_types=[entity_type_1, entity_type_2])),
-            20)
+        self.assertEqual(
+            len(filter.filter_device_list(devices, entity_types=[entity_type_1])), 10
+        )
+        self.assertEqual(
+            len(
+                filter.filter_device_list(
+                    devices, entity_types=[entity_type_1, entity_type_2]
+                )
+            ),
+            20,
+        )
 
         # test with entity id
-        self.assertEqual(len(filter.filter_device_list(
-            devices,
-            entity_names=entity_id_list[5:])),
-            len(entity_id_list[5:]))
+        self.assertEqual(
+            len(filter.filter_device_list(devices, entity_names=entity_id_list[5:])),
+            len(entity_id_list[5:]),
+        )
 
         # test with entity type and entity id
-        self.assertEqual(len(filter.filter_device_list(
-            devices,
-            entity_names=entity_id_list,
-            entity_types=[entity_type_1])),
-            10)
+        self.assertEqual(
+            len(
+                filter.filter_device_list(
+                    devices, entity_names=entity_id_list, entity_types=[entity_type_1]
+                )
+            ),
+            10,
+        )
 
         # test with device id
-        self.assertEqual(len(filter.filter_device_list(
-            devices, device_ids=device_id_list[5:])),
-            len(device_id_list[5:]))
+        self.assertEqual(
+            len(filter.filter_device_list(devices, device_ids=device_id_list[5:])),
+            len(device_id_list[5:]),
+        )
 
         # test with single args
-        self.assertEqual(len(filter.filter_device_list(
-            devices,
-            device_ids=devices[0].device_id)), 1)
+        self.assertEqual(
+            len(filter.filter_device_list(devices, device_ids=devices[0].device_id)), 1
+        )
 
-        self.assertEqual(len(filter.filter_device_list(
-            devices,
-            entity_names=devices[0].entity_name)), 1)
+        self.assertEqual(
+            len(
+                filter.filter_device_list(devices, entity_names=devices[0].entity_name)
+            ),
+            1,
+        )
 
-        self.assertNotEqual(len(filter.filter_device_list(
-            devices,
-            entity_types=devices[0].entity_type)), 1)
+        self.assertNotEqual(
+            len(
+                filter.filter_device_list(devices, entity_types=devices[0].entity_type)
+            ),
+            1,
+        )
 
-        self.assertEqual(len(filter.filter_device_list(
-            devices,
-            device_ids=devices[0].device_id,
-            entity_names=devices[0].entity_name,
-            entity_types=devices[0].entity_type)), 1)
+        self.assertEqual(
+            len(
+                filter.filter_device_list(
+                    devices,
+                    device_ids=devices[0].device_id,
+                    entity_names=devices[0].entity_name,
+                    entity_types=devices[0].entity_type,
+                )
+            ),
+            1,
+        )
 
         # test for errors
         with self.assertRaises(TypeError):
-            filter.filter_device_list(devices, device_ids={'1234'})
+            filter.filter_device_list(devices, device_ids={"1234"})
         with self.assertRaises(TypeError):
-            filter.filter_device_list(devices, entity_names={'1234'})
+            filter.filter_device_list(devices, entity_names={"1234"})
         with self.assertRaises(TypeError):
-            filter.filter_device_list(devices, entity_types={'1234'})
-
+            filter.filter_device_list(devices, entity_types={"1234"})
 
     def tearDown(self) -> None:
         """
         Cleanup test server
         """
         self.client.close()
-        clear_all(fiware_header=self.fiware_header,
-                  cb_url=self.url)
+        clear_all(fiware_header=self.fiware_header, cb_url=self.url)

@@ -16,8 +16,7 @@ class TestUnitCodes(unittest.TestCase):
     def setUp(self):
         self.units_data = load_units()
         self.units = Units()
-        self.unit = {"code": "C58",
-                     "name": "newton second per metre"}
+        self.unit = {"code": "C58", "name": "newton second per metre"}
 
     def test_unit_code(self):
         """
@@ -40,13 +39,12 @@ class TestUnitCodes(unittest.TestCase):
     def test_unit_model(self):
         """
         Test unit model
-
         Returns:
             None
         """
-        # test creation
         unit = Unit(**self.unit)
-        unit_from_json = Unit.parse_raw(unit.json(by_alias=True))
+        json_data = unit.model_dump_json(by_alias=False)
+        unit_from_json = Unit.model_validate_json(json_data=json_data)
         self.assertEqual(unit, unit_from_json)
 
     def test_unit_model_caching(self):
@@ -87,8 +85,7 @@ class TestUnitCodes(unittest.TestCase):
         units = Units()
         self.assertEqual(self.units_data.Name.to_list(), units.keys())
         self.assertEqual(self.units_data.Name.to_list(), units.names)
-        self.assertEqual(self.units_data.CommonCode.to_list(),
-                         units.keys(by_code=True))
+        self.assertEqual(self.units_data.CommonCode.to_list(), units.keys(by_code=True))
         self.assertEqual(self.units_data.CommonCode.to_list(), units.codes)
 
         # check get or __getitem__, respectively
@@ -100,8 +97,7 @@ class TestUnitCodes(unittest.TestCase):
 
         # check serialization
         for v in units.values():
-            v.json(indent=2)
-
+            v.model_dump_json(indent=2)
 
     def test_unit_validator(self):
         """
@@ -111,7 +107,7 @@ class TestUnitCodes(unittest.TestCase):
         """
 
         unit_data = self.unit.copy()
-        unit_data['name'] = "celcius"
+        unit_data["name"] = "celcius"
         with self.assertRaises(ValueError):
             Unit(**unit_data)
 

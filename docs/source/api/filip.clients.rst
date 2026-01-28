@@ -22,6 +22,14 @@ filip.clients.base\_http\_client module
    :undoc-members:
    :show-inheritance:
 
+filip.clients.exceptions module
+-------------------------------
+
+.. automodule:: filip.clients.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

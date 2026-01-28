@@ -4,6 +4,8 @@ omit =
     */test*
 	# omit deprecated code
 	*/deprecated*
+	# omit semantics module
+	filip/semantics/*
 source =
 	filip
 [report]

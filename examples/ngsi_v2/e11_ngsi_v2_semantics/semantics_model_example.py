@@ -6,15 +6,16 @@
 # Following the fiware state will be edited with automatic partial loading
 """
 
-
 """
 To run this example you need a working Fiware v2 setup with a context-broker 
 and an iota-broker. You can here set the addresses:
 """
-cb_url = "http://localhost:1026"
-iota_url = "http://localhost:4041"
+from filip.config import settings
 
-if __name__ == '__main__':
+cb_url = settings.CB_URL
+iota_url = settings.IOTA_URL
+
+if __name__ == "__main__":
 
     # # 0 Clean up Fiware state:
     #
@@ -72,11 +73,13 @@ if __name__ == '__main__':
     from filip.semantics.semantics_models import InstanceHeader
     from filip.models.base import NgsiVersion
 
-    header = InstanceHeader(cb_url=cb_url,
-                            iota_url=iota_url,
-                            ngsi_version=NgsiVersion.v2,
-                            service="example",
-                            service_path="/")
+    header = InstanceHeader(
+        cb_url=cb_url,
+        iota_url=iota_url,
+        ngsi_version=NgsiVersion.v2,
+        service="example",
+        service_path="/",
+    )
 
     my_floor = Floor(id="my-first-floor", header=header)
 
@@ -208,8 +211,10 @@ if __name__ == '__main__':
     # we can check again if all DataFields are now valid:
     print("\u0332".join("DataFields of my_building:"))
     for field in my_building.get_data_fields():
-        print(f"Name: {field.name}, Rule: {field.rule}, Values: "
-              f"{field.get_all_raw()}, Valid: {field.is_valid()}")
+        print(
+            f"Name: {field.name}, Rule: {field.rule}, Values: "
+            f"{field.get_all_raw()}, Valid: {field.is_valid()}"
+        )
     print("")
 
     # Datafields can also specify rules with Datatype enums, in that case we
@@ -236,8 +241,10 @@ if __name__ == '__main__':
     # we can check again if all RelationFields are now valid:
     print("\u0332".join("RelationFields of my_building:"))
     for field in my_building.get_relation_fields():
-        print(f"Name: {field.name}, Rule: {field.rule}, Values: "
-              f"{field.get_all_raw()}, Valid: {field.is_valid()}")
+        print(
+            f"Name: {field.name}, Rule: {field.rule}, Values: "
+            f"{field.get_all_raw()}, Valid: {field.is_valid()}"
+        )
     print("")
 
     # As we can see the RelationField internally only saves the references to
@@ -319,10 +326,11 @@ if __name__ == '__main__':
     # Our sensor has one measurement property that he names internally m
     # We add this attribute to our measurement_field.
 
-    from filip.semantics.semantics_models import \
-        DeviceAttribute, DeviceAttributeType
+    from filip.semantics.semantics_models import DeviceAttribute, DeviceAttributeType
+
     my_sensor.measurement.add(
-        DeviceAttribute(name="m", attribute_type=DeviceAttributeType.active))
+        DeviceAttribute(name="m", attribute_type=DeviceAttributeType.active)
+    )
 
     # To access the value of the attribute we could call:
     # my_sensor.measurement[0].get_value()
@@ -338,6 +346,7 @@ if __name__ == '__main__':
     # A command has 1 property:
     # - name: The internal name that the specific device uses for this purpose
     from filip.semantics.semantics_models import Command
+
     c1 = Command(name="open")
     my_outlet.controlCommand.add(c1)
 
@@ -366,8 +375,7 @@ if __name__ == '__main__':
     # instance. He can give the instance a name, and leave a comment
 
     my_floor.metadata.name = "First Basement"
-    my_floor.metadata.comment = "The first basement is directly below the " \
-                                "ground"
+    my_floor.metadata.comment = "The first basement is directly below the " "ground"
 
     # # 4 State Management
     #
@@ -416,12 +424,13 @@ if __name__ == '__main__':
     # we can use the corresponding functions in the semantic_manager:
 
     from filip.models.base import FiwareHeader
+
     semantic_manager.load_instances_from_fiware(
         fiware_version=NgsiVersion.v2,
         fiware_header=FiwareHeader(service="Example", service_path="/"),
         cb_url=cb_url,
         iota_url=iota_url,
-        entity_ids=[], # list of ids to load
+        entity_ids=[],  # list of ids to load
         # or entity_types=[...],  # list of types to load
     )
 
@@ -434,8 +443,10 @@ if __name__ == '__main__':
     # We can check this for each instance by calling:
     print("\u0332".join("Check instance validity:"))
     for instance in semantic_manager.get_all_local_instances():
-        print(f'({instance.get_type()}, {instance.id}) is valid: '
-              f'{instance.is_valid()}')
+        print(
+            f"({instance.get_type()}, {instance.id}) is valid: "
+            f"{instance.is_valid()}"
+        )
     print("")
 
     # if we want to save the LocalState to fiware with an invalid instance
@@ -534,9 +545,9 @@ if __name__ == '__main__':
     # ### 5.2.1 Generate Data
     #
     # To generate a representation of the current local state simply call:
-    [elements, stylesheet] = \
-        semantic_manager.generate_cytoscape_for_local_state(
-        display_only_used_individuals=True)
+    [elements, stylesheet] = semantic_manager.generate_cytoscape_for_local_state(
+        display_only_used_individuals=True
+    )
 
     # As a result you receive a Tuple containing the graph elements (nodes,
     # edges) and a stylesheet. (For more details refer to the methode
