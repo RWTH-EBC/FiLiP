@@ -66,7 +66,7 @@ class TestSettings(BaseSettings):
     )
 
     LD_MQTT_BROKER_URL: AnyUrl = Field(
-        default="mqtt://127.0.0.1:1884",
+        default="mqtt://127.0.0.1:1883",
         validation_alias=AliasChoices(
             "LD_MQTT_BROKER_URL", "LD_MQTT_URL", "LD_MQTT_BROKER"
         ),
