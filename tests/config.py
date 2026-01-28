@@ -61,7 +61,7 @@ class TestSettings(BaseSettings):
     )
 
     MQTT_BROKER_URL_INTERNAL: AnyUrl = Field(
-        default="mqtt://mosquitto:1883",
+        default="mqtt://127.0.0.1:1883",
         validation_alias=AliasChoices("MQTT_BROKER_URL_INTERNAL", "MQTT_URL_INTERNAL"),
     )
 
@@ -73,7 +73,7 @@ class TestSettings(BaseSettings):
     )
 
     LD_MQTT_BROKER_URL_INTERNAL: AnyUrl = Field(
-        default="mqtt://mqtt-broker-ld:1883",
+        default="mqtt://127.0.0.1:1883",
         validation_alias=AliasChoices(
             "LD_MQTT_BROKER_URL_INTERNAL", "LD_MQTT_URL_INTERNAL"
         ),
