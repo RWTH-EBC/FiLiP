@@ -13,13 +13,12 @@ class TestContextBroker(unittest.TestCase):
         for op in list(Operator):
             QueryStatement(self.left_hand_side, op, self.numeric_right_hand_side)
             if op not in [Operator.EQUAL, Operator.UNEQUAL, Operator.MATCH_PATTERN]:
-                self.assertRaises(
-                    ValueError,
-                    QueryStatement,
-                    self.left_hand_side,
-                    op,
-                    self.string_right_hand_side,
-                )
+                with self.assertRaises(ValueError):
+                    QueryStatement(
+                        self.left_hand_side,
+                        op,
+                        self.string_right_hand_side,
+                    )
 
     def test_simple_query(self):
         # create queries for testing
