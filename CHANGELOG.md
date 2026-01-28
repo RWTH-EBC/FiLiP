@@ -1,8 +1,116 @@
-#### v0.3.1
+### v0.7.x
+- fix: various bug fixes regarding query string and its regex ([#469](https://github.com/RWTH-EBC/FiLiP/pull/469))
+- fix: fixed outdated module overview diagram ([#467](https://github.com/RWTH-EBC/FiLiP/pull/467))
+- fix: ignore password field while checking duplicated subscription ([#471](https://github.com/RWTH-EBC/FiLiP/pull/471))
+- update: ignore difference of the order of list elements while checking duplicated subscription ([#474](https://github.com/RWTH-EBC/FiLiP/pull/474))
+- fix: make unit model hashable for caching ([#187](https://github.com/RWTH-EBC/FiLiP/issues/187))
+
+### v0.7.3
+- update: error handling for get devices list ([#451](https://github.com/RWTH-EBC/FiLiP/pull/451))
+- update: link FIWARE badges in README.md ([#463](https://github.com/RWTH-EBC/FiLiP/pull/463))
+- fix: falsy value handling on update_entity_attribute ([#454](https://github.com/RWTH-EBC/FiLiP/pull/454))
+- add: warning if ``Orion`` version is not supported ([#200](https://github.com/RWTH-EBC/FiLiP/issues/200))
+- add: support pagination for get_entity_list of NGSI-LD ([#456](https://github.com/RWTH-EBC/FiLiP/pull/457))
+- add: version checker for correct cb version ([#200](https://github.com/RWTH-EBC/FiLiP/pull/200))
+- add: pagination for get entity list in NGSI-LD client ([#457](https://github.com/RWTH-EBC/FiLiP/pull/457))
+- add: new example for uploading existing dataset ([#453](https://github.com/RWTH-EBC/FiLiP/pull/453))
+
+### v0.7.2
+- update: move rdflib requirement to ``semantics`` extras
+
+### v0.7.1
+- update: relax rdflib requirements to allow rdflib<=6.1.1 ([#446](https://github.com/RWTH-EBC/FiLiP/issues/446))
+
+### v0.7.0
+- add: flag to decide on whether ignore invalid entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
+- add: system params like ``lastSuccess`` to notification model ([#441](https://github.com/RWTH-EBC/FiLiP/pull/441))
+- add: NGSI-LD convertion functions between keyvalues and normal entity format ([#443](https://github.com/RWTH-EBC/FiLiP/pull/443))
+- add: flag to decide on whether ignore invalid entities in get_entity_list ([#416](https://github.com/RWTH-EBC/FiLiP/pull/416))
+- add: NGSI-LD examples ([#432](https://github.com/RWTH-EBC/FiLiP/pull/432))
+- fix: handle large amount of data in clear context broker ([#419](https://github.com/RWTH-EBC/FiLiP/pull/419))
+- update: allow UTF-8 characters in attribute values ([#437](https://github.com/RWTH-EBC/FiLiP/pull/437))
+- update: stop testing python 3.8 in workflow ([#441](https://github.com/RWTH-EBC/FiLiP/pull/441))
+- update: adapt the behavior of `patch_entity` to align with the API specification ([#429](https://github.com/RWTH-EBC/FiLiP/pull/429))
+
+### v0.6.3
+- add: Unittest workflow via Github actions ([#388](https://github.com/RWTH-EBC/FiLiP/pull/388))
+- add: Context conversion methods to_keyvalues() and to_normalized() ([#393](https://github.com/RWTH-EBC/FiLiP/pull/393))
+- fix: relationship validation can not handle empty attributes ([#411](https://github.com/RWTH-EBC/FiLiP/pull/411))
+- fix:relationship and properties cannot be created via predefined models ([#412](https://github.com/RWTH-EBC/FiLiP/pull/412))
+- fix: LD entity model ignore unset properties ([#402](https://github.com/RWTH-EBC/FiLiP/pull/402))
+
+### v0.6.2
+- add: New features to validate and update relationships for V2 entities ([#380](https://github.com/RWTH-EBC/FiLiP/pull/380))
+- add: ngsi-ld support for entity creation and update with keyvalues format ([#394](https://github.com/RWTH-EBC/FiLiP/pull/394))
+- fix: exception handling for special characters in attribute value  ([#381](https://github.com/RWTH-EBC/FiLiP/pull/381))
+- update: relax pydantic requirements ([#390](https://github.com/RWTH-EBC/FiLiP/pull/390))
+- update: pandas requirement from ~=1.3.5 to >=1.3.5,<2.3.0 ([#396](https://github.com/RWTH-EBC/FiLiP/pull/396))
+
+### v0.6.1
+- add: Tutorial for saving live timeseries data (e.g., forecast) in context broker and timeseries database ([#363](https://github.com/RWTH-EBC/FiLiP/pull/363))
+- add: Tutorial for using session object ([#370](https://github.com/RWTH-EBC/FiLiP/pull/370))
+- add: Validation of quotation mark in ``q`` strings for NGSI-LD ``get_entities_list`` ([#383](https://github.com/RWTH-EBC/FiLiP/pull/383/files))
+- fix: Addition of trailing slash if missing from base url ([#371](https://github.com/RWTH-EBC/FiLiP/pull/371))
+- fix: Serialization error for custom datamodels during batch operation ([#376](https://github.com/RWTH-EBC/FiLiP/pull/376))
+- update: omit invalid entities in `get_entity_list` ([#375](https://github.com/RWTH-EBC/FiLiP/pull/375))
+
+### v0.6.0
+- add: Tutorial for connecting with secured endpoints ([#319](https://github.com/RWTH-EBC/FiLiP/pull/319))
+- add: Example for notification based command ([#332](https://github.com/RWTH-EBC/FiLiP/pull/332))
+- add: tests for clear functions ([#336](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- 🚀 **add: API client for NGSI-LD context broker** ([#338](https://github.com/RWTH-EBC/FiLiP/pull/338)
+,[#356](https://github.com/RWTH-EBC/FiLiP/pull/356)
+,[#327](https://github.com/RWTH-EBC/FiLiP/pull/327)
+,[#300](https://github.com/RWTH-EBC/FiLiP/pull/300)
+,[#301](https://github.com/RWTH-EBC/FiLiP/pull/301)
+,[#212](https://github.com/RWTH-EBC/FiLiP/pull/212)
+,[#222](https://github.com/RWTH-EBC/FiLiP/pull/222)
+,[#221](https://github.com/RWTH-EBC/FiLiP/pull/221)
+  )
+- fix: clear functions for context broker ([#336](https://github.com/RWTH-EBC/FiLiP/pull/336))
+- fix: validation error of ``ngsipayloadattr`` when the attribute substitution is used([#351](https://github.com/RWTH-EBC/FiLiP/pull/351))
+- update: integrate the key-values endpoints with normalized endpoints ([#318](https://github.com/RWTH-EBC/FiLiP/pull/318))
+- remove: ``update_entity_attributes_key_values`` and ``update_entity_key_values`` are removed ([#318](https://github.com/RWTH-EBC/FiLiP/pull/318))
+
+
+### v0.5.0
+- update: allow duplicated name in device, check uniqueness of object_id ([#279](https://github.com/RWTH-EBC/FiLiP/pull/279))
+- update: upgrade dependency of `paho-mqtt` to v2 ([#273](https://github.com/RWTH-EBC/FiLiP/pull/273/))
+- add: `json` and `ngsi` as payload format in custom notification model ([#296](https://github.com/RWTH-EBC/FiLiP/pull/296))
+- add: support alterationTypes in subscription model ([#293](https://github.com/RWTH-EBC/FiLiP/pull/293))
+- add: validation for JEXL based expression ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+- add: tutorials for multi-entity ([#260](https://github.com/RWTH-EBC/FiLiP/pull/260))
+- add: add ``update_entity_relationships`` to allow relationship update ([#271](https://github.com/RWTH-EBC/FiLiP/pull/271))
+- add: timeseries query with all attrs and specific attr name ([#16](https://github.com/RWTH-EBC/FiLiP/pull/16))
+- add: flag to determine the deletion of registration when clearing the CB ([#267](https://github.com/RWTH-EBC/FiLiP/pull/267))
+- add: ``covered`` flag in notification model ([#310](https://github.com/RWTH-EBC/FiLiP/pull/310))
+- fix: rework tutorials for pydantic v2 ([#259](https://github.com/RWTH-EBC/FiLiP/pull/259))
+- fix: inconsistency of `entity_type` as required argument ([#188](https://github.com/RWTH-EBC/FiLiP/pull/188))
+- fix: allow empty string in attribute value validation ([#311](https://github.com/RWTH-EBC/FiLiP/pull/311))
+
+BREAKING CHANGE: upgrade dependency of `paho-mqtt` to v2 ([#273](https://github.com/RWTH-EBC/FiLiP/pull/273/))
+
+### v0.4.1
+- fix: Session added as optional parameter to enable tls communication with clients ([#249](https://github.com/RWTH-EBC/FiLiP/pull/249))
+- fix: add missing package ``geojson_pydantic`` in setup.py ([#276](https://github.com/RWTH-EBC/FiLiP/pull/276))
+- add: support entity creation with keyvalues ([#264](https://github.com/RWTH-EBC/FiLiP/pull/264))
+
+#### v0.4.0
 - add tutorial for protected endpoint with bearer authentication ([#208](https://github.com/RWTH-EBC/FiLiP/issues/208))
+- add internal mqtt url for unittests @djs0109 ([#239](https://github.com/RWTH-EBC/FiLiP/pull/239))
+- fix: compare subscriptions to prevent duplicated notifications @FWuellhorst, @RCX112 ([#138](https://github.com/RWTH-EBC/FiLiP/pull/138))
 - update pandas version to `~=2.1.4` for `python>=3.9` ([#231](https://github.com/RWTH-EBC/FiLiP/pull/231))
 - fix: wrong msg in iotac post device ([#214](https://github.com/RWTH-EBC/FiLiP/pull/214))
-- fix: make unit model hashable for caching ([#187](https://github.com/RWTH-EBC/FiLiP/issues/187))
+- add support to update entities with keyValues @djs0109 ([#245](https://github.com/RWTH-EBC/FiLiP/pull/245))
+- add function to override the existing entity ([#232 ](https://github.com/RWTH-EBC/FiLiP/pull/232 ))
+- fix: remove root slash from paths ([#251](https://github.com/RWTH-EBC/FiLiP/issues/251))
+- fix: include headers in some requests ([#250](https://github.com/RWTH-EBC/FiLiP/issues/250))
+- add: `forcedUpdate` and missing `overrideMetadata` in request parameters ([#236](https://github.com/RWTH-EBC/FiLiP/pull/236))
+- feat: make context-entity more customizable ([#225](https://github.com/RWTH-EBC/FiLiP/issues/225))
+- feat: add geojson support to context-entity ([#226](https://github.com/RWTH-EBC/FiLiP/issues/226))
+
+BREAKING CHANGE:
+- feat: make context-entity more customizable ([#225](https://github.com/RWTH-EBC/FiLiP/issues/225)) enforces stricter type validation as before. This might lead to errors in your code if you are not using the correct types. Please check the documentation for the correct types.
 
 #### v0.3.0
 - fix: bug in typePattern validation @richardmarston ([#180](https://github.com/RWTH-EBC/FiLiP/pull/180))

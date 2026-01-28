@@ -9,6 +9,7 @@ tables visit this website:
 https://unece.org/trade/cefact/UNLOCODE-Download
 https://unece.org/trade/uncefact/cl-recommendations
 """
+
 import json
 import logging
 import pandas as pd
@@ -33,12 +34,13 @@ def load_units() -> pd.DataFrame:
         Cleaned dataset containing all unit data
     """
     units = load_datapackage(
-            url="https://github.com/datasets/unece-units-of-measure",
-            package_name="unece-units")["units_of_measure"]
+        url="https://github.com/datasets/unece-units-of-measure",
+        package_name="unece-units",
+    )["units_of_measure"]
     # remove deprecated entries
     units = units.loc[
-            ((units.Status.str.casefold() != 'x') &
-             (units.Status.str.casefold() != 'd'))]
+        ((units.Status.str.casefold() != "x") & (units.Status.str.casefold() != "d"))
+    ]
     return units
 
 
@@ -52,16 +54,21 @@ class UnitCode(BaseModel):
     Note:
         Currently we only support the UN/CEFACT Common Codes
     """
-    type: DataType = Field(default=DataType.TEXT,
-                           # const=True,
-                           description="Data type")
-    value: str = Field(...,
-                       title="Code of unit ",
-                       description="UN/CEFACT Common Code (3 characters)",
-                       min_length=2,
-                       max_length=3)
 
-    @field_validator('value')
+    type: DataType = Field(
+        default=DataType.TEXT,
+        # const=True,
+        description="Data type",
+    )
+    value: str = Field(
+        ...,
+        title="Code of unit ",
+        description="UN/CEFACT Common Code (3 characters)",
+        min_length=2,
+        max_length=3,
+    )
+
+    @field_validator("value")
     @classmethod
     def validate_code(cls, value):
         units = load_units()
@@ -79,16 +86,21 @@ class UnitText(BaseModel):
     Note:
         We use the names of units of measurements from UN/CEFACT for validation
     """
-    type: DataType = Field(default=DataType.TEXT,
-                           # const=True,
-                           description="Data type")
-    value: str = Field(...,
-                       title="Name of unit of measurement",
-                       description="Verbose name of a unit using British "
-                                   "spelling in singular form, "
-                                   "e.g. 'newton second per metre'")
 
-    @field_validator('value')
+    type: DataType = Field(
+        default=DataType.TEXT,
+        # const=True,
+        description="Data type",
+    )
+    value: str = Field(
+        ...,
+        title="Name of unit of measurement",
+        description="Verbose name of a unit using British "
+        "spelling in singular form, "
+        "e.g. 'newton second per metre'",
+    )
+
+    @field_validator("value")
     @classmethod
     def validate_text(cls, value):
         units = load_units()
@@ -96,48 +108,55 @@ class UnitText(BaseModel):
         if len(units.loc[(units.Name.str.casefold() == value.casefold())]) >= 1:
             return value
         names = units.Name.tolist()
-        suggestions = [item[0] for item in process.extract(
-            query=value.casefold(),
-            choices=names,
-            score_cutoff=50,
-            limit=5)]
-        raise ValueError(f"Invalid 'name' for unit! '{value}' \n "
-                         f"Did you mean one of the following? \n "
-                         f"{suggestions}")
+        suggestions = [
+            item[0]
+            for item in process.extract(
+                query=value.casefold(), choices=names, score_cutoff=50, limit=5
+            )
+        ]
+        raise ValueError(
+            f"Invalid 'name' for unit! '{value}' \n "
+            f"Did you mean one of the following? \n "
+            f"{suggestions}"
+        )
 
 
 class Unit(BaseModel):
     """
     Model for a unit definition
     """
-    model_config = ConfigDict(extra='ignore',
-                              populate_by_name=True,
-                              frozen=True)
+
+    model_config = ConfigDict(extra="ignore", populate_by_name=True, frozen=True)
     _ngsi_version: Literal[NgsiVersion.v2] = NgsiVersion.v2
     name: Optional[Union[str, UnitText]] = Field(
         alias="unitText",
         default=None,
-        description="A string or text indicating the unit of measurement")
+        description="A string or text indicating the unit of measurement",
+    )
     code: Optional[Union[str, UnitCode]] = Field(
         alias="unitCode",
         default=None,
         description="The unit of measurement given using the UN/CEFACT "
-                    "Common Code (3 characters)")
+        "Common Code (3 characters)",
+    )
     description: Optional[str] = Field(
         default=None,
         alias="unitDescription",
         description="Verbose description of unit",
-        max_length=350)
+        max_length=350,
+    )
     symbol: Optional[str] = Field(
         default=None,
         alias="unitSymbol",
         description="The symbol used to represent the unit of measure as "
-                    "in ISO 31 / 80000.")
+        "in ISO 31 / 80000.",
+    )
     conversion_factor: Optional[str] = Field(
         default=None,
         alias="unitConversionFactor",
         description="The value used to convert units to the equivalent SI "
-                    "unit when applicable.")
+        "unit when applicable.",
+    )
 
     @model_validator(mode="before")
     @classmethod
@@ -162,11 +181,11 @@ class Unit(BaseModel):
             name = name.value
 
         if code and name:
-            idx = units.index[((units.CommonCode == code) &
-                               (units.Name == name))]
+            idx = units.index[((units.CommonCode == code) & (units.Name == name))]
             if idx.empty:
-                raise ValueError("Invalid combination of 'code' and 'name': ",
-                                 code, name)
+                raise ValueError(
+                    "Invalid combination of 'code' and 'name': ", code, name
+                )
         elif code:
             idx = units.index[(units.CommonCode == code)]
             if idx.empty:
@@ -175,15 +194,18 @@ class Unit(BaseModel):
             idx = units.index[(units.Name == name)]
             if idx.empty:
                 names = units.Name.tolist()
-                suggestions = [item[0] for item in process.extract(
-                    query=name.casefold(),
-                    choices=names,
-                    score_cutoff=50,
-                    limit=5)]
+                suggestions = [
+                    item[0]
+                    for item in process.extract(
+                        query=name.casefold(), choices=names, score_cutoff=50, limit=5
+                    )
+                ]
 
-                raise ValueError(f"Invalid 'name' for unit! '{name}' \n "
-                                 f"Did you mean one of the following? \n "
-                                 f"{suggestions}")
+                raise ValueError(
+                    f"Invalid 'name' for unit! '{name}' \n "
+                    f"Did you mean one of the following? \n "
+                    f"{suggestions}"
+                )
         else:
             raise AssertionError("'name' or 'code' must be  provided!")
 
@@ -201,6 +223,7 @@ class Units:
     Class for easy accessing the data set of UNECE units from here.
     "https://github.com/datasets/unece-units-of-measure"
     """
+
     units = load_units()
 
     def __getattr__(self, item):
@@ -208,14 +231,13 @@ class Units:
         Return unit as attribute by name or code.
         Notes:
             Underscores will be substituted with whitespaces
-
         Args:
             item: if len(row) == 0:
 
         Returns:
             Unit
         """
-        item = item.casefold().replace('_', ' ')
+        item = item.casefold().replace("_", " ")
         return self.__getitem__(item)
 
     @property
@@ -225,10 +247,11 @@ class Units:
         Returns:
             list of units ordered by measured quantities
         """
-        raise NotImplementedError("The used dataset does currently not "
-                                  "contain the information about quantity")
+        raise NotImplementedError(
+            "The used dataset does currently not "
+            "contain the information about quantity"
+        )
 
-    @lru_cache()
     def __getitem__(self, item: str) -> Unit:
         """
         Get unit by name or code
@@ -239,19 +262,25 @@ class Units:
         Returns:
             Unit
         """
-        idx = self.units.index[((self.units.CommonCode == item.upper()) |
-                                (self.units.Name.str.casefold() ==
-                                 item.casefold()))]
+        idx = self.units.index[
+            (
+                (self.units.CommonCode == item.upper())
+                | (self.units.Name.str.casefold() == item.casefold())
+            )
+        ]
         if idx.empty:
             names = self.units.Name.tolist()
-            suggestions = [item[0] for item in process.extract(
-                query=item.casefold(),
-                choices=names,
-                score_cutoff=50,
-                limit=5)]
-            raise ValueError(f"Invalid 'name' for unit! '{item}' \n "
-                             f"Did you mean one of the following? \n "
-                             f"{suggestions}")
+            suggestions = [
+                item[0]
+                for item in process.extract(
+                    query=item.casefold(), choices=names, score_cutoff=50, limit=5
+                )
+            ]
+            raise ValueError(
+                f"Invalid 'name' for unit! '{item}' \n "
+                f"Did you mean one of the following? \n "
+                f"{suggestions}"
+            )
 
         return Unit(code=self.units.CommonCode[idx[0]])
 
@@ -326,13 +355,11 @@ def validate_unit_data(data: Dict) -> Dict:
     Returns:
         Validated dictionary of metadata
     """
-    _unit_models = {'unit': Unit,
-                    "unitText": UnitText,
-                    "unitCode": UnitCode}
+    _unit_models = {"unit": Unit, "unitText": UnitText, "unitCode": UnitCode}
     for modelname, model in _unit_models.items():
         if data.get("name", "").casefold() == modelname.casefold():
-            if data.get("name", "").casefold() == 'unit':
-                data["type"] = 'Unit'
+            if data.get("name", "").casefold() == "unit":
+                data["type"] = "Unit"
                 data["value"] = model.model_validate(data["value"])
                 # data["value"] = model.parse_obj(data["value"])
                 return data
@@ -340,5 +367,4 @@ def validate_unit_data(data: Dict) -> Dict:
                 data.update(model.model_validate(data).model_dump())
                 # data.update(model.parse_obj(data).dict())
                 return data
-    raise ValueError(f"Invalid unit data found: \n "
-                     f"{json.dumps(data, indent=2)}")
+    raise ValueError(f"Invalid unit data found: \n " f"{json.dumps(data, indent=2)}")

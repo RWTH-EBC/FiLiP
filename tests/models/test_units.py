@@ -1,14 +1,10 @@
 """
 Test for filip.models.units
 """
+
 import unittest
 import functools
-from filip.models.ngsi_v2.units import \
-    Unit, \
-    Units, \
-    UnitCode, \
-    UnitText, \
-    load_units
+from filip.models.ngsi_v2.units import Unit, Units, UnitCode, UnitText, load_units
 
 
 class TestUnitCodes(unittest.TestCase):
@@ -16,8 +12,7 @@ class TestUnitCodes(unittest.TestCase):
     def setUp(self):
         self.units_data = load_units()
         self.units = Units()
-        self.unit = {"code": "C58",
-                     "name": "newton second per metre"}
+        self.unit = {"code": "C58", "name": "newton second per metre"}
 
     def test_unit_code(self):
         """
@@ -40,11 +35,9 @@ class TestUnitCodes(unittest.TestCase):
     def test_unit_model(self):
         """
         Test unit model
-
         Returns:
             None
         """
-        # test creation
         unit = Unit(**self.unit)
         json_data = unit.model_dump_json(by_alias=False)
         unit_from_json = Unit.model_validate_json(json_data=json_data)
@@ -88,8 +81,7 @@ class TestUnitCodes(unittest.TestCase):
         units = Units()
         self.assertEqual(self.units_data.Name.to_list(), units.keys())
         self.assertEqual(self.units_data.Name.to_list(), units.names)
-        self.assertEqual(self.units_data.CommonCode.to_list(),
-                         units.keys(by_code=True))
+        self.assertEqual(self.units_data.CommonCode.to_list(), units.keys(by_code=True))
         self.assertEqual(self.units_data.CommonCode.to_list(), units.codes)
 
         # check get or __getitem__, respectively
@@ -103,16 +95,14 @@ class TestUnitCodes(unittest.TestCase):
         for v in units.values():
             v.model_dump_json(indent=2)
 
-
     def test_unit_validator(self):
         """
         Test if unit hints are given for typos
         Returns:
             None
         """
-
         unit_data = self.unit.copy()
-        unit_data['name'] = "celcius"
+        unit_data["name"] = "celcius"
         with self.assertRaises(ValueError):
             Unit(**unit_data)
 
@@ -122,17 +112,18 @@ class TestUnitCodes(unittest.TestCase):
         """
         # using garbage collector to clean up all caches
         import gc
+
         gc.collect()
 
         # All objects collected
-        objects = [i for i in gc.get_objects()
-                   if isinstance(i, functools._lru_cache_wrapper)]
+        objects = [
+            i for i in gc.get_objects() if isinstance(i, functools._lru_cache_wrapper)
+        ]
 
         # All objects cleared
         for object in objects:
             object.cache_clear()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
-
-
