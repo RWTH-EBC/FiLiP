@@ -694,10 +694,7 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )
-
-
-# NGSIv2 entity models</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -729,10 +726,9 @@
                 return items
             res.raise_for_status()
 
-    # MANAGEMENT API
     def get_version(self) -&gt; Dict:
         &#34;&#34;&#34;
-        Gets version of IoT Agent
+        Gets version of Orion-LD context broker
         Returns:
             Dictionary with response
         &#34;&#34;&#34;</pre></td>
@@ -780,7 +776,6 @@
         json_schema_extra={&#34;example&#34;: &#34;Room&#34;},
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     )</pre></td>
             </tr>
@@ -804,17 +799,7 @@
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        &#34;&#34;&#34;
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        &#34;&#34;&#34;</pre></td>
+                return False</pre></td>
             </tr>
             
             <tr>
@@ -884,7 +869,9 @@
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
+
+</pre></td>
             </tr>
             
             <tr>
@@ -906,7 +893,7 @@
         description=&#34;Id of an entity in an NGSI context broker. Allowed &#34;
         &#34;characters are the ones in the plain ASCII set, except &#34;
         &#34;the following ones: control characters, &#34;
-        &#34;whitespace, &amp;, ?, / and #.&#34;,</pre></td>
+        &#34;whitespace, &amp;, ?, / and #.&#34;</pre></td>
             </tr>
             
             <tr>
@@ -1077,7 +1064,6 @@ class IdType(str, Enum):
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) &gt; 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1228,23 +1214,6 @@ class IdType(str, Enum):
 
         return True
 
-    def is_logically_equivalent_to(
-        self,
-        datatype: &#34;Datatype&#34;,
-        vocabulary: &#34;Vocabulary&#34;,
-        old_vocabulary: &#34;Vocabulary&#34;,
-    ) -&gt; bool:
-        &#34;&#34;&#34;Test if this datatype is logically equivalent to the given datatype
-
-        Args:
-            datatype (Datatype): Datatype to compare against
-            vocabulary (Vocabulary): Not used, but needed to keep signature the
-                same as other entities
-            old_vocabulary (Vocabulary): Not used, but needed to keep signature
-                the same as other entities
-        Returns:
-            bool
-        &#34;&#34;&#34;
 </pre></td>
             </tr>
             
@@ -1283,7 +1252,9 @@ from geojson_pydantic import (
         &#34;By default, the entities are represented in normalized &#34;
         &#34;mode. However, using the attrsFormat modifier, a &#34;
         &#34;simplified representation mode can be requested.&#34;
-    )</pre></td>
+    )
+
+</pre></td>
             </tr>
             
             <tr>
@@ -1419,7 +1390,7 @@ from geojson_pydantic import (
             params[&#34;limit&#34;] = 1000  # maximum items per request
         else:
             params[&#34;limit&#34;] = limit
-        # add count option if not present</pre></td>
+</pre></td>
             </tr>
             
             <tr>
@@ -1487,7 +1458,6 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )</pre></td>
             </tr>
             
@@ -1541,8 +1511,11 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)
+
+</pre></td>
             </tr>
             
             <tr>
@@ -1645,8 +1618,10 @@ from geojson_pydantic import (
         url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
-            params.update({&#34;type&#34;: entity_type})</pre></td>
+            params.update({&#34;type&#34;: entity_type})
+</pre></td>
             </tr>
             
             <tr>
@@ -1836,7 +1811,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -1887,16 +1862,6 @@ from pydantic import (
                 <td>R0401</td>
                 <td></td>
                 <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -11814,7 +11779,7 @@ from pydantic import (
             
             <tr>
                 <td>refactor</td>
-                <td>331</td>
+                <td>330</td>
             </tr>
             
             <tr>
@@ -12239,7 +12204,7 @@ from pydantic import (
             
             <tr>
                 <td>cyclic-import</td>
-                <td>11</td>
+                <td>10</td>
             </tr>
             
         </table>
@@ -12489,7 +12454,7 @@ from pydantic import (
             
             <tr>
                 <td>filip.clients.ngsi_ld.__init__</td>
-                <td>66</td>
+                <td>65</td>
             </tr>
             
         </table>
@@ -12739,7 +12704,7 @@ from pydantic import (
             
             <tr>
                 <td>filip/clients/ngsi_ld/__init__.py</td>
-                <td>66</td>
+                <td>65</td>
             </tr>
             
         </table>
