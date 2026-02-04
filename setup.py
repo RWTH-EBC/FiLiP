@@ -27,7 +27,6 @@ INSTALL_REQUIRES = [
     "pyjexl~=0.3.0",
     "packaging~=24.1",
     "matplotlib~=3.9.4",
-    "rdflib~=6.0.2",
 ]
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
