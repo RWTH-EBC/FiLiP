@@ -1,0 +1,524 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FiLiP &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+
+  
+      <script src="_static/jquery.js"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+      <script src="_static/doctools.js"></script>
+      <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="api/index.html" />
+    <link rel="prev" title="Documentation for FILiP" href="contents.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FiLiP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-motivation">General Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#supported-python-versions">Supported Python Versions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#install-extra-dependencies-for-tutorials-and-examples-optional">Install extra dependencies for tutorials and examples (optional)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-semantics-module-optional">Install semantics module (optional)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-to-fiware">Introduction to FIWARE</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-fiware">What is FIWARE?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-set-up-a-fiware-platform">How to set up a FIWARE platform?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fiware-ges-covered-by-filip">FIWARE GEs covered by FiLiP</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#structure-of-filip">Structure of FiLiP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-examples">Running examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#authors">Authors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alumni">Alumni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copyright">Copyright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#related-projects">Related projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="contents.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FiLiP</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <a class="reference external image-reference" href="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/EBC_Logo.png"><img alt="E.ON EBC RWTH Aachen University" src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/EBC_Logo.png" /></a>
+<section id="filip">
+<h1>FiLiP<a class="headerlink" href="#filip" title="Permalink to this heading"></a></h1>
+<a class="reference external image-reference" href="https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.html"><img alt="pylint" src="https://rwth-ebc.github.io/FiLiP/master/pylint/pylint.svg" /></a>
+<a class="reference external image-reference" href="https://rwth-ebc.github.io/FiLiP/master/docs/index.html"><img alt="Documentation" src="https://rwth-ebc.github.io/FiLiP/master/docs/doc.svg" /></a>
+<a class="reference external image-reference" href="https://rwth-ebc.github.io/FiLiP/coverage"><img alt="coverage" src="https://rwth-ebc.github.io/FiLiP/coverage/badge.svg" /></a>
+<a class="reference external image-reference" href="https://opensource.org/licenses/BSD-3-Clause"><img alt="License" src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" /></a>
+<a class="reference external image-reference" href="https://rwth-ebc.github.io/FiLiP/master/build/build.svg"><img alt="build" src="https://rwth-ebc.github.io/FiLiP/master/build/build.svg" /></a>
+<a class="reference external image-reference" href="https://doi.org/10.21105/joss.06953"><img alt="DOI" src="https://joss.theoj.org/papers/10.21105/joss.06953/status.svg" /></a>
+<p><span class="raw-html-m2r"><br/></span></p>
+<a class="reference external image-reference" href="https://www.fiware.org/developers/catalogue/"><img alt="" src="https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/core.svg" /></a>
+<a class="reference external image-reference" href="https://nexus.lab.fiware.org/repository/raw/public/badges/statuses/incubating.svg"><img alt="Status" src="https://nexus.lab.fiware.org/repository/raw/public/badges/statuses/incubating.svg" /></a>
+<p>FiLiP (<span class="raw-html-m2r"><ins>FI</ins></span>WARE <span class="raw-html-m2r"><ins>Li</ins></span>brary for <span class="raw-html-m2r"><ins>P</ins></span>ython) is a python Software Development Kit (SDK) for
+accelerating the development of web services that use Fiware’s Generic
+Enablers (GEs) as backend.</p>
+<p>It is mainly based on the <a class="reference external" href="https://pydantic-docs.helpmanual.io/">Pydantic</a>
+package which is a sophisticated library for data validation and settings
+management using python type annotations.
+Pydantic enforces type hints at runtime, and provides user friendly errors
+when data is invalid.
+We mainly use the Pydantic model to build our own data model structure required
+for efficient data model parsing and validation and interaction with FIWARE
+services’ RestAPIs.</p>
+<p>For API interaction, FiLiP relies on the well-known
+<a class="reference external" href="https://docs.python-requests.org/en/latest/">requests</a> package.
+It is important to understand that we do not in any way restrict any
+features of requests.</p>
+<p>Furthermore, FiLiP is designed to help with the fast development of FIWARE-based
+applications and avoid hundreds of lines of boilerplate, but it cannot
+substitute learning the basic concepts behind the used FIWARE components.</p>
+<p>This project is part of <a class="reference external" href="https://www.fiware.org/">FIWARE</a>. For more information check the FIWARE Catalogue entry for the
+<a class="reference external" href="https://github.com/Fiware/catalogue/tree/master/core">Core Context Management</a>.</p>
+<section id="general-motivation">
+<h2>General Motivation<a class="headerlink" href="#general-motivation" title="Permalink to this heading"></a></h2>
+<p>Why implement a client library when clients can be auto-generated
+from openapi documentation?
+A general prerequisite to do so is that the documentation is in depth and of
+good quality.
+While FIWARE generally provides
+<a class="reference external" href="https://github.com/FIWARE/specifications">openapi documentation</a>,
+here are some thoughts on the challenges of auto-generating client code from
+these documents:</p>
+<ul class="simple">
+<li><p>Auto-generated code tends to become rather bulky and its quality strongly
+depends on the provided input data.</p></li>
+<li><p>Manipulating generated code can result in a big hassle for maintenance if
+additional features need to be integrated.</p></li>
+<li><p>The underlying NGSI (Next Generation Service Interface) for FIWARE is a
+rather generic specification.
+Hence, generated models may also be of generic types as lists
+and dicts in Python. So there is no real benefit.
+Furthermore, there is no chance for reasonable validation and error handling.</p></li>
+</ul>
+</section>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h2>
+<p>The following section shortly describes how to use the library.</p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h3>
+<p>Since FiLiP is designed as a client library, it requires a server that provides
+the target Service-APIs.
+Hence, if you do not yet have a running instance of a FIWARE based platform,
+using docker is the most convenient way to set it up.
+Please check <a class="reference external" href="https://github.com/N5GEH/n5geh.platform">here</a> for a tutorial
+on this.
+If this is not an option for you, FIWARE also provides a testing server.
+You can register for a testing account
+<a class="reference external" href="https://www.fiware.org/developers/fiware-lab/">here</a>.</p>
+<blockquote>
+<div><p><strong>Note</strong>: FiLiP is now compatible to <a class="reference external" href="https://docs.pydantic.dev/latest/migration/">Pydantic V2</a>. If your program still require Pydantic V1.x for some reason, please use release <a class="reference external" href="https://github.com/RWTH-EBC/FiLiP/releases/tag/v0.2.5">v0.2.5</a> or earlier version of FiLiP. Besides, we recommended to set <code class="docutils literal notranslate"><span class="pre">pydantic~=1.10</span></code> in the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>, otherwise Pydantic V2 might still be installed.</p>
+</div></blockquote>
+<section id="supported-python-versions">
+<h4>Supported Python Versions<a class="headerlink" href="#supported-python-versions" title="Permalink to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Version</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>3.7</p></td>
+<td><p>❌ Deprecated</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.8</p></td>
+<td><p>❌ Deprecated</p></td>
+</tr>
+<tr class="row-even"><td><p>3.9</p></td>
+<td><p>✅ Tested</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.10</p></td>
+<td><p>✅ Tested</p></td>
+</tr>
+<tr class="row-even"><td><p>3.11</p></td>
+<td><p>✅ Tested</p></td>
+</tr>
+<tr class="row-odd"><td><p>3.12</p></td>
+<td><p>✅ Tested</p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><p>✅ Tested python versions have passed the unittests</p>
+</div></blockquote>
+</section>
+</section>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h3>
+<p>The easiest way to install the library is via pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">filip</span>
+</pre></div>
+</div>
+<p>If you want to benefit from the latest changes, use the following command
+(This will install the current master branch from this repository):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">git</span><span class="o">+</span><span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">RWTH</span><span class="o">-</span><span class="n">EBC</span><span class="o">/</span><span class="n">filip</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note</strong>: For development, you should install FiLiP in editable mode with the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>development<span class="o">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">development</span></code> option will install extra libraries required for contribution. Please check the <a class="reference external" href="CONTRIBUTING.md">CONTRIBUTING.md</a> for more information.</p>
+</div></blockquote>
+<section id="install-extra-dependencies-for-tutorials-and-examples-optional">
+<h4>Install extra dependencies for tutorials and examples (optional)<a class="headerlink" href="#install-extra-dependencies-for-tutorials-and-examples-optional" title="Permalink to this heading"></a></h4>
+<p>If you need to go through the tutorials or examples, please install filip with extra module <code class="docutils literal notranslate"><span class="pre">tutorials</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">filip</span><span class="p">[</span><span class="n">tutorials</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="install-semantics-module-optional">
+<h4>Install semantics module (optional)<a class="headerlink" href="#install-semantics-module-optional" title="Permalink to this heading"></a></h4>
+<p>If you want to use the optional <a class="reference external" href="filip/semantics">semantics module</a>, use the following command. This will install the libraries (e.g., <code class="docutils literal notranslate"><span class="pre">igraph</span></code> and <code class="docutils literal notranslate"><span class="pre">rdflib</span></code>) that only required for the semantics module):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">filip</span><span class="p">[</span><span class="n">semantics</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="introduction-to-fiware">
+<h3>Introduction to FIWARE<a class="headerlink" href="#introduction-to-fiware" title="Permalink to this heading"></a></h3>
+<p>The following section introduces FIWARE. If you are already familiar with
+FIWARE, you can skip this section and go straight to <a class="reference external" href="#getting-started">Getting Started</a>.</p>
+<section id="what-is-fiware">
+<h4>What is FIWARE?<a class="headerlink" href="#what-is-fiware" title="Permalink to this heading"></a></h4>
+<p>FIWARE is a framework of open-source cloud platform components, created
+to facilitate the development of smart solutions within various application
+domains.
+At the moment, the FIWARE
+<a class="reference external" href="https://www.fiware.org/developers/catalogue/">catalogue</a> contains over 30
+interoperable software modules, so-called Generic Enablers
+(GE) for developing and providing customized IoT platform solutions.</p>
+<p>To get familiar with the APIs of the different modules we highly recommend
+checking the
+<a class="reference external" href="https://fiware-tutorials.readthedocs.io/en/latest/">step-by-step tutorial</a>.
+It provides a good overview on FIWARE and its basic usage.
+Whereas the tutorial helps to understand most of the general concepts,
+for a deep dive, where you can learn about the components in more detail,
+FIWARE also offers extended lessons through their
+<a class="reference external" href="https://fiware-academy.readthedocs.io/en/latest/index.html/">academy</a>.</p>
+<p>However, usually one only requires a small set of components.
+Hence, we recommend using the cited pages only as needed.</p>
+</section>
+<section id="how-to-set-up-a-fiware-platform">
+<h4>How to set up a FIWARE platform?<a class="headerlink" href="#how-to-set-up-a-fiware-platform" title="Permalink to this heading"></a></h4>
+<p>The easiest way to set up a FIWARE platform is by using docker as all GEs are
+open-source and distributed as docker containers on dockerhub.</p>
+<p>However, as mentioned before, for most use cases only a subset of GEs is required.
+Hence, we wrote a small <a class="reference external" href="https://github.com/N5GEH/n5geh.platform">tutorial</a>
+explaining how to set up a platform suited for most use cases within the energy
+domain.</p>
+</section>
+<section id="fiware-ges-covered-by-filip">
+<h4>FIWARE GEs covered by FiLiP<a class="headerlink" href="#fiware-ges-covered-by-filip" title="Permalink to this heading"></a></h4>
+<p>FiLiP is a library developed on demand.
+Hence, we do not aim to cover the APIs of all GEs that are included in the
+<a class="reference external" href="https://www.fiware.org/developers/catalogue/">catalogue</a>.
+This would mean an unnecessary development overhead.
+Therefore, FiLiP currently only covers the APIs of the following GEs:</p>
+<ul>
+<li><p>NGSIv2 Context Broker for managing context data. We use its
+reference implementation ORION for testing. There is also warning in Filip if you are using an old version of ORION which could have breaking changes.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://fiware-orion.readthedocs.io/en/master/">documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/telefonicaid/fiware-orion">github</a></p></li>
+<li><p><a class="reference external" href="https://swagger.lab.fiware.org/">swagger</a></p></li>
+<li><p><a class="reference external" href="https://github.com/FIWARE/specifications/tree/master/OpenAPI/ngsiv2">NGSI v2 specifications</a></p></li>
+</ul>
+</li>
+<li><p>NGSI-LD Context Broker for managing context data with Linked Data concept. The functionalities that FiLiP supports are closely aligned with the specification <a href="#id4"><span class="problematic" id="id5">**</span></a><em>NGSI-LD V1.3.1</em><a href="#id6"><span class="problematic" id="id7">**</span></a>, which is according to the FIWARE <a class="reference external" href="https://github.com/FIWARE/catalogue#core-context-broker-components">catalogue</a> the latest spec version that has been implemented by all three brokers (Orion-LD, Scorpio, and Stellio). We currently use Orion-LD for testing.</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/FIWARE/context.Orion-LD">github</a></p></li>
+<li><p><a class="reference external" href="https://swagger.lab.fiware.org/?url=https://raw.githubusercontent.com/FIWARE/specifications/master/OpenAPI/ngsi-ld/full_api.json#/">swagger</a>
+..</p>
+<blockquote>
+<div><p><strong>Note</strong>: <code class="docutils literal notranslate"><span class="pre">-experimental</span></code> flag need to be set for Orion-LD Context Broker to enable the full functionality. Check this <a class="reference external" href="https://github.com/FIWARE/context.Orion-LD/issues/1648">issue</a> for more information</p>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>IoT-Agents for managing IoT Devices. IoT agents are implemented using
+the FIWARE IoT Agent Node Lib as a common framework.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://iotagent-node-lib.readthedocs.io/en/latest/">documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/telefonicaid/iotagent-node-lib">github</a></p></li>
+</ul>
+</li>
+<li><p>IoT-Agent-JSON for managing devices using a JSON message payload protocol
+format.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://fiware-iotagent-json.readthedocs.io/en/latest/">documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/telefonicaid/iotagent-json">github</a></p></li>
+<li><p><a class="reference external" href="https://telefonicaiotiotagents.docs.apiary.io/">apiary</a>
+(<em>partly deprecated</em>)</p></li>
+</ul>
+<p>Example payload:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;humidity&quot;</span><span class="p">:</span> <span class="s2">&quot;45%&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="s2">&quot;23&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;luminosity&quot;</span><span class="p">:</span> <span class="s2">&quot;1570&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>IoT-Agent-Ultralight for managing devices using an Ultralight 2.0 message
+payload protocol.</p>
+<ul>
+<li><p><a class="reference external" href="https://fiware-iotagent-ul.readthedocs.io/en/latest/">documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/telefonicaid/iotagent-ul">github</a></p></li>
+<li><p><a class="reference external" href="https://telefonicaiotiotagents.docs.apiary.io/">apiary</a>
+(<em>partly deprecated</em>)</p>
+<p>Example payload:</p>
+<blockquote>
+<div><p>humidity|45%|temperature|23|luminosity|1570</p>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>QuantumLeap for the management of time series data</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://quantumleap.readthedocs.io/en/latest/">documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/FIWARE-GEs/quantum-leap">github</a></p></li>
+<li><p><a class="reference external" href="https://app.swaggerhub.com/apis/smartsdk/ngsi-tsdb/0.8.3">swagger</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="structure-of-filip">
+<h2>Structure of FiLiP<a class="headerlink" href="#structure-of-filip" title="Permalink to this heading"></a></h2>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/diagrams/out/architecture.png"><img alt="Library Structure" src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/diagrams/out/architecture.png" /></a>
+</section>
+<section id="id21">
+<h2>Documentation<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h2>
+<p>We are still working on the documentation.
+You can find our current documentation
+<a class="reference external" href="https://rwth-ebc.github.io/FiLiP/master/docs/index.html">here</a>.</p>
+</section>
+<section id="running-examples">
+<h2>Running examples<a class="headerlink" href="#running-examples" title="Permalink to this heading"></a></h2>
+<p>Once you have installed the library, you can check the <a class="reference external" href="/examples">examples</a>
+to learn how to use the different components.</p>
+<p>Currently, we provide basic examples for the usage of FiLiP for the FIWARE
+GEs mentioned above.
+We suggest to start in the right order to first understand the
+configuration of clients.
+Afterwards, you can start modelling context data and interacting with the context
+broker and use its functionalities before you learn how to connect
+IoT Devices and store historic data.</p>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this heading"></a></h2>
+<p>We use unittests to write our test cases.
+To test the source code of the library in our CI workflow, the CI
+executes all tests located in the <code class="docutils literal notranslate"><span class="pre">tests</span></code>-directory and prefixed with <code class="docutils literal notranslate"><span class="pre">test_</span></code> .</p>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h2>
+<p>The best way to report a bug or request a new feature is to open an issue. Please use one of the available issue templates and provide as much detail as possible.</p>
+<p>We warmly welcome code contributions! If you’re planning to contribute, please first read our <a class="reference external" href="./CONTRIBUTING.md">Contribution Guide</a> for details on our development workflow, coding standards, and how to submit a pull request.</p>
+<p>For other inquiries, you can still contact us via <a class="reference external" href="mailto:ebc-tools&#37;&#52;&#48;eonerc&#46;rwth-aachen&#46;de">ebc-tools<span>&#64;</span>eonerc<span>&#46;</span>rwth-aachen<span>&#46;</span>de</a>.</p>
+</section>
+<section id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/tstorek">Thomas Storek</a></p></li>
+<li><p><a class="reference external" href="https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Digitale-Energie-Quartiere/~trcib/Du-Junsong/lidx/1/">Junsong Du</a> (corresponding)</p></li>
+<li><p><a class="reference external" href="https://www.ebc.eonerc.rwth-aachen.de/cms/E-ON-ERC-EBC/Das-Institut/Mitarbeiter/Systemadministration/~ohhca/Bano-Saira/">Saira Bano</a></p></li>
+</ul>
+</section>
+<section id="alumni">
+<h2>Alumni<a class="headerlink" href="#alumni" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Jeff Reding</p></li>
+<li><p>Felix Rehmann</p></li>
+<li><p>Daniel Nikolay</p></li>
+<li><p>Sebastian Blechmann</p></li>
+</ul>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this heading"></a></h2>
+<p>If you use FiLiP in your work, please cite the JOSS paper:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Storek2024</span><span class="p">,</span>
+<span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.21105/joss.06953}</span><span class="p">,</span>
+<span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.21105/joss.06953}</span><span class="p">,</span>
+<span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2024}</span><span class="p">,</span>
+<span class="na">publisher</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{The Open Journal}</span><span class="p">,</span>
+<span class="na">volume</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{9}</span><span class="p">,</span>
+<span class="na">number</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{101}</span><span class="p">,</span>
+<span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{6953}</span><span class="p">,</span>
+<span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Storek, Thomas and Du, Junsong and Blechmann, Sebastian and Streblow, Rita and Müller, Dirk}</span><span class="p">,</span>
+<span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{FiLiP: A python software development kit (SDK) for accelerating the development of services based on FIWARE IoT platform}</span><span class="p">,</span>
+<span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Journal of Open Source Software}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We also want to refer to publications that presented or applied the library:</p>
+<ul class="simple">
+<li><ol class="upperalpha simple" start="19">
+<li><p>Blechmann, I. Sowa, M. H. Schraven, R. Streblow, D. Müller &amp; A. Monti. Open source platform application for smart building and smart grid controls. Automation in Construction 145 (2023), 104622. ISSN: 0926-5805. <a class="reference external" href="https://doi.org/10.1016/j.autcon.2022.104622">https://doi.org/10.1016/j.autcon.2022.104622</a></p></li>
+</ol>
+</li>
+<li><p>Haghgoo, M., Dognini, A., Storek, T., Plamanescu, R, Rahe, U.,
+Gheorghe, S, Albu, M., Monti, A., Müller, D. (2021) A cloud-based service-oriented architecture to unlock smart energy services
+<a class="reference external" href="https://www.doi.org/10.1186/s42162-021-00143-x">https://www.doi.org/10.1186/s42162-021-00143-x</a></p></li>
+<li><p>Baranski, M., Storek, T. P. B., Kümpel, A., Blechmann, S., Streblow, R.,
+Müller, D. et al.,
+(2020). National 5G Energy Hub : Application of the Open-Source Cloud Platform
+FIWARE for Future Energy Management Systems.
+<a class="reference external" href="https://doi.org/10.18154/RWTH-2020-07876">https://doi.org/10.18154/RWTH-2020-07876</a></p></li>
+<li><p>T. Storek, J. Lohmöller, A. Kümpel, M. Baranski &amp; D. Müller (2019).
+Application of the open-source cloud platform FIWARE for future building
+energy management systems.
+Journal of Physics:
+Conference Series, 1343, 12063. <a class="reference external" href="https://doi.org/10.1088/1742-6596/1343/1/012063">https://doi.org/10.1088/1742-6596/1343/1/012063</a></p></li>
+</ul>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this heading"></a></h2>
+<p>This project is licensed under the BSD License - see the <a class="reference external" href="LICENSE.md">LICENSE</a> file for details.</p>
+</section>
+<section id="copyright">
+<h2>Copyright<a class="headerlink" href="#copyright" title="Permalink to this heading"></a></h2>
+<p><span class="raw-html-m2r"><a href="https://www.ebc.eonerc.rwth-aachen.de/"> <img alt="EBC" src="https://www.ebc.eonerc.rwth-aachen.de/global/show_picture.asp?id=aaaaaaaaaakevlz" height="100"> </a></span></p>
+<p>2021-2025, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy
+Efficient Buildings and Indoor Climate</p>
+<p><a class="reference external" href="https://www.ebc.eonerc.rwth-aachen.de">Institute for Energy Efficient Buildings and Indoor Climate (EBC)</a><span class="raw-html-m2r"><br></span>
+<a class="reference external" href="https://www.eonerc.rwth-aachen.de">E.ON Energy Research Center (E.ON ERC)</a><span class="raw-html-m2r"><br></span>
+<a class="reference external" href="https://www.rwth-aachen.de">RWTH University Aachen, Germany</a></p>
+</section>
+<section id="disclaimer">
+<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Permalink to this heading"></a></h2>
+<p>This project is part of the cooperation between the RWTH Aachen University and
+the Research Centre Jülich.</p>
+<p><span class="raw-html-m2r"><a href="https://www.jara.org/de/forschung/jara-energy"> <img alt="JARA
+ENERGY" src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/LogoJARAEnergy.jpg" height="100"> </a></span></p>
+</section>
+<section id="related-projects">
+<h2>Related projects<a class="headerlink" href="#related-projects" title="Permalink to this heading"></a></h2>
+<p><span class="raw-html-m2r"><a href="https://n5geh.de/"> <img alt="National 5G Energy Hub"
+src="https://avatars.githubusercontent.com/u/43948851?s=200&v=4" height="100"></a></span></p>
+<p><span class="raw-html-m2r"><a href="https://fismep.de/"> <img alt="FISMEP"
+src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/FISMEP.png"
+height="100"></a></span></p>
+</section>
+<section id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this heading"></a></h2>
+<p>We gratefully acknowledge the financial support of the Federal Ministry <span class="raw-html-m2r"><br /></span>
+for Economic Affairs and Climate Action (BMWK), promotional references
+03ET1495A, 03ET1551A, 0350018A, 03ET1561B, 03EN1030B.</p>
+<p><span class="raw-html-m2r"><a href="https://www.bmwi.de/Navigation/EN/Home/home.html"> <img alt="BMWK"
+src="https://raw.githubusercontent.com/RWTH-EBC/FiLiP/master/docs/logos/bmwi_logo_en.png" height="100"> </a></span></p>
+<p>This project has received funding in the framework of the joint programming initiative ERA-Net Smart Grids Plus, with support from the European Union’s Horizon 2020 research and innovation programme.</p>
+<p><span class="raw-html-m2r"><a href="https://www.eranet-smartgridsplus.eu/"> <img alt="ERANET"
+src="https://fismep.de/wp-content/uploads/2017/09/SmartGridsPlus_rgb-300x55.jpg" height="100"> </a></span></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="contents.html" class="btn btn-neutral float-left" title="Documentation for FILiP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/index.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

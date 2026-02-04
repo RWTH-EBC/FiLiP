@@ -1,0 +1,607 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients.mqtt package &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="filip.clients.mqtt.encoder package" href="filip.clients.mqtt.encoder.html" />
+    <link rel="prev" title="filip.clients package" href="filip.clients.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="filip.clients.html">filip.clients package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="filip.clients.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">filip.clients.mqtt package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_ld.html">filip.clients.ngsi_ld package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.ngsi_v2.html">filip.clients.ngsi_v2 package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.html#module-filip.clients.base_http_client">filip.clients.base_http_client module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.html#module-filip.clients.exceptions">filip.clients.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.html#module-filip.clients">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.models.html">filip.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.html">filip.semantics package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.utils.html">filip.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Documentation</a></li>
+          <li class="breadcrumb-item"><a href="filip.clients.html">filip.clients package</a></li>
+      <li class="breadcrumb-item active">filip.clients.mqtt package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/api/filip.clients.mqtt.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="filip-clients-mqtt-package">
+<h1>filip.clients.mqtt package<a class="headerlink" href="#filip-clients-mqtt-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="filip.clients.mqtt.encoder.html">filip.clients.mqtt.encoder package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.encoder.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.encoder.html#module-filip.clients.mqtt.encoder.base_encoder">filip.clients.mqtt.encoder.base_encoder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.base_encoder.BaseEncoder"><code class="docutils literal notranslate"><span class="pre">BaseEncoder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.base_encoder.BaseEncoder.decode_message"><code class="docutils literal notranslate"><span class="pre">BaseEncoder.decode_message()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.base_encoder.BaseEncoder.encode_msg"><code class="docutils literal notranslate"><span class="pre">BaseEncoder.encode_msg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.base_encoder.BaseEncoder.prefix"><code class="docutils literal notranslate"><span class="pre">BaseEncoder.prefix</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.encoder.html#module-filip.clients.mqtt.encoder.json">filip.clients.mqtt.encoder.json module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json"><code class="docutils literal notranslate"><span class="pre">Json</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.decode_message"><code class="docutils literal notranslate"><span class="pre">Json.decode_message()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.encode_msg"><code class="docutils literal notranslate"><span class="pre">Json.encode_msg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.prefix"><code class="docutils literal notranslate"><span class="pre">Json.prefix</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.encoder.html#module-filip.clients.mqtt.encoder.ulralight">filip.clients.mqtt.encoder.ulralight module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.ulralight.Ultralight"><code class="docutils literal notranslate"><span class="pre">Ultralight</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.ulralight.Ultralight.decode_message"><code class="docutils literal notranslate"><span class="pre">Ultralight.decode_message()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.ulralight.Ultralight.encode_msg"><code class="docutils literal notranslate"><span class="pre">Ultralight.encode_msg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.ulralight.Ultralight.prefix"><code class="docutils literal notranslate"><span class="pre">Ultralight.prefix</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.clients.mqtt.encoder.html#module-filip.clients.mqtt.encoder">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-filip.clients.mqtt.client">
+<span id="filip-clients-mqtt-client-module"></span><h2>filip.clients.mqtt.client module<a class="headerlink" href="#module-filip.clients.mqtt.client" title="Permalink to this heading"></a></h2>
+<p>Implementation of an extended MQTT client that automatically handles the
+topic subscription for FIWARE’s IoT communication pattern.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.clients.mqtt.client.</span></span><span class="sig-name descname"><span class="pre">IoTAMQTTClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userdata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MQTTProtocolVersion.MQTTv311</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tcp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_api_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CallbackAPIVersion.VERSION2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.base_encoder.BaseEncoder" title="filip.clients.mqtt.encoder.base_encoder.BaseEncoder"><span class="pre">BaseEncoder</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></p>
+<p>This class is an extension to the MQTT client from the well established
+Eclipse Paho™ MQTT Python Client. The official documentation is located
+here: <a class="reference external" href="https://github.com/eclipse/paho.mqtt.python">https://github.com/eclipse/paho.mqtt.python</a></p>
+<p>The class adds additional functions to facilitate the communication to
+FIWARE’s IoT-Agent via MQTT. It magically generates and subscribes to all
+important topics that are necessary to establish a
+bi-directional communication with the IoT-Agent.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The client does not sync the device configuration with the IoT-Agent.
+This is up to the user!</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The extension does not effect the normal workflow or any other
+functionality known from the original client.</p>
+<p>The client does not yet support the retrieval of command
+configurations via mqtt documented here:
+<a class="reference external" href="https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#api-overview">https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#api-overview</a></p>
+</div>
+<p class="rubric">Example</p>
+<p>This example shows the basic usage of the client. It does not
+demonstrate its whole capabilities. Please check the single methods
+for more details. Please also keep in mind that this still requires
+provisioning of the device in the IoT-Agent and sending the commands
+via the context broker. For more details check the additional example
+section:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.iot</span><span class="w"> </span><span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">DeviceAttribute</span><span class="p">,</span> <span class="n">DeviceCommand</span><span class="p">,</span> <span class="n">ServiceGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt</span><span class="w"> </span><span class="kn">import</span> <span class="n">MQTTClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt.encoder</span><span class="w"> </span><span class="kn">import</span> <span class="n">IoTA_Json</span>
+
+<span class="c1"># create a device configuration</span>
+<span class="n">device_attr</span> <span class="o">=</span> <span class="n">DeviceAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+                              <span class="n">object_id</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
+                              <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Number&quot;</span><span class="p">)</span>
+<span class="n">device_command</span> <span class="o">=</span> <span class="n">DeviceCommand</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;heater&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Boolean&quot;</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
+                <span class="n">entity_name</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
+                <span class="n">entity_type</span><span class="o">=</span><span class="s1">&#39;Thing&#39;</span><span class="p">,</span>
+                <span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;IoTA-JSON&#39;</span><span class="p">,</span>
+                <span class="n">transport</span><span class="o">=</span><span class="s1">&#39;MQTT&#39;</span><span class="p">,</span>
+                <span class="n">apikey</span><span class="o">=</span><span class="n">YourApiKey</span><span class="p">,</span>
+                <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="n">device_attr</span><span class="p">],</span>
+                <span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="n">device_command</span><span class="p">])</span>
+
+<span class="n">service_group</span> <span class="o">=</span> <span class="n">ServiceGroup</span><span class="p">(</span><span class="n">apikey</span><span class="o">=</span><span class="s2">&quot;YourApiKey&quot;</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="s2">&quot;/iot&quot;</span><span class="p">)</span>
+
+<span class="n">mqttc</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;YourID&quot;</span><span class="p">,</span>
+                   <span class="n">userdata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">protocol</span><span class="o">=</span><span class="n">mqtt</span><span class="o">.</span><span class="n">MQTTv5</span><span class="p">,</span>
+                   <span class="n">transport</span><span class="o">=</span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
+                   <span class="n">_devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">device</span><span class="p">],</span>
+                   <span class="n">service_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_group</span><span class="p">])</span>
+
+<span class="c1"># create a callback function that will be called for incoming</span>
+<span class="c1"># commands and add it for a single device</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="n">apikey</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span>                     <span class="n">client</span><span class="o">.</span><span class="n">get_encoder</span><span class="p">()</span><span class="o">.</span><span class="n">decode_message</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># do_something with the message.</span>
+    <span class="c1"># For instance write into a queue.</span>
+
+    <span class="c1"># acknowledge a command</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+                   <span class="n">command_name</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+                   <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+
+<span class="n">mqttc</span><span class="o">.</span><span class="n">add_command_callback</span><span class="p">(</span><span class="n">on_command</span><span class="p">)</span>
+
+<span class="c1"># create a non blocking loop</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">loop_start</span><span class="p">()</span>
+
+<span class="c1"># publish a multi-measurement for a device</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">})</span>
+
+<span class="c1"># publish a single measurement for a device</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
+              <span class="n">attribute_name</span><span class="o">=</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+              <span class="n">payload</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># adding timestamps to measurements using the client</span>
+
+
+<span class="c1"># adding timestamps to measurements in payload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
+              <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                       <span class="s1">&#39;timeInstant&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">astimezone</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()},</span>
+              <span class="n">timestamp</span><span class="o">=</span><span class="n">true</span><span class="p">)</span>
+
+<span class="c1"># stop network loop and disconnect cleanly</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">loop_stop</span><span class="p">()</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.add_command_callback">
+<span class="sig-name descname"><span class="pre">add_command_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.add_command_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.add_command_callback" title="Permalink to this definition"></a></dt>
+<dd><p>Adds callback function for a device configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_id</strong> – id of and IoT device</p></li>
+<li><p><strong>callback</strong> – function that will be called for incoming commands.
+This function should have the following format:</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="n">apikey</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span>                     <span class="n">client</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">decode_message</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># do_something with the message.</span>
+    <span class="c1"># For instance write into a queue.</span>
+
+    <span class="c1"># acknowledge a command. Here command are usually single</span>
+    <span class="c1"># messages. The first key is equal to the commands name.</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+                   <span class="n">command_name</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">payload</span><span class="p">)),</span>
+                   <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+
+<span class="n">mqttc</span><span class="o">.</span><span class="n">add_command_callback</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;MyDevice&quot;</span><span class="p">,</span>
+                           <span class="n">callback</span><span class="o">=</span><span class="n">on_command</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.add_device">
+<span class="sig-name descname"><span class="pre">add_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.add_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.add_device" title="Permalink to this definition"></a></dt>
+<dd><p>Registers a device config with the mqtt client. Subsequently,
+the client will magically subscribe to the corresponding topics based
+on the device config and any matching registered service group config
+if exists.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To register the device config only with this client is not
+sufficient for data streaming the configuration also needs to be
+registered with IoTA-Agent.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> – Configuration of an IoT device</p></li>
+<li><p><strong>qos</strong> – Quality of service can be 0, 1 or 2</p></li>
+<li><p><strong>options</strong> – MQTT v5.0 subscribe options</p></li>
+<li><p><strong>properties</strong> – MQTT v5.0 properties</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – if device configuration already exists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.add_encoder">
+<span class="sig-name descname"><span class="pre">add_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.base_encoder.BaseEncoder" title="filip.clients.mqtt.encoder.base_encoder.BaseEncoder"><span class="pre">BaseEncoder</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.add_encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.add_encoder" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.add_service_group">
+<span class="sig-name descname"><span class="pre">add_service_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.add_service_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.add_service_group" title="Permalink to this definition"></a></dt>
+<dd><p>Registers a device service group with the client</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_group</strong> – Service group configuration</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – if service group already exists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.delete_device">
+<span class="sig-name descname"><span class="pre">delete_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.delete_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.delete_device" title="Permalink to this definition"></a></dt>
+<dd><p>Unregisters a device and removes its subscriptions and callbacks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_id</strong> – id of and IoT device</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.delete_service_group">
+<span class="sig-name descname"><span class="pre">delete_service_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apikey</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.delete_service_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.delete_service_group" title="Permalink to this definition"></a></dt>
+<dd><p>Unregisters a service group and removes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>apikey</strong> – Unique APIKey of the service group</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.devices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">devices</span></span><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.devices" title="Permalink to this definition"></a></dt>
+<dd><p>Returns as list of all registered device configurations
+Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.get_device">
+<span class="sig-name descname"><span class="pre">get_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.get_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.get_device" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the configuration of a registered device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_id</strong> – Id of the requested device</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Device model of the requested device</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device">Device</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – if requested device is not registered with the client</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt</span><span class="w"> </span><span class="kn">import</span> <span class="n">MQTTClient</span>
+
+<span class="n">mqttc</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="p">()</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">mqttc</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;MyDeviceId&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.get_encoder">
+<span class="sig-name descname"><span class="pre">get_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.PayloadProtocol" title="filip.models.ngsi_v2.iot.PayloadProtocol"><span class="pre">PayloadProtocol</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.get_encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.get_encoder" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the encoder by key</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>encoder</strong> – encoder name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Subclass of Baseencoder</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.get_service_group">
+<span class="sig-name descname"><span class="pre">get_service_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.get_service_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.get_service_group" title="Permalink to this definition"></a></dt>
+<dd><p>Returns registered service group configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>apikey</strong> – Unique APIKey of the service group</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ServiceGroup</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – if service group not yet registered</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt</span><span class="w"> </span><span class="kn">import</span> <span class="n">MQTTClient</span>
+
+<span class="n">mqttc</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="p">()</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">mqttc</span><span class="o">.</span><span class="n">get_service_group</span><span class="p">(</span><span class="n">apikey</span><span class="o">=</span><span class="s2">&quot;MyAPIKEY&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.publish">
+<span class="sig-name descname"><span class="pre">publish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.publish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.publish" title="Permalink to this definition"></a></dt>
+<dd><p>Publish an MQTT Message to a specified topic. If you want to publish
+a device specific message to a device use the device_id argument for
+multi-measurement. The function will then automatically validate
+against the registered device configuration if the payload keys are
+valid. If you want to publish a single measurement the attribute_name
+argument is required as well.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the device_id argument is set, the topic argument will be
+ignored.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic</strong> – The topic that the message should be published on.</p></li>
+<li><p><strong>payload</strong> – The actual message to send. If not given, or set to None a
+zero length message will be used. Passing an int or float will
+result in the payload being converted to a string
+representing that number. If you wish to send a true
+int/float, use struct.pack() to create the
+payload you require. For publishing to a device use a dict
+containing the object_ids as keys.</p></li>
+<li><p><strong>qos</strong> – The quality of service level to use.</p></li>
+<li><p><strong>retain</strong> – If set to true, the message will be set as the “last known
+good”/retained message for the topic.</p></li>
+<li><p><strong>properties</strong> – (MQTT v5.0 only) the MQTT v5.0 properties to be included.
+Use the Properties class.</p></li>
+<li><p><strong>device_id</strong> – Id of the IoT device you want to publish for. The topics will
+automatically created. If set, the message type will be
+assumed to be multi measurement.</p></li>
+<li><p><strong>attribute_name</strong> – Name of an attribute of the device. Do only use this for
+single measurements. If set, <cite>command_name</cite> must
+be omitted.</p></li>
+<li><p><strong>command_name</strong> – Name of a command of the device that should be acknowledged. If
+set <cite>attribute_name</cite> must be omitted.</p></li>
+<li><p><strong>timestamp</strong> – If <cite>true</cite> the client will generate a valid timestamp based on
+utc and added to the multi measurement payload.
+If a <cite>timeInstant</cite> is already contained in the
+message payload it will not overwritten.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – if device configuration is not registered with client</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – if the passed arguments are inconsistent or a
+    timestamp does not match the ISO 8601 format.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.14)"><strong>AssertionError</strong></a> – if the message payload does not match the device
+    configuration.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.subscribe">
+<span class="sig-name descname"><span class="pre">subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.subscribe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.subscribe" title="Permalink to this definition"></a></dt>
+<dd><p>Extends the normal subscribe function of the paho.mqtt.client.
+If the topic argument is omitted the client will subscribe to all
+registered device command topics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic</strong> – A string specifying the subscription topic to subscribe to.</p></li>
+<li><p><strong>qos</strong> – The desired quality of service level for the subscription.
+Defaults to 0.</p></li>
+<li><p><strong>options</strong> – Not used.</p></li>
+<li><p><strong>properties</strong> – Not used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.update_device">
+<span class="sig-name descname"><span class="pre">update_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.update_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.update_device" title="Permalink to this definition"></a></dt>
+<dd><p>Updates a registered device configuration. There is no opportunity
+to only partially update the device. Hence, your device model should
+be complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> – Configuration of an IoT device</p></li>
+<li><p><strong>qos</strong> – Quality of service can be 0, 1 or 2</p></li>
+<li><p><strong>options</strong> – MQTT v5.0 subscribe options</p></li>
+<li><p><strong>properties</strong> – MQTT v5.0 properties</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – if device not yet registered</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.mqtt.client.IoTAMQTTClient.update_service_group">
+<span class="sig-name descname"><span class="pre">update_service_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/mqtt/client.html#IoTAMQTTClient.update_service_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.mqtt.client.IoTAMQTTClient.update_service_group" title="Permalink to this definition"></a></dt>
+<dd><p>Updates a registered service group configuration. There is no
+opportunity to only partially update the device. Hence, your service
+group model should be complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>service_group</strong> – Service group configuration</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – if service group not yet registered</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-filip.clients.mqtt">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-filip.clients.mqtt" title="Permalink to this heading"></a></h2>
+<p>MQTT client for streaming data via FIWARE’s IoT-Agent</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="filip.clients.html" class="btn btn-neutral float-left" title="filip.clients package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="filip.clients.mqtt.encoder.html" class="btn btn-neutral float-right" title="filip.clients.mqtt.encoder package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

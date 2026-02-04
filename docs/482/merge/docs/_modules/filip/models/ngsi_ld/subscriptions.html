@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.models.ngsi_ld.subscriptions &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.models.ngsi_ld.subscriptions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.models.ngsi_ld.subscriptions</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConfigDict</span><span class="p">,</span>
+    <span class="n">BaseModel</span><span class="p">,</span>
+    <span class="n">Field</span><span class="p">,</span>
+    <span class="n">HttpUrl</span><span class="p">,</span>
+    <span class="n">AnyUrl</span><span class="p">,</span>
+    <span class="n">field_validator</span><span class="p">,</span>
+    <span class="n">model_validator</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dateutil.parser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_ld.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeoQuery</span><span class="p">,</span> <span class="n">validate_ngsi_ld_query</span>
+
+
+<div class="viewcode-block" id="EntityInfo"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.EntityInfo">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EntityInfo</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    In v1.3.1 it is specified as EntityInfo</span>
+<span class="sd">    In v1.6.1 it is specified in a new data type, namely EntitySelector</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Entity identifier (valid URI)&quot;</span><span class="p">)</span>
+    <span class="n">idPattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Regular expression as per IEEE POSIX 1003.2™ [11]&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Fully Qualified Name of an Entity Type or the Entity Type Name as a &quot;</span>
+        <span class="s2">&quot;short-hand string. See clause 4.6.2&quot;</span>
+    <span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="KeyValuePair"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.KeyValuePair">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KeyValuePair</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="Endpoint"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Endpoint</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This datatype represents the parameters that are required in order to define</span>
+<span class="sd">    an endpoint for notifications. This can include the endpoint&#39;s URI, a</span>
+<span class="sd">    generic{key, value} array, named receiverInfo, which contains, in a</span>
+<span class="sd">    generalized form, whatever extra information the broker shall convey to the</span>
+<span class="sd">    receiver in order for the broker to successfully communicate with</span>
+<span class="sd">    receiver (e.g Authorization material), or for the receiver to correctly</span>
+<span class="sd">    interpret the received content (e.g. the Link URL to fetch an @context).</span>
+
+<span class="sd">    Additionally, it can include another generic{key, value} array, named</span>
+<span class="sd">    notifierInfo, which contains the configuration that the broker needs to</span>
+<span class="sd">    know in order to correctly set up the communication channel towards the</span>
+<span class="sd">    receiver</span>
+
+<span class="sd">    Example of &quot;receiverInfo&quot;</span>
+<span class="sd">        &quot;receiverInfo&quot;: [</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;key&quot;: &quot;H1&quot;,</span>
+<span class="sd">              &quot;value&quot;: &quot;123&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;key&quot;: &quot;H2&quot;,</span>
+<span class="sd">              &quot;value&quot;: &quot;456&quot;</span>
+<span class="sd">            }</span>
+<span class="sd">          ]</span>
+
+<span class="sd">    Example of &quot;notifierInfo&quot;</span>
+<span class="sd">        &quot;notifierInfo&quot;: [</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;key&quot;: &quot;MQTT-Version&quot;,</span>
+<span class="sd">              &quot;value&quot;: &quot;mqtt5.0&quot;</span>
+<span class="sd">            }</span>
+<span class="sd">          ]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">uri</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dereferenceable URI&quot;</span><span class="p">)</span>
+    <span class="n">accept</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;MIME type for the notification payload body &quot;</span>
+        <span class="s2">&quot;(application/json, application/ld+json, &quot;</span>
+        <span class="s2">&quot;application/geo+json)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">receiverInfo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">KeyValuePair</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Generic {key, value} array to convey optional information &quot;</span>
+        <span class="s2">&quot;to the receiver&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">notifierInfo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">KeyValuePair</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Generic {key, value} array to set up the communication &quot;</span> <span class="s2">&quot;channel&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Endpoint.check_uri"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.check_uri">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;uri&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_uri</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="n">AnyUrl</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">,</span> <span class="s2">&quot;mqtt&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;NGSI-LD currently only support http and mqtt&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uri</span></div>
+
+<div class="viewcode-block" id="Endpoint.check_notifier_info"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.Endpoint.check_notifier_info">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;notifierInfo&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_notifier_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">notifierInfo</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">KeyValuePair</span><span class="p">]):</span>
+        <span class="c1"># TODO add validation of notifierInfo for MQTT notification</span>
+        <span class="k">return</span> <span class="n">notifierInfo</span></div></div>
+
+
+<div class="viewcode-block" id="NotificationParams"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.NotificationParams">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NotificationParams</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NGSI-LD Notification model. It contains the parameters that allow to</span>
+<span class="sd">    convey the details of a notification, as described in NGSI-LD Spec section 5.2.14</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Entity Attribute Names (Properties or Relationships) to be included &quot;</span>
+        <span class="s2">&quot;in the notification payload body. If undefined, it will mean all Attributes&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;normalized&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Conveys the representation format of the entities delivered at &quot;</span>
+        <span class="s2">&quot;notification time. By default, it will be in normalized format&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">Endpoint</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Notification endpoint details&quot;</span><span class="p">)</span>
+    <span class="c1"># status can either be &quot;ok&quot; or &quot;failed&quot;</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="s2">&quot;failed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;ok&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Status of the Notification. It shall be &#39;ok&#39; if the last attempt &quot;</span>
+        <span class="s2">&quot;to notify the subscriber succeeded. It shall be &#39;failed&#39; if the last&quot;</span>
+        <span class="s2">&quot; attempt to notify the subscriber failed&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Additional members</span>
+    <span class="n">timesSent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Number of times that the notification was sent. Provided by the &quot;</span>
+        <span class="s2">&quot;system when querying the details of a subscription&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">lastNotification</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Timestamp corresponding to the instant when the last notification &quot;</span>
+        <span class="s2">&quot;was sent. Provided by the system when querying the details of a subscription&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">lastFailure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Timestamp corresponding to the instant when the last notification&quot;</span>
+        <span class="s2">&quot; resulting in failure was sent. Provided by the system when querying the details of a subscription&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">lastSuccess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Timestamp corresponding to the instant when the last successful &quot;</span>
+        <span class="s2">&quot;notification was sent. Provided by the system when querying the details of a subscription&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TemporalQuery"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TemporalQuery</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Temporal query according to NGSI-LD Spec section 5.2.21</span>
+
+<span class="sd">    timerel:</span>
+<span class="sd">        Temporal relationship, one of &quot;before&quot;, &quot;after&quot; and &quot;between&quot;.</span>
+<span class="sd">        &quot;before&quot;: before the time specified by timeAt.</span>
+<span class="sd">        &quot;after&quot;: after the time specified by timeAt.</span>
+<span class="sd">        &quot;between&quot;: after the time specified by timeAt and before the time specified by</span>
+<span class="sd">            endtimeAt</span>
+<span class="sd">    timeAt:</span>
+<span class="sd">        A DateTime object following ISO 8061, e.g. 2007-12-24T18:21Z</span>
+<span class="sd">    endTimeAt (optional):</span>
+<span class="sd">        A DateTime object following ISO 8061, e.g. 2007-12-24T18:21Z</span>
+<span class="sd">        Only required when timerel=&quot;between&quot;</span>
+<span class="sd">    timeproperty: str</span>
+<span class="sd">        Representing a Propertyname of the Property that contains the temporal data that</span>
+<span class="sd">        will be used to resolve the temporal query. If not specified, the default is</span>
+<span class="sd">        &quot;observedAt&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">timerel</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;before&quot;</span><span class="p">,</span> <span class="s2">&quot;after&quot;</span><span class="p">,</span> <span class="s2">&quot;between&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;String representing the temporal relationship as defined by clause &quot;</span>
+        <span class="s2">&quot;4.11 (Allowed values: &#39;before&#39;, &#39;after&#39;, and &#39;between&#39;) &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">timeAt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;String representing the timeAt parameter as defined by clause &quot;</span>
+        <span class="s2">&quot;4.11. It shall be a DateTime &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">endTimeAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;String representing the endTimeAt parameter as defined by clause &quot;</span>
+        <span class="s2">&quot;4.11. It shall be a DateTime. Cardinality shall be 1 if timerel is &quot;</span>
+        <span class="s2">&quot;equal to &#39;between&#39; &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">timeproperty</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;String representing a Property name. The name of the Property that &quot;</span>
+        <span class="s2">&quot;contains the temporal data that will be used to resolve the &quot;</span>
+        <span class="s2">&quot;temporal query. If not specified, &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="TemporalQuery.check_uri"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_uri">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;timeAt&quot;</span><span class="p">,</span> <span class="s2">&quot;endTimeAt&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_uri</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">isoparse</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;timeAt must be in ISO8061 format&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">v</span></div>
+
+    <span class="c1"># when timerel=between, endTimeAt must be specified</span>
+<div class="viewcode-block" id="TemporalQuery.check_passwords_match"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.TemporalQuery.check_passwords_match">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_passwords_match</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TemporalQuery&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timerel</span> <span class="o">==</span> <span class="s2">&quot;between&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">endTimeAt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;When timerel=&quot;between&quot;, endTimeAt must be specified&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<div class="viewcode-block" id="SubscriptionLD"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SubscriptionLD</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context Subscription model according to NGSI-LD Spec section 5.2.12</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Subscription identifier (JSON-LD @id)&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;Subscription&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;JSON-LD @type&quot;</span><span class="p">)</span>
+    <span class="n">subscriptionName</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A (short) name given to this Subscription&quot;</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Subscription description&quot;</span>
+    <span class="p">)</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">EntityInfo</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Entities subscribed&quot;</span>
+    <span class="p">)</span>
+    <span class="n">watchedAttributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Watched Attributes (Properties or Relationships)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">notificationTrigger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Notification triggers&quot;</span>
+    <span class="p">)</span>
+    <span class="n">timeInterval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Time interval in seconds&quot;</span>
+    <span class="p">)</span>
+    <span class="n">q</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Query met by subscribed entities to trigger the notification&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="SubscriptionLD.check_q"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_q">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_q</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">validate_ngsi_ld_query</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+    <span class="n">geoQ</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeoQuery</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Geoquery met by subscribed entities to trigger the notification&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">csf</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Context source filter&quot;</span><span class="p">)</span>
+    <span class="n">isActive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Indicates if the Subscription is under operation (True) or paused (False)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">notification</span><span class="p">:</span> <span class="n">NotificationParams</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Notification details&quot;</span><span class="p">)</span>
+    <span class="n">expiresAt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Expiration date for the subscription&quot;</span>
+    <span class="p">)</span>
+    <span class="n">throttling</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Minimal period of time in seconds between two consecutive notifications.&quot;</span>
+        <span class="s2">&quot;It must be greater than 0 if set. If not set, it means no throttling is used.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="SubscriptionLD.check_throttling"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD.check_throttling">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;throttling&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_throttling</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">throttling</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the throttling value. It must be greater than 0 if provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">throttling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">throttling</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Throttling must be greater than 0&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">throttling</span></div>
+
+    <span class="n">temporalQ</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TemporalQuery</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Temporal Query&quot;</span>
+    <span class="p">)</span>
+    <span class="n">lang</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Language filter applied to the query&quot;</span>
+    <span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

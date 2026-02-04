@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.models.ngsi_v2.units &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.models.ngsi_v2.units</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.models.ngsi_v2.units</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implementation of UN/CEFACT units</span>
+
+<span class="sd">We creating the data set of UNECE units from here.</span>
+<span class="sd">&quot;https://github.com/datasets/unece-units-of-measure&quot;</span>
+<span class="sd">It downloads the data and stores it in external resources if not</span>
+<span class="sd">already present. For additional information on UNECE an the current state of</span>
+<span class="sd">tables visit this website:</span>
+<span class="sd">https://unece.org/trade/cefact/UNLOCODE-Download</span>
+<span class="sd">https://unece.org/trade/uncefact/cl-recommendations</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rapidfuzz</span><span class="w"> </span><span class="kn">import</span> <span class="n">process</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">model_validator</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">NgsiVersion</span><span class="p">,</span> <span class="n">DataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_datapackage</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_units"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.load_units">[docs]</a><span class="nd">@lru_cache</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_units</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads data package from public repo if not already downloaded.</span>
+<span class="sd">    This function will be cached for fast accessing the data set.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Cleaned dataset containing all unit data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">load_datapackage</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://github.com/datasets/unece-units-of-measure&quot;</span><span class="p">,</span>
+        <span class="n">package_name</span><span class="o">=</span><span class="s2">&quot;unece-units&quot;</span><span class="p">,</span>
+    <span class="p">)[</span><span class="s2">&quot;units_of_measure&quot;</span><span class="p">]</span>
+    <span class="c1"># remove deprecated entries</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+        <span class="p">((</span><span class="n">units</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">units</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;d&quot;</span><span class="p">))</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">units</span></div>
+
+
+<div class="viewcode-block" id="UnitCode"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.UnitCode">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">UnitCode</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The unit of measurement given using the UN/CEFACT Common Code (3 characters)</span>
+<span class="sd">    or a URL. Other codes than the UN/CEFACT Common Code may be used with a</span>
+<span class="sd">    prefix followed by a colon.</span>
+<span class="sd">    https://schema.org/unitCode</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Currently we only support the UN/CEFACT Common Codes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">DataType</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+        <span class="c1"># const=True,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data type&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Code of unit &quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;UN/CEFACT Common Code (3 characters)&quot;</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="UnitCode.validate_code"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.UnitCode.validate_code">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">load_units</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Code does not exist or is deprecated! &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UnitText"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.UnitText">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">UnitText</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A string or text indicating the unit of measurement. Useful if you cannot</span>
+<span class="sd">    provide a standard unit code for unitCode.</span>
+<span class="sd">    https://schema.org/unitText</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        We use the names of units of measurements from UN/CEFACT for validation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">DataType</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+        <span class="c1"># const=True,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data type&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Name of unit of measurement&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Verbose name of a unit using British &quot;</span>
+        <span class="s2">&quot;spelling in singular form, &quot;</span>
+        <span class="s2">&quot;e.g. &#39;newton second per metre&#39;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="UnitText.validate_text"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.UnitText.validate_text">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_text</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">load_units</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">casefold</span><span class="p">())])</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">suggestions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">casefold</span><span class="p">(),</span> <span class="n">choices</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">score_cutoff</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid &#39;name&#39; for unit! &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; </span><span class="se">\n</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Did you mean one of the following? </span><span class="se">\n</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">suggestions</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Unit"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.Unit">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Unit</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for a unit definition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_ngsi_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="n">NgsiVersion</span><span class="o">.</span><span class="n">v2</span><span class="p">]</span> <span class="o">=</span> <span class="n">NgsiVersion</span><span class="o">.</span><span class="n">v2</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">UnitText</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;unitText&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A string or text indicating the unit of measurement&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">UnitCode</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;unitCode&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The unit of measurement given using the UN/CEFACT &quot;</span>
+        <span class="s2">&quot;Common Code (3 characters)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;unitDescription&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Verbose description of unit&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">symbol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;unitSymbol&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The symbol used to represent the unit of measure as &quot;</span>
+        <span class="s2">&quot;in ISO 31 / 80000.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">conversion_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;unitConversionFactor&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value used to convert units to the equivalent SI &quot;</span>
+        <span class="s2">&quot;unit when applicable.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Unit.check_consistency"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.Unit.check_consistency">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_consistency</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate and auto complete unit data based on the UN/CEFACT data</span>
+<span class="sd">        Args:</span>
+<span class="sd">            values (dict): Values of a all data fields</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            values (dict): Validated data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">load_units</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">UnitText</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">UnitCode</span><span class="p">):</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">UnitText</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="n">code</span> <span class="ow">and</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">[((</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span> <span class="o">==</span> <span class="n">code</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span> <span class="o">==</span> <span class="n">name</span><span class="p">))]</span>
+            <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Invalid combination of &#39;code&#39; and &#39;name&#39;: &quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">name</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">code</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span> <span class="o">==</span> <span class="n">code</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid &#39;code&#39;: &quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">suggestions</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span>
+                        <span class="n">query</span><span class="o">=</span><span class="n">name</span><span class="o">.</span><span class="n">casefold</span><span class="p">(),</span> <span class="n">choices</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">score_cutoff</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid &#39;name&#39; for unit! &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Did you mean one of the following? </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">suggestions</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;&#39;name&#39; or &#39;code&#39; must be  provided!&quot;</span><span class="p">)</span>
+
+        <span class="n">values</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UnitCode</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">values</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UnitText</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">values</span><span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">Symbol</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">values</span><span class="p">[</span><span class="s2">&quot;conversion_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">ConversionFactor</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">):</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">Description</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">values</span></div></div>
+
+
+<div class="viewcode-block" id="Units"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.Units">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Units</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for easy accessing the data set of UNECE units from here.</span>
+<span class="sd">    &quot;https://github.com/datasets/unece-units-of-measure&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">units</span> <span class="o">=</span> <span class="n">load_units</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return unit as attribute by name or code.</span>
+<span class="sd">        Notes:</span>
+<span class="sd">            Underscores will be substituted with whitespaces</span>
+<span class="sd">        Args:</span>
+<span class="sd">            item: if len(row) == 0:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">quantities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of units ordered by measured quantities</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list of units ordered by measured quantities</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;The used dataset does currently not &quot;</span>
+            <span class="s2">&quot;contain the information about quantity&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Unit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get unit by name or code</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item (str): name or code</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">[</span>
+            <span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+                <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">casefold</span><span class="p">())</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">suggestions</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span>
+                    <span class="n">query</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">casefold</span><span class="p">(),</span> <span class="n">choices</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">score_cutoff</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid &#39;name&#39; for unit! &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39; </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Did you mean one of the following? </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">suggestions</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+<div class="viewcode-block" id="Units.keys"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.Units.keys">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">by_code</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns list of all unit names or codes</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            by_code (bool): if &#39;True&#39; the keys will contain the unit codes</span>
+<span class="sd">                instead of their names.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str] containing the names or list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">by_code</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns list of all unit names</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str] containing the names or list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">codes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns list of all unit codes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str] containing the codes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">(</span><span class="n">by_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Units.values"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.Units.values">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Unit</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of all units</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Unit] containing all units</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">Unit</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Units.get"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.Units.get">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get unit by name or by code</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item (str): name or code of unit</span>
+<span class="sd">            default (Any): Default value to return if unit does not exist.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span></div></div>
+
+
+<div class="viewcode-block" id="validate_unit_data"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.validate_unit_data">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_unit_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validator for unit objects</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data (Dict): Dictionary containing the metadata of an object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Validated dictionary of metadata</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_unit_models</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="n">Unit</span><span class="p">,</span> <span class="s2">&quot;unitText&quot;</span><span class="p">:</span> <span class="n">UnitText</span><span class="p">,</span> <span class="s2">&quot;unitCode&quot;</span><span class="p">:</span> <span class="n">UnitCode</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">modelname</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">_unit_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="n">modelname</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Unit&quot;</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+                <span class="c1"># data[&quot;value&quot;] = model.parse_obj(data[&quot;value&quot;])</span>
+                <span class="k">return</span> <span class="n">data</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+                <span class="c1"># data.update(model.parse_obj(data).dict())</span>
+                <span class="k">return</span> <span class="n">data</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid unit data found: </span><span class="se">\n</span><span class="s2"> &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
