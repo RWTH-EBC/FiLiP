@@ -894,7 +894,7 @@
         description=&#34;Id of an entity in an NGSI context broker. Allowed &#34;
         &#34;characters are the ones in the plain ASCII set, except &#34;
         &#34;the following ones: control characters, &#34;
-        &#34;whitespace, &amp;, ?, / and #.&#34;,</pre></td>
+        &#34;whitespace, &amp;, ?, / and #.&#34;</pre></td>
             </tr>
             
             <tr>
@@ -950,6 +950,8 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
+
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -1062,7 +1064,6 @@ class IdType(str, Enum):
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) &gt; 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1417,16 +1418,25 @@ from geojson_pydantic import (
                 <td><pre>Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if &#34;#&#34; in iri:
-        index = iri.find(&#34;#&#34;)
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind(&#34;/&#34;)
-        return iri[:index]
+        if &#34;#&#34; in iri:
+            index = iri.find(&#34;#&#34;)
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind(&#34;/&#34;)
+            return iri[:index]
 
-</pre></td>
+    def get_entity_by_iri(self, iri: str) -&gt; Union[None, Entity]:
+        &#34;&#34;&#34;Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -1445,7 +1455,6 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )</pre></td>
             </tr>
             
@@ -1459,12 +1468,12 @@ from geojson_pydantic import (
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[463:469]
-                        Point,
-                        MultiPoint,
-                        LineString,
-                        MultiLineString,
-                        Polygon,
-                        MultiPolygon,</pre></td>
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,</pre></td>
             </tr>
             
             <tr>
@@ -1499,11 +1508,8 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)
-
-</pre></td>
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
             </tr>
             
             <tr>
@@ -1590,10 +1596,8 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1255:1260]
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
-
         try:</pre></td>
             </tr>
             
@@ -1610,10 +1614,8 @@ from geojson_pydantic import (
         url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
-            params.update({&#34;type&#34;: entity_type})
-</pre></td>
+            params.update({&#34;type&#34;: entity_type})</pre></td>
             </tr>
             
             <tr>
@@ -1793,7 +1795,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
             </tr>
             
             <tr>
@@ -1813,7 +1815,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
             </tr>
             
             <tr>
@@ -1824,16 +1826,6 @@ from pydantic import (
                 <td>R0401</td>
                 <td></td>
                 <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
             <tr>
@@ -1863,7 +1855,27 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
                 <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
             </tr>
             
             <tr>
@@ -11751,7 +11763,7 @@ from pydantic import (
             
             <tr>
                 <td>refactor</td>
-                <td>331</td>
+                <td>332</td>
             </tr>
             
             <tr>
@@ -12176,7 +12188,7 @@ from pydantic import (
             
             <tr>
                 <td>cyclic-import</td>
-                <td>10</td>
+                <td>11</td>
             </tr>
             
         </table>
@@ -12426,7 +12438,7 @@ from pydantic import (
             
             <tr>
                 <td>filip.clients.ngsi_ld.__init__</td>
-                <td>65</td>
+                <td>66</td>
             </tr>
             
         </table>
@@ -12676,7 +12688,7 @@ from pydantic import (
             
             <tr>
                 <td>filip/clients/ngsi_ld/__init__.py</td>
-                <td>65</td>
+                <td>66</td>
             </tr>
             
         </table>
