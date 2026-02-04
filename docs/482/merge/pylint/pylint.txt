@@ -1048,7 +1048,10 @@ filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         "If attrs is not used, the order is arbitrary. "
         "Example:"
         "[ 'Ford', 'black', 78.3 ]",
-    ) (duplicate-code)
+    )
+
+
+# NGSIv2 entity models (duplicate-code)
 filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[132:157]
 ==filip.clients.ngsi_v2.cb:[138:164]
@@ -1103,6 +1106,7 @@ filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
@@ -1160,9 +1164,7 @@ filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
-
- (duplicate-code)
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect) (duplicate-code)
 filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[384:394]
 ==filip.models.ngsi_v2.context:[149:159]
@@ -1470,7 +1472,7 @@ filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             params["limit"] = 1000  # maximum items per request
         else:
             params["limit"] = limit
- (duplicate-code)
+        # add count option if not present (duplicate-code)
 filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[164:170]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1483,16 +1485,25 @@ filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if "#" in iri:
-        index = iri.find("#")
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind("/")
-        return iri[:index]
+        if "#" in iri:
+            index = iri.find("#")
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind("/")
+            return iri[:index]
 
- (duplicate-code)
+    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
+        """Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        """ (duplicate-code)
 filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[159:166]
 ==filip.models.ngsi_v2.base:[361:369]
@@ -1674,8 +1685,8 @@ filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.voc
 filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
-filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 
 -----------------------------------
 Your code has been rated at 7.64/10
