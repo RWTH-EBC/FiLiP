@@ -126,7 +126,11 @@ class Unit(BaseModel):
     Model for a unit definition
     """
 
-    model_config = ConfigDict(extra="ignore", populate_by_name=True)
+    model_config = ConfigDict(
+        extra="ignore",
+        populate_by_name=True,
+        frozen=True
+    )
     _ngsi_version: Literal[NgsiVersion.v2] = NgsiVersion.v2
     name: Optional[Union[str, UnitText]] = Field(
         alias="unitText",
@@ -247,12 +251,12 @@ class Units:
         Returns:
             list of units ordered by measured quantities
         """
-        raise NotImplementedError(
-            "The used dataset does currently not "
-            "contain the information about quantity"
-        )
+        raise NotImplementedError("The used dataset does currently not "
+                                  "contain the information about quantity")
 
-    def __getitem__(self, item: str) -> Unit:
+    @classmethod
+    @lru_cache(maxsize=128)
+    def __getitem__(cls, item: str) -> Unit:
         """
         Get unit by name or code
 
@@ -262,14 +266,14 @@ class Units:
         Returns:
             Unit
         """
-        idx = self.units.index[
+        idx = cls.units.index[
             (
-                (self.units.CommonCode == item.upper())
-                | (self.units.Name.str.casefold() == item.casefold())
+                (cls.units.CommonCode == item.upper())
+                | (cls.units.Name.str.casefold() == item.casefold())
             )
         ]
         if idx.empty:
-            names = self.units.Name.tolist()
+            names = cls.units.Name.tolist()
             suggestions = [
                 item[0]
                 for item in process.extract(
@@ -282,7 +286,7 @@ class Units:
                 f"{suggestions}"
             )
 
-        return Unit(code=self.units.CommonCode[idx[0]])
+        return Unit(code=cls.units.CommonCode[idx[0]])
 
     @classmethod
     def keys(cls, by_code: bool = False) -> List[str]:
