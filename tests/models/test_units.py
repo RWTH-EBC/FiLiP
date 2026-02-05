@@ -3,6 +3,7 @@ Test for filip.models.units
 """
 import unittest
 import functools
+from time import perf_counter_ns
 from filip.models.ngsi_v2.units import \
     Unit, \
     Units, \
@@ -57,9 +58,6 @@ class TestUnitCodes(unittest.TestCase):
 
         unit = Unit(**self.unit)
         # testing hashing and caching
-        from functools import lru_cache
-        from time import perf_counter_ns
-
         self.assertEqual(unit.__hash__(), unit.__hash__())
 
         @functools.lru_cache(maxsize=128)
@@ -67,13 +65,18 @@ class TestUnitCodes(unittest.TestCase):
             return Unit(name=unit.name)
 
         timers = []
+        results = []
         for i in range(5):
             start = perf_counter_ns()
-            cache_unit(unit)
+            res = cache_unit(unit)
             stop = perf_counter_ns()
             timers.append(stop - start)
+            results.append(res)
             if i > 0:
+                self.assertEqual(results[0], res)
                 self.assertLess(timers[i], timers[0])
+
+        cache_unit.cache_clear()
 
     def test_units(self):
         """
@@ -110,22 +113,6 @@ class TestUnitCodes(unittest.TestCase):
         unit_data["name"] = "celcius"
         with self.assertRaises(ValueError):
             Unit(**unit_data)
-
-    def tearDown(self):
-        """
-        clean up
-        """
-        # using garbage collector to clean up all caches
-        import gc
-        gc.collect()
-
-        # All objects collected
-        objects = [i for i in gc.get_objects()
-                   if isinstance(i, functools._lru_cache_wrapper)]
-
-        # All objects cleared
-        for object in objects:
-            object.cache_clear()
 
 if __name__ == '__main__':
     unittest.main()

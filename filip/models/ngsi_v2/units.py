@@ -253,8 +253,10 @@ class Units:
         """
         raise NotImplementedError("The used dataset does currently not "
                                   "contain the information about quantity")
-    @lru_cache()
-    def __getitem__(self, item: str) -> Unit:
+
+    @classmethod
+    @lru_cache(maxsize=128)
+    def __getitem__(cls, item: str) -> Unit:
         """
         Get unit by name or code
 
@@ -264,14 +266,14 @@ class Units:
         Returns:
             Unit
         """
-        idx = self.units.index[
+        idx = cls.units.index[
             (
-                (self.units.CommonCode == item.upper())
-                | (self.units.Name.str.casefold() == item.casefold())
+                (cls.units.CommonCode == item.upper())
+                | (cls.units.Name.str.casefold() == item.casefold())
             )
         ]
         if idx.empty:
-            names = self.units.Name.tolist()
+            names = cls.units.Name.tolist()
             suggestions = [
                 item[0]
                 for item in process.extract(
@@ -284,7 +286,7 @@ class Units:
                 f"{suggestions}"
             )
 
-        return Unit(code=self.units.CommonCode[idx[0]])
+        return Unit(code=cls.units.CommonCode[idx[0]])
 
     @classmethod
     def keys(cls, by_code: bool = False) -> List[str]:
