@@ -1,4 +1,4 @@
-************* Module /builds/EBC/EBC_all/github_ci/FiLiP/pylintrc
+************* Module /home/runner/work/FiLiP/FiLiP/pylintrc
 pylintrc:1:0: R0022: Useless option value for '--disable', 'print-statement' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942. (useless-option-value)
 pylintrc:1:0: R0022: Useless option value for '--disable', 'parameter-unpacking' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942. (useless-option-value)
 pylintrc:1:0: R0022: Useless option value for '--disable', 'unpacking-in-except' was removed from pylint, see https://github.com/pylint-dev/pylint/pull/4942. (useless-option-value)
@@ -71,35 +71,1610 @@ pylintrc:1:0: W0012: Unknown option value for '--disable', expected a valid pyli
 pylintrc:1:0: W0012: Unknown option value for '--disable', expected a valid pylint message and got 'old-octal-literal' (unknown-option-value)
 pylintrc:1:0: W0012: Unknown option value for '--disable', expected a valid pylint message and got 'non-ascii-bytes-literal' (unknown-option-value)
 pylintrc:1:0: W0012: Unknown option value for '--disable', expected a valid pylint message and got 'eq-without-hash' (unknown-option-value)
+************* Module filip.custom_types
+filip/custom_types.py:5:0: E0401: Unable to import 'pydantic' (import-error)
+filip/custom_types.py:7:0: E0401: Unable to import 'pydantic_core' (import-error)
 ************* Module filip.config
+filip/config.py:8:0: E0401: Unable to import 'pydantic' (import-error)
+filip/config.py:9:0: E0401: Unable to import 'pydantic_settings' (import-error)
+filip/config.py:12:0: E0401: Unable to import 'dotenv' (import-error)
 filip/config.py:10:0: C0411: standard import "from pathlib import Path" should be placed before "from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl" (wrong-import-order)
 filip/config.py:11:0: C0411: standard import "import os" should be placed before "from pydantic import Field, AnyHttpUrl, AliasChoices, AnyUrl" (wrong-import-order)
-************* Module tests.config
-tests/config.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-tests/config.py:6:0: C0411: third party import "from pydantic_settings import BaseSettings, SettingsConfigDict" should be placed before "from filip.models.base import FiwareHeader, LogLevel" (wrong-import-order)
-tests/config.py:7:0: C0411: standard import "from typing import Union, Optional" should be placed before "from dotenv import find_dotenv" (wrong-import-order)
-tests/config.py:7:0: W0611: Unused Union imported from typing (unused-import)
-************* Module tests.test_config
-tests/test_config.py:8:0: C0411: standard import "import json" should be placed before "from filip.config import Settings" (wrong-import-order)
-tests/test_config.py:9:0: C0411: third party import "from pydantic import AnyHttpUrl" should be placed before "from filip.config import Settings" (wrong-import-order)
-************* Module tests.test_logging
-tests/test_logging.py:49:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
-************* Module tutorials.__init__
-tutorials/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.config:[45:56]
-==tests.config:[50:62]
+************* Module filip.models.mqtt
+filip/models/mqtt.py:5:0: E0401: Unable to import 'aenum' (import-error)
+************* Module filip.models
+filip/models/__init__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module filip.models.base
+filip/models/base.py:190:0: C0301: Line too long (113/100) (line-too-long)
+filip/models/base.py:5:0: E0401: Unable to import 'aenum' (import-error)
+filip/models/base.py:6:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/base.py:10:0: C0103: Constant name "core_context" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/models/base.py:63:0: W1404: Implicit string concatenation found in tuple (implicit-str-concat)
+filip/models/base.py:135:0: C0115: Missing class docstring (missing-class-docstring)
+filip/models/base.py:144:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/models/base.py:189:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/base.py:6:0: W0611: Unused computed_field imported from pydantic (unused-import)
+************* Module filip.models.ngsi_v2.context
+filip/models/ngsi_v2/context.py:739:0: C0301: Line too long (168/100) (line-too-long)
+filip/models/ngsi_v2/context.py:8:0: E0401: Unable to import 'aenum' (import-error)
+filip/models/ngsi_v2/context.py:9:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_v2/context.py:17:0: E0401: Unable to import 'pydantic_core.core_schema' (import-error)
+filip/models/ngsi_v2/context.py:18:0: E0401: Unable to import 'pydantic.types' (import-error)
+filip/models/ngsi_v2/context.py:118:23: W0622: Redefining built-in 'type' (redefined-builtin)
+filip/models/ngsi_v2/context.py:134:4: W0107: Unnecessary pass statement (unnecessary-pass)
+filip/models/ngsi_v2/context.py:184:23: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/models/ngsi_v2/context.py:184:32: W0622: Redefining built-in 'type' (redefined-builtin)
+filip/models/ngsi_v2/context.py:219:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/context.py:224:19: R1701: Consider merging these isinstance calls to isinstance(value, (float, int)) (consider-merging-isinstance)
+filip/models/ngsi_v2/context.py:223:16: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/models/ngsi_v2/context.py:226:20: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/models/ngsi_v2/context.py:228:25: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/models/ngsi_v2/context.py:280:23: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/models/ngsi_v2/context.py:280:32: W0622: Redefining built-in 'type' (redefined-builtin)
+filip/models/ngsi_v2/context.py:333:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/context.py:336:34: C2801: Unnecessarily calls dunder method __getattr__. Access attribute directly or use getattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/context.py:368:12: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/context.py:413:30: R1721: Unnecessary use of a comprehension, use list(list(DataType)) instead. (unnecessary-comprehension)
+filip/models/ngsi_v2/context.py:416:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/context.py:430:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/context.py:470:12: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/context.py:554:13: C0103: Variable name "c" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/context.py:562:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/context.py:633:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/context.py:672:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/context.py:835:12: W0707: Consider explicitly re-raising using 'except Exception as exc' and 'raise ValueError(f'Command value {value} is not serializable') from exc' (raise-missing-from)
+filip/models/ngsi_v2/context.py:18:0: C0412: Imports from package pydantic are not grouped (ungrouped-imports)
+filip/models/ngsi_v2/context.py:27:0: W0611: Unused validate_fiware_datatype_string_protect imported from filip.utils.validators (unused-import)
+************* Module filip.models.ngsi_v2.iot
+filip/models/ngsi_v2/iot.py:459:0: C0301: Line too long (113/100) (line-too-long)
+filip/models/ngsi_v2/iot.py:11:0: E0401: Unable to import 'pytz' (import-error)
+filip/models/ngsi_v2/iot.py:12:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_v2/iot.py:123:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/iot.py:183:4: W0107: Unnecessary pass statement (unnecessary-pass)
+filip/models/ngsi_v2/iot.py:246:4: C0103: Method name "validate_cbHost" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/iot.py:570:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:577:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/iot.py:578:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:583:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/iot.py:584:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:589:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/iot.py:590:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:595:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/iot.py:602:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/models/ngsi_v2/iot.py:608:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/models/ngsi_v2/iot.py:632:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:635:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:638:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:641:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:647:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/models/ngsi_v2/iot.py:657:16: W0707: Consider explicitly re-raising using 'except ValueError as exc' and 'raise KeyError(msg) from exc' (raise-missing-from)
+filip/models/ngsi_v2/iot.py:674:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:676:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:678:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:680:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:686:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+************* Module filip.models.ngsi_v2.registrations
+filip/models/ngsi_v2/registrations.py:8:0: E0401: Unable to import 'aenum' (import-error)
+filip/models/ngsi_v2/registrations.py:9:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_v2/registrations.py:13:0: C0115: Missing class docstring (missing-class-docstring)
+filip/models/ngsi_v2/registrations.py:17:0: W1404: Implicit string concatenation found in tuple (implicit-str-concat)
+filip/models/ngsi_v2/registrations.py:20:0: W1404: Implicit string concatenation found in tuple (implicit-str-concat)
+filip/models/ngsi_v2/registrations.py:29:0: C0115: Missing class docstring (missing-class-docstring)
+filip/models/ngsi_v2/registrations.py:46:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module filip.models.ngsi_v2.timeseries
+filip/models/ngsi_v2/timeseries.py:9:0: E0401: Unable to import 'numpy' (import-error)
+filip/models/ngsi_v2/timeseries.py:10:0: E0401: Unable to import 'pandas' (import-error)
+filip/models/ngsi_v2/timeseries.py:11:0: E0401: Unable to import 'aenum' (import-error)
+filip/models/ngsi_v2/timeseries.py:12:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_v2/timeseries.py:124:48: E1133: Non-iterable value self.attributes is used in an iterating context (not-an-iterable)
+filip/models/ngsi_v2/timeseries.py:125:51: E1133: Non-iterable value self.attributes is used in an iterating context (not-an-iterable)
+************* Module filip.models.ngsi_v2.units
+filip/models/ngsi_v2/units.py:15:0: E0401: Unable to import 'pandas' (import-error)
+filip/models/ngsi_v2/units.py:17:0: E0401: Unable to import 'rapidfuzz' (import-error)
+filip/models/ngsi_v2/units.py:20:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_v2/units.py:73:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/units.py:77:8: W0715: Exception arguments suggest string formatting might be intended (raising-format-tuple)
+filip/models/ngsi_v2/units.py:105:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/units.py:344:19: C2801: Unnecessarily calls dunder method __getitem__. Access item via subscript. (unnecessary-dunder-call)
+filip/models/ngsi_v2/units.py:361:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/units.py:16:0: C0411: standard import "from functools import lru_cache" should be placed before "import pandas as pd" (wrong-import-order)
+filip/models/ngsi_v2/units.py:18:0: C0411: standard import "from typing import Any, Dict, List, Optional, Union" should be placed before "import pandas as pd" (wrong-import-order)
+************* Module filip.models.ngsi_v2.subscriptions
+filip/models/ngsi_v2/subscriptions.py:318:0: C0301: Line too long (168/100) (line-too-long)
+filip/models/ngsi_v2/subscriptions.py:8:0: E0401: Unable to import 'aenum' (import-error)
+filip/models/ngsi_v2/subscriptions.py:9:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_v2/subscriptions.py:83:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:84:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/subscriptions.py:108:0: C0115: Missing class docstring (missing-class-docstring)
+filip/models/ngsi_v2/subscriptions.py:164:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:240:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:367:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:373:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:379:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:415:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:417:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/subscriptions.py:484:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:484:25: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/subscriptions.py:485:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/subscriptions.py:493:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:493:36: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/subscriptions.py:496:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/subscriptions.py:19:0: C0411: first party import "from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic" should be placed before "from .base import AttrsFormat, EntityPattern, Http, Status, Expression" (wrong-import-order)
+filip/models/ngsi_v2/subscriptions.py:20:0: C0411: first party import "from filip.models.ngsi_v2.context import ContextEntity" should be placed before "from .base import AttrsFormat, EntityPattern, Http, Status, Expression" (wrong-import-order)
+filip/models/ngsi_v2/subscriptions.py:21:0: C0411: first party import "from filip.models.ngsi_v2.base import EntityPattern, Expression, DataType" should be placed before "from .base import AttrsFormat, EntityPattern, Http, Status, Expression" (wrong-import-order)
+filip/models/ngsi_v2/subscriptions.py:22:0: C0411: first party import "from filip.custom_types import AnyMqttUrl" should be placed before "from .base import AttrsFormat, EntityPattern, Http, Status, Expression" (wrong-import-order)
+filip/models/ngsi_v2/subscriptions.py:23:0: C0411: standard import "import warnings" should be placed before "from aenum import Enum" (wrong-import-order)
+************* Module filip.models.ngsi_v2.base
+filip/models/ngsi_v2/base.py:7:0: E0401: Unable to import 'aenum' (import-error)
+filip/models/ngsi_v2/base.py:8:0: E0401: Unable to import 'geojson_pydantic' (import-error)
+filip/models/ngsi_v2/base.py:18:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_v2/base.py:68:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:153:12: C0103: Attribute name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/base.py:155:12: C0103: Attribute name "mq" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/base.py:146:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:146:34: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/base.py:146:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/models/ngsi_v2/base.py:151:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:151:41: W0613: Unused argument 'info' (unused-argument)
+filip/models/ngsi_v2/base.py:230:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:257:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:268:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:328:11: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/base.py:400:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:451:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/base.py:477:20: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/base.py:497:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/base.py:410:4: R0911: Too many return statements (26/6) (too-many-return-statements)
+filip/models/ngsi_v2/base.py:410:4: R0912: Too many branches (31/12) (too-many-branches)
+filip/models/ngsi_v2/base.py:30:0: C0411: standard import "from typing import Union, Optional, Pattern, List, Dict, Any" should be placed before "from aenum import Enum" (wrong-import-order)
+************* Module filip.models.ngsi_ld.context
+filip/models/ngsi_ld/context.py:30:0: C0301: Line too long (101/100) (line-too-long)
+filip/models/ngsi_ld/context.py:47:0: C0301: Line too long (109/100) (line-too-long)
+filip/models/ngsi_ld/context.py:151:0: C0301: Line too long (115/100) (line-too-long)
+filip/models/ngsi_ld/context.py:268:0: C0301: Line too long (110/100) (line-too-long)
+filip/models/ngsi_ld/context.py:290:0: C0301: Line too long (114/100) (line-too-long)
+filip/models/ngsi_ld/context.py:8:0: E0401: Unable to import 'geojson_pydantic' (import-error)
+filip/models/ngsi_ld/context.py:17:0: E0401: Unable to import 'aenum' (import-error)
+filip/models/ngsi_ld/context.py:18:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_ld/context.py:25:0: E0401: Unable to import 'pydantic_core' (import-error)
+filip/models/ngsi_ld/context.py:125:14: R1721: Unnecessary use of a comprehension, use list(cls.model_fields) instead. (unnecessary-comprehension)
+filip/models/ngsi_ld/context.py:197:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_ld/context.py:193:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/models/ngsi_ld/context.py:537:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/context.py:582:14: R1721: Unnecessary use of a comprehension, use list(cls.model_fields) instead. (unnecessary-comprehension)
+filip/models/ngsi_ld/context.py:600:19: W0718: Catching too general exception Exception (broad-exception-caught)
+filip/models/ngsi_ld/context.py:600:12: W0612: Unused variable 'e' (unused-variable)
+filip/models/ngsi_ld/context.py:626:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/context.py:626:4: W0246: Useless parent or super() delegation in method 'model_dump' (useless-parent-delegation)
+filip/models/ngsi_ld/context.py:631:26: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/models/ngsi_ld/context.py:639:4: R0912: Too many branches (13/12) (too-many-branches)
+filip/models/ngsi_ld/context.py:747:12: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_ld/context.py:767:12: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_ld/context.py:788:12: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_ld/context.py:832:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_ld/context.py:838:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/context.py:25:0: C0411: third party import "from pydantic_core import ValidationError" should be placed before "from filip.models.ngsi_v2 import ContextEntity" (wrong-import-order)
+filip/models/ngsi_ld/context.py:7:0: W0611: Unused import re (unused-import)
+filip/models/ngsi_ld/context.py:19:0: W0611: Unused ContextEntity imported from filip.models.ngsi_v2 (unused-import)
+filip/models/ngsi_ld/context.py:20:0: W0611: Unused FiwareRegex imported from filip.utils.validators (unused-import)
+filip/models/ngsi_ld/context.py:25:0: W0611: Unused ValidationError imported from pydantic_core (unused-import)
+************* Module filip.models.ngsi_ld.subscriptions
+filip/models/ngsi_ld/subscriptions.py:144:0: C0301: Line too long (109/100) (line-too-long)
+filip/models/ngsi_ld/subscriptions.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+filip/models/ngsi_ld/subscriptions.py:2:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_ld/subscriptions.py:11:0: E0401: Unable to import 'dateutil.parser' (import-error)
+filip/models/ngsi_ld/subscriptions.py:32:0: C0115: Missing class docstring (missing-class-docstring)
+filip/models/ngsi_ld/subscriptions.py:93:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/subscriptions.py:100:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/subscriptions.py:100:33: C0103: Argument name "notifierInfo" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_ld/subscriptions.py:202:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/subscriptions.py:202:23: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_ld/subscriptions.py:203:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_ld/subscriptions.py:209:16: W0707: Consider explicitly re-raising using 'except ValueError as exc' and 'raise ValueError('timeAt must be in ISO8061 format') from exc' (raise-missing-from)
+filip/models/ngsi_ld/subscriptions.py:214:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/subscriptions.py:254:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_ld/subscriptions.py:254:21: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_ld/subscriptions.py:2:0: W0611: Unused HttpUrl imported from pydantic (unused-import)
+************* Module filip.models.ngsi_ld.base
+filip/models/ngsi_ld/base.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+filip/models/ngsi_ld/base.py:2:0: E0401: Unable to import 'pydantic' (import-error)
+filip/models/ngsi_ld/base.py:27:27: C0103: Argument name "q" doesn't conform to snake_case naming style (invalid-name)
+************* Module filip.utils.cleanup
+filip/utils/cleanup.py:128:0: C0301: Line too long (119/100) (line-too-long)
+filip/utils/cleanup.py:157:0: C0301: Line too long (122/100) (line-too-long)
+filip/utils/cleanup.py:162:0: C0301: Line too long (117/100) (line-too-long)
+filip/utils/cleanup.py:284:0: C0301: Line too long (117/100) (line-too-long)
+filip/utils/cleanup.py:285:0: C0301: Line too long (119/100) (line-too-long)
+filip/utils/cleanup.py:286:0: C0301: Line too long (117/100) (line-too-long)
+filip/utils/cleanup.py:8:0: E0401: Unable to import 'pydantic' (import-error)
+filip/utils/cleanup.py:9:0: E0401: Unable to import 'requests' (import-error)
+filip/utils/cleanup.py:52:4: W0612: Unused variable 'e' (unused-variable)
+filip/utils/cleanup.py:183:12: E0704: The raise statement is not inside an except clause (misplaced-bare-raise)
+filip/utils/cleanup.py:10:0: C0411: standard import "from typing import Callable, List, Union" should be placed before "from pydantic import AnyHttpUrl, AnyUrl" (wrong-import-order)
+filip/utils/cleanup.py:15:0: C0411: standard import "import logging" should be placed before "from pydantic import AnyHttpUrl, AnyUrl" (wrong-import-order)
+filip/utils/cleanup.py:5:0: W0611: Unused import warnings (unused-import)
+************* Module filip.utils.datetime
+filip/utils/datetime.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module filip.utils.validators
+filip/utils/validators.py:231:0: C0301: Line too long (111/100) (line-too-long)
+filip/utils/validators.py:232:0: C0301: Line too long (165/100) (line-too-long)
+filip/utils/validators.py:248:0: C0301: Line too long (120/100) (line-too-long)
+filip/utils/validators.py:250:0: C0301: Line too long (116/100) (line-too-long)
+filip/utils/validators.py:8:0: E0401: Unable to import 'aenum' (import-error)
+filip/utils/validators.py:10:0: E0401: Unable to import 'pydantic' (import-error)
+filip/utils/validators.py:11:0: E0401: Unable to import 'pydantic_core' (import-error)
+filip/utils/validators.py:13:0: E0401: Unable to import 'pyjexl.jexl' (import-error)
+filip/utils/validators.py:14:0: E0401: Unable to import 'pyjexl.parser' (import-error)
+filip/utils/validators.py:15:0: E0401: Unable to import 'pyjexl.exceptions' (import-error)
+filip/utils/validators.py:108:8: R1704: Redefining argument with the local name 'value' (redefined-argument-from-local)
+filip/utils/validators.py:110:16: W0612: Unused variable 'key' (unused-variable)
+filip/utils/validators.py:127:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:142:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:151:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:152:29: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/utils/validators.py:155:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:156:29: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/utils/validators.py:159:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:160:29: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/utils/validators.py:163:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:164:29: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/utils/validators.py:168:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:173:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:174:4: C0415: Import outside toplevel (filip.models.base.DataType) (import-outside-toplevel)
+filip/utils/validators.py:176:4: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/utils/validators.py:185:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:186:4: C0415: Import outside toplevel (filip.models.base.DataType) (import-outside-toplevel)
+filip/utils/validators.py:188:4: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/utils/validators.py:197:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:202:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:241:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:245:43: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/utils/validators.py:251:8: W0707: Consider explicitly re-raising using 'except ParseError as exc' and 'raise ParseError(msg) from exc' (raise-missing-from)
+filip/utils/validators.py:255:0: C0116: Missing function or method docstring (missing-function-docstring)
+filip/utils/validators.py:255:38: C0103: Argument name "expressionLanguage" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/validators.py:9:0: C0411: standard import "from typing import Dict, Any, List" should be placed before "from aenum import Enum" (wrong-import-order)
+filip/utils/validators.py:13:0: C0411: third party import "from pyjexl.jexl import JEXL" should be placed before "from filip.custom_types import AnyMqttUrl" (wrong-import-order)
+filip/utils/validators.py:14:0: C0411: third party import "from pyjexl.parser import Transform" should be placed before "from filip.custom_types import AnyMqttUrl" (wrong-import-order)
+filip/utils/validators.py:15:0: C0411: third party import "from pyjexl.exceptions import ParseError" should be placed before "from filip.custom_types import AnyMqttUrl" (wrong-import-order)
+************* Module filip.utils.data
+filip/utils/data.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+filip/utils/data.py:7:0: E0401: Unable to import 'pandas' (import-error)
+filip/utils/data.py:8:0: E0401: Unable to import 'pandas' (import-error)
+filip/utils/data.py:9:0: E0401: Unable to import 'pandas_datapackage_reader' (import-error)
+filip/utils/data.py:64:19: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/data.py:65:16: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/data.py:2:0: W0611: Unused import importlib (unused-import)
+filip/utils/data.py:5:0: W0611: Unused import pickle (unused-import)
+************* Module filip.utils.simple_ql
+filip/utils/simple_ql.py:13:0: E0401: Unable to import 'regex' (import-error)
+filip/utils/simple_ql.py:14:0: E0401: Unable to import 'aenum' (import-error)
+filip/utils/simple_ql.py:142:8: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:143:8: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:160:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/utils/simple_ql.py:198:12: C0103: Variable name "op" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:229:14: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:235:31: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:259:21: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:274:21: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:284:12: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:292:22: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:321:8: C0103: Variable name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:323:12: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:15:0: C0411: standard import "from typing import Union, List, Tuple, Any" should be placed before "import regex as re" (wrong-import-order)
+************* Module filip.utils.filter
+filip/utils/filter.py:10:0: E0401: Unable to import 'requests.exceptions' (import-error)
+filip/utils/filter.py:10:0: C0411: third party import "from requests.exceptions import RequestException" should be placed before "from filip.clients.ngsi_v2 import ContextBrokerClient" (wrong-import-order)
+filip/utils/filter.py:10:0: W0611: Unused RequestException imported from requests.exceptions (unused-import)
+************* Module filip.utils.model_generation
+filip/utils/model_generation.py:12:0: E0401: Unable to import 'datamodel_code_generator' (import-error)
+filip/utils/model_generation.py:13:0: E0401: Unable to import 'pydantic' (import-error)
+filip/utils/model_generation.py:80:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/utils/model_generation.py:154:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+filip/utils/model_generation.py:154:37: C0103: Variable name "f" doesn't conform to snake_case naming style (invalid-name)
+************* Module filip.semantics.semantics_models
+filip/semantics/semantics_models.py:977:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
+filip/semantics/semantics_models.py:1:0: C0302: Too many lines in module (1914/1000) (too-many-lines)
+filip/semantics/semantics_models.py:5:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/semantics_models.py:6:0: E0401: Unable to import 'requests' (import-error)
+filip/semantics/semantics_models.py:7:0: E0401: Unable to import 'aenum' (import-error)
+filip/semantics/semantics_models.py:21:0: R0402: Use 'from filip.models.ngsi_v2 import iot' instead (consider-using-from-import)
+filip/semantics/semantics_models.py:33:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/semantics_models.py:54:18: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:54:18: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:54:18: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:54:18: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:58:20: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:58:20: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:58:20: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:58:20: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:63:32: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:63:32: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:63:32: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:63:32: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:81:14: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:81:14: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:81:14: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:82:16: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:82:16: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:82:16: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:83:29: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:83:29: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:83:29: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:143:16: E0401: Unable to import 'dateutil.parser' (import-error)
+filip/semantics/semantics_models.py:143:16: C0415: Import outside toplevel (dateutil.parser.parse) (import-outside-toplevel)
+filip/semantics/semantics_models.py:96:4: R0911: Too many return statements (12/6) (too-many-return-statements)
+filip/semantics/semantics_models.py:96:4: R0912: Too many branches (18/12) (too-many-branches)
+filip/semantics/semantics_models.py:163:56: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:163:56: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:163:56: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:163:56: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:166:53: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:166:53: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:166:53: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:166:53: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:169:32: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:169:32: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:169:32: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:169:32: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:187:16: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:217:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/semantics_models.py:229:12: W0707: Consider explicitly re-raising using 'except Exception as exc' and 'raise Exception('The instance to which this property belongs is not yet present in Fiware, you need to save the state first') from exc' (raise-missing-from)
+filip/semantics/semantics_models.py:229:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/semantics_models.py:237:12: W0707: Consider explicitly re-raising using 'except Exception as exc' and 'raise Exception('This property was not yet saved in Fiware. You need to save the state first before this methode can be executed') from exc' (raise-missing-from)
+filip/semantics/semantics_models.py:237:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/semantics_models.py:244:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/semantics_models.py:260:8: W0107: Unnecessary pass statement (unnecessary-pass)
+filip/semantics/semantics_models.py:354:42: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:354:42: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:354:42: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:386:0: E0102: class already defined line 33 (function-redefined)
+filip/semantics/semantics_models.py:400:16: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:400:16: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:400:16: E1120: No value for argument 'self' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:400:16: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:400:16: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:412:16: E1123: Unexpected keyword argument 'default' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:412:16: E1123: Unexpected keyword argument 'description' in constructor call (unexpected-keyword-arg)
+filip/semantics/semantics_models.py:412:16: E1120: No value for argument 'self' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:412:16: E1120: No value for argument 'name' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:412:16: E1120: No value for argument 'semantic_manager' in constructor call (no-value-for-parameter)
+filip/semantics/semantics_models.py:427:8: W0107: Unnecessary pass statement (unnecessary-pass)
+filip/semantics/semantics_models.py:437:8: W0107: Unnecessary pass statement (unnecessary-pass)
+filip/semantics/semantics_models.py:460:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:492:15: C2801: Unnecessarily calls dunder method __len__. Use len built-in function. (unnecessary-dunder-call)
+filip/semantics/semantics_models.py:494:21: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:506:18: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:526:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:540:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:550:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:587:29: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:617:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:664:25: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:691:16: C0103: Variable name "c" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:703:8: W0212: Access to a protected member _instance_link of a client class (protected-access)
+filip/semantics/semantics_models.py:704:8: W0212: Access to a protected member _instance_link of a client class (protected-access)
+filip/semantics/semantics_models.py:705:8: W0212: Access to a protected member _instance_link of a client class (protected-access)
+filip/semantics/semantics_models.py:706:8: R1725: Consider using Python 3 style super() without arguments (super-with-arguments)
+filip/semantics/semantics_models.py:727:12: W0212: Access to a protected member _instance_link of a client class (protected-access)
+filip/semantics/semantics_models.py:734:8: W0212: Access to a protected member _instance_link of a client class (protected-access)
+filip/semantics/semantics_models.py:735:8: W0212: Access to a protected member _instance_link of a client class (protected-access)
+filip/semantics/semantics_models.py:736:8: W0212: Access to a protected member _instance_link of a client class (protected-access)
+filip/semantics/semantics_models.py:738:8: R1725: Consider using Python 3 style super() without arguments (super-with-arguments)
+filip/semantics/semantics_models.py:749:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:762:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:893:13: W0612: Unused variable 'rule' (unused-variable)
+filip/semantics/semantics_models.py:898:4: R0914: Too many local variables (16/15) (too-many-locals)
+filip/semantics/semantics_models.py:937:16: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:898:4: R0912: Too many branches (20/12) (too-many-branches)
+filip/semantics/semantics_models.py:992:8: W0107: Unnecessary pass statement (unnecessary-pass)
+filip/semantics/semantics_models.py:1001:17: R1725: Consider using Python 3 style super() without arguments (super-with-arguments)
+filip/semantics/semantics_models.py:1015:12: W0612: Unused variable 'statement' (unused-variable)
+filip/semantics/semantics_models.py:1037:18: R1721: Unnecessary use of a comprehension, use list(self.get_all_raw()) instead. (unnecessary-comprehension)
+filip/semantics/semantics_models.py:1102:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/semantics/semantics_models.py:1111:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:1126:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/semantics/semantics_models.py:1121:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/semantics/semantics_models.py:1155:8: R1702: Too many nested blocks (6/5) (too-many-nested-blocks)
+filip/semantics/semantics_models.py:1182:27: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_models.py:1205:15: R1725: Consider using Python 3 style super() without arguments (super-with-arguments)
+filip/semantics/semantics_models.py:1294:14: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/semantics/semantics_models.py:1356:8: R1715: Consider using dict.get for getting values from a dict if a key is present or a default if not (consider-using-get)
+filip/semantics/semantics_models.py:1368:12: C0415: Import outside toplevel (re) (import-outside-toplevel)
+filip/semantics/semantics_models.py:1371:16: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/semantics/semantics_models.py:1380:11: C0113: Consider changing "not instance_id == ''" to "instance_id != ''" (unneeded-not)
+filip/semantics/semantics_models.py:1389:15: E1120: No value for argument 'cls' in classmethod call (no-value-for-parameter)
+filip/semantics/semantics_models.py:1414:8: R1715: Consider using dict.get for getting values from a dict if a key is present or a default if not (consider-using-get)
+filip/semantics/semantics_models.py:1391:0: W0613: Unused argument 'args' (unused-argument)
+filip/semantics/semantics_models.py:1540:12: W0612: Unused variable 'key' (unused-variable)
+filip/semantics/semantics_models.py:1554:12: W0612: Unused variable 'key' (unused-variable)
+filip/semantics/semantics_models.py:1586:12: W0612: Unused variable 'key' (unused-variable)
+filip/semantics/semantics_models.py:1658:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/semantics/semantics_models.py:1674:12: R1713: Consider using str.join(sequence) for concatenating strings from an iterable (consider-using-join)
+filip/semantics/semantics_models.py:1738:12: W0612: Unused variable 'key' (unused-variable)
+filip/semantics/semantics_models.py:1751:12: W0612: Unused variable 'key' (unused-variable)
+filip/semantics/semantics_models.py:1764:12: W0612: Unused variable 'key' (unused-variable)
+filip/semantics/semantics_models.py:1789:17: R1725: Consider using Python 3 style super() without arguments (super-with-arguments)
+filip/semantics/semantics_models.py:1802:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/semantics/semantics_models.py:1879:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/semantics/semantics_models.py:8:0: C0411: standard import "from typing import List, Tuple, Dict, Type, TYPE_CHECKING, Optional, Union, Set, Iterator, Any" should be placed before "import pydantic as pyd" (wrong-import-order)
+filip/semantics/semantics_models.py:33:0: C0411: third party import "from pydantic import ConfigDict, BaseModel, Field" should be placed before "import filip.models.ngsi_v2.iot as iot" (wrong-import-order)
+filip/semantics/semantics_models.py:34:0: C0412: Imports from package filip are not grouped (ungrouped-imports)
+************* Module filip.semantics.semantics_manager
+filip/semantics/semantics_manager.py:1:0: C0302: Too many lines in module (1302/1000) (too-many-lines)
+filip/semantics/semantics_manager.py:9:0: E0401: Unable to import 'requests' (import-error)
+filip/semantics/semantics_manager.py:12:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/semantics_manager.py:13:0: E0401: Unable to import 'rapidfuzz' (import-error)
+filip/semantics/semantics_manager.py:103:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
+filip/semantics/semantics_manager.py:196:23: W0212: Access to a protected member _context_entity_to_semantic_class of a client class (protected-access)
+filip/semantics/semantics_manager.py:255:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/semantics_manager.py:262:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/semantics_manager.py:273:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/semantics_manager.py:280:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/semantics_manager.py:282:4: R0914: Too many local variables (22/15) (too-many-locals)
+filip/semantics/semantics_manager.py:317:16: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/semantics_manager.py:338:20: W0212: Access to a protected member _set of a client class (protected-access)
+filip/semantics/semantics_manager.py:366:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/semantics/semantics_manager.py:282:4: R0912: Too many branches (13/12) (too-many-branches)
+filip/semantics/semantics_manager.py:382:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/semantics/semantics_manager.py:389:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/semantics_manager.py:371:4: R0911: Too many return statements (7/6) (too-many-return-statements)
+filip/semantics/semantics_manager.py:371:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/semantics/semantics_manager.py:517:12: W0706: The except handler raises immediately (try-except-raise)
+filip/semantics/semantics_manager.py:561:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/semantics_manager.py:571:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/semantics/semantics_manager.py:593:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/semantics/semantics_manager.py:690:8: C0103: Argument name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_manager.py:680:4: R0913: Too many arguments (11/5) (too-many-arguments)
+filip/semantics/semantics_manager.py:842:41: W0621: Redefining name 'json' from outer scope (line 4) (redefined-outer-name)
+filip/semantics/semantics_manager.py:876:12: C0113: Consider changing "not display_individuals_rule == 'ALL'" to "display_individuals_rule != 'ALL'" (unneeded-not)
+filip/semantics/semantics_manager.py:877:16: C0113: Consider changing "not display_individuals_rule == 'NONE'" to "display_individuals_rule != 'NONE'" (unneeded-not)
+filip/semantics/semantics_manager.py:878:16: C0113: Consider changing "not display_individuals_rule == 'USED'" to "display_individuals_rule != 'USED'" (unneeded-not)
+filip/semantics/semantics_manager.py:883:8: C0415: Import outside toplevel (igraph) (import-outside-toplevel)
+filip/semantics/semantics_manager.py:883:8: E0401: Unable to import 'igraph' (import-error)
+filip/semantics/semantics_manager.py:885:8: C0103: Variable name "g" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_manager.py:903:27: C0113: Consider changing "not display_individuals_rule == 'NONE'" to "display_individuals_rule != 'NONE'" (unneeded-not)
+filip/semantics/semantics_manager.py:930:4: R0914: Too many local variables (18/15) (too-many-locals)
+filip/semantics/semantics_manager.py:1002:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/semantics_manager.py:1026:20: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/semantics_manager.py:1105:4: R0914: Too many local variables (26/15) (too-many-locals)
+filip/semantics/semantics_manager.py:1207:12: W0212: Access to a protected member _set of a client class (protected-access)
+filip/semantics/semantics_manager.py:1211:16: W0212: Access to a protected member _set of a client class (protected-access)
+filip/semantics/semantics_manager.py:1274:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/semantics/semantics_manager.py:1105:4: R0912: Too many branches (21/12) (too-many-branches)
+filip/semantics/semantics_manager.py:1105:4: R0915: Too many statements (58/50) (too-many-statements)
+filip/semantics/semantics_manager.py:218:0: R0904: Too many public methods (25/20) (too-many-public-methods)
+filip/semantics/semantics_manager.py:11:0: C0411: standard import "from typing import Optional, Dict, Type, List, Any, Union, Set" should be placed before "import requests" (wrong-import-order)
+************* Module filip.semantics.vocabulary_configurator
+filip/semantics/vocabulary_configurator.py:13:0: E0401: Unable to import 'requests' (import-error)
+filip/semantics/vocabulary_configurator.py:14:0: E0401: Unable to import 'wget' (import-error)
+filip/semantics/vocabulary_configurator.py:69:0: C0103: Constant name "label_char_whitelist" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary_configurator.py:194:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+filip/semantics/vocabulary_configurator.py:275:12: W0707: Consider explicitly re-raising using 'raise ParsingException(e.args) from e' (raise-missing-from)
+filip/semantics/vocabulary_configurator.py:301:12: C0103: Variable name "c" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary_configurator.py:472:4: R0914: Too many local variables (39/15) (too-many-locals)
+filip/semantics/vocabulary_configurator.py:504:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/semantics/vocabulary_configurator.py:571:19: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:579:23: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:656:23: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:661:23: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:662:23: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:669:23: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:676:27: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:683:27: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:722:16: C0103: Variable name "cr" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary_configurator.py:631:8: R1702: Too many nested blocks (6/5) (too-many-nested-blocks)
+filip/semantics/vocabulary_configurator.py:775:36: C0103: Argument name "cr" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary_configurator.py:779:27: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:782:27: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:803:31: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:813:31: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:825:31: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:848:27: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:872:19: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:881:47: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/semantics/vocabulary_configurator.py:900:19: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:910:19: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/semantics/vocabulary_configurator.py:918:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary_configurator.py:472:4: R0912: Too many branches (59/12) (too-many-branches)
+filip/semantics/vocabulary_configurator.py:472:4: R0915: Too many statements (231/50) (too-many-statements)
+filip/semantics/vocabulary_configurator.py:874:12: W0612: Unused variable 'name' (unused-variable)
+************* Module filip.semantics.vocabulary.entities
+filip/semantics/vocabulary/entities.py:4:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/vocabulary/entities.py:115:35: C0103: Argument name "a" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:115:44: C0103: Argument name "b" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:202:12: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/entities.py:220:12: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/entities.py:238:12: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/entities.py:373:20: W4701: Iterated list 'parents' is being modified inside for loop body, consider iterating through a copy of it instead. (modified-iterating-list)
+filip/semantics/vocabulary/entities.py:422:12: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/entities.py:418:19: C0121: Comparison 'statement.fulfilled == False' should be 'statement.fulfilled is False' if checking for the singleton value False, or 'not statement.fulfilled' if testing for falsiness (singleton-comparison)
+filip/semantics/vocabulary/entities.py:514:12: C0103: Variable name "cr" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:556:4: C0103: Class constant name "string" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:557:4: C0103: Class constant name "number" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:558:4: C0103: Class constant name "date" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:559:4: C0103: Class constant name "enum" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:654:16: W0702: No exception type(s) specified (bare-except)
+filip/semantics/vocabulary/entities.py:659:16: W0702: No exception type(s) specified (bare-except)
+filip/semantics/vocabulary/entities.py:676:16: E0401: Unable to import 'dateutil.parser' (import-error)
+filip/semantics/vocabulary/entities.py:676:16: C0415: Import outside toplevel (dateutil.parser.parse) (import-outside-toplevel)
+filip/semantics/vocabulary/entities.py:627:4: R0911: Too many return statements (12/6) (too-many-return-statements)
+filip/semantics/vocabulary/entities.py:627:4: R0912: Too many branches (18/12) (too-many-branches)
+filip/semantics/vocabulary/entities.py:689:8: W0613: Unused argument 'vocabulary' (unused-argument)
+filip/semantics/vocabulary/entities.py:690:8: W0613: Unused argument 'old_vocabulary' (unused-argument)
+filip/semantics/vocabulary/entities.py:774:8: W0613: Unused argument 'vocabulary' (unused-argument)
+filip/semantics/vocabulary/entities.py:775:8: W0613: Unused argument 'old_vocabulary' (unused-argument)
+filip/semantics/vocabulary/entities.py:832:4: C0103: Class constant name "command" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:833:4: C0103: Class constant name "device_attribute" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:834:4: C0103: Class constant name "simple" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/entities.py:876:8: W0613: Unused argument 'vocabulary' (unused-argument)
+filip/semantics/vocabulary/entities.py:877:8: W0613: Unused argument 'old_vocabulary' (unused-argument)
+filip/semantics/vocabulary/entities.py:5:0: C0411: standard import "from typing import List, TYPE_CHECKING, Dict, Union, Set, Any" should be placed before "from pydantic import BaseModel, Field" (wrong-import-order)
+************* Module filip.semantics.vocabulary.relation
+filip/semantics/vocabulary/relation.py:8:0: E0401: Unable to import 'aenum' (import-error)
+filip/semantics/vocabulary/relation.py:8:0: C0413: Import "from aenum import Enum" should be placed at the top of the module (wrong-import-position)
+filip/semantics/vocabulary/relation.py:9:0: W0404: Reimport 'TYPE_CHECKING' (imported line 3) (reimported)
+filip/semantics/vocabulary/relation.py:9:0: C0413: Import "from typing import List, TYPE_CHECKING" should be placed at the top of the module (wrong-import-position)
+filip/semantics/vocabulary/relation.py:11:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/vocabulary/relation.py:11:0: C0413: Import "from pydantic import BaseModel, Field" should be placed at the top of the module (wrong-import-position)
+filip/semantics/vocabulary/relation.py:13:0: C0413: Import "from .source import DependencyStatement" should be placed at the top of the module (wrong-import-position)
+filip/semantics/vocabulary/relation.py:86:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/relation.py:95:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/relation.py:126:16: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+filip/semantics/vocabulary/relation.py:74:4: R0912: Too many branches (16/12) (too-many-branches)
+filip/semantics/vocabulary/relation.py:85:8: R1702: Too many nested blocks (7/5) (too-many-nested-blocks)
+filip/semantics/vocabulary/relation.py:123:20: W0612: Unused variable 'empty' (unused-variable)
+filip/semantics/vocabulary/relation.py:150:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/relation.py:209:8: C0415: Import outside toplevel (vocabulary.IdType) (import-outside-toplevel)
+filip/semantics/vocabulary/relation.py:211:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/relation.py:227:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/relation.py:344:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/relation.py:345:19: C0209: Formatting a regular string which could be a f-string (consider-using-f-string)
+filip/semantics/vocabulary/relation.py:357:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/semantics/vocabulary/relation.py:444:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+filip/semantics/vocabulary/relation.py:429:8: W0613: Unused argument 'vocabulary' (unused-argument)
+filip/semantics/vocabulary/relation.py:467:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+filip/semantics/vocabulary/relation.py:522:12: W0622: Redefining built-in 'list' (redefined-builtin)
+filip/semantics/vocabulary/relation.py:512:8: C0415: Import outside toplevel (vocabulary.IdType) (import-outside-toplevel)
+filip/semantics/vocabulary/relation.py:566:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/relation.py:9:0: C0411: standard import "from typing import List, TYPE_CHECKING" should be placed before "from aenum import Enum" (wrong-import-order)
+filip/semantics/vocabulary/relation.py:3:0: W0611: Unused Dict imported from typing (unused-import)
+************* Module filip.semantics.vocabulary.vocabulary
+filip/semantics/vocabulary/vocabulary.py:6:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0401: Wildcard import  (wildcard-import)
+filip/semantics/vocabulary/vocabulary.py:13:0: E0102: class already defined line 7 (function-redefined)
+filip/semantics/vocabulary/vocabulary.py:64:20: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:94:0: E0102: class already defined line 7 (function-redefined)
+filip/semantics/vocabulary/vocabulary.py:97:4: C0103: Class constant name "class_" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:98:4: C0103: Class constant name "object_property" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:99:4: C0103: Class constant name "data_property" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:100:4: C0103: Class constant name "datatype" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:101:4: C0103: Class constant name "relation" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:102:4: C0103: Class constant name "combined_relation" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:103:4: C0103: Class constant name "individual" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:104:4: C0103: Class constant name "source" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:107:0: E0102: class already defined line 7 (function-redefined)
+filip/semantics/vocabulary/vocabulary.py:140:0: E0102: class already defined line 7 (function-redefined)
+filip/semantics/vocabulary/vocabulary.py:208:29: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:263:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/semantics/vocabulary/vocabulary.py:320:36: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:333:8: W0702: No exception type(s) specified (bare-except)
+filip/semantics/vocabulary/vocabulary.py:355:46: W0622: Redefining built-in 'list' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:413:33: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:427:42: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:440:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/vocabulary.py:445:47: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:459:49: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:509:28: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:509:37: W0622: Redefining built-in 'type' (redefined-builtin)
+filip/semantics/vocabulary/vocabulary.py:536:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/vocabulary.py:552:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/vocabulary.py:571:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/vocabulary.py:584:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/vocabulary.py:561:4: R0911: Too many return statements (7/6) (too-many-return-statements)
+filip/semantics/vocabulary/vocabulary.py:635:12: C0103: Variable name "l" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/vocabulary/vocabulary.py:140:0: R0904: Too many public methods (31/20) (too-many-public-methods)
+filip/semantics/vocabulary/vocabulary.py:8:0: C0411: standard import "from typing import List, Dict, Union, Optional, Tuple" should be placed before "from pydantic import BaseModel, Field" (wrong-import-order)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:7:0: W0611: Unused import * (unused-import)
+filip/semantics/vocabulary/vocabulary.py:10:0: W0611: Unused LogLevel imported from models.base (unused-import)
+************* Module filip.semantics.vocabulary.source
+filip/semantics/vocabulary/source.py:6:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/vocabulary/source.py:101:8: C0415: Import outside toplevel (.IdType) (import-outside-toplevel)
+filip/semantics/vocabulary/source.py:189:8: W0621: Redefining name 'ParsingError' from outer scope (line 36) (redefined-outer-name)
+filip/semantics/vocabulary/source.py:189:8: C0415: Import outside toplevel (.ParsingError) (import-outside-toplevel)
+filip/semantics/vocabulary/source.py:216:19: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module filip.semantics.vocabulary.combined_relations
+filip/semantics/vocabulary/combined_relations.py:3:0: E0401: Unable to import 'aenum' (import-error)
+filip/semantics/vocabulary/combined_relations.py:6:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/vocabulary/combined_relations.py:36:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/semantics/vocabulary/combined_relations.py:38:12: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/vocabulary/combined_relations.py:43:33: W0613: Unused argument 'vocabulary' (unused-argument)
+filip/semantics/vocabulary/combined_relations.py:117:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/vocabulary/combined_relations.py:167:8: W0622: Redefining built-in 'property' (redefined-builtin)
+filip/semantics/vocabulary/combined_relations.py:197:8: C0415: Import outside toplevel (.Vocabulary) (import-outside-toplevel)
+filip/semantics/vocabulary/combined_relations.py:228:8: W0622: Redefining built-in 'property' (redefined-builtin)
+filip/semantics/vocabulary/combined_relations.py:6:0: C0411: third party import "from pydantic import BaseModel, Field" should be placed before "from filip.semantics.vocabulary import DataFieldType" (wrong-import-order)
+filip/semantics/vocabulary/combined_relations.py:7:0: C0411: standard import "from typing import List, TYPE_CHECKING, Set" should be placed before "from aenum import Enum" (wrong-import-order)
+filip/semantics/vocabulary/combined_relations.py:3:0: W0611: Unused Enum imported from aenum (unused-import)
+************* Module filip.semantics.vocabulary
+filip/semantics/vocabulary/__init__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module filip.semantics.ontology_parser.vocabulary_builder
+filip/semantics/ontology_parser/vocabulary_builder.py:8:0: E0401: Unable to import 'pydantic' (import-error)
+filip/semantics/ontology_parser/vocabulary_builder.py:12:0: W0401: Wildcard import filip.semantics.vocabulary (wildcard-import)
+filip/semantics/ontology_parser/vocabulary_builder.py:15:0: C0115: Missing class docstring (missing-class-docstring)
+filip/semantics/ontology_parser/vocabulary_builder.py:15:0: E0102: class already defined line 12 (function-redefined)
+filip/semantics/ontology_parser/vocabulary_builder.py:16:4: C0103: Class constant name "class_" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:17:4: C0103: Class constant name "object_property" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:18:4: C0103: Class constant name "data_property" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:19:4: C0103: Class constant name "datatype" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:20:4: C0103: Class constant name "relation" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:21:4: C0103: Class constant name "combined_relation" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:22:4: C0103: Class constant name "individual" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:23:4: C0103: Class constant name "source" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/vocabulary_builder.py:190:41: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/ontology_parser/vocabulary_builder.py:255:48: W0622: Redefining built-in 'property' (redefined-builtin)
+filip/semantics/ontology_parser/vocabulary_builder.py:260:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/semantics/ontology_parser/vocabulary_builder.py:9:0: C0411: standard import "from typing import Dict" should be placed before "from pydantic import BaseModel, Field" (wrong-import-order)
+filip/semantics/ontology_parser/vocabulary_builder.py:12:0: W0614: Unused import(s) DataFieldType, DatatypeType, TargetStatement, StatementType, RestrictionType, CombinedRelation, DependencyStatement, ParsingError, LabelSummary and VocabularySettings from wildcard import of filip.semantics.vocabulary (unused-wildcard-import)
+************* Module filip.semantics.ontology_parser.post_processer
+filip/semantics/ontology_parser/post_processer.py:13:0: E0401: Unable to import 'stringcase' (import-error)
+filip/semantics/ontology_parser/post_processer.py:505:4: R0912: Too many branches (13/12) (too-many-branches)
+filip/semantics/ontology_parser/post_processer.py:530:8: W0612: Unused variable 'to_snake_case' (unused-variable)
+filip/semantics/ontology_parser/post_processer.py:579:8: C0415: Import outside toplevel (filip.semantics.vocabulary_configurator.VocabularyConfigurator) (import-outside-toplevel)
+filip/semantics/ontology_parser/post_processer.py:695:20: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/ontology_parser/post_processer.py:695:25: C0209: Formatting a regular string which could be a f-string (consider-using-f-string)
+filip/semantics/ontology_parser/post_processer.py:706:25: C0209: Formatting a regular string which could be a f-string (consider-using-f-string)
+************* Module filip.semantics.ontology_parser.rdfparser
+filip/semantics/ontology_parser/rdfparser.py:8:0: E0401: Unable to import 'rdflib' (import-error)
+filip/semantics/ontology_parser/rdfparser.py:48:4: C0103: Class constant name "rdf_type" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:49:4: C0103: Class constant name "owl_intersection" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:50:4: C0103: Class constant name "owl_union" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:51:4: C0103: Class constant name "owl_one_of" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:52:4: C0103: Class constant name "owl_individual" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:53:4: C0103: Class constant name "owl_on_class" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:54:4: C0103: Class constant name "owl_on_data_range" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:78:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/semantics/ontology_parser/rdfparser.py:136:8: C0103: Variable name "g" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:163:14: C0103: Argument name "a" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:187:4: R0914: Too many local variables (29/15) (too-many-locals)
+filip/semantics/ontology_parser/rdfparser.py:402:20: W0622: Redefining built-in 'object' (redefined-builtin)
+filip/semantics/ontology_parser/rdfparser.py:411:20: W0622: Redefining built-in 'type' (redefined-builtin)
+filip/semantics/ontology_parser/rdfparser.py:200:12: C0103: Variable name "a" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:216:16: C0103: Variable name "c" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:244:12: C0103: Variable name "a" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:286:12: C0103: Variable name "a" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:313:12: C0103: Variable name "a" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:378:12: C0103: Variable name "a" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:187:4: R0912: Too many branches (40/12) (too-many-branches)
+filip/semantics/ontology_parser/rdfparser.py:187:4: R0915: Too many statements (78/50) (too-many-statements)
+filip/semantics/ontology_parser/rdfparser.py:458:4: R0914: Too many local variables (17/15) (too-many-locals)
+filip/semantics/ontology_parser/rdfparser.py:515:20: W0622: Redefining built-in 'object' (redefined-builtin)
+filip/semantics/ontology_parser/rdfparser.py:580:20: W0622: Redefining built-in 'id' (redefined-builtin)
+filip/semantics/ontology_parser/rdfparser.py:505:16: C0103: Variable name "p" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:507:16: C0103: Variable name "o" doesn't conform to snake_case naming style (invalid-name)
+filip/semantics/ontology_parser/rdfparser.py:546:16: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+filip/semantics/ontology_parser/rdfparser.py:598:16: C0113: Consider changing "not get_iri_from_uriref(node) == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'" to "get_iri_from_uriref(node) != 'http://www.w3.org/1999/02/22-rdf-syntax-ns#nil'" (unneeded-not)
+filip/semantics/ontology_parser/rdfparser.py:603:20: C0113: Consider changing "not get_iri_from_uriref(node) == 'http://www.w3.org/2002/07/owl#Thing'" to "get_iri_from_uriref(node) != 'http://www.w3.org/2002/07/owl#Thing'" (unneeded-not)
+filip/semantics/ontology_parser/rdfparser.py:458:4: R0912: Too many branches (18/12) (too-many-branches)
+filip/semantics/ontology_parser/rdfparser.py:676:20: C0209: Formatting a regular string which could be a f-string (consider-using-f-string)
+filip/semantics/ontology_parser/rdfparser.py:680:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/semantics/ontology_parser/rdfparser.py:771:14: C0113: Consider changing "not len(queue) == 0" to "len(queue) != 0" (unneeded-not)
+filip/semantics/ontology_parser/rdfparser.py:811:4: R0913: Too many arguments (6/5) (too-many-arguments)
+************* Module filip.clients.exceptions
+filip/clients/exceptions.py:10:0: C0301: Line too long (108/100) (line-too-long)
+filip/clients/exceptions.py:4:0: E0401: Unable to import 'requests.models' (import-error)
+filip/clients/exceptions.py:5:0: E0401: Unable to import 'requests' (import-error)
+************* Module filip.clients.base_http_client
+filip/clients/base_http_client.py:6:0: E0401: Unable to import 'pydantic' (import-error)
+filip/clients/base_http_client.py:8:0: E0401: Unable to import 'requests' (import-error)
+filip/clients/base_http_client.py:19:4: C0103: Class constant name "v2_url" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/clients/base_http_client.py:20:4: C0103: Class constant name "ld_url" doesn't conform to UPPER_CASE naming style (invalid-name)
+filip/clients/base_http_client.py:23:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+filip/clients/base_http_client.py:194:72: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/base_http_client.py:212:72: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/base_http_client.py:234:72: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/base_http_client.py:262:72: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/base_http_client.py:291:72: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/base_http_client.py:320:72: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/base_http_client.py:338:72: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/base_http_client.py:7:0: C0411: standard import "from typing import Dict, ByteString, List, IO, Tuple, Union" should be placed before "from pydantic import AnyHttpUrl" (wrong-import-order)
+filip/clients/base_http_client.py:11:0: C0411: standard import "from enum import Enum" should be placed before "from pydantic import AnyHttpUrl" (wrong-import-order)
+************* Module filip.clients.ngsi_v2.cb
+filip/clients/ngsi_v2/cb.py:178:0: C0301: Line too long (108/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:184:0: C0301: Line too long (109/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:185:0: C0301: Line too long (103/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:367:0: C0301: Line too long (176/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:370:0: C0301: Line too long (178/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:378:0: C0301: Line too long (114/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:514:0: C0301: Line too long (178/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:578:0: C0301: Line too long (178/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:1122:0: C0301: Line too long (179/100) (line-too-long)
+filip/clients/ngsi_v2/cb.py:1:0: C0302: Too many lines in module (2276/1000) (too-many-lines)
+filip/clients/ngsi_v2/cb.py:14:0: E0401: Unable to import 'pydantic' (import-error)
+filip/clients/ngsi_v2/cb.py:15:0: E0401: Unable to import 'pydantic.type_adapter' (import-error)
+filip/clients/ngsi_v2/cb.py:18:0: E0401: Unable to import 'requests' (import-error)
+filip/clients/ngsi_v2/cb.py:21:0: E0401: Unable to import 'requests' (import-error)
+filip/clients/ngsi_v2/cb.py:90:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:159:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:183:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_v2/cb.py:189:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:207:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:227:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:227:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:301:4: R0914: Too many local variables (27/15) (too-many-locals)
+filip/clients/ngsi_v2/cb.py:444:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/ngsi_v2/cb.py:479:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/ngsi_v2/cb.py:301:4: R0912: Too many branches (32/12) (too-many-branches)
+filip/clients/ngsi_v2/cb.py:301:4: R0915: Too many statements (76/50) (too-many-statements)
+filip/clients/ngsi_v2/cb.py:493:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:493:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:555:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:555:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:730:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:778:12: C0415: Import outside toplevel (filip.clients.ngsi_v2.IoTAClient) (import-outside-toplevel)
+filip/clients/ngsi_v2/cb.py:855:8: C0103: Argument name "forcedUpdate" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/cb.py:847:4: R0913: Too many arguments (7/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:847:4: R0914: Too many local variables (16/15) (too-many-locals)
+filip/clients/ngsi_v2/cb.py:930:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/cb.py:945:8: C0103: Argument name "forcedUpdate" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/cb.py:938:4: R0913: Too many arguments (7/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:938:4: R0914: Too many local variables (16/15) (too-many-locals)
+filip/clients/ngsi_v2/cb.py:1006:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/cb.py:1010:18: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_v2/cb.py:1042:8: C0103: Argument name "forcedUpdate" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/cb.py:1035:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:1098:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/cb.py:1106:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_v2/cb.py:1106:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1112:8: W0613: Unused argument 'response_format' (unused-argument)
+filip/clients/ngsi_v2/cb.py:1226:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/cb.py:1264:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/cb.py:1275:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1362:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/cb.py:1376:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1408:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1531:12: W0621: Redefining name 'version' from outer scope (line 13) (redefined-outer-name)
+filip/clients/ngsi_v2/cb.py:1456:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1575:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1616:12: W0621: Redefining name 'version' from outer scope (line 13) (redefined-outer-name)
+filip/clients/ngsi_v2/cb.py:1674:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_v2/cb.py:1710:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1739:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1845:11: R1701: Consider merging these isinstance calls to isinstance(relationship, (ContextAttribute, NamedContextAttribute)) (consider-merging-isinstance)
+filip/clients/ngsi_v2/cb.py:1856:32: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/clients/ngsi_v2/cb.py:1833:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:1910:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/cb.py:1980:33: E1101: Instance of 'tuple' has no 'value' member (no-member)
+filip/clients/ngsi_v2/cb.py:2006:8: W0613: Unused argument 'order_by' (unused-argument)
+filip/clients/ngsi_v2/cb.py:2124:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/cb.py:2158:8: C0103: Argument name "forcedUpdate" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/cb.py:2203:51: W0108: Lambda may not be necessary (unnecessary-lambda)
+filip/clients/ngsi_v2/cb.py:2236:23: R1729: Use a generator instead 'any(_value_is_not_none(value=_v) for _v in value.values())' (use-a-generator)
+filip/clients/ngsi_v2/cb.py:2237:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_v2/cb.py:2238:23: R1729: Use a generator instead 'any(_value_is_not_none(value=_v) for _v in value)' (use-a-generator)
+filip/clients/ngsi_v2/cb.py:2247:15: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/cb.py:2251:16: R1724: Unnecessary "else" after "continue", remove the "else" and de-indent the code inside it (no-else-continue)
+filip/clients/ngsi_v2/cb.py:2257:16: R1724: Unnecessary "else" after "continue", remove the "else" and de-indent the code inside it (no-else-continue)
+filip/clients/ngsi_v2/cb.py:2263:16: R1724: Unnecessary "else" after "continue", remove the "else" and de-indent the code inside it (no-else-continue)
+filip/clients/ngsi_v2/cb.py:2266:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_v2/cb.py:51:0: R0904: Too many public methods (43/20) (too-many-public-methods)
+filip/clients/ngsi_v2/cb.py:16:0: C0411: standard import "from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union" should be placed before "from packaging.version import parse as parse_version" (wrong-import-order)
+filip/clients/ngsi_v2/cb.py:17:0: C0411: standard import "import re" should be placed before "from packaging.version import parse as parse_version" (wrong-import-order)
+filip/clients/ngsi_v2/cb.py:19:0: C0411: standard import "from urllib.parse import urljoin" should be placed before "from packaging.version import parse as parse_version" (wrong-import-order)
+filip/clients/ngsi_v2/cb.py:20:0: C0411: standard import "import warnings" should be placed before "from packaging.version import parse as parse_version" (wrong-import-order)
+filip/clients/ngsi_v2/cb.py:10:0: W0611: Unused Enum imported from enum (unused-import)
+filip/clients/ngsi_v2/cb.py:16:0: W0611: Unused Optional imported from typing (unused-import)
+filip/clients/ngsi_v2/cb.py:26:0: W0611: Unused PropertyFormat imported from filip.models.ngsi_v2.context (unused-import)
+************* Module filip.clients.ngsi_v2.quantumleap
+filip/clients/ngsi_v2/quantumleap.py:1:0: C0302: Too many lines in module (1308/1000) (too-many-lines)
+filip/clients/ngsi_v2/quantumleap.py:12:0: E0401: Unable to import 'requests' (import-error)
+filip/clients/ngsi_v2/quantumleap.py:13:0: E0401: Unable to import 'pydantic' (import-error)
+filip/clients/ngsi_v2/quantumleap.py:14:0: E0401: Unable to import 'pydantic.type_adapter' (import-error)
+filip/clients/ngsi_v2/quantumleap.py:64:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/quantumleap.py:83:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/quantumleap.py:144:4: R0913: Too many arguments (11/5) (too-many-arguments)
+filip/clients/ngsi_v2/quantumleap.py:242:8: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/clients/ngsi_v2/quantumleap.py:234:12: W0612: Unused variable 'err' (unused-variable)
+filip/clients/ngsi_v2/quantumleap.py:244:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/quantumleap.py:269:4: R0914: Too many local variables (26/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:398:16: R1723: Unnecessary "else" after "break", remove the "else" and de-indent the code inside it (no-else-break)
+filip/clients/ngsi_v2/quantumleap.py:269:4: R0912: Too many branches (25/12) (too-many-branches)
+filip/clients/ngsi_v2/quantumleap.py:269:4: R0915: Too many statements (64/50) (too-many-statements)
+filip/clients/ngsi_v2/quantumleap.py:463:8: C0103: Variable name "ta" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/quantumleap.py:467:4: R0914: Too many local variables (19/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:588:4: R0914: Too many local variables (19/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:662:4: R0914: Too many local variables (20/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:747:4: R0914: Too many local variables (20/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:835:4: R0914: Too many local variables (23/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:897:4: R0914: Too many local variables (23/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:960:4: R0914: Too many local variables (24/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:1075:4: R0914: Too many local variables (23/15) (too-many-locals)
+filip/clients/ngsi_v2/quantumleap.py:1225:16: W0108: Lambda may not be necessary (unnecessary-lambda)
+filip/clients/ngsi_v2/quantumleap.py:1229:20: W0108: Lambda may not be necessary (unnecessary-lambda)
+filip/clients/ngsi_v2/quantumleap.py:1292:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/clients/ngsi_v2/quantumleap.py:1299:31: W0640: Cell variable entity_group defined in loop (cell-var-from-loop)
+************* Module filip.clients.ngsi_v2.client
+filip/clients/ngsi_v2/client.py:10:0: E0401: Unable to import 'pydantic' (import-error)
+filip/clients/ngsi_v2/client.py:11:0: E0401: Unable to import 'requests.auth' (import-error)
+filip/clients/ngsi_v2/client.py:12:0: E0401: Unable to import 'requests' (import-error)
+filip/clients/ngsi_v2/client.py:63:8: C0103: Attribute name "cb" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/client.py:33:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+filip/clients/ngsi_v2/client.py:92:55: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+filip/clients/ngsi_v2/client.py:114:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+filip/clients/ngsi_v2/client.py:114:33: C0103: Variable name "f" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/client.py:150:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+filip/clients/ngsi_v2/client.py:233:4: W0238: Unused private member `HttpClient.__token_saver(self, token)` (unused-private-member)
+filip/clients/ngsi_v2/client.py:234:8: W0238: Unused private member `HttpClient.__token` (unused-private-member)
+filip/clients/ngsi_v2/client.py:234:8: W0201: Attribute '__token' defined outside __init__ (attribute-defined-outside-init)
+************* Module filip.clients.ngsi_v2.iota
+filip/clients/ngsi_v2/iota.py:311:0: C0301: Line too long (101/100) (line-too-long)
+filip/clients/ngsi_v2/iota.py:400:0: C0301: Line too long (114/100) (line-too-long)
+filip/clients/ngsi_v2/iota.py:484:0: C0301: Line too long (107/100) (line-too-long)
+filip/clients/ngsi_v2/iota.py:521:0: C0301: Line too long (118/100) (line-too-long)
+filip/clients/ngsi_v2/iota.py:798:0: C0301: Line too long (106/100) (line-too-long)
+filip/clients/ngsi_v2/iota.py:822:0: C0301: Line too long (108/100) (line-too-long)
+filip/clients/ngsi_v2/iota.py:12:0: E0401: Unable to import 'requests' (import-error)
+filip/clients/ngsi_v2/iota.py:13:0: E0401: Unable to import 'pydantic' (import-error)
+filip/clients/ngsi_v2/iota.py:14:0: E0401: Unable to import 'pydantic.type_adapter' (import-error)
+filip/clients/ngsi_v2/iota.py:60:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/iota.py:127:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/iota.py:173:16: C0103: Variable name "ta" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/iota.py:158:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/iota.py:197:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/ngsi_v2/iota.py:316:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/iota.py:369:4: R0914: Too many local variables (18/15) (too-many-locals)
+filip/clients/ngsi_v2/iota.py:406:12: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
+filip/clients/ngsi_v2/iota.py:407:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/iota.py:412:12: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
+filip/clients/ngsi_v2/iota.py:422:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_v2/iota.py:425:20: C0103: Variable name "ta" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_v2/iota.py:369:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/iota.py:462:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/iota.py:603:12: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
+filip/clients/ngsi_v2/iota.py:604:16: W0719: Raising too general exception: Exception (broad-exception-raised)
+filip/clients/ngsi_v2/iota.py:612:20: C0415: Import outside toplevel (filip.clients.ngsi_v2.ContextBrokerClient) (import-outside-toplevel)
+filip/clients/ngsi_v2/iota.py:633:16: W0612: Unused variable 'err' (unused-variable)
+filip/clients/ngsi_v2/iota.py:721:8: C0415: Import outside toplevel (filip.models.ngsi_v2.context.ContextEntity, filip.models.ngsi_v2.context.NamedContextAttribute) (import-outside-toplevel)
+filip/clients/ngsi_v2/iota.py:724:12: C0415: Import outside toplevel (filip.models.base.DataType) (import-outside-toplevel)
+filip/clients/ngsi_v2/iota.py:764:12: C0415: Import outside toplevel (filip.clients.ngsi_v2.ContextBrokerClient) (import-outside-toplevel)
+filip/clients/ngsi_v2/iota.py:805:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_v2/iota.py:848:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/iota.py:9:0: W0611: Unused Optional imported from typing (unused-import)
+************* Module filip.clients.mqtt.client
+filip/clients/mqtt/client.py:55:0: C0301: Line too long (101/100) (line-too-long)
+filip/clients/mqtt/client.py:12:0: E0401: Unable to import 'paho.mqtt.client' (import-error)
+filip/clients/mqtt/client.py:126:4: R0913: Too many arguments (10/5) (too-many-arguments)
+filip/clients/mqtt/client.py:254:16: W0707: Consider explicitly re-raising using 'except ValueError as exc' and 'raise ValueError(f'Duplicate device_id: {device.device_id}') from exc' (raise-missing-from)
+filip/clients/mqtt/client.py:268:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/clients/mqtt/client.py:412:11: W0125: Using a conditional statement with a constant value (using-constant-test)
+filip/clients/mqtt/client.py:422:16: R1704: Redefining argument with the local name 'device' (redefined-argument-from-local)
+filip/clients/mqtt/client.py:451:12: W0715: Exception arguments suggest string formatting might be intended (raising-format-tuple)
+filip/clients/mqtt/client.py:476:12: W0715: Exception arguments suggest string formatting might be intended (raising-format-tuple)
+filip/clients/mqtt/client.py:519:12: W0715: Exception arguments suggest string formatting might be intended (raising-format-tuple)
+filip/clients/mqtt/client.py:578:12: W0715: Exception arguments suggest string formatting might be intended (raising-format-tuple)
+filip/clients/mqtt/client.py:630:12: W0715: Exception arguments suggest string formatting might be intended (raising-format-tuple)
+filip/clients/mqtt/client.py:673:12: W0715: Exception arguments suggest string formatting might be intended (raising-format-tuple)
+filip/clients/mqtt/client.py:678:4: R0913: Too many arguments (10/5) (too-many-arguments)
+filip/clients/mqtt/client.py:678:4: R0914: Too many local variables (17/15) (too-many-locals)
+filip/clients/mqtt/client.py:768:28: W0104: Statement seems to have no effect (pointless-statement)
+filip/clients/mqtt/client.py:767:40: W0613: Unused argument 'msg' (unused-argument)
+filip/clients/mqtt/client.py:773:28: E0102: function already defined line 767 (function-redefined)
+filip/clients/mqtt/client.py:774:36: W0640: Cell variable attr defined in loop (cell-var-from-loop)
+filip/clients/mqtt/client.py:774:62: W0640: Cell variable key defined in loop (cell-var-from-loop)
+filip/clients/mqtt/client.py:778:24: R1723: Unnecessary "elif" after "break", remove the leading "el" from "elif" (no-else-break)
+filip/clients/mqtt/client.py:6:0: W0611: Unused import itertools (unused-import)
+************* Module filip.clients.mqtt.encoder.ulralight
+filip/clients/mqtt/encoder/ulralight.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+filip/clients/mqtt/encoder/ulralight.py:1:0: E0401: Unable to import 'pydantic' (import-error)
+filip/clients/mqtt/encoder/ulralight.py:7:0: C0115: Missing class docstring (missing-class-docstring)
+filip/clients/mqtt/encoder/ulralight.py:10:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+filip/clients/mqtt/encoder/ulralight.py:35:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/mqtt/encoder/ulralight.py:32:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/mqtt/encoder/ulralight.py:2:0: C0411: standard import "from typing import Any, Dict, Tuple, Union" should be placed before "from pydantic import validate_arguments" (wrong-import-order)
+************* Module filip.clients.mqtt.encoder.base_encoder
+filip/clients/mqtt/encoder/base_encoder.py:9:0: E0401: Unable to import 'paho.mqtt.client' (import-error)
+filip/clients/mqtt/encoder/base_encoder.py:107:8: W0133: Exception statement has no effect (pointless-exception-statement)
+************* Module filip.clients.mqtt.encoder.json
+filip/clients/mqtt/encoder/json.py:18:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+filip/clients/mqtt/encoder/json.py:27:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/mqtt/encoder/json.py:26:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+************* Module filip.clients.mqtt.encoder
+filip/clients/mqtt/encoder/__init__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module filip.clients.ngsi_ld.cb
+filip/clients/ngsi_ld/cb.py:276:0: C0301: Line too long (178/100) (line-too-long)
+filip/clients/ngsi_ld/cb.py:11:0: E0401: Unable to import 'requests' (import-error)
+filip/clients/ngsi_ld/cb.py:12:0: E0401: Unable to import 'pydantic' (import-error)
+filip/clients/ngsi_ld/cb.py:81:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:152:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:182:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:236:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/ngsi_ld/cb.py:198:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:261:8: C0103: Argument name "geometryProperty" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:255:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_ld/cb.py:299:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
+filip/clients/ngsi_ld/cb.py:301:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:310:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_ld/cb.py:255:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:335:8: C0103: Argument name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:329:4: R0913: Too many arguments (12/5) (too-many-arguments)
+filip/clients/ngsi_ld/cb.py:329:4: R0914: Too many local variables (20/15) (too-many-locals)
+filip/clients/ngsi_ld/cb.py:407:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
+filip/clients/ngsi_ld/cb.py:409:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:423:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_ld/cb.py:329:4: R0912: Too many branches (15/12) (too-many-branches)
+filip/clients/ngsi_ld/cb.py:464:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:434:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:516:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:551:33: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:562:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:594:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:622:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:696:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:659:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:723:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:793:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:803:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/clients/ngsi_ld/cb.py:836:20: C0103: Variable name "successList" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:917:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
+filip/clients/ngsi_ld/cb.py:941:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:943:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:16:0: W0611: Unused AttrsFormat imported from filip.models.ngsi_v2.base (unused-import)
+filip/clients/ngsi_ld/cb.py:29:0: W0611: Unused Query imported from filip.models.ngsi_v2.context (unused-import)
+************* Module filip.clients.ngsi_ld.__init__
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.base:[179:201]
+==filip.models.ngsi_v2.context:[48:67]
+        "Example: "
+        "{"
+        "  'id': 'R12345',"
+        "  'type': 'Room',"
+        "  'temperature': 22"
+        "}",
+    )
+    VALUES = (
+        "values",
+        "Key value message representation. "
+        "This mode represents the entity as an array of "
+        "attribute values. Information about id and type is "
+        "left out. See example below. The order of the "
+        "attributes in the array is specified by the attrs "
+        "URI param (e.g. attrs=branch,colour,engine). "
+        "If attrs is not used, the order is arbitrary. "
+        "Example:"
+        "[ 'Ford', 'black', 78.3 ]",
     )
 
-    QL_URL: AnyHttpUrl = Field(
-        default="http://127.0.0.1:8668",
-        validation_alias=AliasChoices("QUANTUMLEAP_URL", "QL_URL"),
-    )
 
-    MQTT_BROKER_URL: AnyUrl = Field(
-        default="mqtt://127.0.0.1:1883",
-        validation_alias=AliasChoices("MQTT_BROKER_URL", "MQTT_URL", "MQTT_BROKER"),
+# NGSIv2 entity models (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[132:157]
+==filip.clients.ngsi_v2.cb:[138:164]
+                while len(items) < limit and len(items) < count:
+                    # Establishing the offset from where entities are retrieved
+                    params["offset"] = len(items)
+                    params["limit"] = min(1000, (limit - len(items)))
+                    res = session.request(
+                        method=method,
+                        url=url,
+                        params=params,
+                        headers=headers,
+                        data=data,
+                    )
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                self.logger.debug("Received: %s", items)
+                return items
+            res.raise_for_status()
+
+    # MANAGEMENT API
+    def get_version(self) -> Dict:
+        """
+        Gets version of IoT Agent
+        Returns:
+            Dictionary with response
+        """ (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.iot:[143:154]
+==filip.models.ngsi_v2.subscriptions:[48:59]
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description="The attribute type represents the NGSI value type of the "
+        "attribute value. Note that FIWARE NGSI has its own type "
+        "system for attribute values, so NGSI value types are not "
+        "the same as JSON types. Allowed characters "
+        "are the ones in the plain ASCII set, except the following "
+        "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
     ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_ld.context:[403:415]
+==filip.models.ngsi_v2.context:[166:177]
+        ...,
+        title="Entity Type",
+        description="Id of an entity in an NGSI context broker. "
+        "Allowed characters are the ones in the plain ASCII set, "
+        "except the following ones: control characters, "
+        "whitespace, &, ?, / and #.",
+        json_schema_extra={"example": "Room"},
+        max_length=256,
+        min_length=1,
+        frozen=True,
+    ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[974:984]
+==filip.clients.ngsi_v2.cb:[1856:1876]
+                    '"value" "entity_id"}'
+                )
+        else:
+            raise ValueError("Invalid relationship type.")
+        try:
+            destination_entity = self.get_entity(entity_id=destination_id)
+            return destination_entity.id == destination_id
+        except requests.RequestException as err:
+            if err.response.status_code == 404:
+                return False (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[119:130]
+==filip.clients.ngsi_v2.cb:[125:136]
+        if self.session:
+            session = self.session
+        else:
+            session = requests.Session()
+        with session:
+            res = session.request(
+                method=method, url=url, params=params, headers=headers, data=data
+            )
+            if res.ok:
+                items = res.json()
+                # do pagination (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.base:[297:308]
+==filip.models.ngsi_v2.subscriptions:[48:59]
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description="The attribute type represents the NGSI value type of the "
+        "attribute value. Note that FIWARE NGSI has its own type "
+        "system for attribute values, so NGSI value types are not "
+        "the same as JSON types. Allowed characters "
+        "are the ones in the plain ASCII set, except the following "
+        "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+    ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.base:[297:309]
+==filip.models.ngsi_v2.iot:[143:157]
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description="The attribute type represents the NGSI value type of the "
+        "attribute value. Note that FIWARE NGSI has its own type "
+        "system for attribute values, so NGSI value types are not "
+        "the same as JSON types. Allowed characters "
+        "are the ones in the plain ASCII set, except the following "
+        "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+    )
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_ld.context:[384:394]
+==filip.models.ngsi_v2.context:[149:159]
+    model_config = ConfigDict(
+        extra="allow", validate_default=True, validate_assignment=True
+    )
+    id: str = Field(
+        ...,
+        title="Entity Id",
+        description="Id of an entity in an NGSI context broker. Allowed "
+        "characters are the ones in the plain ASCII set, except "
+        "the following ones: control characters, "
+        "whitespace, &, ?, / and #." (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[767:776]
+==filip.clients.ngsi_v2.cb:[1649:1658]
+                    exclude_none=True,
+                ),
+            )
+            if res.ok:
+                self.logger.info("Subscription successfully updated!")
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not update subscription {subscription.id}" (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[496:505]
+==filip.clients.ngsi_v2.cb:[1189:1198]
+            assert attr_name is not None, (
+                "Missing name for attribute. "
+                "attr_name must be present if"
+                "attr is of type ContextAttribute"
+            )
+        else:
+            assert attr_name is None, (
+                "Invalid argument attr_name. Do not set "
+                "attr_name if attr is of type " (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
+==filip.semantics.vocabulary.vocabulary:[93:106]
+class IdType(str, Enum):
+    class_ = "Class"
+    object_property = "Object Property"
+    data_property = "Data Property"
+    datatype = "Datatype"
+    relation = "Relation"
+    combined_relation = "Combined Relation"
+    individual = "Individual"
+    source = "Source"
+
+ (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_ld.context:[357:369]
+==filip.models.ngsi_v2.base:[358:369]
+    name: str = Field(
+        title="Attribute name",
+        description="The attribute name describes what kind of property the "
+        "attribute value represents of the entity, for example "
+        "current_speed. Allowed characters "
+        "are the ones in the plain ASCII set, except the following "
+        "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        # Make it FIWARE-Safe
+    ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[731:739]
+==filip.clients.ngsi_v2.cb:[1583:1591]
+        url = urljoin(
+            self.base_url, f"{self._url_version}/subscriptions/{subscription_id}"
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.get(url=url, headers=headers)
+            if res.ok:
+                self.logger.debug("Received: %s", res.json()) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[640:651]
+==filip.clients.ngsi_v2.cb:[1438:1449]
+        url = urljoin(self.base_url, f"{self._url_version}/subscriptions/")
+        headers = self.headers.copy()
+        params = {}
+
+        # We always use the 'count' option to check weather pagination is
+        # required
+        params.update({"options": "count"})
+        try:
+            items = self.__pagination(
+                limit=limit, url=url, params=params, headers=headers
+            ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.semantics.semantics_models:[126:137]
+==filip.semantics.vocabulary.entities:[659:670]
+                    return False
+
+            if not self.number_range_min == "/":
+                if number < self.number_range_min:
+                    return False
+            if not self.number_range_max == "/":
+                if number > self.number_range_max:
+                    return False
+
+            return True
+ (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.semantics.semantics_models:[107:116]
+==filip.semantics.vocabulary.entities:[638:648]
+            if len(self.allowed_chars) > 0:
+                for char in value:
+                    if char not in self.allowed_chars:
+                        return False
+            for char in self.forbidden_chars:
+                if char in value:
+                    return False
+            return True
+ (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.base:[169:178]
+==filip.models.ngsi_v2.context:[37:46]
+    _init_ = "value __doc__"
+
+    NORMALIZED = "normalized", "Normalized message representation"
+    KEY_VALUES = (
+        "keyValues",
+        "Key value message representation."
+        "This mode represents the entity "
+        "attributes by their values only, leaving out "
+        "the information about type and metadata. " (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[712:719]
+==filip.clients.ngsi_v2.cb:[1565:1572]
+            )
+            if res.ok:
+                self.logger.info("Subscription successfully created!")
+                return res.headers["Location"].split("/")[-1]
+            res.raise_for_status()
+        except requests.RequestException as err:
+            msg = "Could not send subscription!" (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[688:695]
+==filip.clients.ngsi_v2.cb:[1516:1523]
+            ):
+                self.logger.info("Subscription already exists")
+                if update:
+                    self.logger.info("Updated subscription")
+                    subscription.id = ex_sub.id
+                    self.update_subscription(subscription)
+                else: (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[641:651]
+==filip.clients.ngsi_v2.cb:[1693:1703]
+        headers = self.headers.copy()
+        params = {}
+
+        # We always use the 'count' option to check weather pagination is
+        # required
+        params.update({"options": "count"})
+        try:
+            items = self.__pagination(
+                limit=limit, url=url, params=params, headers=headers
+            ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[288:295]
+==filip.clients.ngsi_v2.cb:[526:533]
+        url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({"type": entity_type})
+        if attrs:
+            params.update({"attrs": ",".join(attrs)}) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[165:172]
+==filip.clients.ngsi_v2.iota:[67:74]
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.semantics.semantics_models:[141:153]
+==filip.semantics.vocabulary.entities:[674:703]
+            try:
+                from dateutil.parser import parse
+
+                parse(value, fuzzy=False)
+                return True
+
+            except ValueError:
+                return False
+
+        return True
+
+    def is_logically_equivalent_to(
+        self,
+        datatype: "Datatype",
+        vocabulary: "Vocabulary",
+        old_vocabulary: "Vocabulary",
+    ) -> bool:
+        """Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        """
+ (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_ld.context:[7:14]
+==filip.models.ngsi_v2.base:[7:14]
+from geojson_pydantic import (
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon, (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_ld.context:[880:887]
+==filip.models.ngsi_v2.subscriptions:[98:107]
+        description="is an array with the notification data itself which "
+        "includes the entity and all concerned attributes. Each "
+        "element in the array corresponds to a different entity. "
+        "By default, the entities are represented in normalized "
+        "mode. However, using the attrsFormat modifier, a "
+        "simplified representation mode can be requested."
+    ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[733:739]
+==filip.clients.ngsi_v2.cb:[1750:1756]
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.get(url=url, headers=headers)
+            if res.ok:
+                self.logger.debug("Received: %s", res.json()) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[785:799]
+==filip.clients.ngsi_v2.cb:[1666:1680]
+        url = urljoin(
+            self.base_url, f"{self._url_version}/subscriptions/{subscription_id}"
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info(
+                    f"Subscription '{subscription_id}' " f"successfully deleted!"
+                )
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f"Could not delete subscription {subscription_id}" (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[787:793]
+==filip.clients.ngsi_v2.cb:[1903:1909]
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info( (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[615:622]
+==filip.clients.ngsi_v2.cb:[1668:1674]
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info( (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[289:295]
+==filip.clients.ngsi_v2.cb:[591:597]
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({"type": entity_type})
+        if attrs:
+            params.update({"attrs": ",".join(attrs)}) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[228:234]
+==filip.clients.ngsi_v2.cb:[282:288]
+            )
+            if res.ok:
+                self.logger.info("Entity successfully posted!")
+                return res.headers.get("Location")
+            res.raise_for_status()
+        except requests.RequestException as err: (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[109:116]
+==filip.clients.ngsi_v2.cb:[118:125]
+        if limit is None:
+            limit = inf
+        if limit > 1000:
+            params["limit"] = 1000  # maximum items per request
+        else:
+            params["limit"] = limit
+        # add count option if not present (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[164:170]
+==filip.clients.ngsi_v2.quantumleap:[70:76]
+        url = urljoin(self.base_url, "version")
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status() (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.semantics.ontology_parser.rdfparser:[77:87]
+==filip.semantics.vocabulary.vocabulary:[551:570]
+    if "#" in iri:
+        index = iri.find("#")
+        return iri[:index]
+    else:
+        # for example if uri looks like:
+        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+        index = iri.rfind("/")
+        return iri[:index]
+
+ (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_ld.context:[159:166]
+==filip.models.ngsi_v2.base:[361:369]
+        "attribute value represents of the entity, for example "
+        "current_speed. Allowed characters "
+        "are the ones in the plain ASCII set, except the following "
+        "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+        # Make it FIWARE-Safe
+    ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_ld.context:[8:14]
+==filip.models.ngsi_v2.base:[463:469]
+                        Point,
+                        MultiPoint,
+                        LineString,
+                        MultiLineString,
+                        Polygon,
+                        MultiPolygon, (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.registrations:[131:137]
+==filip.models.ngsi_v2.subscriptions:[546:552]
+        "attribute is set to expired (no matter if the client "
+        "updates it to active/inactive). Also, for subscriptions "
+        "experiencing problems with notifications, the status is "
+        "set to failed. As soon as the notifications start working "
+        "again, the status is changed back to active.",
+    ) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.base:[363:372]
+==filip.models.ngsi_v2.iot:[165:171]
+        "are the ones in the plain ASCII set, except the following "
+        "ones: control characters, whitespace, &, ?, / and #.",
+        max_length=256,
+        min_length=1,
+    )
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.mqtt.encoder.json:[23:30]
+==filip.clients.mqtt.encoder.ulralight:[29:38]
+        return apikey, device_id, payload
+
+    def encode_msg(
+        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
+    ) -> str:
+        if msg_type == IoTAMQTTMessageType.SINGLE:
+            return payload
+        elif msg_type == IoTAMQTTMessageType.MULTI:
+            payload = super()._parse_timestamp(payload=payload) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[966:971]
+==filip.clients.ngsi_v2.cb:[1848:1853]
+        elif isinstance(relationship, dict):
+            _sentinel = object()
+            destination_id = relationship.get("value", _sentinel)
+            if destination_id is _sentinel:
+                raise ValueError( (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[761:766]
+==filip.clients.ngsi_v2.cb:[1635:1640]
+        try:
+            res = self.patch(
+                url=url,
+                headers=headers,
+                data=subscription.model_dump_json( (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[304:309]
+==filip.clients.ngsi_v2.cb:[539:544]
+        try:
+            res = self.get(url=url, params=params, headers=headers)
+            if res.ok:
+                self.logger.info("Entity successfully retrieved!")
+                self.logger.debug("Received: %s", res.json()) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[584:591]
+==filip.clients.ngsi_v2.cb:[1255:1260]
+        headers = self.headers.copy()
+        params = {}
+
+        if entity_type:
+            params.update({"type": entity_type})
+
+        try: (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[583:590]
+==filip.clients.ngsi_v2.cb:[526:531]
+        url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({"type": entity_type}) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[553:558]
+==filip.clients.ngsi_v2.cb:[1985:1990]
+        try:
+            res = self.post(
+                url=url,
+                headers=headers,
+                params=params, (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[705:710]
+==filip.clients.ngsi_v2.cb:[1548:1553]
+        try:
+            res = self.post(
+                url=url,
+                headers=headers,
+                data=subscription.model_dump_json( (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[190:195]
+==filip.clients.ngsi_v2.cb:[198:203]
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[160:165]
+==filip.clients.ngsi_v2.cb:[167:172]
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err) (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[1216:1221]
+==filip.clients.ngsi_v2.iota:[259:264]
+        try:
+            res = self.put(
+                url=url,
+                headers=headers,
+                params=params, (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[1669:1674]
+==filip.clients.ngsi_v2.quantumleap:[253:258]
+        headers = self.headers.copy()
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info( (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[196:201]
+==filip.clients.ngsi_v2.quantumleap:[71:76]
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status() (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[165:170]
+==filip.clients.ngsi_v2.quantumleap:[96:101]
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status() (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.semantics.ontology_parser.post_processer:[14:19]
+==filip.semantics.ontology_parser.rdfparser:[10:15]
+from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
+from filip.semantics.vocabulary import (
+    Source,
+    IdType,
+    Vocabulary, (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.models.ngsi_v2.iot:[11:16]
+==filip.models.ngsi_v2.subscriptions:[8:13]
+from pydantic import (
+    field_validator,
+    model_validator,
+    ConfigDict,
+    BaseModel, (duplicate-code)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
+filip/clients/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 
 -----------------------------------
-Your code has been rated at 9.10/10
+Your code has been rated at 7.64/10
 
