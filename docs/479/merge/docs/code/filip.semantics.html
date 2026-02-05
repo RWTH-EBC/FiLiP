@@ -1,0 +1,491 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.semantics package &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">filip.semantics package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/code/filip.semantics.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-filip.semantics">
+<span id="filip-semantics-package"></span><h1>filip.semantics package<a class="headerlink" href="#module-filip.semantics" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="filip.semantics.ontology_parser.html">filip.semantics.ontology_parser package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.ontology_parser.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.ontology_parser.html#module-filip.semantics.ontology_parser.post_processer">filip.semantics.ontology_parser.post_processer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.post_processer.PostProcessor"><code class="docutils literal notranslate"><span class="pre">PostProcessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.post_processer.PostProcessor.post_process_vocabulary"><code class="docutils literal notranslate"><span class="pre">PostProcessor.post_process_vocabulary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.post_processer.PostProcessor.transfer_settings"><code class="docutils literal notranslate"><span class="pre">PostProcessor.transfer_settings()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip-semantics-ontology-parser-rdfparser-module">filip.semantics.ontology_parser.rdfparser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.ontology_parser.html#module-filip.semantics.ontology_parser.vocabulary_builder">filip.semantics.ontology_parser.vocabulary_builder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType"><code class="docutils literal notranslate"><span class="pre">IdType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.class_"><code class="docutils literal notranslate"><span class="pre">IdType.class_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.combined_relation"><code class="docutils literal notranslate"><span class="pre">IdType.combined_relation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.data_property"><code class="docutils literal notranslate"><span class="pre">IdType.data_property</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.datatype"><code class="docutils literal notranslate"><span class="pre">IdType.datatype</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.individual"><code class="docutils literal notranslate"><span class="pre">IdType.individual</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.object_property"><code class="docutils literal notranslate"><span class="pre">IdType.object_property</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.relation"><code class="docutils literal notranslate"><span class="pre">IdType.relation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.IdType.source"><code class="docutils literal notranslate"><span class="pre">IdType.source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.current_source"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.current_source</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.vocabulary"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.vocabulary</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_class"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_data_relation_for_class"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_combined_data_relation_for_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_combined_object_relation_for_class"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_combined_object_relation_for_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_data_property"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_data_property()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_datatype"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_datatype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_individual"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_individual()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_object_property"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_object_property()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_predefined_datatype"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_predefined_datatype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_relation_for_class"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_relation_for_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.add_source"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.add_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.clear"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.entity_is_known"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.entity_is_known()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.ontology_parser.html#filip.semantics.ontology_parser.vocabulary_builder.VocabularyBuilder.set_current_source"><code class="docutils literal notranslate"><span class="pre">VocabularyBuilder.set_current_source()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filip.semantics.vocabulary.html">filip.semantics.vocabulary package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.vocabulary.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.vocabulary.html#module-filip.semantics.vocabulary.combined_relations">filip.semantics.vocabulary.combined_relations module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation"><code class="docutils literal notranslate"><span class="pre">CombinedDataRelation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_field_type"><code class="docutils literal notranslate"><span class="pre">CombinedDataRelation.get_field_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_possible_enum_target_values"><code class="docutils literal notranslate"><span class="pre">CombinedDataRelation.get_possible_enum_target_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.get_property_label"><code class="docutils literal notranslate"><span class="pre">CombinedDataRelation.get_property_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedDataRelation.is_device_relation"><code class="docutils literal notranslate"><span class="pre">CombinedDataRelation.is_device_relation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation"><code class="docutils literal notranslate"><span class="pre">CombinedObjectRelation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_all_possible_target_class_iris"><code class="docutils literal notranslate"><span class="pre">CombinedObjectRelation.get_all_possible_target_class_iris()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_inverse_of_labels"><code class="docutils literal notranslate"><span class="pre">CombinedObjectRelation.get_inverse_of_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedObjectRelation.get_property_label"><code class="docutils literal notranslate"><span class="pre">CombinedObjectRelation.get_property_label()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation"><code class="docutils literal notranslate"><span class="pre">CombinedRelation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.class_iri"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.class_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.id"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.property_iri"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.property_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.relation_ids"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.relation_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.export_rule"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.export_rule()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_target_iris"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.get_all_target_iris()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_target_labels"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.get_all_target_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_all_targetstatements_as_string"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.get_all_targetstatements_as_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_property_label"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.get_property_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.combined_relations.CombinedRelation.get_relations"><code class="docutils literal notranslate"><span class="pre">CombinedRelation.get_relations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.vocabulary.html#module-filip.semantics.vocabulary.entities">filip.semantics.vocabulary.entities module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class"><code class="docutils literal notranslate"><span class="pre">Class</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.ancestor_class_iris"><code class="docutils literal notranslate"><span class="pre">Class.ancestor_class_iris</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.child_class_iris"><code class="docutils literal notranslate"><span class="pre">Class.child_class_iris</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.combined_data_relation_ids"><code class="docutils literal notranslate"><span class="pre">Class.combined_data_relation_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.combined_object_relation_ids"><code class="docutils literal notranslate"><span class="pre">Class.combined_object_relation_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.comment"><code class="docutils literal notranslate"><span class="pre">Class.comment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.iri"><code class="docutils literal notranslate"><span class="pre">Class.iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.label"><code class="docutils literal notranslate"><span class="pre">Class.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.parent_class_iris"><code class="docutils literal notranslate"><span class="pre">Class.parent_class_iris</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.predefined"><code class="docutils literal notranslate"><span class="pre">Class.predefined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.relation_ids"><code class="docutils literal notranslate"><span class="pre">Class.relation_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.source_ids"><code class="docutils literal notranslate"><span class="pre">Class.source_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.user_set_label"><code class="docutils literal notranslate"><span class="pre">Class.user_set_label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_ancestor_classes"><code class="docutils literal notranslate"><span class="pre">Class.get_ancestor_classes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_combined_data_relation_with_property_iri"><code class="docutils literal notranslate"><span class="pre">Class.get_combined_data_relation_with_property_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_combined_data_relations"><code class="docutils literal notranslate"><span class="pre">Class.get_combined_data_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_combined_object_relation_with_property_iri"><code class="docutils literal notranslate"><span class="pre">Class.get_combined_object_relation_with_property_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_combined_object_relations"><code class="docutils literal notranslate"><span class="pre">Class.get_combined_object_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_combined_relation_with_property_iri"><code class="docutils literal notranslate"><span class="pre">Class.get_combined_relation_with_property_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_combined_relations"><code class="docutils literal notranslate"><span class="pre">Class.get_combined_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_next_combined_relation_id"><code class="docutils literal notranslate"><span class="pre">Class.get_next_combined_relation_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_parent_classes"><code class="docutils literal notranslate"><span class="pre">Class.get_parent_classes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_previous_combined_relation_id"><code class="docutils literal notranslate"><span class="pre">Class.get_previous_combined_relation_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_relation_ids"><code class="docutils literal notranslate"><span class="pre">Class.get_relation_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.get_relations"><code class="docutils literal notranslate"><span class="pre">Class.get_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.is_child_of_all_classes"><code class="docutils literal notranslate"><span class="pre">Class.is_child_of_all_classes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.is_iot_class"><code class="docutils literal notranslate"><span class="pre">Class.is_iot_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.is_logically_equivalent_to"><code class="docutils literal notranslate"><span class="pre">Class.is_logically_equivalent_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Class.treat_dependency_statements"><code class="docutils literal notranslate"><span class="pre">Class.treat_dependency_statements()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataFieldType"><code class="docutils literal notranslate"><span class="pre">DataFieldType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataFieldType.command"><code class="docutils literal notranslate"><span class="pre">DataFieldType.command</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataFieldType.device_attribute"><code class="docutils literal notranslate"><span class="pre">DataFieldType.device_attribute</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataFieldType.simple"><code class="docutils literal notranslate"><span class="pre">DataFieldType.simple</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty"><code class="docutils literal notranslate"><span class="pre">DataProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty.comment"><code class="docutils literal notranslate"><span class="pre">DataProperty.comment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty.field_type"><code class="docutils literal notranslate"><span class="pre">DataProperty.field_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty.iri"><code class="docutils literal notranslate"><span class="pre">DataProperty.iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty.label"><code class="docutils literal notranslate"><span class="pre">DataProperty.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty.predefined"><code class="docutils literal notranslate"><span class="pre">DataProperty.predefined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty.source_ids"><code class="docutils literal notranslate"><span class="pre">DataProperty.source_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DataProperty.user_set_label"><code class="docutils literal notranslate"><span class="pre">DataProperty.user_set_label</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype"><code class="docutils literal notranslate"><span class="pre">Datatype</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.export"><code class="docutils literal notranslate"><span class="pre">Datatype.export()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.is_logically_equivalent_to"><code class="docutils literal notranslate"><span class="pre">Datatype.is_logically_equivalent_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Datatype.value_is_valid"><code class="docutils literal notranslate"><span class="pre">Datatype.value_is_valid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields"><code class="docutils literal notranslate"><span class="pre">DatatypeFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.allowed_chars"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.allowed_chars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.enum_values"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.enum_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.forbidden_chars"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.forbidden_chars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.number_decimal_allowed"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.number_decimal_allowed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.number_has_range"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.number_has_range</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.number_range_max"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.number_range_max</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.number_range_min"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.number_range_min</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeFields.type"><code class="docutils literal notranslate"><span class="pre">DatatypeFields.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeType"><code class="docutils literal notranslate"><span class="pre">DatatypeType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeType.date"><code class="docutils literal notranslate"><span class="pre">DatatypeType.date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeType.enum"><code class="docutils literal notranslate"><span class="pre">DatatypeType.enum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeType.number"><code class="docutils literal notranslate"><span class="pre">DatatypeType.number</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.DatatypeType.string"><code class="docutils literal notranslate"><span class="pre">DatatypeType.string</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity"><code class="docutils literal notranslate"><span class="pre">Entity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.comment"><code class="docutils literal notranslate"><span class="pre">Entity.comment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.iri"><code class="docutils literal notranslate"><span class="pre">Entity.iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.label"><code class="docutils literal notranslate"><span class="pre">Entity.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.predefined"><code class="docutils literal notranslate"><span class="pre">Entity.predefined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.source_ids"><code class="docutils literal notranslate"><span class="pre">Entity.source_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.user_set_label"><code class="docutils literal notranslate"><span class="pre">Entity.user_set_label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.get_label"><code class="docutils literal notranslate"><span class="pre">Entity.get_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.get_ontology_iri"><code class="docutils literal notranslate"><span class="pre">Entity.get_ontology_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.get_original_label"><code class="docutils literal notranslate"><span class="pre">Entity.get_original_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.get_source_names"><code class="docutils literal notranslate"><span class="pre">Entity.get_source_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.get_sources"><code class="docutils literal notranslate"><span class="pre">Entity.get_sources()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.is_renamed"><code class="docutils literal notranslate"><span class="pre">Entity.is_renamed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Entity.set_label"><code class="docutils literal notranslate"><span class="pre">Entity.set_label()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual"><code class="docutils literal notranslate"><span class="pre">Individual</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.comment"><code class="docutils literal notranslate"><span class="pre">Individual.comment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.iri"><code class="docutils literal notranslate"><span class="pre">Individual.iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.label"><code class="docutils literal notranslate"><span class="pre">Individual.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.parent_class_iris"><code class="docutils literal notranslate"><span class="pre">Individual.parent_class_iris</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.predefined"><code class="docutils literal notranslate"><span class="pre">Individual.predefined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.source_ids"><code class="docutils literal notranslate"><span class="pre">Individual.source_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.user_set_label"><code class="docutils literal notranslate"><span class="pre">Individual.user_set_label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.get_ancestor_iris"><code class="docutils literal notranslate"><span class="pre">Individual.get_ancestor_iris()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.get_parent_classes"><code class="docutils literal notranslate"><span class="pre">Individual.get_parent_classes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.is_logically_equivalent_to"><code class="docutils literal notranslate"><span class="pre">Individual.is_logically_equivalent_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.to_string"><code class="docutils literal notranslate"><span class="pre">Individual.to_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.Individual.treat_dependency_statements"><code class="docutils literal notranslate"><span class="pre">Individual.treat_dependency_statements()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty"><code class="docutils literal notranslate"><span class="pre">ObjectProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.comment"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.comment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.inverse_property_iris"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.inverse_property_iris</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.iri"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.label"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.predefined"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.predefined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.source_ids"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.source_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.user_set_label"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.user_set_label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.add_inverse_property_iri"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.add_inverse_property_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.entities.ObjectProperty.is_logically_equivalent_to"><code class="docutils literal notranslate"><span class="pre">ObjectProperty.is_logically_equivalent_to()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.vocabulary.html#module-filip.semantics.vocabulary.relation">filip.semantics.vocabulary.relation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation"><code class="docutils literal notranslate"><span class="pre">Relation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.id"><code class="docutils literal notranslate"><span class="pre">Relation.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.property_iri"><code class="docutils literal notranslate"><span class="pre">Relation.property_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.restriction_cardinality"><code class="docutils literal notranslate"><span class="pre">Relation.restriction_cardinality</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.restriction_type"><code class="docutils literal notranslate"><span class="pre">Relation.restriction_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.target_statement"><code class="docutils literal notranslate"><span class="pre">Relation.target_statement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.export_rule"><code class="docutils literal notranslate"><span class="pre">Relation.export_rule()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_all_possible_target_class_iris"><code class="docutils literal notranslate"><span class="pre">Relation.get_all_possible_target_class_iris()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_all_target_iris"><code class="docutils literal notranslate"><span class="pre">Relation.get_all_target_iris()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_dependency_statements"><code class="docutils literal notranslate"><span class="pre">Relation.get_dependency_statements()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_possible_enum_target_values"><code class="docutils literal notranslate"><span class="pre">Relation.get_possible_enum_target_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.get_targets"><code class="docutils literal notranslate"><span class="pre">Relation.get_targets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_fulfilled_with_iris"><code class="docutils literal notranslate"><span class="pre">Relation.is_fulfilled_with_iris()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_fulfilled_with_values"><code class="docutils literal notranslate"><span class="pre">Relation.is_fulfilled_with_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.is_restriction_fulfilled"><code class="docutils literal notranslate"><span class="pre">Relation.is_restriction_fulfilled()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.Relation.to_string"><code class="docutils literal notranslate"><span class="pre">Relation.to_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType"><code class="docutils literal notranslate"><span class="pre">RestrictionType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType.exactly"><code class="docutils literal notranslate"><span class="pre">RestrictionType.exactly</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType.max"><code class="docutils literal notranslate"><span class="pre">RestrictionType.max</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType.min"><code class="docutils literal notranslate"><span class="pre">RestrictionType.min</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType.only"><code class="docutils literal notranslate"><span class="pre">RestrictionType.only</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType.some"><code class="docutils literal notranslate"><span class="pre">RestrictionType.some</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.RestrictionType.value"><code class="docutils literal notranslate"><span class="pre">RestrictionType.value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.StatementType"><code class="docutils literal notranslate"><span class="pre">StatementType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.StatementType.AND"><code class="docutils literal notranslate"><span class="pre">StatementType.AND</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.StatementType.LEAF"><code class="docutils literal notranslate"><span class="pre">StatementType.LEAF</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.StatementType.OR"><code class="docutils literal notranslate"><span class="pre">StatementType.OR</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement"><code class="docutils literal notranslate"><span class="pre">TargetStatement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.target_data_value"><code class="docutils literal notranslate"><span class="pre">TargetStatement.target_data_value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.target_iri"><code class="docutils literal notranslate"><span class="pre">TargetStatement.target_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.target_statements"><code class="docutils literal notranslate"><span class="pre">TargetStatement.target_statements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.type"><code class="docutils literal notranslate"><span class="pre">TargetStatement.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.get_all_targets"><code class="docutils literal notranslate"><span class="pre">TargetStatement.get_all_targets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.get_dependency_statements"><code class="docutils literal notranslate"><span class="pre">TargetStatement.get_dependency_statements()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.is_fulfilled_by_data_value"><code class="docutils literal notranslate"><span class="pre">TargetStatement.is_fulfilled_by_data_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.is_fulfilled_by_iri_value"><code class="docutils literal notranslate"><span class="pre">TargetStatement.is_fulfilled_by_iri_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.retrieve_label"><code class="docutils literal notranslate"><span class="pre">TargetStatement.retrieve_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.set_target"><code class="docutils literal notranslate"><span class="pre">TargetStatement.set_target()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.relation.TargetStatement.to_string"><code class="docutils literal notranslate"><span class="pre">TargetStatement.to_string()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.vocabulary.html#module-filip.semantics.vocabulary.source">filip.semantics.vocabulary.source module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement"><code class="docutils literal notranslate"><span class="pre">DependencyStatement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement.class_iri"><code class="docutils literal notranslate"><span class="pre">DependencyStatement.class_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement.dependency_iri"><code class="docutils literal notranslate"><span class="pre">DependencyStatement.dependency_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement.fulfilled"><code class="docutils literal notranslate"><span class="pre">DependencyStatement.fulfilled</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement.source_iri"><code class="docutils literal notranslate"><span class="pre">DependencyStatement.source_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement.source_name"><code class="docutils literal notranslate"><span class="pre">DependencyStatement.source_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement.type"><code class="docutils literal notranslate"><span class="pre">DependencyStatement.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError"><code class="docutils literal notranslate"><span class="pre">ParsingError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError.entity_iri"><code class="docutils literal notranslate"><span class="pre">ParsingError.entity_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError.entity_label"><code class="docutils literal notranslate"><span class="pre">ParsingError.entity_label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError.entity_type"><code class="docutils literal notranslate"><span class="pre">ParsingError.entity_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError.level"><code class="docutils literal notranslate"><span class="pre">ParsingError.level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError.message"><code class="docutils literal notranslate"><span class="pre">ParsingError.message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError.source_iri"><code class="docutils literal notranslate"><span class="pre">ParsingError.source_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError.source_name"><code class="docutils literal notranslate"><span class="pre">ParsingError.source_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source"><code class="docutils literal notranslate"><span class="pre">Source</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.content"><code class="docutils literal notranslate"><span class="pre">Source.content</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.dependency_statements"><code class="docutils literal notranslate"><span class="pre">Source.dependency_statements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.id"><code class="docutils literal notranslate"><span class="pre">Source.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.ontology_iri"><code class="docutils literal notranslate"><span class="pre">Source.ontology_iri</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.parsing_log"><code class="docutils literal notranslate"><span class="pre">Source.parsing_log</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.predefined"><code class="docutils literal notranslate"><span class="pre">Source.predefined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.source_name"><code class="docutils literal notranslate"><span class="pre">Source.source_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.timestamp"><code class="docutils literal notranslate"><span class="pre">Source.timestamp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.add_parsing_log_entry"><code class="docutils literal notranslate"><span class="pre">Source.add_parsing_log_entry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.clear"><code class="docutils literal notranslate"><span class="pre">Source.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.get_name"><code class="docutils literal notranslate"><span class="pre">Source.get_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.get_number_of_id_type"><code class="docutils literal notranslate"><span class="pre">Source.get_number_of_id_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.get_parsing_log"><code class="docutils literal notranslate"><span class="pre">Source.get_parsing_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.treat_dependency_statements"><code class="docutils literal notranslate"><span class="pre">Source.treat_dependency_statements()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="filip.semantics.vocabulary.html#module-filip.semantics.vocabulary.vocabulary">filip.semantics.vocabulary.vocabulary module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType"><code class="docutils literal notranslate"><span class="pre">IdType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.class_"><code class="docutils literal notranslate"><span class="pre">IdType.class_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.combined_relation"><code class="docutils literal notranslate"><span class="pre">IdType.combined_relation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.data_property"><code class="docutils literal notranslate"><span class="pre">IdType.data_property</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.datatype"><code class="docutils literal notranslate"><span class="pre">IdType.datatype</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.individual"><code class="docutils literal notranslate"><span class="pre">IdType.individual</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.object_property"><code class="docutils literal notranslate"><span class="pre">IdType.object_property</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.relation"><code class="docutils literal notranslate"><span class="pre">IdType.relation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.IdType.source"><code class="docutils literal notranslate"><span class="pre">IdType.source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary"><code class="docutils literal notranslate"><span class="pre">LabelSummary</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary.blacklisted_labels"><code class="docutils literal notranslate"><span class="pre">LabelSummary.blacklisted_labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary.class_label_duplicates"><code class="docutils literal notranslate"><span class="pre">LabelSummary.class_label_duplicates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary.datatype_label_duplicates"><code class="docutils literal notranslate"><span class="pre">LabelSummary.datatype_label_duplicates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary.field_label_duplicates"><code class="docutils literal notranslate"><span class="pre">LabelSummary.field_label_duplicates</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary.labels_with_illegal_chars"><code class="docutils literal notranslate"><span class="pre">LabelSummary.labels_with_illegal_chars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.LabelSummary.is_valid"><code class="docutils literal notranslate"><span class="pre">LabelSummary.is_valid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary"><code class="docutils literal notranslate"><span class="pre">Vocabulary</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.classes"><code class="docutils literal notranslate"><span class="pre">Vocabulary.classes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.combined_data_relations"><code class="docutils literal notranslate"><span class="pre">Vocabulary.combined_data_relations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.combined_object_relations"><code class="docutils literal notranslate"><span class="pre">Vocabulary.combined_object_relations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.data_properties"><code class="docutils literal notranslate"><span class="pre">Vocabulary.data_properties</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.datatypes"><code class="docutils literal notranslate"><span class="pre">Vocabulary.datatypes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.id_types"><code class="docutils literal notranslate"><span class="pre">Vocabulary.id_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.individuals"><code class="docutils literal notranslate"><span class="pre">Vocabulary.individuals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.object_properties"><code class="docutils literal notranslate"><span class="pre">Vocabulary.object_properties</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.original_label_summary"><code class="docutils literal notranslate"><span class="pre">Vocabulary.original_label_summary</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.relations"><code class="docutils literal notranslate"><span class="pre">Vocabulary.relations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.settings"><code class="docutils literal notranslate"><span class="pre">Vocabulary.settings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.sources"><code class="docutils literal notranslate"><span class="pre">Vocabulary.sources</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_all_entities"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_all_entities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_all_individuals_of_class"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_all_individuals_of_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_base_out_of_iri"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_base_out_of_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_class_by_iri"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_class_by_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_classes"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_classes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_classes_sorted_by_label"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_classes_sorted_by_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_combined_data_relation_by_id"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_combined_data_relation_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_combined_object_relation_by_id"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_combined_object_relation_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_combined_relation_by_id"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_combined_relation_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_data_properties_sorted_by_label"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_data_properties_sorted_by_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_data_property"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_data_property()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_datatype"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_datatype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_datatypes_sorted_by_label"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_datatypes_sorted_by_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_entity_by_iri"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_entity_by_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_entity_list_sorted_by_label"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_entity_list_sorted_by_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_enum_dataytypes"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_enum_dataytypes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_individual"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_individual()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_individuals_sorted_by_label"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_individuals_sorted_by_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_label_for_entity_iri"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_label_for_entity_iri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_object_properties_sorted_by_label"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_object_properties_sorted_by_label()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_object_property"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_object_property()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_relation_by_id"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_relation_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_source"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_source_list"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_source_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.get_type_of_id"><code class="docutils literal notranslate"><span class="pre">Vocabulary.get_type_of_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.has_source"><code class="docutils literal notranslate"><span class="pre">Vocabulary.has_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.iri_is_predefined_datatype"><code class="docutils literal notranslate"><span class="pre">Vocabulary.iri_is_predefined_datatype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.is_id_from_individual"><code class="docutils literal notranslate"><span class="pre">Vocabulary.is_id_from_individual()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.is_id_of_type"><code class="docutils literal notranslate"><span class="pre">Vocabulary.is_id_of_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.is_iri_registered"><code class="docutils literal notranslate"><span class="pre">Vocabulary.is_iri_registered()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.Vocabulary.set_label_for_entity"><code class="docutils literal notranslate"><span class="pre">Vocabulary.set_label_for_entity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.VocabularySettings"><code class="docutils literal notranslate"><span class="pre">VocabularySettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.VocabularySettings.camel_case_datatype_labels"><code class="docutils literal notranslate"><span class="pre">VocabularySettings.camel_case_datatype_labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.VocabularySettings.camel_case_property_labels"><code class="docutils literal notranslate"><span class="pre">VocabularySettings.camel_case_property_labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.VocabularySettings.pascal_case_class_labels"><code class="docutils literal notranslate"><span class="pre">VocabularySettings.pascal_case_class_labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.VocabularySettings.pascal_case_datatype_enum_labels"><code class="docutils literal notranslate"><span class="pre">VocabularySettings.pascal_case_datatype_enum_labels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="filip.semantics.vocabulary.html#filip.semantics.vocabulary.vocabulary.VocabularySettings.pascal_case_individual_labels"><code class="docutils literal notranslate"><span class="pre">VocabularySettings.pascal_case_individual_labels</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="filip-semantics-semantics-manager-module">
+<h2>filip.semantics.semantics_manager module<a class="headerlink" href="#filip-semantics-semantics-manager-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="filip-semantics-semantics-models-module">
+<h2>filip.semantics.semantics_models module<a class="headerlink" href="#filip-semantics-semantics-models-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="filip-semantics-vocabulary-configurator-module">
+<h2>filip.semantics.vocabulary_configurator module<a class="headerlink" href="#filip-semantics-vocabulary-configurator-module" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

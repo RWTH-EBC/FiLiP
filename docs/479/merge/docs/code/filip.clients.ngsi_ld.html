@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.clients.ngsi_ld package &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">filip.clients.ngsi_ld package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/code/filip.clients.ngsi_ld.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-filip.clients.ngsi_ld">
+<span id="filip-clients-ngsi-ld-package"></span><h1>filip.clients.ngsi_ld package<a class="headerlink" href="#module-filip.clients.ngsi_ld" title="Permalink to this heading"></a></h1>
+<p>This package will contain HTTP clients for FIWARE’s NGSI-LD APIs</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-filip.clients.ngsi_ld.cb">
+<span id="filip-clients-ngsi-ld-cb-module"></span><h2>filip.clients.ngsi_ld.cb module<a class="headerlink" href="#module-filip.clients.ngsi_ld.cb" title="Permalink to this heading"></a></h2>
+<p>Context Broker Module for API Client</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.clients.ngsi_ld.cb.</span></span><span class="sig-name descname"><span class="pre">ContextBrokerLDClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareLDHeader" title="filip.models.base.FiwareLDHeader"><span class="pre">FiwareLDHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="filip.clients.html#filip.clients.base_http_client.BaseHttpClient" title="filip.clients.base_http_client.BaseHttpClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHttpClient</span></code></a></p>
+<p>Implementation of NGSI-LD Context Broker functionalities, such as creating
+entities and subscriptions; retrieving, updating and deleting data.
+Further documentation:
+<a class="reference external" href="https://fiware-orion.readthedocs.io/en/master/">https://fiware-orion.readthedocs.io/en/master/</a></p>
+<p>Api specifications for LD are located here:
+<a class="reference external" href="https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.04.01_60/gs_cim009v010401p.pdf">https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.04.01_60/gs_cim009v010401p.pdf</a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.GeometryShape">
+<span class="sig-name descname"><span class="pre">GeometryShape</span></span><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.GeometryShape" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘Point’, ‘MultiPoint’, ‘LineString’, ‘MultiLineString’, ‘Polygon’, ‘MultiPolygon’]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.append_entity_attributes">
+<span class="sig-name descname"><span class="pre">append_entity_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><span class="pre">ContextLDEntityKeyValues</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.append_entity_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.append_entity_attributes" title="Permalink to this definition"></a></dt>
+<dd><p>Append new Entity attributes to an existing Entity within an NGSI-LD system
+:param entity: Entity to append attributes to.
+:type entity: ContextLDEntity
+:param options: Options for the request. The only available value is</p>
+<blockquote>
+<div><p>‘noOverwrite’. If set, it will raise 400, if all attributes
+exist already.</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_attribute">
+<span class="sig-name descname"><span class="pre">delete_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.delete_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_attribute" title="Permalink to this definition"></a></dt>
+<dd><p>Deletes an attribute from an entity.
+:param entity_id: ID of the entity.
+:param attribute_id: Name of the attribute to delete.</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_entity_by_id">
+<span class="sig-name descname"><span class="pre">delete_entity_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.delete_entity_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_entity_by_id" title="Permalink to this definition"></a></dt>
+<dd><p>Deletes an entity by its id. For deleting mulitple entities at once,
+entity_batch_operation() is more efficient.
+:param entity_id: ID of entity to delete.
+:param entity_type: Type of entity to delete.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_subscription">
+<span class="sig-name descname"><span class="pre">delete_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.delete_subscription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.delete_subscription" title="Permalink to this definition"></a></dt>
+<dd><p>Deletes a subscription from a Context Broker
+:param subscription_id: id of the subscription</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.entity_batch_operation">
+<span class="sig-name descname"><span class="pre">entity_batch_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><span class="pre">ContextLDEntityKeyValues</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ActionTypeLD" title="filip.models.ngsi_ld.context.ActionTypeLD"><span class="pre">ActionTypeLD</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'noOverwrite'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'replace'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'update'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.entity_batch_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.entity_batch_operation" title="Permalink to this definition"></a></dt>
+<dd><p>This operation allows to create, update and/or delete several entities
+in a single batch operation.</p>
+<p>This operation is split in as many individual operations as entities
+in the entities vector, so the actionType is executed for each one of
+them. Depending on the actionType, a mapping with regular non-batch
+operations can be done:</p>
+<p>append: maps to POST /v2/entities (if the entity does not already exist)
+or POST /v2/entities/&lt;id&gt;/attrs (if the entity already exists).</p>
+<p>appendStrict: maps to POST /v2/entities (if the entity does not
+already exist) or POST /v2/entities/&lt;id&gt;/attrs?options=append (if the
+entity already exists).</p>
+<p>update: maps to PATCH /v2/entities/&lt;id&gt;/attrs.</p>
+<dl class="simple">
+<dt>delete: maps to DELETE /v2/entities/&lt;id&gt;/attrs/&lt;attrName&gt; on every</dt><dd><p>attribute included in the entity or to DELETE /v2/entities/&lt;id&gt; if
+no attribute were included in the entity.</p>
+</dd>
+</dl>
+<p>replace: maps to PUT /v2/entities/&lt;id&gt;/attrs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entities</strong> – “an array of entities, each entity specified using the ”
+“JSON entity representation format “</p></li>
+<li><p><strong>action_type</strong> (<a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.Update" title="filip.models.ngsi_v2.context.Update"><em>Update</em></a>) – “actionType, to specify the kind of update
+action to do: either append, appendStrict, update, delete,
+or replace. “</p></li>
+<li><p><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Optional ‘noOverwrite’ ‘replace’ ‘update’</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_entity">
+<span class="sig-name descname"><span class="pre">get_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometryProperty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><span class="pre">ContextLDEntityKeyValues</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.get_entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_entity" title="Permalink to this definition"></a></dt>
+<dd><p>This operation must return one entity element only, but there may be
+more than one entity with the same ID (e.g. entities with same ID but
+different types). In such case, an error message is returned, with
+the HTTP status code set to 409 Conflict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity_id</strong> (<em>String</em>) – Id of the entity to be retrieved</p></li>
+<li><p><strong>entity_type</strong> (<em>String</em>) – Entity type, to avoid ambiguity in case
+there are several entities with the same entity id.</p></li>
+<li><p><strong>attrs</strong> (<em>List</em><em> of </em><em>Strings</em>) – List of attribute names whose data must be
+included in the response. The attributes are retrieved in the
+order specified by this parameter.
+See “Filtering out attributes and metadata” section in <a class="reference external" href="https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata">https://fiware-orion.readthedocs.io/en/master/orion-api.html#filtering-out-attributes-and-metadata</a> for more
+detail. If this parameter is not included, the attributes are
+retrieved in arbitrary order, and all the attributes of the
+entity are included in the response.
+Example: temperature, humidity.</p></li>
+<li><p><strong>options</strong> (<em>String</em>) – keyValues (simplified representation of entity)
+or sysAttrs (include generated attrs createdAt and modifiedAt)</p></li>
+<li><p><strong>geometryProperty</strong> (<em>String</em>) – Name of a GeoProperty. In the case of GeoJSON
+Entity representation, this parameter indicates which GeoProperty to
+use for the “geometry” element. By default, it shall be ‘location’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ContextEntity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_entity_list">
+<span class="sig-name descname"><span class="pre">get_entity_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">georel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'Point'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'MultiPoint'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'LineString'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'MultiLineString'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'Polygon'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'MultiPolygon'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geoproperty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><span class="pre">ContextLDEntityKeyValues</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.get_entity_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_entity_list" title="Permalink to this definition"></a></dt>
+<dd><p>This operation retrieves a list of entities based on different query options.
+By default, the operation retrieves all the entities in the context broker.
+:param entity_id: Id of the entity to be retrieved
+:param id_pattern: Regular expression to match the entity id
+:param entity_type: Entity type, to avoid ambiguity in case there are several</p>
+<blockquote>
+<div><p>entities with the same entity id.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attrs</strong> – List of attribute names whose data must be included in the response.</p></li>
+<li><p><strong>q</strong> – Query expression, composed of attribute names, operators and values.</p></li>
+<li><p><strong>georel</strong> – Geospatial relationship between the query geometry and the entities.</p></li>
+<li><p><strong>geometry</strong> – Type of geometry for the query. The possible values are Point,
+MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon.</p></li>
+<li><p><strong>coordinates</strong> – Coordinates of the query geometry. The coordinates must be
+expressed as a string of comma-separated values.</p></li>
+<li><p><strong>geoproperty</strong> – Name of a GeoProperty. In the case of GeoJSON Entity representation,
+this parameter indicates which GeoProperty to use for the “geometry” element.</p></li>
+<li><p><strong>limit</strong> – Maximum number of entities to retrieve.</p></li>
+<li><p><strong>options</strong> – <dl class="simple">
+<dt>Further options for the query. The available options are:</dt><dd><ul>
+<li><p>keyValues (simplified representation of entity)</p></li>
+<li><p>sysAttrs (including createdAt and modifiedAt, etc.)</p></li>
+<li><p>count (include number of all matched entities in response header)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_statistics">
+<span class="sig-name descname"><span class="pre">get_statistics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.get_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_statistics" title="Permalink to this definition"></a></dt>
+<dd><p>Gets statistics of context broker
+:returns: Dictionary with response</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_subscription">
+<span class="sig-name descname"><span class="pre">get_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD"><span class="pre">SubscriptionLD</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.get_subscription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_subscription" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves a subscription from the context broker.
+:param subscription_id: id of the subscription</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_subscription_list">
+<span class="sig-name descname"><span class="pre">get_subscription_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD"><span class="pre">SubscriptionLD</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.get_subscription_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_subscription_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of all the subscriptions present in the system.
+:param limit: Limit the number of subscriptions to be retrieved</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of subscriptions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_version">
+<span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.get_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.get_version" title="Permalink to this definition"></a></dt>
+<dd><p>Gets version of Orion-LD context broker
+:returns: Dictionary with response</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.handle_multi_status_response">
+<span class="sig-name descname"><span class="pre">handle_multi_status_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.handle_multi_status_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.handle_multi_status_response" title="Permalink to this definition"></a></dt>
+<dd><p>Handles the response of a batch_operation. If the response contains
+errors, they are logged. If the response contains only errors, a RuntimeError
+is raised.
+:param res:</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.kwargs">
+<span class="sig-name descname"><span class="pre">kwargs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></em><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.kwargs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.log_multi_errors">
+<span class="sig-name descname"><span class="pre">log_multi_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.log_multi_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.log_multi_errors" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.override_entities">
+<span class="sig-name descname"><span class="pre">override_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><span class="pre">ContextLDEntityKeyValues</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.override_entities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.override_entities" title="Permalink to this definition"></a></dt>
+<dd><p>Function to create or override existing entites with the NGSI-LD Context Broker.
+The batch operation with Upsert will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.post_entity">
+<span class="sig-name descname"><span class="pre">post_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><span class="pre">ContextLDEntityKeyValues</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.post_entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.post_entity" title="Permalink to this definition"></a></dt>
+<dd><p>Function registers an Object with the NGSI-LD Context Broker,
+if it already exists it can be automatically updated
+if the update flag bool is True.
+First a post request with the entity is tried, if the response code
+is 422 the entity is uncrossable, as it already exists there are two
+options, either overwrite it, if the attribute have changed
+(e.g. at least one new/new values) (update = True) or leave
+it the way it is (update=False)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.post_subscription">
+<span class="sig-name descname"><span class="pre">post_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD"><span class="pre">SubscriptionLD</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.post_subscription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.post_subscription" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a new subscription. The subscription is represented by a
+Subscription object defined in filip.cb.models.</p>
+<p>If the subscription already exists, the adding is prevented and the id
+of the existing subscription is returned.</p>
+<p>A subscription is deemed as already existing if there exists a
+subscription with the exact same subject and notification fields. All
+optional fields are not considered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subscription</strong> – Subscription</p></li>
+<li><p><strong>update</strong> – True - If the subscription already exists, update it
+False- If the subscription already exists, throw warning</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Id of the (created) subscription</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.replace_existing_attributes_of_entity">
+<span class="sig-name descname"><span class="pre">replace_existing_attributes_of_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntity" title="filip.models.ngsi_ld.context.ContextLDEntity"><span class="pre">ContextLDEntity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextLDEntityKeyValues" title="filip.models.ngsi_ld.context.ContextLDEntityKeyValues"><span class="pre">ContextLDEntityKeyValues</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.replace_existing_attributes_of_entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.replace_existing_attributes_of_entity" title="Permalink to this definition"></a></dt>
+<dd><p>The attributes previously existing in the entity are removed and
+replaced by the ones in the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> (<a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity" title="filip.models.ngsi_v2.context.ContextEntity"><em>ContextEntity</em></a>) – </p></li>
+<li><p><strong>append</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – </p></li>
+<li><p><strong>options</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.update_entity_attribute">
+<span class="sig-name descname"><span class="pre">update_entity_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty" title="filip.models.ngsi_ld.context.ContextProperty"><span class="pre">ContextProperty</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship" title="filip.models.ngsi_ld.context.ContextRelationship"><span class="pre">ContextRelationship</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextProperty" title="filip.models.ngsi_ld.context.NamedContextProperty"><span class="pre">NamedContextProperty</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextRelationship" title="filip.models.ngsi_ld.context.NamedContextRelationship"><span class="pre">NamedContextRelationship</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.update_entity_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.update_entity_attribute" title="Permalink to this definition"></a></dt>
+<dd><p>Updates a specified attribute from an entity.
+:param attr: context attribute to update
+:param entity_id: Id of the entity. Example: Bcn_Welt
+:param entity_type: Entity type, to avoid ambiguity in case there are
+:param several entities with the same entity id.:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.update_subscription">
+<span class="sig-name descname"><span class="pre">update_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.subscriptions.SubscriptionLD" title="filip.models.ngsi_ld.subscriptions.SubscriptionLD"><span class="pre">SubscriptionLD</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.update_subscription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.update_subscription" title="Permalink to this definition"></a></dt>
+<dd><p>Only the fields included in the request are updated in the subscription.
+:param subscription: Subscription to update</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.clients.ngsi_ld.cb.ContextBrokerLDClient.validate_relationship">
+<span class="sig-name descname"><span class="pre">validate_relationship</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relationship</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextProperty" title="filip.models.ngsi_ld.context.NamedContextProperty"><span class="pre">NamedContextProperty</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextProperty" title="filip.models.ngsi_ld.context.ContextProperty"><span class="pre">ContextProperty</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.NamedContextRelationship" title="filip.models.ngsi_ld.context.NamedContextRelationship"><span class="pre">NamedContextRelationship</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="filip.models.ngsi_ld.html#filip.models.ngsi_ld.context.ContextRelationship" title="filip.models.ngsi_ld.context.ContextRelationship"><span class="pre">ContextRelationship</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/filip/clients/ngsi_ld/cb.html#ContextBrokerLDClient.validate_relationship"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.clients.ngsi_ld.cb.ContextBrokerLDClient.validate_relationship" title="Permalink to this definition"></a></dt>
+<dd><p>Validates a relationship. A relationship is valid if it points to an existing
+entity. Otherwise, it is considered invalid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relationship</strong> – relationship to validate,assumed to be property or relationship</p></li>
+<li><p><strong>value</strong> (<em>since there is no geoproperty with string</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>True if the relationship is valid, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

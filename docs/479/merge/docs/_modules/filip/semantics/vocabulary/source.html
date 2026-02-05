@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.semantics.vocabulary.source &mdash; FiLiP 0.7.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.semantics.vocabulary.source</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.semantics.vocabulary.source</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Vocabulary Models for Ontology Sources&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">...models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogLevel</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vocabulary</span><span class="p">,</span> <span class="n">IdType</span><span class="p">,</span> <span class="n">LoggingLevel</span>
+
+
+<div class="viewcode-block" id="DependencyStatement"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.DependencyStatement">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DependencyStatement</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Information about one dependency statement in the source</span>
+<span class="sd">    A dependency is a reference of one iri in an other entity definition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">source_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Iri of the source containing the statement&quot;</span>
+    <span class="p">)</span>
+    <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the source containing the statement&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Possible types: Parent Class, Relation Property, &quot;</span>
+        <span class="s2">&quot;Relation Target&quot;</span>
+    <span class="p">)</span>
+    <span class="n">class_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Iri of the class containing the statement&quot;</span><span class="p">)</span>
+    <span class="n">dependency_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Entity Iri of the dependency&quot;</span><span class="p">)</span>
+    <span class="n">fulfilled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;True if the dependency_iri is registered in the &quot;</span> <span class="s2">&quot;vocabulary&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ParsingError"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.ParsingError">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ParsingError</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Object represents one issue that arose while parsing a source,</span>
+<span class="sd">    and holds all relevant details for that issue&quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">use_enum_values</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">LogLevel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Severity of error&quot;</span><span class="p">)</span>
+    <span class="n">source_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Iri of the source containing the error&quot;</span><span class="p">)</span>
+    <span class="n">source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the source, only set in get_function&quot;</span>
+    <span class="p">)</span>
+    <span class="n">entity_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of the problematic entity: Class, Individual,..&quot;</span>
+        <span class="s2">&quot;ID_type in string form&quot;</span>
+    <span class="p">)</span>
+    <span class="n">entity_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Iri of the problematic entity&quot;</span><span class="p">)</span>
+    <span class="n">entity_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the source, only set in get_function&quot;</span>
+    <span class="p">)</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Message describing the error&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Source"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Source</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A source represent one file that was provided via file upload or link to the</span>
+<span class="sd">    project and is parsed into the</span>
+<span class="sd">    vocabulary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;unique ID of the source; for internal use&quot;</span><span class="p">)</span>
+    <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the source &quot;</span><span class="p">)</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;File content of the provided ontology file&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parsing_log</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ParsingError&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Log containing all issues that were discovered while &quot;</span> <span class="s2">&quot;parsing&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">dependency_statements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DependencyStatement</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of all statements in source&quot;</span>
+    <span class="p">)</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;timestamp when the source was added to the project&quot;</span>
+    <span class="p">)</span>
+    <span class="n">ontology_iri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Iri of the ontology of the source&quot;</span>
+    <span class="p">)</span>
+    <span class="n">predefined</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Stating if the source is a predefined source; &quot;</span>
+        <span class="s2">&quot;a predefined source is added to each project containing &quot;</span>
+        <span class="s2">&quot;owl:Thing and predefined Datatypes&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Source.get_number_of_id_type"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.get_number_of_id_type">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_number_of_id_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">,</span> <span class="n">id_type</span><span class="p">:</span> <span class="s2">&quot;IdType&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number how many entities of a given type are created by or</span>
+<span class="sd">        influenced by this source</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vocabulary (Vocabulary): Vocabulary of this project</span>
+<span class="sd">            id_type (IdType): Idtype that should be counted</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">IdType</span>
+
+        <span class="n">id_func</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+        <span class="n">iri_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">id_type</span> <span class="ow">is</span> <span class="n">IdType</span><span class="o">.</span><span class="n">class_</span><span class="p">:</span>
+            <span class="n">id_func</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_class_by_iri</span>
+            <span class="n">iri_list</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">classes</span>
+        <span class="k">elif</span> <span class="n">id_type</span> <span class="ow">is</span> <span class="n">IdType</span><span class="o">.</span><span class="n">object_property</span><span class="p">:</span>
+            <span class="n">id_func</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_object_property</span>
+            <span class="n">iri_list</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">object_properties</span>
+        <span class="k">elif</span> <span class="n">id_type</span> <span class="ow">is</span> <span class="n">IdType</span><span class="o">.</span><span class="n">data_property</span><span class="p">:</span>
+            <span class="n">id_func</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_data_property</span>
+            <span class="n">iri_list</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">data_properties</span>
+        <span class="k">elif</span> <span class="n">id_type</span> <span class="ow">is</span> <span class="n">IdType</span><span class="o">.</span><span class="n">individual</span><span class="p">:</span>
+            <span class="n">id_func</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_individual</span>
+            <span class="n">iri_list</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span>
+        <span class="k">elif</span> <span class="n">id_type</span> <span class="ow">is</span> <span class="n">IdType</span><span class="o">.</span><span class="n">datatype</span><span class="p">:</span>
+            <span class="n">id_func</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_datatype</span>
+            <span class="n">iri_list</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">datatypes</span>
+
+        <span class="k">if</span> <span class="n">id_func</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">iri</span> <span class="ow">in</span> <span class="n">iri_list</span><span class="p">:</span>
+            <span class="n">entity</span> <span class="o">=</span> <span class="n">id_func</span><span class="p">(</span><span class="n">iri</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">entity</span><span class="o">.</span><span class="n">source_ids</span><span class="p">:</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">counter</span></div>
+
+<div class="viewcode-block" id="Source.get_name"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.get_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the name of the source</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_name</span></div>
+
+<div class="viewcode-block" id="Source.treat_dependency_statements"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.treat_dependency_statements">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">treat_dependency_statements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log and purge all pointers/iris in entities that are not contained</span>
+<span class="sd">        in the vocabulary</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vocabulary (Vocabulary): Vocabulary of this project</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dependency_statements</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">class_</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_classes</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">class_</span><span class="o">.</span><span class="n">source_ids</span><span class="p">:</span>
+                <span class="n">dependency_statements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="n">class_</span><span class="o">.</span><span class="n">treat_dependency_statements</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">individual_iri</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">individuals</span><span class="p">:</span>
+            <span class="n">individual</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_individual</span><span class="p">(</span><span class="n">individual_iri</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">individual</span><span class="o">.</span><span class="n">source_ids</span><span class="p">:</span>
+                <span class="n">dependency_statements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="n">individual</span><span class="o">.</span><span class="n">treat_dependency_statements</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="n">dependency_statements</span><span class="p">:</span>
+            <span class="n">statement</span><span class="o">.</span><span class="n">source_iri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ontology_iri</span>
+            <span class="n">statement</span><span class="o">.</span><span class="n">source_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dependency_statements</span> <span class="o">=</span> <span class="n">dependency_statements</span></div>
+
+<div class="viewcode-block" id="Source.add_parsing_log_entry"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.add_parsing_log_entry">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_parsing_log_entry</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="s2">&quot;LoggingLevel&quot;</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">:</span> <span class="s2">&quot;IdType&quot;</span><span class="p">,</span> <span class="n">entity_iri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a parsing log entry for an entity, if an issue in parsing</span>
+<span class="sd">        was discovered</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            level (LoggingLevel): Logging level of the entry</span>
+<span class="sd">            entity_type (IdType): Type of the enitity (Class, Individual,..)</span>
+<span class="sd">            entity_iri (str): iri of the entity</span>
+<span class="sd">            msg (str): message to display in log</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParsingError</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsing_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">ParsingError</span><span class="p">(</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+                <span class="n">entity_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">entity_type</span><span class="p">),</span>
+                <span class="n">entity_iri</span><span class="o">=</span><span class="n">entity_iri</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span>
+                <span class="n">source_iri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ontology_iri</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Source.get_parsing_log"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.get_parsing_log">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_parsing_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">:</span> <span class="s2">&quot;Vocabulary&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ParsingError&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the Parsinglog, where the labels of the entities are filled in</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vocabulary (Vocabulary): Vocabulary of this project</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Dict[str, Union[LoggingLevel,&#39;IdType&#39;,str]]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsing_log</span><span class="p">:</span>
+
+            <span class="n">entry</span><span class="o">.</span><span class="n">source_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_name</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">vocabulary</span><span class="o">.</span><span class="n">get_label_for_entity_iri</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">entity_iri</span><span class="p">)</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">entity_label</span> <span class="o">=</span> <span class="n">label</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsing_log</span></div>
+
+<div class="viewcode-block" id="Source.clear"><a class="viewcode-back" href="../../../../code/filip.semantics.vocabulary.html#filip.semantics.vocabulary.source.Source.clear">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all logging and dependency data of the source</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsing_log</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dependency_statements</span> <span class="o">=</span> <span class="p">[]</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
