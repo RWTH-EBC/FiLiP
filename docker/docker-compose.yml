@@ -136,7 +136,7 @@ services:
         - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
 
   quantumleap:
-    image: orchestracities/quantumleap:0.8.3
+    image: orchestracities/quantumleap:1.0.0
     hostname: quantumleap
     container_name: quantumleap
     restart: always
