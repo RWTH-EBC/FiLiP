@@ -10,7 +10,7 @@ on:
 
 jobs:
   ci:
-    uses: RWTH-EBC/ci_templates/.github/workflows/ci_pipeline.yml@main
+    uses: RWTH-EBC/ci_templates/.github/workflows/ci_pipeline.yml@29-fiware-testcoverage-allow-healthcheck-urls-being-specified-as-input
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
