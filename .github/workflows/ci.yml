@@ -10,7 +10,7 @@ on:
 
 jobs:
   ci:
-    uses: RWTH-EBC/ci_templates/.github/workflows/ci_pipeline.yml@29-fiware-testcoverage-allow-healthcheck-urls-being-specified-as-input
+    uses: RWTH-EBC/ci_templates/.github/workflows/ci_pipeline.yml@main
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
@@ -26,3 +26,4 @@ jobs:
       TEST_PATH: './tests'
       TEST_ENV_VARS: '["CB_URL=http://localhost:1026","ORION_LD_URL=http://localhost:1027","IOTA_URL=http://localhost:4041","IOTA_JSON_URL=http://localhost:4041","IOTA_UL_URL=http://localhost:4061","QL_URL=http://localhost:8668","MQTT_BROKER_URL=mqtt://localhost:1883","MQTT_BROKER_URL_INTERNAL=mqtt://mqtt-broker:1883","LD_MQTT_BROKER_URL=mqtt://localhost:1883","LD_MQTT_BROKER_URL_INTERNAL=mqtt://mqtt-broker:1883","FIWARE_SERVICE=filip","FIWARE_SERVICEPATH=/"]'
       PYTHON_TEST_MATRIX: '["3.9", "3.10", "3.11", "3.12"]'    #List of Python versions to run tests against as a matrix
+      HEALTHCHECK_URLS: '["http://localhost:1026/version", "http://localhost:1027/version", "http://localhost:4041/version", "http://localhost:4061/version", "http://localhost:8668/version"]'
