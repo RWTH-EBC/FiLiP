@@ -654,1286 +654,6 @@
             
         </table>
         
-        <h3>Module <code>filip.clients.ngsi_ld.__init__</code> (<code>filip/clients/ngsi_ld/__init__.py</code>)</h3>
-        <table>
-            <tr>
-                <th>Line</th>
-                <th>Col.</th>
-                <th>Type</th>
-                <th>Symbol</th>
-                <th>ID</th>
-                <th>Obj</th>
-                <th>Message</th>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[179:201]
-==filip.models.ngsi_v2.context:[48:67]
-        &#34;Example: &#34;
-        &#34;{&#34;
-        &#34;  &#39;id&#39;: &#39;R12345&#39;,&#34;
-        &#34;  &#39;type&#39;: &#39;Room&#39;,&#34;
-        &#34;  &#39;temperature&#39;: 22&#34;
-        &#34;}&#34;,
-    )
-    VALUES = (
-        &#34;values&#34;,
-        &#34;Key value message representation. &#34;
-        &#34;This mode represents the entity as an array of &#34;
-        &#34;attribute values. Information about id and type is &#34;
-        &#34;left out. See example below. The order of the &#34;
-        &#34;attributes in the array is specified by the attrs &#34;
-        &#34;URI param (e.g. attrs=branch,colour,engine). &#34;
-        &#34;If attrs is not used, the order is arbitrary. &#34;
-        &#34;Example:&#34;
-        &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )
-
-
-# NGSIv2 entity models</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[132:157]
-==filip.clients.ngsi_v2.cb:[138:164]
-                while len(items) &lt; limit and len(items) &lt; count:
-                    # Establishing the offset from where entities are retrieved
-                    params[&#34;offset&#34;] = len(items)
-                    params[&#34;limit&#34;] = min(1000, (limit - len(items)))
-                    res = session.request(
-                        method=method,
-                        url=url,
-                        params=params,
-                        headers=headers,
-                        data=data,
-                    )
-                    if res.ok:
-                        items.extend(res.json())
-                    else:
-                        res.raise_for_status()
-                self.logger.debug(&#34;Received: %s&#34;, items)
-                return items
-            res.raise_for_status()
-
-    # MANAGEMENT API
-    def get_version(self) -&gt; Dict:
-        &#34;&#34;&#34;
-        Gets version of IoT Agent
-        Returns:
-            Dictionary with response
-        &#34;&#34;&#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.iot:[143:154]
-==filip.models.ngsi_v2.subscriptions:[48:59]
-    type: Union[DataType, str] = Field(
-        default=DataType.TEXT,
-        description=&#34;The attribute type represents the NGSI value type of the &#34;
-        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
-        &#34;system for attribute values, so NGSI value types are not &#34;
-        &#34;the same as JSON types. Allowed characters &#34;
-        &#34;are the ones in the plain ASCII set, except the following &#34;
-        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
-        max_length=256,
-        min_length=1,
-    )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[403:415]
-==filip.models.ngsi_v2.context:[166:177]
-        ...,
-        title=&#34;Entity Type&#34;,
-        description=&#34;Id of an entity in an NGSI context broker. &#34;
-        &#34;Allowed characters are the ones in the plain ASCII set, &#34;
-        &#34;except the following ones: control characters, &#34;
-        &#34;whitespace, &amp;, ?, / and #.&#34;,
-        json_schema_extra={&#34;example&#34;: &#34;Room&#34;},
-        max_length=256,
-        min_length=1,
-        frozen=True,
-    )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[974:984]
-==filip.clients.ngsi_v2.cb:[1856:1876]
-                    &#39;&#34;value&#34; &#34;entity_id&#34;}&#39;
-                )
-        else:
-            raise ValueError(&#34;Invalid relationship type.&#34;)
-        try:
-            destination_entity = self.get_entity(entity_id=destination_id)
-            return destination_entity.id == destination_id
-        except requests.RequestException as err:
-            if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        &#34;&#34;&#34;
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        &#34;&#34;&#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[119:130]
-==filip.clients.ngsi_v2.cb:[125:136]
-        if self.session:
-            session = self.session
-        else:
-            session = requests.Session()
-        with session:
-            res = session.request(
-                method=method, url=url, params=params, headers=headers, data=data
-            )
-            if res.ok:
-                items = res.json()
-                # do pagination</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[297:308]
-==filip.models.ngsi_v2.subscriptions:[48:59]
-    type: Union[DataType, str] = Field(
-        default=DataType.TEXT,
-        description=&#34;The attribute type represents the NGSI value type of the &#34;
-        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
-        &#34;system for attribute values, so NGSI value types are not &#34;
-        &#34;the same as JSON types. Allowed characters &#34;
-        &#34;are the ones in the plain ASCII set, except the following &#34;
-        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
-        max_length=256,
-        min_length=1,
-    )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[297:309]
-==filip.models.ngsi_v2.iot:[143:157]
-    type: Union[DataType, str] = Field(
-        default=DataType.TEXT,
-        description=&#34;The attribute type represents the NGSI value type of the &#34;
-        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
-        &#34;system for attribute values, so NGSI value types are not &#34;
-        &#34;the same as JSON types. Allowed characters &#34;
-        &#34;are the ones in the plain ASCII set, except the following &#34;
-        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
-        max_length=256,
-        min_length=1,
-    )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
-
-</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[384:394]
-==filip.models.ngsi_v2.context:[149:159]
-    model_config = ConfigDict(
-        extra=&#34;allow&#34;, validate_default=True, validate_assignment=True
-    )
-    id: str = Field(
-        ...,
-        title=&#34;Entity Id&#34;,
-        description=&#34;Id of an entity in an NGSI context broker. Allowed &#34;
-        &#34;characters are the ones in the plain ASCII set, except &#34;
-        &#34;the following ones: control characters, &#34;
-        &#34;whitespace, &amp;, ?, / and #.&#34;,</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[767:776]
-==filip.clients.ngsi_v2.cb:[1649:1658]
-                    exclude_none=True,
-                ),
-            )
-            if res.ok:
-                self.logger.info(&#34;Subscription successfully updated!&#34;)
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f&#34;Could not update subscription {subscription.id}&#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[496:505]
-==filip.clients.ngsi_v2.cb:[1189:1198]
-            assert attr_name is not None, (
-                &#34;Missing name for attribute. &#34;
-                &#34;attr_name must be present if&#34;
-                &#34;attr is of type ContextAttribute&#34;
-            )
-        else:
-            assert attr_name is None, (
-                &#34;Invalid argument attr_name. Do not set &#34;
-                &#34;attr_name if attr is of type &#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
-==filip.semantics.vocabulary.vocabulary:[93:106]
-class IdType(str, Enum):
-    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
-
-    class_ = &#34;Class&#34;
-    object_property = &#34;Object Property&#34;
-    data_property = &#34;Data Property&#34;
-    datatype = &#34;Datatype&#34;
-    relation = &#34;Relation&#34;
-    combined_relation = &#34;Combined Relation&#34;
-    individual = &#34;Individual&#34;
-    source = &#34;Source&#34;
-
-</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[357:369]
-==filip.models.ngsi_v2.base:[358:369]
-    name: str = Field(
-        title=&#34;Attribute name&#34;,
-        description=&#34;The attribute name describes what kind of property the &#34;
-        &#34;attribute value represents of the entity, for example &#34;
-        &#34;current_speed. Allowed characters &#34;
-        &#34;are the ones in the plain ASCII set, except the following &#34;
-        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
-        max_length=256,
-        min_length=1,
-        # Make it FIWARE-Safe
-    )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[731:739]
-==filip.clients.ngsi_v2.cb:[1583:1591]
-        url = urljoin(
-            self.base_url, f&#34;{self._url_version}/subscriptions/{subscription_id}&#34;
-        )
-        headers = self.headers.copy()
-        try:
-            res = self.get(url=url, headers=headers)
-            if res.ok:
-                self.logger.debug(&#34;Received: %s&#34;, res.json())</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[640:651]
-==filip.clients.ngsi_v2.cb:[1438:1449]
-        url = urljoin(self.base_url, f&#34;{self._url_version}/subscriptions/&#34;)
-        headers = self.headers.copy()
-        params = {}
-
-        # We always use the &#39;count&#39; option to check weather pagination is
-        # required
-        params.update({&#34;options&#34;: &#34;count&#34;})
-        try:
-            items = self.__pagination(
-                limit=limit, url=url, params=params, headers=headers
-            )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.semantics_models:[126:137]
-==filip.semantics.vocabulary.entities:[659:670]
-                    return False
-
-            if not self.number_range_min == &#34;/&#34;:
-                if number &lt; self.number_range_min:
-                    return False
-            if not self.number_range_max == &#34;/&#34;:
-                if number &gt; self.number_range_max:
-                    return False
-
-            return True
-</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.semantics_models:[107:116]
-==filip.semantics.vocabulary.entities:[638:648]
-            if len(self.allowed_chars) &gt; 0:
-                # if allowed chars is empty all chars are allowed
-                for char in value:
-                    if char not in self.allowed_chars:
-                        return False
-            for char in self.forbidden_chars:
-                if char in value:
-                    return False
-            return True
-</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[169:178]
-==filip.models.ngsi_v2.context:[37:46]
-    _init_ = &#34;value __doc__&#34;
-
-    NORMALIZED = &#34;normalized&#34;, &#34;Normalized message representation&#34;
-    KEY_VALUES = (
-        &#34;keyValues&#34;,
-        &#34;Key value message representation.&#34;
-        &#34;This mode represents the entity &#34;
-        &#34;attributes by their values only, leaving out &#34;
-        &#34;the information about type and metadata. &#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[712:719]
-==filip.clients.ngsi_v2.cb:[1565:1572]
-            )
-            if res.ok:
-                self.logger.info(&#34;Subscription successfully created!&#34;)
-                return res.headers[&#34;Location&#34;].split(&#34;/&#34;)[-1]
-            res.raise_for_status()
-        except requests.RequestException as err:
-            msg = &#34;Could not send subscription!&#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[688:695]
-==filip.clients.ngsi_v2.cb:[1516:1523]
-            ):
-                self.logger.info(&#34;Subscription already exists&#34;)
-                if update:
-                    self.logger.info(&#34;Updated subscription&#34;)
-                    subscription.id = ex_sub.id
-                    self.update_subscription(subscription)
-                else:</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[641:651]
-==filip.clients.ngsi_v2.cb:[1693:1703]
-        headers = self.headers.copy()
-        params = {}
-
-        # We always use the &#39;count&#39; option to check weather pagination is
-        # required
-        params.update({&#34;options&#34;: &#34;count&#34;})
-        try:
-            items = self.__pagination(
-                limit=limit, url=url, params=params, headers=headers
-            )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[288:295]
-==filip.clients.ngsi_v2.cb:[526:533]
-        url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
-        headers = self.headers.copy()
-        params = {}
-        if entity_type:
-            params.update({&#34;type&#34;: entity_type})
-        if attrs:
-            params.update({&#34;attrs&#34;: &#34;,&#34;.join(attrs)})</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_v2.cb:[165:172]
-==filip.clients.ngsi_v2.iota:[67:74]
-        try:
-            res = self.get(url=url, headers=self.headers)
-            if res.ok:
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            self.logger.error(err)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.semantics_models:[141:153]
-==filip.semantics.vocabulary.entities:[674:703]
-            try:
-                from dateutil.parser import parse
-
-                parse(value, fuzzy=False)
-                return True
-
-            except ValueError:
-                return False
-
-        return True
-
-    def is_logically_equivalent_to(
-        self,
-        datatype: &#34;Datatype&#34;,
-        vocabulary: &#34;Vocabulary&#34;,
-        old_vocabulary: &#34;Vocabulary&#34;,
-    ) -&gt; bool:
-        &#34;&#34;&#34;Test if this datatype is logically equivalent to the given datatype
-
-        Args:
-            datatype (Datatype): Datatype to compare against
-            vocabulary (Vocabulary): Not used, but needed to keep signature the
-                same as other entities
-            old_vocabulary (Vocabulary): Not used, but needed to keep signature
-                the same as other entities
-        Returns:
-            bool
-        &#34;&#34;&#34;
-</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[7:14]
-==filip.models.ngsi_v2.base:[7:14]
-from geojson_pydantic import (
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon,</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[880:887]
-==filip.models.ngsi_v2.subscriptions:[98:107]
-        description=&#34;is an array with the notification data itself which &#34;
-        &#34;includes the entity and all concerned attributes. Each &#34;
-        &#34;element in the array corresponds to a different entity. &#34;
-        &#34;By default, the entities are represented in normalized &#34;
-        &#34;mode. However, using the attrsFormat modifier, a &#34;
-        &#34;simplified representation mode can be requested.&#34;
-    )
-
-</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[733:739]
-==filip.clients.ngsi_v2.cb:[1750:1756]
-        )
-        headers = self.headers.copy()
-        try:
-            res = self.get(url=url, headers=headers)
-            if res.ok:
-                self.logger.debug(&#34;Received: %s&#34;, res.json())</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[785:799]
-==filip.clients.ngsi_v2.cb:[1666:1680]
-        url = urljoin(
-            self.base_url, f&#34;{self._url_version}/subscriptions/{subscription_id}&#34;
-        )
-        headers = self.headers.copy()
-        try:
-            res = self.delete(url=url, headers=headers)
-            if res.ok:
-                self.logger.info(
-                    f&#34;Subscription &#39;{subscription_id}&#39; &#34; f&#34;successfully deleted!&#34;
-                )
-            else:
-                res.raise_for_status()
-        except requests.RequestException as err:
-            msg = f&#34;Could not delete subscription {subscription_id}&#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[787:793]
-==filip.clients.ngsi_v2.cb:[1903:1909]
-        )
-        headers = self.headers.copy()
-        try:
-            res = self.delete(url=url, headers=headers)
-            if res.ok:
-                self.logger.info(</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[615:622]
-==filip.clients.ngsi_v2.cb:[1668:1674]
-        )
-        headers = self.headers.copy()
-
-        try:
-            res = self.delete(url=url, headers=headers)
-            if res.ok:
-                self.logger.info(</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[289:295]
-==filip.clients.ngsi_v2.cb:[591:597]
-        headers = self.headers.copy()
-        params = {}
-        if entity_type:
-            params.update({&#34;type&#34;: entity_type})
-        if attrs:
-            params.update({&#34;attrs&#34;: &#34;,&#34;.join(attrs)})</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[228:234]
-==filip.clients.ngsi_v2.cb:[282:288]
-            )
-            if res.ok:
-                self.logger.info(&#34;Entity successfully posted!&#34;)
-                return res.headers.get(&#34;Location&#34;)
-            res.raise_for_status()
-        except requests.RequestException as err:</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[109:116]
-==filip.clients.ngsi_v2.cb:[118:125]
-        if limit is None:
-            limit = inf
-        if limit &gt; 1000:
-            params[&#34;limit&#34;] = 1000  # maximum items per request
-        else:
-            params[&#34;limit&#34;] = limit
-        # add count option if not present</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_v2.cb:[164:170]
-==filip.clients.ngsi_v2.quantumleap:[70:76]
-        url = urljoin(self.base_url, &#34;version&#34;)
-        try:
-            res = self.get(url=url, headers=self.headers)
-            if res.ok:
-                return res.json()
-            res.raise_for_status()</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.ontology_parser.rdfparser:[77:87]
-==filip.semantics.vocabulary.vocabulary:[551:570]
-        if &#34;#&#34; in iri:
-            index = iri.find(&#34;#&#34;)
-            return iri[:index]
-        else:
-            # for example if uri looks like:
-            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-            index = iri.rfind(&#34;/&#34;)
-            return iri[:index]
-
-    def get_entity_by_iri(self, iri: str) -&gt; Union[None, Entity]:
-        &#34;&#34;&#34;Get the entity with the given iri
-        Fast efficient methode
-
-        Args:
-            iri (str)
-
-        Returns:
-            Entity or None if iri does not belong to an Entity
-        &#34;&#34;&#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[159:166]
-==filip.models.ngsi_v2.base:[361:369]
-        &#34;attribute value represents of the entity, for example &#34;
-        &#34;current_speed. Allowed characters &#34;
-        &#34;are the ones in the plain ASCII set, except the following &#34;
-        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
-        max_length=256,
-        min_length=1,
-    )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[8:14]
-==filip.models.ngsi_v2.base:[463:469]
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon,</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.registrations:[131:137]
-==filip.models.ngsi_v2.subscriptions:[546:552]
-        &#34;attribute is set to expired (no matter if the client &#34;
-        &#34;updates it to active/inactive). Also, for subscriptions &#34;
-        &#34;experiencing problems with notifications, the status is &#34;
-        &#34;set to failed. As soon as the notifications start working &#34;
-        &#34;again, the status is changed back to active.&#34;,
-    )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[363:372]
-==filip.models.ngsi_v2.iot:[165:171]
-        &#34;are the ones in the plain ASCII set, except the following &#34;
-        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
-        max_length=256,
-        min_length=1,
-    )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.mqtt.encoder.json:[23:30]
-==filip.clients.mqtt.encoder.ulralight:[29:38]
-        return apikey, device_id, payload
-
-    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -&gt; str:
-        if msg_type == IoTAMQTTMessageType.SINGLE:
-            return payload
-        elif msg_type == IoTAMQTTMessageType.MULTI:
-            payload = super()._parse_timestamp(payload=payload)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[966:971]
-==filip.clients.ngsi_v2.cb:[1848:1853]
-        elif isinstance(relationship, dict):
-            _sentinel = object()
-            destination_id = relationship.get(&#34;value&#34;, _sentinel)
-            if destination_id is _sentinel:
-                raise ValueError(</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[761:766]
-==filip.clients.ngsi_v2.cb:[1635:1640]
-        try:
-            res = self.patch(
-                url=url,
-                headers=headers,
-                data=subscription.model_dump_json(</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[304:309]
-==filip.clients.ngsi_v2.cb:[539:544]
-        try:
-            res = self.get(url=url, params=params, headers=headers)
-            if res.ok:
-                self.logger.info(&#34;Entity successfully retrieved!&#34;)
-                self.logger.debug(&#34;Received: %s&#34;, res.json())</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[584:591]
-==filip.clients.ngsi_v2.cb:[1255:1260]
-        headers = self.headers.copy()
-        params = {}
-
-        if entity_type:
-            params.update({&#34;type&#34;: entity_type})
-
-        try:</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[583:590]
-==filip.clients.ngsi_v2.cb:[526:531]
-        url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
-        headers = self.headers.copy()
-        params = {}
-        if entity_type:
-            params.update({&#34;type&#34;: entity_type})</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[553:558]
-==filip.clients.ngsi_v2.cb:[1985:1990]
-        try:
-            res = self.post(
-                url=url,
-                headers=headers,
-                params=params,</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[705:710]
-==filip.clients.ngsi_v2.cb:[1548:1553]
-        try:
-            res = self.post(
-                url=url,
-                headers=headers,
-                data=subscription.model_dump_json(</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[190:195]
-==filip.clients.ngsi_v2.cb:[198:203]
-            if res.ok:
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            self.logger.error(err)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[160:165]
-==filip.clients.ngsi_v2.cb:[167:172]
-            if res.ok:
-                return res.json()
-            res.raise_for_status()
-        except requests.RequestException as err:
-            self.logger.error(err)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_v2.cb:[1216:1221]
-==filip.clients.ngsi_v2.iota:[259:264]
-        try:
-            res = self.put(
-                url=url,
-                headers=headers,
-                params=params,</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_v2.cb:[1669:1674]
-==filip.clients.ngsi_v2.quantumleap:[253:258]
-        headers = self.headers.copy()
-        try:
-            res = self.delete(url=url, headers=headers)
-            if res.ok:
-                self.logger.info(</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_v2.cb:[196:201]
-==filip.clients.ngsi_v2.quantumleap:[71:76]
-        try:
-            res = self.get(url=url, headers=self.headers)
-            if res.ok:
-                return res.json()
-            res.raise_for_status()</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_v2.cb:[165:170]
-==filip.clients.ngsi_v2.quantumleap:[96:101]
-        try:
-            res = self.get(url=url, headers=self.headers)
-            if res.ok:
-                return res.json()
-            res.raise_for_status()</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.ontology_parser.post_processer:[14:19]
-==filip.semantics.ontology_parser.rdfparser:[10:15]
-from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
-from filip.semantics.vocabulary import (
-    Source,
-    IdType,
-    Vocabulary,</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.iot:[11:16]
-==filip.models.ngsi_v2.subscriptions:[8:13]
-from pydantic import (
-    field_validator,
-    model_validator,
-    ConfigDict,
-    BaseModel,</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.semantics.ontology_parser.post_processer -&gt; filip.semantics.vocabulary_configurator)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
-            </tr>
-            
-        </table>
-        
         <h3>Module <code>filip.clients.ngsi_ld.cb</code> (<code>filip/clients/ngsi_ld/cb.py</code>)</h3>
         <table>
             <tr>
@@ -4595,6 +3315,1254 @@ from pydantic import (
             </tr>
             
             <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.base:[179:201]
+==filip.models.ngsi_v2.context:[48:67]
+        &#34;Example: &#34;
+        &#34;{&#34;
+        &#34;  &#39;id&#39;: &#39;R12345&#39;,&#34;
+        &#34;  &#39;type&#39;: &#39;Room&#39;,&#34;
+        &#34;  &#39;temperature&#39;: 22&#34;
+        &#34;}&#34;,
+    )
+    VALUES = (
+        &#34;values&#34;,
+        &#34;Key value message representation. &#34;
+        &#34;This mode represents the entity as an array of &#34;
+        &#34;attribute values. Information about id and type is &#34;
+        &#34;left out. See example below. The order of the &#34;
+        &#34;attributes in the array is specified by the attrs &#34;
+        &#34;URI param (e.g. attrs=branch,colour,engine). &#34;
+        &#34;If attrs is not used, the order is arbitrary. &#34;
+        &#34;Example:&#34;
+        &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
+    )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[132:157]
+==filip.clients.ngsi_v2.cb:[138:164]
+                while len(items) &lt; limit and len(items) &lt; count:
+                    # Establishing the offset from where entities are retrieved
+                    params[&#34;offset&#34;] = len(items)
+                    params[&#34;limit&#34;] = min(1000, (limit - len(items)))
+                    res = session.request(
+                        method=method,
+                        url=url,
+                        params=params,
+                        headers=headers,
+                        data=data,
+                    )
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                self.logger.debug(&#34;Received: %s&#34;, items)
+                return items
+            res.raise_for_status()
+
+    def get_version(self) -&gt; Dict:
+        &#34;&#34;&#34;
+        Gets version of Orion-LD context broker
+        Returns:
+            Dictionary with response
+        &#34;&#34;&#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_ld.context:[403:415]
+==filip.models.ngsi_v2.context:[166:177]
+        ...,
+        title=&#34;Entity Type&#34;,
+        description=&#34;Id of an entity in an NGSI context broker. &#34;
+        &#34;Allowed characters are the ones in the plain ASCII set, &#34;
+        &#34;except the following ones: control characters, &#34;
+        &#34;whitespace, &amp;, ?, / and #.&#34;,
+        json_schema_extra={&#34;example&#34;: &#34;Room&#34;},
+        max_length=256,
+        min_length=1,
+        frozen=True,
+    )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.iot:[143:154]
+==filip.models.ngsi_v2.subscriptions:[48:59]
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description=&#34;The attribute type represents the NGSI value type of the &#34;
+        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
+        &#34;system for attribute values, so NGSI value types are not &#34;
+        &#34;the same as JSON types. Allowed characters &#34;
+        &#34;are the ones in the plain ASCII set, except the following &#34;
+        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
+        max_length=256,
+        min_length=1,
+    )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_ld.context:[384:394]
+==filip.models.ngsi_v2.context:[149:159]
+    model_config = ConfigDict(
+        extra=&#34;allow&#34;, validate_default=True, validate_assignment=True
+    )
+    id: str = Field(
+        ...,
+        title=&#34;Entity Id&#34;,
+        description=&#34;Id of an entity in an NGSI context broker. Allowed &#34;
+        &#34;characters are the ones in the plain ASCII set, except &#34;
+        &#34;the following ones: control characters, &#34;
+        &#34;whitespace, &amp;, ?, / and #.&#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.base:[297:308]
+==filip.models.ngsi_v2.subscriptions:[48:59]
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description=&#34;The attribute type represents the NGSI value type of the &#34;
+        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
+        &#34;system for attribute values, so NGSI value types are not &#34;
+        &#34;the same as JSON types. Allowed characters &#34;
+        &#34;are the ones in the plain ASCII set, except the following &#34;
+        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
+        max_length=256,
+        min_length=1,
+    )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.base:[297:309]
+==filip.models.ngsi_v2.iot:[143:157]
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description=&#34;The attribute type represents the NGSI value type of the &#34;
+        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
+        &#34;system for attribute values, so NGSI value types are not &#34;
+        &#34;the same as JSON types. Allowed characters &#34;
+        &#34;are the ones in the plain ASCII set, except the following &#34;
+        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
+        max_length=256,
+        min_length=1,
+    )
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
+
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[974:984]
+==filip.clients.ngsi_v2.cb:[1856:1876]
+                    &#39;&#34;value&#34; &#34;entity_id&#34;}&#39;
+                )
+        else:
+            raise ValueError(&#34;Invalid relationship type.&#34;)
+        try:
+            destination_entity = self.get_entity(entity_id=destination_id)
+            return destination_entity.id == destination_id
+        except requests.RequestException as err:
+            if err.response.status_code == 404:
+                return False
+
+    def update_registration(self, registration: Registration):
+        &#34;&#34;&#34;
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        &#34;&#34;&#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[119:130]
+==filip.clients.ngsi_v2.cb:[125:136]
+        if self.session:
+            session = self.session
+        else:
+            session = requests.Session()
+        with session:
+            res = session.request(
+                method=method, url=url, params=params, headers=headers, data=data
+            )
+            if res.ok:
+                items = res.json()
+                # do pagination</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_ld.context:[357:369]
+==filip.models.ngsi_v2.base:[358:369]
+    name: str = Field(
+        title=&#34;Attribute name&#34;,
+        description=&#34;The attribute name describes what kind of property the &#34;
+        &#34;attribute value represents of the entity, for example &#34;
+        &#34;current_speed. Allowed characters &#34;
+        &#34;are the ones in the plain ASCII set, except the following &#34;
+        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
+        max_length=256,
+        min_length=1,
+        # pattern=FiwareRegex.string_protect.value,
+        # Make it FIWARE-Safe
+    )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
+==filip.semantics.vocabulary.vocabulary:[93:106]
+class IdType(str, Enum):
+    class_ = &#34;Class&#34;
+    object_property = &#34;Object Property&#34;
+    data_property = &#34;Data Property&#34;
+    datatype = &#34;Datatype&#34;
+    relation = &#34;Relation&#34;
+    combined_relation = &#34;Combined Relation&#34;
+    individual = &#34;Individual&#34;
+    source = &#34;Source&#34;
+
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[767:776]
+==filip.clients.ngsi_v2.cb:[1649:1658]
+                    exclude_none=True,
+                ),
+            )
+            if res.ok:
+                self.logger.info(&#34;Subscription successfully updated!&#34;)
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f&#34;Could not update subscription {subscription.id}&#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[496:505]
+==filip.clients.ngsi_v2.cb:[1189:1198]
+            assert attr_name is not None, (
+                &#34;Missing name for attribute. &#34;
+                &#34;attr_name must be present if&#34;
+                &#34;attr is of type ContextAttribute&#34;
+            )
+        else:
+            assert attr_name is None, (
+                &#34;Invalid argument attr_name. Do not set &#34;
+                &#34;attr_name if attr is of type &#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.base:[169:178]
+==filip.models.ngsi_v2.context:[37:46]
+    _init_ = &#34;value __doc__&#34;
+
+    NORMALIZED = &#34;normalized&#34;, &#34;Normalized message representation&#34;
+    KEY_VALUES = (
+        &#34;keyValues&#34;,
+        &#34;Key value message representation.&#34;
+        &#34;This mode represents the entity &#34;
+        &#34;attributes by their values only, leaving out &#34;
+        &#34;the information about type and metadata. &#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.semantics.semantics_models:[126:137]
+==filip.semantics.vocabulary.entities:[659:670]
+                    return False
+
+            if not self.number_range_min == &#34;/&#34;:
+                if number &lt; self.number_range_min:
+                    return False
+            if not self.number_range_max == &#34;/&#34;:
+                if number &gt; self.number_range_max:
+                    return False
+
+            return True
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.semantics.semantics_models:[107:116]
+==filip.semantics.vocabulary.entities:[638:648]
+            if len(self.allowed_chars) &gt; 0:
+                for char in value:
+                    if char not in self.allowed_chars:
+                        return False
+            for char in self.forbidden_chars:
+                if char in value:
+                    return False
+            return True
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[731:739]
+==filip.clients.ngsi_v2.cb:[1583:1591]
+        url = urljoin(
+            self.base_url, f&#34;{self._url_version}/subscriptions/{subscription_id}&#34;
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.get(url=url, headers=headers)
+            if res.ok:
+                self.logger.debug(&#34;Received: %s&#34;, res.json())</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[640:651]
+==filip.clients.ngsi_v2.cb:[1438:1449]
+        url = urljoin(self.base_url, f&#34;{self._url_version}/subscriptions/&#34;)
+        headers = self.headers.copy()
+        params = {}
+
+        # We always use the &#39;count&#39; option to check weather pagination is
+        # required
+        params.update({&#34;options&#34;: &#34;count&#34;})
+        try:
+            items = self.__pagination(
+                limit=limit, url=url, params=params, headers=headers
+            )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_ld.context:[880:887]
+==filip.models.ngsi_v2.subscriptions:[98:107]
+        description=&#34;is an array with the notification data itself which &#34;
+        &#34;includes the entity and all concerned attributes. Each &#34;
+        &#34;element in the array corresponds to a different entity. &#34;
+        &#34;By default, the entities are represented in normalized &#34;
+        &#34;mode. However, using the attrsFormat modifier, a &#34;
+        &#34;simplified representation mode can be requested.&#34;
+    )
+
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_ld.context:[7:14]
+==filip.models.ngsi_v2.base:[7:14]
+from geojson_pydantic import (
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.semantics.semantics_models:[141:153]
+==filip.semantics.vocabulary.entities:[674:703]
+            try:
+                from dateutil.parser import parse
+
+                parse(value, fuzzy=False)
+                return True
+
+            except ValueError:
+                return False
+
+        return True
+
+    def is_logically_equivalent_to(
+        self,
+        datatype: &#34;Datatype&#34;,
+        vocabulary: &#34;Vocabulary&#34;,
+        old_vocabulary: &#34;Vocabulary&#34;,
+    ) -&gt; bool:
+        &#34;&#34;&#34;Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        &#34;&#34;&#34;
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[712:719]
+==filip.clients.ngsi_v2.cb:[1565:1572]
+            )
+            if res.ok:
+                self.logger.info(&#34;Subscription successfully created!&#34;)
+                return res.headers[&#34;Location&#34;].split(&#34;/&#34;)[-1]
+            res.raise_for_status()
+        except requests.RequestException as err:
+            msg = &#34;Could not send subscription!&#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[688:695]
+==filip.clients.ngsi_v2.cb:[1516:1523]
+            ):
+                self.logger.info(&#34;Subscription already exists&#34;)
+                if update:
+                    self.logger.info(&#34;Updated subscription&#34;)
+                    subscription.id = ex_sub.id
+                    self.update_subscription(subscription)
+                else:</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[641:651]
+==filip.clients.ngsi_v2.cb:[1693:1703]
+        headers = self.headers.copy()
+        params = {}
+
+        # We always use the &#39;count&#39; option to check weather pagination is
+        # required
+        params.update({&#34;options&#34;: &#34;count&#34;})
+        try:
+            items = self.__pagination(
+                limit=limit, url=url, params=params, headers=headers
+            )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[288:295]
+==filip.clients.ngsi_v2.cb:[526:533]
+        url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({&#34;type&#34;: entity_type})
+        if attrs:
+            params.update({&#34;attrs&#34;: &#34;,&#34;.join(attrs)})</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[165:172]
+==filip.clients.ngsi_v2.iota:[67:74]
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.registrations:[131:137]
+==filip.models.ngsi_v2.subscriptions:[546:552]
+        &#34;attribute is set to expired (no matter if the client &#34;
+        &#34;updates it to active/inactive). Also, for subscriptions &#34;
+        &#34;experiencing problems with notifications, the status is &#34;
+        &#34;set to failed. As soon as the notifications start working &#34;
+        &#34;again, the status is changed back to active.&#34;,
+    )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_ld.context:[159:166]
+==filip.models.ngsi_v2.base:[361:369]
+        &#34;attribute value represents of the entity, for example &#34;
+        &#34;current_speed. Allowed characters &#34;
+        &#34;are the ones in the plain ASCII set, except the following &#34;
+        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
+        max_length=256,
+        min_length=1,
+    )</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_ld.context:[8:14]
+==filip.models.ngsi_v2.base:[463:469]
+                        Point,
+                        MultiPoint,
+                        LineString,
+                        MultiLineString,
+                        Polygon,
+                        MultiPolygon,</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.base:[363:372]
+==filip.models.ngsi_v2.iot:[165:171]
+        &#34;are the ones in the plain ASCII set, except the following &#34;
+        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
+        max_length=256,
+        min_length=1,
+    )
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.semantics.ontology_parser.rdfparser:[77:87]
+==filip.semantics.vocabulary.vocabulary:[551:570]
+        if &#34;#&#34; in iri:
+            index = iri.find(&#34;#&#34;)
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind(&#34;/&#34;)
+            return iri[:index]
+
+    def get_entity_by_iri(self, iri: str) -&gt; Union[None, Entity]:
+        &#34;&#34;&#34;Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        &#34;&#34;&#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[733:739]
+==filip.clients.ngsi_v2.cb:[1750:1756]
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.get(url=url, headers=headers)
+            if res.ok:
+                self.logger.debug(&#34;Received: %s&#34;, res.json())</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[785:799]
+==filip.clients.ngsi_v2.cb:[1666:1680]
+        url = urljoin(
+            self.base_url, f&#34;{self._url_version}/subscriptions/{subscription_id}&#34;
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info(
+                    f&#34;Subscription &#39;{subscription_id}&#39; &#34; f&#34;successfully deleted!&#34;
+                )
+            else:
+                res.raise_for_status()
+        except requests.RequestException as err:
+            msg = f&#34;Could not delete subscription {subscription_id}&#34;</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[787:793]
+==filip.clients.ngsi_v2.cb:[1903:1909]
+        )
+        headers = self.headers.copy()
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info(</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[615:622]
+==filip.clients.ngsi_v2.cb:[1668:1674]
+        )
+        headers = self.headers.copy()
+
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info(</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[289:295]
+==filip.clients.ngsi_v2.cb:[591:597]
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({&#34;type&#34;: entity_type})
+        if attrs:
+            params.update({&#34;attrs&#34;: &#34;,&#34;.join(attrs)})</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[228:234]
+==filip.clients.ngsi_v2.cb:[282:288]
+            )
+            if res.ok:
+                self.logger.info(&#34;Entity successfully posted!&#34;)
+                return res.headers.get(&#34;Location&#34;)
+            res.raise_for_status()
+        except requests.RequestException as err:</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[109:116]
+==filip.clients.ngsi_v2.cb:[118:125]
+        if limit is None:
+            limit = inf
+        if limit &gt; 1000:
+            params[&#34;limit&#34;] = 1000  # maximum items per request
+        else:
+            params[&#34;limit&#34;] = limit
+        # add count option if not present</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[164:170]
+==filip.clients.ngsi_v2.quantumleap:[70:76]
+        url = urljoin(self.base_url, &#34;version&#34;)
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status()</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.iot:[11:16]
+==filip.models.ngsi_v2.subscriptions:[8:13]
+from pydantic import (
+    field_validator,
+    model_validator,
+    ConfigDict,
+    BaseModel,</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.semantics.ontology_parser.post_processer:[14:19]
+==filip.semantics.ontology_parser.rdfparser:[10:15]
+from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
+from filip.semantics.vocabulary import (
+    Source,
+    IdType,
+    Vocabulary,</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[966:971]
+==filip.clients.ngsi_v2.cb:[1848:1853]
+        elif isinstance(relationship, dict):
+            _sentinel = object()
+            destination_id = relationship.get(&#34;value&#34;, _sentinel)
+            if destination_id is _sentinel:
+                raise ValueError(</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[761:766]
+==filip.clients.ngsi_v2.cb:[1635:1640]
+        try:
+            res = self.patch(
+                url=url,
+                headers=headers,
+                data=subscription.model_dump_json(</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[304:309]
+==filip.clients.ngsi_v2.cb:[539:544]
+        try:
+            res = self.get(url=url, params=params, headers=headers)
+            if res.ok:
+                self.logger.info(&#34;Entity successfully retrieved!&#34;)
+                self.logger.debug(&#34;Received: %s&#34;, res.json())</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[584:591]
+==filip.clients.ngsi_v2.cb:[1255:1260]
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({&#34;type&#34;: entity_type})
+        try:</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[583:590]
+==filip.clients.ngsi_v2.cb:[526:531]
+        url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
+        headers = self.headers.copy()
+        params = {}
+        if entity_type:
+            params.update({&#34;type&#34;: entity_type})</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[553:558]
+==filip.clients.ngsi_v2.cb:[1985:1990]
+        try:
+            res = self.post(
+                url=url,
+                headers=headers,
+                params=params,</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[705:710]
+==filip.clients.ngsi_v2.cb:[1548:1553]
+        try:
+            res = self.post(
+                url=url,
+                headers=headers,
+                data=subscription.model_dump_json(</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[190:195]
+==filip.clients.ngsi_v2.cb:[167:172]
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[1669:1674]
+==filip.clients.ngsi_v2.quantumleap:[253:258]
+        headers = self.headers.copy()
+        try:
+            res = self.delete(url=url, headers=headers)
+            if res.ok:
+                self.logger.info(</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[165:170]
+==filip.clients.ngsi_v2.quantumleap:[96:101]
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status()</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[160:165]
+==filip.clients.ngsi_v2.iota:[69:74]
+            if res.ok:
+                return res.json()
+            res.raise_for_status()
+        except requests.RequestException as err:
+            self.logger.error(err)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[1216:1221]
+==filip.clients.ngsi_v2.iota:[259:264]
+        try:
+            res = self.put(
+                url=url,
+                headers=headers,
+                params=params,</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_v2.iota:[67:72]
+==filip.clients.ngsi_v2.quantumleap:[71:76]
+        try:
+            res = self.get(url=url, headers=self.headers)
+            if res.ok:
+                return res.json()
+            res.raise_for_status()</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.mqtt.encoder.json:[23:30]
+==filip.clients.mqtt.encoder.ulralight:[29:38]
+        return apikey, device_id, payload
+
+    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -&gt; str:
+        if msg_type == IoTAMQTTMessageType.SINGLE:
+            return payload
+        elif msg_type == IoTAMQTTMessageType.MULTI:
+            payload = super()._parse_timestamp(payload=payload)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.semantics.ontology_parser.post_processer -&gt; filip.semantics.vocabulary_configurator)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+            </tr>
+            
+            <tr>
                 <td>2</td>
                 <td>0</td>
                 <td>error</td>
@@ -6083,7 +6051,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>344</td>
+                <td>348</td>
                 <td>19</td>
                 <td>convention</td>
                 <td><code>unnecessary-dunder-call</code></td>
@@ -6093,7 +6061,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>361</td>
+                <td>365</td>
                 <td>12</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -11797,7 +11765,7 @@ from pydantic import (
             
             <tr>
                 <td>refactor</td>
-                <td>332</td>
+                <td>331</td>
             </tr>
             
             <tr>
@@ -11846,8 +11814,18 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>missing-module-docstring</td>
-                <td>8</td>
+                <td>invalid-name</td>
+                <td>110</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-instance-attributes</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>consider-iterating-dictionary</td>
+                <td>9</td>
             </tr>
             
             <tr>
@@ -11856,23 +11834,13 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>invalid-name</td>
-                <td>110</td>
+                <td>too-many-arguments</td>
+                <td>16</td>
             </tr>
             
             <tr>
-                <td>implicit-str-concat</td>
-                <td>18</td>
-            </tr>
-            
-            <tr>
-                <td>missing-class-docstring</td>
+                <td>raise-missing-from</td>
                 <td>8</td>
-            </tr>
-            
-            <tr>
-                <td>inconsistent-return-statements</td>
-                <td>44</td>
             </tr>
             
             <tr>
@@ -11881,18 +11849,158 @@ from pydantic import (
             </tr>
             
             <tr>
+                <td>using-constant-test</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>redefined-argument-from-local</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>raising-format-tuple</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-locals</td>
+                <td>22</td>
+            </tr>
+            
+            <tr>
+                <td>pointless-statement</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>unused-argument</td>
+                <td>13</td>
+            </tr>
+            
+            <tr>
+                <td>function-redefined</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>cell-var-from-loop</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>no-else-break</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
                 <td>unused-import</td>
                 <td>29</td>
             </tr>
             
             <tr>
-                <td>redefined-builtin</td>
-                <td>30</td>
+                <td>missing-module-docstring</td>
+                <td>8</td>
             </tr>
             
             <tr>
-                <td>unnecessary-pass</td>
-                <td>6</td>
+                <td>missing-class-docstring</td>
+                <td>8</td>
+            </tr>
+            
+            <tr>
+                <td>useless-parent-delegation</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>no-else-return</td>
+                <td>53</td>
+            </tr>
+            
+            <tr>
+                <td>inconsistent-return-statements</td>
+                <td>44</td>
+            </tr>
+            
+            <tr>
+                <td>pointless-exception-statement</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>implicit-str-concat</td>
+                <td>18</td>
+            </tr>
+            
+            <tr>
+                <td>no-else-raise</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>broad-exception-raised</td>
+                <td>10</td>
+            </tr>
+            
+            <tr>
+                <td>import-outside-toplevel</td>
+                <td>17</td>
+            </tr>
+            
+            <tr>
+                <td>unused-variable</td>
+                <td>16</td>
+            </tr>
+            
+            <tr>
+                <td>unspecified-encoding</td>
+                <td>4</td>
+            </tr>
+            
+            <tr>
+                <td>unused-private-member</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>attribute-defined-outside-init</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-lines</td>
+                <td>4</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-branches</td>
+                <td>15</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-statements</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>unnecessary-lambda</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>logging-fstring-interpolation</td>
+                <td>12</td>
+            </tr>
+            
+            <tr>
+                <td>f-string-without-interpolation</td>
+                <td>21</td>
+            </tr>
+            
+            <tr>
+                <td>redefined-outer-name</td>
+                <td>4</td>
             </tr>
             
             <tr>
@@ -11906,73 +12014,23 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>unnecessary-dunder-call</td>
-                <td>14</td>
-            </tr>
-            
-            <tr>
-                <td>unnecessary-comprehension</td>
-                <td>4</td>
-            </tr>
-            
-            <tr>
-                <td>no-else-return</td>
-                <td>53</td>
-            </tr>
-            
-            <tr>
-                <td>raise-missing-from</td>
-                <td>8</td>
-            </tr>
-            
-            <tr>
-                <td>ungrouped-imports</td>
+                <td>use-a-generator</td>
                 <td>2</td>
             </tr>
             
             <tr>
-                <td>unidiomatic-typecheck</td>
-                <td>15</td>
-            </tr>
-            
-            <tr>
-                <td>not-an-iterable</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>raising-format-tuple</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>unused-argument</td>
-                <td>13</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-return-statements</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-branches</td>
-                <td>15</td>
-            </tr>
-            
-            <tr>
-                <td>broad-exception-caught</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>unused-variable</td>
-                <td>16</td>
-            </tr>
-            
-            <tr>
-                <td>useless-parent-delegation</td>
+                <td>no-else-continue</td>
                 <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-public-methods</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>consider-using-in</td>
+                <td>2</td>
             </tr>
             
             <tr>
@@ -11981,33 +12039,8 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>redefined-argument-from-local</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>import-outside-toplevel</td>
-                <td>17</td>
-            </tr>
-            
-            <tr>
-                <td>consider-iterating-dictionary</td>
-                <td>9</td>
-            </tr>
-            
-            <tr>
-                <td>unspecified-encoding</td>
-                <td>4</td>
-            </tr>
-            
-            <tr>
                 <td>superfluous-parens</td>
                 <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-lines</td>
-                <td>4</td>
             </tr>
             
             <tr>
@@ -12026,13 +12059,18 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>broad-exception-raised</td>
-                <td>10</td>
+                <td>too-many-return-statements</td>
+                <td>5</td>
             </tr>
             
             <tr>
-                <td>function-redefined</td>
-                <td>7</td>
+                <td>unnecessary-pass</td>
+                <td>6</td>
+            </tr>
+            
+            <tr>
+                <td>unnecessary-dunder-call</td>
+                <td>14</td>
             </tr>
             
             <tr>
@@ -12046,8 +12084,8 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>too-many-locals</td>
-                <td>22</td>
+                <td>unnecessary-comprehension</td>
+                <td>4</td>
             </tr>
             
             <tr>
@@ -12071,8 +12109,13 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>no-else-raise</td>
-                <td>5</td>
+                <td>unidiomatic-typecheck</td>
+                <td>15</td>
+            </tr>
+            
+            <tr>
+                <td>ungrouped-imports</td>
+                <td>2</td>
             </tr>
             
             <tr>
@@ -12081,43 +12124,28 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>logging-fstring-interpolation</td>
-                <td>12</td>
+                <td>wildcard-import</td>
+                <td>2</td>
             </tr>
             
             <tr>
-                <td>too-many-arguments</td>
-                <td>16</td>
+                <td>redefined-builtin</td>
+                <td>30</td>
             </tr>
             
             <tr>
-                <td>redefined-outer-name</td>
+                <td>unused-wildcard-import</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>consider-using-f-string</td>
                 <td>4</td>
             </tr>
             
             <tr>
-                <td>too-many-statements</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-public-methods</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>f-string-without-interpolation</td>
-                <td>21</td>
-            </tr>
-            
-            <tr>
-                <td>modified-iterating-list</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>singleton-comparison</td>
-                <td>1</td>
+                <td>consider-using-enumerate</td>
+                <td>4</td>
             </tr>
             
             <tr>
@@ -12136,82 +12164,22 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>consider-using-enumerate</td>
-                <td>4</td>
-            </tr>
-            
-            <tr>
-                <td>consider-using-f-string</td>
-                <td>4</td>
-            </tr>
-            
-            <tr>
-                <td>wildcard-import</td>
+                <td>broad-exception-caught</td>
                 <td>2</td>
             </tr>
             
             <tr>
-                <td>unused-wildcard-import</td>
+                <td>modified-iterating-list</td>
                 <td>1</td>
             </tr>
             
             <tr>
-                <td>too-many-instance-attributes</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>unnecessary-lambda</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>use-a-generator</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>no-else-continue</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>no-else-break</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>cell-var-from-loop</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>unused-private-member</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>attribute-defined-outside-init</td>
+                <td>singleton-comparison</td>
                 <td>1</td>
             </tr>
             
             <tr>
-                <td>using-constant-test</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>pointless-statement</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>pointless-exception-statement</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>consider-using-in</td>
+                <td>not-an-iterable</td>
                 <td>2</td>
             </tr>
             
@@ -12222,7 +12190,7 @@ from pydantic import (
             
             <tr>
                 <td>cyclic-import</td>
-                <td>11</td>
+                <td>10</td>
             </tr>
             
         </table>
@@ -12251,67 +12219,67 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip.models.mqtt</td>
-                <td>1</td>
+                <td>filip.clients.base_http_client</td>
+                <td>14</td>
             </tr>
             
             <tr>
-                <td>filip.models</td>
-                <td>1</td>
+                <td>filip.clients.exceptions</td>
+                <td>3</td>
             </tr>
             
             <tr>
-                <td>filip.models.base</td>
-                <td>9</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.context</td>
-                <td>30</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.iot</td>
-                <td>27</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.registrations</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.timeseries</td>
-                <td>6</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.units</td>
-                <td>10</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.subscriptions</td>
-                <td>24</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.base</td>
+                <td>filip.clients.mqtt.client</td>
                 <td>22</td>
             </tr>
             
             <tr>
-                <td>filip.models.ngsi_ld.context</td>
-                <td>30</td>
+                <td>filip.clients.mqtt.encoder.ulralight</td>
+                <td>7</td>
             </tr>
             
             <tr>
-                <td>filip.models.ngsi_ld.subscriptions</td>
-                <td>16</td>
+                <td>filip.clients.mqtt.encoder</td>
+                <td>1</td>
             </tr>
             
             <tr>
-                <td>filip.models.ngsi_ld.base</td>
+                <td>filip.clients.mqtt.encoder.json</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>filip.clients.mqtt.encoder.base_encoder</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>filip.clients.ngsi_v2.iota</td>
+                <td>33</td>
+            </tr>
+            
+            <tr>
+                <td>filip.clients.ngsi_v2.client</td>
+                <td>12</td>
+            </tr>
+            
+            <tr>
+                <td>filip.clients.ngsi_v2.quantumleap</td>
+                <td>27</td>
+            </tr>
+            
+            <tr>
+                <td>filip.clients.ngsi_v2.cb</td>
+                <td>85</td>
+            </tr>
+            
+            <tr>
+                <td>filip.clients.ngsi_ld.cb</td>
+                <td>39</td>
+            </tr>
+            
+            <tr>
+                <td>filip.utils.filter</td>
                 <td>3</td>
             </tr>
             
@@ -12326,13 +12294,8 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip.utils.validators</td>
-                <td>40</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.data</td>
-                <td>8</td>
+                <td>filip.utils.model_generation</td>
+                <td>5</td>
             </tr>
             
             <tr>
@@ -12341,13 +12304,13 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip.utils.filter</td>
-                <td>3</td>
+                <td>filip.utils.data</td>
+                <td>8</td>
             </tr>
             
             <tr>
-                <td>filip.utils.model_generation</td>
-                <td>5</td>
+                <td>filip.utils.validators</td>
+                <td>40</td>
             </tr>
             
             <tr>
@@ -12366,36 +12329,6 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip.semantics.vocabulary.entities</td>
-                <td>30</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.relation</td>
-                <td>28</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.vocabulary</td>
-                <td>44</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.source</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.combined_relations</td>
-                <td>12</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
                 <td>filip.semantics.ontology_parser.vocabulary_builder</td>
                 <td>17</td>
             </tr>
@@ -12411,68 +12344,98 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip.clients.exceptions</td>
-                <td>3</td>
+                <td>filip.semantics.vocabulary.vocabulary</td>
+                <td>44</td>
             </tr>
             
             <tr>
-                <td>filip.clients.base_http_client</td>
-                <td>14</td>
+                <td>filip.semantics.vocabulary.relation</td>
+                <td>28</td>
             </tr>
             
             <tr>
-                <td>filip.clients.ngsi_v2.cb</td>
-                <td>85</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.ngsi_v2.quantumleap</td>
-                <td>27</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.ngsi_v2.client</td>
-                <td>12</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.ngsi_v2.iota</td>
-                <td>33</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.mqtt.client</td>
-                <td>22</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.mqtt.encoder.ulralight</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.mqtt.encoder.base_encoder</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.mqtt.encoder.json</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.mqtt.encoder</td>
+                <td>filip.semantics.vocabulary</td>
                 <td>1</td>
             </tr>
             
             <tr>
-                <td>filip.clients.ngsi_ld.cb</td>
-                <td>39</td>
+                <td>filip.semantics.vocabulary.combined_relations</td>
+                <td>12</td>
             </tr>
             
             <tr>
-                <td>filip.clients.ngsi_ld.__init__</td>
-                <td>66</td>
+                <td>filip.semantics.vocabulary.source</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary.entities</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.base</td>
+                <td>9</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.mqtt</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.units</td>
+                <td>10</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.timeseries</td>
+                <td>6</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.base</td>
+                <td>22</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.iot</td>
+                <td>27</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.registrations</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.context</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.subscriptions</td>
+                <td>24</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_ld.base</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_ld.context</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_ld.subscriptions</td>
+                <td>81</td>
             </tr>
             
         </table>
@@ -12501,67 +12464,67 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip/models/mqtt.py</td>
-                <td>1</td>
+                <td>filip/clients/base_http_client.py</td>
+                <td>14</td>
             </tr>
             
             <tr>
-                <td>filip/models/__init__.py</td>
-                <td>1</td>
+                <td>filip/clients/exceptions.py</td>
+                <td>3</td>
             </tr>
             
             <tr>
-                <td>filip/models/base.py</td>
-                <td>9</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/context.py</td>
-                <td>30</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/iot.py</td>
-                <td>27</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/registrations.py</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/timeseries.py</td>
-                <td>6</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/units.py</td>
-                <td>10</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/subscriptions.py</td>
-                <td>24</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/base.py</td>
+                <td>filip/clients/mqtt/client.py</td>
                 <td>22</td>
             </tr>
             
             <tr>
-                <td>filip/models/ngsi_ld/context.py</td>
-                <td>30</td>
+                <td>filip/clients/mqtt/encoder/ulralight.py</td>
+                <td>7</td>
             </tr>
             
             <tr>
-                <td>filip/models/ngsi_ld/subscriptions.py</td>
-                <td>16</td>
+                <td>filip/clients/mqtt/encoder/__init__.py</td>
+                <td>1</td>
             </tr>
             
             <tr>
-                <td>filip/models/ngsi_ld/base.py</td>
+                <td>filip/clients/mqtt/encoder/json.py</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>filip/clients/mqtt/encoder/base_encoder.py</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>filip/clients/ngsi_v2/iota.py</td>
+                <td>33</td>
+            </tr>
+            
+            <tr>
+                <td>filip/clients/ngsi_v2/client.py</td>
+                <td>12</td>
+            </tr>
+            
+            <tr>
+                <td>filip/clients/ngsi_v2/quantumleap.py</td>
+                <td>27</td>
+            </tr>
+            
+            <tr>
+                <td>filip/clients/ngsi_v2/cb.py</td>
+                <td>85</td>
+            </tr>
+            
+            <tr>
+                <td>filip/clients/ngsi_ld/cb.py</td>
+                <td>39</td>
+            </tr>
+            
+            <tr>
+                <td>filip/utils/filter.py</td>
                 <td>3</td>
             </tr>
             
@@ -12576,13 +12539,8 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip/utils/validators.py</td>
-                <td>40</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/data.py</td>
-                <td>8</td>
+                <td>filip/utils/model_generation.py</td>
+                <td>5</td>
             </tr>
             
             <tr>
@@ -12591,13 +12549,13 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip/utils/filter.py</td>
-                <td>3</td>
+                <td>filip/utils/data.py</td>
+                <td>8</td>
             </tr>
             
             <tr>
-                <td>filip/utils/model_generation.py</td>
-                <td>5</td>
+                <td>filip/utils/validators.py</td>
+                <td>40</td>
             </tr>
             
             <tr>
@@ -12616,36 +12574,6 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip/semantics/vocabulary/entities.py</td>
-                <td>30</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/relation.py</td>
-                <td>28</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/vocabulary.py</td>
-                <td>44</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/source.py</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/combined_relations.py</td>
-                <td>12</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/__init__.py</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
                 <td>filip/semantics/ontology_parser/vocabulary_builder.py</td>
                 <td>17</td>
             </tr>
@@ -12661,68 +12589,98 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>filip/clients/exceptions.py</td>
-                <td>3</td>
+                <td>filip/semantics/vocabulary/vocabulary.py</td>
+                <td>44</td>
             </tr>
             
             <tr>
-                <td>filip/clients/base_http_client.py</td>
-                <td>14</td>
+                <td>filip/semantics/vocabulary/relation.py</td>
+                <td>28</td>
             </tr>
             
             <tr>
-                <td>filip/clients/ngsi_v2/cb.py</td>
-                <td>85</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/ngsi_v2/quantumleap.py</td>
-                <td>27</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/ngsi_v2/client.py</td>
-                <td>12</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/ngsi_v2/iota.py</td>
-                <td>33</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/mqtt/client.py</td>
-                <td>22</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/mqtt/encoder/ulralight.py</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/mqtt/encoder/base_encoder.py</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/mqtt/encoder/json.py</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/mqtt/encoder/__init__.py</td>
+                <td>filip/semantics/vocabulary/__init__.py</td>
                 <td>1</td>
             </tr>
             
             <tr>
-                <td>filip/clients/ngsi_ld/cb.py</td>
-                <td>39</td>
+                <td>filip/semantics/vocabulary/combined_relations.py</td>
+                <td>12</td>
             </tr>
             
             <tr>
-                <td>filip/clients/ngsi_ld/__init__.py</td>
-                <td>66</td>
+                <td>filip/semantics/vocabulary/source.py</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary/entities.py</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/base.py</td>
+                <td>9</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/__init__.py</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/mqtt.py</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/units.py</td>
+                <td>10</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/timeseries.py</td>
+                <td>6</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/base.py</td>
+                <td>22</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/iot.py</td>
+                <td>27</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/registrations.py</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/context.py</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/subscriptions.py</td>
+                <td>24</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_ld/base.py</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_ld/context.py</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_ld/subscriptions.py</td>
+                <td>81</td>
             </tr>
             
         </table>

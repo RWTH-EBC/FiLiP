@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>filip.models.ngsi_v2.units &mdash; FiLiP 0.7.3 documentation</title>
+  <title>filip.models.ngsi_v2.units &mdash; FiLiP 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
@@ -204,7 +204,11 @@
 <span class="sd">    Model for a unit definition</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
+        <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
+        <span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
     <span class="n">_ngsi_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="n">NgsiVersion</span><span class="o">.</span><span class="n">v2</span><span class="p">]</span> <span class="o">=</span> <span class="n">NgsiVersion</span><span class="o">.</span><span class="n">v2</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">UnitText</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;unitText&quot;</span><span class="p">,</span>
@@ -325,12 +329,12 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            list of units ordered by measured quantities</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;The used dataset does currently not &quot;</span>
-            <span class="s2">&quot;contain the information about quantity&quot;</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;The used dataset does currently not &quot;</span>
+                                  <span class="s2">&quot;contain the information about quantity&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Unit</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Unit</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get unit by name or code</span>
 
@@ -340,14 +344,14 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">[</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">[</span>
             <span class="p">(</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-                <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">casefold</span><span class="p">())</span>
+                <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+                <span class="o">|</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">casefold</span><span class="p">())</span>
             <span class="p">)</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="n">suggestions</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span>
@@ -360,7 +364,7 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">suggestions</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="n">Unit</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">CommonCode</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 
 <div class="viewcode-block" id="Units.keys"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.units.Units.keys">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">by_code</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
