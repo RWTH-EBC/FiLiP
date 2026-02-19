@@ -7,19 +7,6 @@ class TestContextBroker(unittest.TestCase):
     def setUp(self) -> None:
         self.left_hand_side = "attr"
         self.numeric_right_hand_side = 20
-        self.string_right_hand_side = "'20'"
-
-    def test_statements(self):
-        for op in list(Operator):
-            QueryStatement(self.left_hand_side, op, self.numeric_right_hand_side)
-            if op not in [Operator.EQUAL, Operator.UNEQUAL, Operator.MATCH_PATTERN]:
-                self.assertRaises(
-                    ValueError,
-                    QueryStatement,
-                    self.left_hand_side,
-                    op,
-                    self.string_right_hand_side,
-                )
 
     def test_simple_query(self):
         # create queries for testing

@@ -17,7 +17,6 @@ TODO: please at least copy the release note here, afterwards
 Following steps will be checked:
 - [ ] Revise the changelog if necessary
 - [ ] Update the version tag in:
-  - [ ] `setup.py`
   - [ ] `filip/__init__.py`
   - [ ] `Changelog`
 - [ ] Check dependencies in `setup.py`, especially when a new library is introduced
