@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.models.ngsi_v2.base &mdash; FiLiP 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../../../../_static/jquery.js"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+      <script src="../../../../_static/doctools.js"></script>
+      <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">filip.models.ngsi_v2.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for filip.models.ngsi_v2.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Shared models that are used by multiple submodules</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geojson_pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Point</span><span class="p">,</span>
+    <span class="n">MultiPoint</span><span class="p">,</span>
+    <span class="n">LineString</span><span class="p">,</span>
+    <span class="n">MultiLineString</span><span class="p">,</span>
+    <span class="n">Polygon</span><span class="p">,</span>
+    <span class="n">MultiPolygon</span><span class="p">,</span>
+    <span class="n">Feature</span><span class="p">,</span>
+    <span class="n">FeatureCollection</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">field_validator</span><span class="p">,</span>
+    <span class="n">model_validator</span><span class="p">,</span>
+    <span class="n">ConfigDict</span><span class="p">,</span>
+    <span class="n">AnyHttpUrl</span><span class="p">,</span>
+    <span class="n">BaseModel</span><span class="p">,</span>
+    <span class="n">Field</span><span class="p">,</span>
+    <span class="n">model_serializer</span><span class="p">,</span>
+    <span class="n">SerializationInfo</span><span class="p">,</span>
+    <span class="n">ValidationInfo</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Pattern</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_unit_data</span><span class="p">,</span> <span class="n">Unit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.simple_ql</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueryString</span><span class="p">,</span> <span class="n">QueryStatement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_escape_character_free</span><span class="p">,</span>
+    <span class="n">validate_fiware_datatype_string_protect</span><span class="p">,</span>
+    <span class="n">validate_fiware_datatype_standard</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_value_regex</span><span class="p">,</span>
+    <span class="n">validate_fiware_attribute_name_regex</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="Http"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Http">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Http</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for notification and registrations sent or retrieved via HTTP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;URL referencing the service to be invoked when a &quot;</span>
+        <span class="s2">&quot;notification is generated. An NGSIv2 compliant server &quot;</span>
+        <span class="s2">&quot;must support the http URL schema. Other schemas could &quot;</span>
+        <span class="s2">&quot;also be supported.&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EntityPattern"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.EntityPattern">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EntityPattern</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entity pattern used to create subscriptions or registrations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\w&quot;</span><span class="p">)</span>
+    <span class="n">idPattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pattern</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\w&quot;</span><span class="p">)</span>
+    <span class="n">typePattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pattern</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EntityPattern.validate_conditions"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.EntityPattern.validate_conditions">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">idPattern</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">idPattern</span><span class="p">),</span> <span class="p">(</span>
+            <span class="s2">&quot;Both cannot be used at the same time, but one of &#39;id&#39; or &quot;</span>
+            <span class="s2">&quot;&#39;idPattern must&#39; be present.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;typePattern&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">typePattern</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">typePattern</span>
+            <span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;Type or pattern of the affected entities. &quot;</span>
+                <span class="s2">&quot;Both cannot be used at the same time.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<div class="viewcode-block" id="Status"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Status">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Status</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Current status of a subscription or registrations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+
+    <span class="n">ACTIVE</span> <span class="o">=</span> <span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;for active subscriptions&quot;</span>
+    <span class="n">INACTIVE</span> <span class="o">=</span> <span class="s2">&quot;inactive&quot;</span><span class="p">,</span> <span class="s2">&quot;for inactive subscriptions&quot;</span>
+    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">&quot;failed&quot;</span><span class="p">,</span> <span class="s2">&quot;for failed subscription&quot;</span>
+    <span class="n">EXPIRED</span> <span class="o">=</span> <span class="s2">&quot;expired&quot;</span><span class="p">,</span> <span class="s2">&quot;for expired subscription&quot;</span></div>
+
+
+<div class="viewcode-block" id="Expression"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Expression</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    By means of a filtering expression, allows to express what is the scope</span>
+<span class="sd">    of the data provided.</span>
+<span class="sd">    https://telefonicaid.github.io/fiware-orion/api/v2/stable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">q</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QueryString</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Simple Query Language: filter&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If filtering by attribute value (i.e. the expression is &quot;</span>
+        <span class="s2">&quot;used in a q query), the rest of tokens (if present) &quot;</span>
+        <span class="s2">&quot;represent the path to a sub-property of the target NGSI &quot;</span>
+        <span class="s2">&quot;attribute value (which should be a JSON object). Such &quot;</span>
+        <span class="s2">&quot;sub-property is defined as the target property.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">mq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QueryString</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Simple Query Language: metadata filters&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;If filtering by metadata (i.e. the expression is used in &quot;</span>
+        <span class="s2">&quot;a mq query), the second token represents a metadata name &quot;</span>
+        <span class="s2">&quot;associated to the target NGSI attribute, target &quot;</span>
+        <span class="s2">&quot;metadata, and the rest of tokens (if present) represent &quot;</span>
+        <span class="s2">&quot;the path to a sub-property of the target metadata value &quot;</span>
+        <span class="s2">&quot;(which should be a JSON object). Such sub-property is &quot;</span>
+        <span class="s2">&quot;defined as the target property. &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">georel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QueryString</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Metadata filters&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Any of the geographical relationships as specified by &quot;</span>
+        <span class="s2">&quot;the Geoqueries section of this specification.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QueryString</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Metadata filters&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Any of the supported geometries as specified by the &quot;</span>
+        <span class="s2">&quot;Geoqueries section of this specification.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">coords</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QueryString</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Metadata filters&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;String representation of coordinates as specified by the &quot;</span>
+        <span class="s2">&quot;Geoqueries section of the specification.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Expression.validate_expressions"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.validate_expressions">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;mq&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_expressions</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">QueryString</span><span class="o">.</span><span class="n">parse_str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Expression.serialize"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Expression.serialize">[docs]</a>    <span class="nd">@model_serializer</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serializer</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">SerializationInfo</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="p">(</span><span class="n">QueryString</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mq</span><span class="p">,</span> <span class="p">(</span><span class="n">QueryString</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mq</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="p">(</span><span class="n">QueryString</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">georel</span><span class="p">,</span> <span class="p">(</span><span class="n">QueryString</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">georel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">georel</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="p">(</span><span class="n">QueryString</span><span class="p">,</span> <span class="n">QueryStatement</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">serializer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="AttrsFormat"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.AttrsFormat">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AttrsFormat</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allowed options for attribute formats</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+
+    <span class="n">NORMALIZED</span> <span class="o">=</span> <span class="s2">&quot;normalized&quot;</span><span class="p">,</span> <span class="s2">&quot;Normalized message representation&quot;</span>
+    <span class="n">KEY_VALUES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;keyValues&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Key value message representation.&quot;</span>
+        <span class="s2">&quot;This mode represents the entity &quot;</span>
+        <span class="s2">&quot;attributes by their values only, leaving out &quot;</span>
+        <span class="s2">&quot;the information about type and metadata. &quot;</span>
+        <span class="s2">&quot;See example below.&quot;</span>
+        <span class="s2">&quot;Example: &quot;</span>
+        <span class="s2">&quot;{&quot;</span>
+        <span class="s2">&quot;  &#39;id&#39;: &#39;R12345&#39;,&quot;</span>
+        <span class="s2">&quot;  &#39;type&#39;: &#39;Room&#39;,&quot;</span>
+        <span class="s2">&quot;  &#39;temperature&#39;: 22&quot;</span>
+        <span class="s2">&quot;}&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">VALUES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;values&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Key value message representation. &quot;</span>
+        <span class="s2">&quot;This mode represents the entity as an array of &quot;</span>
+        <span class="s2">&quot;attribute values. Information about id and type is &quot;</span>
+        <span class="s2">&quot;left out. See example below. The order of the &quot;</span>
+        <span class="s2">&quot;attributes in the array is specified by the attrs &quot;</span>
+        <span class="s2">&quot;URI param (e.g. attrs=branch,colour,engine). &quot;</span>
+        <span class="s2">&quot;If attrs is not used, the order is arbitrary. &quot;</span>
+        <span class="s2">&quot;Example:&quot;</span>
+        <span class="s2">&quot;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1"># NGSIv2 entity models</span>
+<div class="viewcode-block" id="Metadata"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Metadata">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Metadata</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context metadata is used in FIWARE NGSI in several places, one of them being</span>
+<span class="sd">    an optional part of the attribute value as described above. Similar to</span>
+<span class="sd">    attributes, each piece of metadata has.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">         In NGSI it is not foreseen that metadata may contain nested metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">DataType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;metadata type&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;a metadata type, describing the NGSI value type of the &quot;</span>
+        <span class="s2">&quot;metadata value Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_standard</span><span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;metadata value&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;a metadata value containing the actual metadata&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Metadata.validate_value"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Metadata.validate_value">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="s2">&quot;metadata not serializable&quot;</span>
+
+        <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">Unit</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div></div>
+
+
+<div class="viewcode-block" id="NamedMetadata"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.NamedMetadata">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NamedMetadata</span><span class="p">(</span><span class="n">Metadata</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for metadata including a name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;metadata name&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;a metadata name, describing the role of the metadata in &quot;</span>
+        <span class="s2">&quot;the place where it occurs; for example, the metadata name &quot;</span>
+        <span class="s2">&quot;accuracy indicates that the metadata value describes how &quot;</span>
+        <span class="s2">&quot;accurate a given attribute value is. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_standard</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NamedMetadata.validate_data"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.NamedMetadata.validate_data">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;unit&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unittext&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unitcode&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="n">valide_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+            <span class="n">valide_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">validate_unit_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()))</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="NamedMetadata.to_context_metadata"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.NamedMetadata.to_context_metadata">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_context_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())}</span></div></div>
+
+
+<div class="viewcode-block" id="BaseAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BaseAttribute</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for an attribute is represented by a JSON object with the following</span>
+<span class="sd">    syntax:</span>
+
+<span class="sd">    The attribute NGSI type is specified by the type property, whose value</span>
+<span class="sd">    is a string containing the NGSI type.</span>
+
+<span class="sd">    The attribute metadata is specified by the metadata property. Its value</span>
+<span class="sd">    is another JSON object which contains a property per metadata element</span>
+<span class="sd">    defined (the name of the property is the name of the metadata element).</span>
+<span class="sd">    Each metadata element, in turn, is represented by a JSON object</span>
+<span class="sd">    containing the following properties:</span>
+
+<span class="sd">    Values of entity attributes. For adding it you need to nest it into a</span>
+<span class="sd">    dict in order to give it a name.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; data = {&quot;type&quot;: &lt;...&gt;,</span>
+<span class="sd">                    &quot;metadata&quot;: &lt;...&gt;}</span>
+<span class="sd">        &gt;&gt;&gt; attr = BaseAttribute(**data)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The attribute type represents the NGSI value type of the &quot;</span>
+        <span class="s2">&quot;attribute value. Note that FIWARE NGSI has its own type &quot;</span>
+        <span class="s2">&quot;system for attribute values, so NGSI value types are not &quot;</span>
+        <span class="s2">&quot;the same as JSON types. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Union</span><span class="p">[</span>
+            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metadata</span><span class="p">],</span>
+            <span class="n">NamedMetadata</span><span class="p">,</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">NamedMetadata</span><span class="p">],</span>
+            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Metadata&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;optional metadata describing properties of the attribute &quot;</span>
+        <span class="s2">&quot;value like e.g. accuracy, provider, or a timestamp&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="BaseAttribute.validate_metadata_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseAttribute.validate_metadata_type">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_metadata_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;validator for field &#39;metadata&#39;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">NamedMetadata</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Metadata</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">NamedMetadata</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">item</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">NamedMetadata</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">NamedMetadata</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">NamedMetadata</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">}))</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span>
+                <span class="p">}</span>
+
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BaseNameAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseNameAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BaseNameAttribute</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model to add the name property to an BaseAttribute Model.</span>
+<span class="sd">    The attribute name describes what kind of property the</span>
+<span class="sd">    attribute value represents of the entity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Attribute name&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The attribute name describes what kind of property the &quot;</span>
+        <span class="s2">&quot;attribute value represents of the entity, for example &quot;</span>
+        <span class="s2">&quot;current_speed. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="c1"># Make it FIWARE-Safe</span>
+    <span class="p">)</span>
+    <span class="n">valid_name</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)(</span><span class="n">validate_fiware_attribute_name_regex</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseValueAttribute"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseValueAttribute">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BaseValueAttribute</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model to add the value property to an BaseAttribute Model. The Model</span>
+<span class="sd">    is represented by a JSON object with the following syntax:</span>
+
+
+<span class="sd">    The attribute value is specified by the value property, whose value may</span>
+<span class="sd">    be any JSON datatype.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The attribute type represents the NGSI value type of the &quot;</span>
+        <span class="s2">&quot;attribute value. Note that FIWARE NGSI has its own type &quot;</span>
+        <span class="s2">&quot;system for attribute values, so NGSI value types are not &quot;</span>
+        <span class="s2">&quot;the same as JSON types. Allowed characters &quot;</span>
+        <span class="s2">&quot;are the ones in the plain ASCII set, except the following &quot;</span>
+        <span class="s2">&quot;ones: control characters, whitespace, &amp;, ?, / and #.&quot;</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)(</span><span class="n">validate_fiware_datatype_string_protect</span><span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Attribute value&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;the actual data&quot;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="BaseValueAttribute.validate_value_based_on_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_based_on_type">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_value_based_on_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate_fiware_attribute_value_regex</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">values</span></div>
+
+<div class="viewcode-block" id="BaseValueAttribute.validate_value_type"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.BaseValueAttribute.validate_value_type">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_value_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validator for field &#39;value&#39;</span>
+<span class="sd">        The validator will try autocast the value based on the given type.</span>
+<span class="sd">        If `DataType.STRUCTUREDVALUE` is used for type it will also serialize</span>
+<span class="sd">        pydantic models. With latter operation all additional features of the</span>
+<span class="sd">        original pydantic model will be dumped.</span>
+<span class="sd">        If the type is unknown it will check json-serializable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+        <span class="n">value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+            <span class="n">value_</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+        <span class="n">validate_escape_character_free</span><span class="p">(</span><span class="n">value_</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="nb">bool</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DataType</span><span class="o">.</span><span class="n">NUMBER</span><span class="p">,</span> <span class="n">DataType</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">DATETIME</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="c1"># allows list</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">ARRAY</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">value</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not match &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DataType</span><span class="o">.</span><span class="n">ARRAY</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># allows dict and BaseModel as object</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">OBJECT</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="n">value</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not match &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DataType</span><span class="o">.</span><span class="n">OBJECT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># allows geojson as structured value</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">GEOJSON</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="n">value</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="n">Point</span><span class="p">,</span>
+                        <span class="n">MultiPoint</span><span class="p">,</span>
+                        <span class="n">LineString</span><span class="p">,</span>
+                        <span class="n">MultiLineString</span><span class="p">,</span>
+                        <span class="n">Polygon</span><span class="p">,</span>
+                        <span class="n">MultiPolygon</span><span class="p">,</span>
+                        <span class="n">Feature</span><span class="p">,</span>
+                        <span class="n">FeatureCollection</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">):</span>
+                    <span class="k">return</span> <span class="n">value</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">_geo_json_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;Point&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">Point</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;MultiPoint&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">MultiPoint</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;LineString&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">LineString</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;MultiLineString&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">MultiLineString</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;MultiPolygon&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">MultiPolygon</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;Feature&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">Feature</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_geo_json_type</span> <span class="o">==</span> <span class="s2">&quot;FeatureCollection&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">FeatureCollection</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not match &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DataType</span><span class="o">.</span><span class="n">GEOJSON</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># allows list, dict and BaseModel as structured value</span>
+            <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">DataType</span><span class="o">.</span><span class="n">STRUCTUREDVALUE</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="n">value</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not match &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DataType</span><span class="o">.</span><span class="n">STRUCTUREDVALUE</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># if none of the above, check if it is a pydantic model</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">value</span>
+
+            <span class="c1"># if none of the above, check if serializable. Hence, no further</span>
+            <span class="c1"># type check is performed</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">value</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
