@@ -108,10 +108,10 @@ class IoTAClient(BaseHttpClient):
                     group.subservice == self.headers["fiware-servicepath"]
                 ), "Service group subservice does not match fiware service path"
 
-        url = urljoin(self.base_url, "iot/services")
+        url = urljoin(self.base_url, "iot/groups")
         headers = self.headers
         data = {
-            "services": [
+            "groups": [
                 group.model_dump(exclude={"service", "subservice"}, exclude_none=True)
                 for group in service_groups
             ]
@@ -165,13 +165,13 @@ class IoTAClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, "iot/services")
+        url = urljoin(self.base_url, "iot/groups")
         headers = self.headers
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
                 ta = TypeAdapter(List[ServiceGroup])
-                return ta.validate_python(res.json()["services"])
+                return ta.validate_python(res.json()["groups"])
             res.raise_for_status()
         except requests.RequestException as err:
             self.logger.error(err)
@@ -254,7 +254,7 @@ class IoTAClient(BaseHttpClient):
                 fields = set(fields)
         else:
             fields = None
-        url = urljoin(self.base_url, "iot/services")
+        url = urljoin(self.base_url, "iot/groups")
         headers = self.headers
         params = service_group.model_dump(include={"resource", "apikey"})
         try:
@@ -290,7 +290,7 @@ class IoTAClient(BaseHttpClient):
         Returns:
 
         """
-        url = urljoin(self.base_url, "iot/services")
+        url = urljoin(self.base_url, "iot/groups")
         headers = self.headers
         params = {"resource": resource, "apikey": apikey}
         try:

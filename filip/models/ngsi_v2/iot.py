@@ -217,7 +217,6 @@ class ServiceGroup(BaseModel):
         "property-of-a-property is created instead.",
     )
     entity_type: Optional[str] = Field(
-        default=None,
         description="name of the Entity type to assign to the group. "
         "Allowed characters "
         "are the ones in the plain ASCII set, except the following "

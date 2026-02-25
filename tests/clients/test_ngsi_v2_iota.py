@@ -13,6 +13,7 @@ from uuid import uuid4
 from filip.models.base import FiwareHeader, DataType
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.clients.exceptions import BaseHttpClientException
+from filip.models.ngsi_v2 import ContextEntity
 from filip.models.ngsi_v2.iot import (
     ServiceGroup,
     Device,
@@ -179,6 +180,12 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(attribute=attr)
         logger.info(device.model_dump_json(indent=2))
 
+        with ContextBrokerClient(
+            url=settings.CB_URL, fiware_header=self.fiware_header
+        ) as client:
+            client.post_entity(
+                ContextEntity(id=device.entity_name, type=device.entity_type)
+            )
         with IoTAClient(
             url=settings.IOTA_JSON_URL, fiware_header=self.fiware_header
         ) as client:
@@ -221,6 +228,10 @@ class TestAgent(unittest.TestCase):
             transport="HTTP",
             apikey="filip-iot-test-device",
         )
+        entity = ContextEntity(
+            id=entity_id,
+            type="Thing2",
+        )
 
         cb_client = ContextBrokerClient(
             url=settings.CB_URL, fiware_header=self.fiware_header
@@ -229,6 +240,7 @@ class TestAgent(unittest.TestCase):
         # Test 1: Only delete device
         # delete without optional parameter -> entity needs to continue existing
         self.client.post_device(device=device)
+        cb_client.post_entity(entity=entity, update=True)
         self.client.delete_device(device_id=device_id, cb_url=settings.CB_URL)
         self.assertTrue(len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
         cb_client.delete_entity(entity_id=entity_id, entity_type="Thing2")
@@ -236,6 +248,7 @@ class TestAgent(unittest.TestCase):
         # Test 2:Delete device and corresponding entity
         # delete with optional parameter -> entity needs to be deleted
         self.client.post_device(device=device)
+        cb_client.post_entity(entity=entity, update=True)
         self.client.delete_device(
             device_id=device_id, cb_url=settings.CB_URL, delete_entity=True
         )
@@ -249,16 +262,20 @@ class TestAgent(unittest.TestCase):
         device2 = copy.deepcopy(device)
         device2.device_id = "device_id2"
         self.client.post_device(device=device2)
+        cb_client.post_entity(entity=entity, update=True)
+
         with self.assertRaises(Exception):
             self.client.delete_device(
                 device_id=device_id, delete_entity=True, cb_url=settings.CB_URL
             )
         self.assertTrue(len(cb_client.get_entity_list(entity_ids=[entity_id])) == 1)
         self.client.delete_device(device_id=device2.device_id)
+        cb_client.delete_entity(entity_id=entity_id, entity_type="Thing2")
 
         # Test 4: Only delete entity
         # delete without optional parameter -> device needs to continue existing
         self.client.post_device(device=device)
+        cb_client.post_entity(entity=entity, update=True)
         cb_client.delete_entity(entity_id=entity_id, entity_type="Thing2")
         self.client.get_device(device_id=device_id)
         self.client.delete_device(device_id=device_id)
@@ -269,6 +286,7 @@ class TestAgent(unittest.TestCase):
         device2 = copy.deepcopy(device)
         device2.device_id = "device_id2"
         self.client.post_device(device=device2)
+        cb_client.post_entity(entity=entity, update=True)
         cb_client.delete_entity(
             entity_id=entity_id,
             delete_devices=True,
@@ -283,6 +301,7 @@ class TestAgent(unittest.TestCase):
         """
 
         device = Device(**self.device)
+        self.client.post_device(device=device)
         device.endpoint = "http://test.com"
         device.transport = "MQTT"
 
@@ -297,12 +316,15 @@ class TestAgent(unittest.TestCase):
         )
         device.add_command(DeviceCommand(name="Com1"))
 
-        # use update_device to post
-        self.client.update_device(device=device, add=True)
-
         cb_client = ContextBrokerClient(
             url=settings.CB_URL, fiware_header=self.fiware_header
         )
+        cb_client.post_entity(
+            ContextEntity(id=device.entity_name, type=device.entity_type), update=True
+        )
+
+        # use update_device to post
+        self.client.update_device(device=device, add=True)
 
         # test if attributes exists correctly
         live_entity = cb_client.get_entity(entity_id=device.entity_name)
@@ -353,6 +375,7 @@ class TestAgent(unittest.TestCase):
         device = Device(**self.device)
         device.endpoint = "http://test.com"
         device.transport = "MQTT"
+        self.client.post_device(device=device)
 
         device.add_attribute(
             DeviceAttribute(name="Att1", object_id="o1", type=DataType.STRUCTUREDVALUE)
@@ -365,12 +388,15 @@ class TestAgent(unittest.TestCase):
         )
         device.add_command(DeviceCommand(name="Com1"))
 
-        # use patch_device to post
-        self.client.patch_device(device=device)
-
         cb_client = ContextBrokerClient(
             url=settings.CB_URL, fiware_header=self.fiware_header
         )
+        cb_client.post_entity(
+            ContextEntity(id=device.entity_name, type=device.entity_type), update=True
+        )
+
+        # use patch_device to post
+        self.client.patch_device(device=device, cb_client=cb_client)
 
         # test if attributes exists correctly
         live_entity = cb_client.get_entity(entity_id=device.entity_name)
@@ -476,18 +502,21 @@ class TestAgent(unittest.TestCase):
             subservice=settings.FIWARE_SERVICEPATH,
             resource="/iot/json",
             apikey="base",
+            entity_type="base",
         )
         group1 = ServiceGroup(
             service=settings.FIWARE_SERVICE,
             subservice=settings.FIWARE_SERVICEPATH,
             resource="/iot/json",
             apikey="test1",
+            entity_type="test1",
         )
         group2 = ServiceGroup(
             service=settings.FIWARE_SERVICE,
             subservice=settings.FIWARE_SERVICEPATH,
             resource="/iot/json",
             apikey="test2",
+            entity_type="test2",
         )
         self.client.post_groups([group_base, group1, group2], update=True)
 
@@ -566,6 +595,9 @@ class TestAgent(unittest.TestCase):
         )
         device = Device(**self.device)
         device.add_command(DeviceCommand(name="dummy_cmd"))
+        cb_client.post_entity(
+            ContextEntity(id=device.entity_name, type=device.entity_type), update=True
+        )
         self.client.post_device(device=device)
         clear_context_broker(settings.CB_URL, self.fiware_header)
         self.assertEqual(len(cb_client.get_registration_list()), 1)
@@ -637,6 +669,7 @@ class TestAgent(unittest.TestCase):
                 subservice=settings.FIWARE_SERVICEPATH,
                 resource="/iot/json",
                 apikey="dummytest",
+                entity_type="dummy",
             )
             self.client.post_group(service_group=group_test)
             response = self.client.get_group(
@@ -657,6 +690,7 @@ class TestAgent(unittest.TestCase):
             subservice=settings.FIWARE_SERVICEPATH,
             resource="/iot/json",
             apikey="dummytest",
+            entity_type="dummy",
         )
         # post group_test
         self.client.post_group(service_group=group_test)
@@ -915,6 +949,7 @@ class TestAgent(unittest.TestCase):
         """
         try:
             device = Device(**self.device)
+            self.client.post_device(device=device)
             device.endpoint = "http://test.com"
             device.transport = "MQTT"
 
@@ -931,12 +966,16 @@ class TestAgent(unittest.TestCase):
             )
             device.add_command(DeviceCommand(name="Com1"))
 
-            # use update_device to post
-            self.client.update_device(device=device, add=True)
-
             cb_client = ContextBrokerClient(
                 url=settings.CB_URL, fiware_header=self.fiware_header
             )
+            cb_client.post_entity(
+                ContextEntity(id=device.entity_name, type=device.entity_type),
+                update=True,
+            )
+
+            # use update_device to post
+            self.client.update_device(device=device, add=True)
 
             # test if attributes exists correctly
             live_entity = cb_client.get_entity(entity_id=device.entity_name)
@@ -987,6 +1026,7 @@ class TestAgent(unittest.TestCase):
 
     def test_update_device_wrong_port(self):
         device = Device(**self.device)
+        self.client.post_device(device=device)
         device.endpoint = "http://test.com"
         device.transport = "MQTT"
 
@@ -1001,12 +1041,15 @@ class TestAgent(unittest.TestCase):
         )
         device.add_command(DeviceCommand(name="Com1"))
 
-        # use update_device to post
-        self.client.update_device(device=device, add=True)
-
         cb_client = ContextBrokerClient(
             url=settings.CB_URL, fiware_header=self.fiware_header
         )
+        cb_client.post_entity(
+            ContextEntity(id=device.entity_name, type=device.entity_type), update=True
+        )
+
+        # use update_device to post
+        self.client.update_device(device=device, add=True)
 
         # test if attributes exists correctly
         live_entity = cb_client.get_entity(entity_id=device.entity_name)
@@ -1065,8 +1108,10 @@ class TestAgent(unittest.TestCase):
         """
         try:
             device = Device(**self.device)
+
             device.endpoint = "http://test.com"
             device.transport = "MQTT"
+            self.client.post_device(device=device)
 
             device.add_attribute(
                 DeviceAttribute(
@@ -1081,12 +1126,15 @@ class TestAgent(unittest.TestCase):
             )
             device.add_command(DeviceCommand(name="Com1"))
 
-            # use patch_device to post
-            self.client.patch_device(device=device)
-
             cb_client = ContextBrokerClient(
                 url=settings.CB_URL, fiware_header=self.fiware_header
             )
+            cb_client.post_entity(
+                ContextEntity(id=device.entity_name, type=device.entity_type),
+                update=True,
+            )
+            # use patch_device to post
+            self.client.patch_device(device=device, cb_client=cb_client)
 
             # test if attributes exists correctly
             live_entity = cb_client.get_entity(entity_id=device.entity_name)
