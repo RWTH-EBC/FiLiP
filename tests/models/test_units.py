@@ -1,12 +1,18 @@
 """
 Test for filip.models.units
 """
+import unittest
+import functools
+from time import perf_counter_ns
+from filip.models.ngsi_v2.units import \
+    Unit, \
+    Units, \
+    UnitCode, \
+    UnitText, \
+    load_units
 
-from unittest import TestCase
-from filip.models.ngsi_v2.units import Unit, Units, UnitCode, UnitText, load_units
 
-
-class TestUnitCodes(TestCase):
+class TestUnitCodes(unittest.TestCase):
 
     def setUp(self):
         self.units_data = load_units()
@@ -42,6 +48,36 @@ class TestUnitCodes(TestCase):
         unit_from_json = Unit.model_validate_json(json_data=json_data)
         self.assertEqual(unit, unit_from_json)
 
+    def test_unit_model_caching(self):
+        """
+        Test caching of unit model
+
+        Returns:
+            None
+        """
+
+        unit = Unit(**self.unit)
+        # testing hashing and caching
+        self.assertEqual(unit.__hash__(), unit.__hash__())
+
+        @functools.lru_cache(maxsize=128)
+        def cache_unit(unit: Unit):
+            return Unit(name=unit.name)
+
+        timers = []
+        results = []
+        for i in range(5):
+            start = perf_counter_ns()
+            res = cache_unit(unit)
+            stop = perf_counter_ns()
+            timers.append(stop - start)
+            results.append(res)
+            if i > 0:
+                self.assertEqual(results[0], res)
+                self.assertLess(timers[i], timers[0])
+
+        cache_unit.cache_clear()
+
     def test_units(self):
         """
         Test units api
@@ -72,7 +108,13 @@ class TestUnitCodes(TestCase):
         Returns:
             None
         """
+
         unit_data = self.unit.copy()
         unit_data["name"] = "celcius"
         with self.assertRaises(ValueError):
             Unit(**unit_data)
+
+if __name__ == '__main__':
+    unittest.main()
+
+

@@ -1,0 +1,218 @@
+version: "3.8"
+
+# Define levels for log file size limits
+x-logging-low: &logging-low # Used by: mongo-express, mongodb1, mongodb2, mongodb3, quantumleap
+  driver: "json-file"
+  options:
+      max-file: 5
+      max-size: 5m
+
+x-logging-medium: &logging-medium # Used by: orion
+  driver: "json-file"
+  options:
+      max-file: 5
+      max-size: 10m
+
+x-logging-high: &logging-high # Used by: cratedb, iot-agent-json
+  driver: "json-file"
+  options:
+      max-file: 5
+      max-size: 50m
+
+services:
+
+  orion:
+    image: fiware/orion:3.10.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
+    hostname: orion
+    container_name: "orion"
+    restart: always
+    ports:
+       - "1026:1026"
+    networks:
+       - fiware
+    depends_on:
+       - mongo-db
+    environment:
+      - ORION_LOG_LEVEL=DEBUG
+      - ORION_LOG_FOR_HUMANS=TRUE
+      - ORION_STAT_COUNTERS=FALSE
+      - ORION_STAT_SEM_WAIT=FALSE
+      - ORION_STAT_TIMING=FALSE
+      - ORION_STAT_NOTIF_QUEUE=TRUE
+      - ORION_MONGO_HOST=mongo-db
+      # - ORION_MONGO_REPLICA_SET=rs0
+      - ORION_MONGO_WRITE_CONCERN=1
+      - ORION_NOTIF_MODE=threadpool
+      - ORION_MQTT_TIMEOUT=10000
+      - ORION_TRQ_POOL_SIZE=10 # Use only if ORION_NOTIFICATION_MODE is set to "threadpool"
+      - ORION_MUTEX_POLICY=none
+      - ORION_CONN_MEMORY=128
+    logging: *logging-medium
+
+  mongo-db:
+    image: mongo:5.0.24
+    hostname: mongo-db
+    container_name: "mongo-db"
+    restart: always
+    networks:
+        - fiware
+    volumes:
+      - mongo-db:/data/db
+    logging: *logging-low
+
+  iot-agent-json:
+    image: fiware/iotagent-json:1.26.0
+    hostname: iot-agent
+    container_name: "iot-agent"
+    restart: always
+    ports:
+      - "4041:4041"
+    networks:
+      - fiware
+    depends_on:
+      - mongo-db
+    environment:
+      - IOTA_MULTI_CORE=true
+      - IOTA_CB_HOST=orion
+      - IOTA_CB_PORT=1026
+      - IOTA_NORTH_PORT=4041
+      - IOTA_REGISTRY_TYPE=mongodb
+      - IOTA_LOG_LEVEL=DEBUG
+      - IOTA_TIMESTAMP=true
+      - IOTA_CB_NGSI_VERSION=v2
+      - IOTA_AUTOCAST=false
+      - IOTA_EXPLICIT_ATTRS=true
+      - IOTA_MONGO_HOST=mongo-db
+      - IOTA_MONGO_PORT=27017
+      - IOTA_MONGO_DB=iotagentjson
+      - IOTA_PROVIDER_URL=http://iot-agent-json:4041
+      - IOTA_DEFAULT_RESOURCE=/iot/json
+      - IOTA_HTTP_PORT=7896
+      - IOTA_MQTT_HOST=mqtt-broker
+      - IOTA_MQTT_PORT=1883
+      # - IOTA_MQTT_USERNAME=iotagent
+      # - IOTA_MQTT_PASSWORD=mypassword
+      - IOTA_MQTT_PROTOCOL=mqtt
+      - IOTA_MQTT_KEEPALIVE=60
+      - IOTA_AMQP_DISABLED=true
+    logging: *logging-high
+
+  iot-agent-ul:
+    image: fiware/iotagent-ul:1.23.0
+    hostname: iot-agent-ul
+    networks:
+      - fiware
+    ports:
+      - "4061:4061"
+    environment:
+      - IOTA_CB_HOST=orion # Name of the context broker to update context
+      - IOTA_CB_PORT=1026 # Port the context broker listens on to update context
+      - IOTA_NORTH_PORT=4061
+      - IOTA_REGISTRY_TYPE=mongodb # Whether to hold IoT device info in memory or in a database
+      - IOTA_LOG_LEVEL=ERROR # The log level of the IoT Agent
+      - IOTA_TIMESTAMP=true # Supply timestamp information with each measurement
+      - IOTA_CB_NGSI_VERSION=v2 # Use NGSIv2 when sending updates for active attributes
+      - IOTA_AUTOCAST=true # Ensure Ultralight number values are read as numbers not strings
+      - IOTA_MONGO_HOST=mongo-db # The host name of MongoDB or list of hosts in case MongoDB is instantiated as replica set
+      - IOTA_MONGO_PORT=27017 # The port MongoDB is listening on
+      - IOTA_MONGO_DB=iotagentul # The name of the database used in MongoDB
+      - IOTA_MQTT_HOST=mqtt-broker # The host name of the MQTT Broker
+      - IOTA_MQTT_PORT=1883 # The port the MQTT Broker is listening on to receive topics
+      - IOTA_MQTT_KEEPALIVE=60
+      - IOTA_PROVIDER_URL=http://iot-agent-ul:4061
+      - IOTA_MULTI_CORE=true
+    logging: *logging-high
+
+  mqtt-broker:
+    image: eclipse-mosquitto:2.0.11
+    hostname: mqtt-broker
+    container_name: mqtt-broker
+    restart: always
+    ports:
+        - "1883:1883"
+    networks:
+        - fiware
+    volumes:
+        - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  quantumleap:
+    image: orchestracities/quantumleap:1.0.0
+    hostname: quantumleap
+    container_name: quantumleap
+    restart: always
+    ports:
+      - "8668:8668"
+    networks:
+      - fiware
+    depends_on:
+      - orion
+      - crate
+    environment:
+      - LOGLEVEL=DEBUG
+      - CRATE_HOST=crate
+      # - CRATE_DB_USER=ql
+      # - CRATE_DB_PASS=myqlpassword
+      # - REDIS_HOST=redis-cache
+      # - REDIS_PORT=6379
+      # - CACHE_QUERIES=True
+    logging: *logging-low
+
+  crate:
+    image: crate:4.8.4 # Please check release notes!
+    hostname: crate
+    container_name: crate
+    restart: always
+    ports:
+      - "4200:4200"
+    networks:
+        - fiware
+    volumes:
+      - crate:/data
+    environment:
+      - TZ=Europe/Berlin
+      - CRATE_HEAP_SIZE=1g
+    logging: *logging-high
+
+  orion-ld:
+    # Sometimes the newest builds fail. Hence, we fixed a stable version that
+    # probably will be updated once in a while
+    image: fiware/orion-ld:1.5.1
+    hostname: orion-ld
+    container_name: "orion-ld"
+    restart: always
+    ports:
+       - "1027:1026"
+    networks:
+        - fiware
+    depends_on:
+        - mongo-db
+    command: -experimental
+    environment:
+      - ORIONLD_LOG_LEVEL=DEBUG
+      - ORIONLD_TMP_TRACES=FALSE # Log level is buggy in 1.5.1 (TMP messages in logs for every request)
+      - ORIONLD_LOG_FOR_HUMANS=TRUE
+      - ORIONLD_CONTEXT_DOWNLOAD_TIMEOUT=1000
+      - ORIONLD_CONTEXT_DOWNLOAD_ATTEMPTS=5
+      - ORIONLD_FORWARDING=TRUE
+      - ORIONLD_STAT_COUNTERS=TRUE
+      - ORIONLD_STAT_SEM_WAIT=TRUE
+      - ORIONLD_STAT_TIMING=TRUE
+      - ORIONLD_STAT_NOTIF_QUEUE=TRUE
+      - ORIONLD_MONGO_HOST=mongo-db
+      # - ORIONLD_MONGO_REPLICA_SET=rs0
+      - ORIONLD_MONGO_DB=orionld
+      - ORIONLD_MONGO_WRITE_CONCERN=0
+      - ORIONLD_MULTI_SERVICE=TRUE
+      - ORIONLD_NOTIF_MODE=persistent
+      - ORIONLD_MUTEX_POLICY=all
+      - ORIONLD_CONN_MEMORY=128
+
+volumes:
+  mongo-db:
+    name: mongodb
+  crate:
+    name: crate
+
+networks:
+  fiware:
+    name: fiware

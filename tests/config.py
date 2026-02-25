@@ -34,7 +34,7 @@ class TestSettings(BaseSettings):
         ),
     )
     LD_CB_URL: AnyHttpUrl = Field(
-        default="http://localhost:1026",
+        default="http://localhost:1027",
         validation_alias=AliasChoices(
             "LD_ORION_URL", "LD_CB_URL", "ORION_LD_URL", "SCORPIO_URL", "STELLIO_URL"
         ),
@@ -61,12 +61,12 @@ class TestSettings(BaseSettings):
     )
 
     MQTT_BROKER_URL_INTERNAL: AnyUrl = Field(
-        default="mqtt://mosquitto:1883",
+        default="mqtt://mqtt-broker:1883",
         validation_alias=AliasChoices("MQTT_BROKER_URL_INTERNAL", "MQTT_URL_INTERNAL"),
     )
 
     LD_MQTT_BROKER_URL: AnyUrl = Field(
-        default="mqtt://127.0.0.1:1884",
+        default="mqtt://127.0.0.1:1883",
         validation_alias=AliasChoices(
             "LD_MQTT_BROKER_URL", "LD_MQTT_URL", "LD_MQTT_BROKER"
         ),
