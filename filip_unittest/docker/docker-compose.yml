@@ -61,7 +61,7 @@ services:
     logging: *logging-low
 
   iot-agent-json:
-    image: fiware/iotagent-json:1.26.0
+    image: fiware/iotagent-json:3.6.0
     hostname: iot-agent
     container_name: "iot-agent"
     restart: always
