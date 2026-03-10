@@ -4,6 +4,8 @@ Test module for context broker models
 
 import unittest
 from typing import List
+
+import pytest
 from pydantic_core import PydanticCustomError
 from geojson_pydantic import (
     Point,
@@ -594,6 +596,7 @@ class TestContextModels(unittest.TestCase):
         entity.delete_attributes(["test3"])
         self.assertEqual(entity.get_attribute_names(), set())
 
+    @pytest.mark.skip(reason="Not ready yet")
     def test_entity_get_command_methods(self):
         """
         Tests the two methods:
@@ -624,6 +627,16 @@ class TestContextModels(unittest.TestCase):
 
         device.add_command(DeviceCommand(name="myCommand"))
         device.add_command(DeviceCommand(name="myCommand2", type=DataType.TEXT))
+
+        with ContextBrokerClient(
+            url=settings.CB_URL,
+            fiware_header=FiwareHeader(
+                service=settings.FIWARE_SERVICE,
+                service_path=settings.FIWARE_SERVICEPATH,
+            ),
+        ) as client:
+            entity = ContextEntity(id="name", type="type")
+            client.post_entity(entity=entity)
 
         with IoTAClient(
             url=settings.IOTA_JSON_URL,

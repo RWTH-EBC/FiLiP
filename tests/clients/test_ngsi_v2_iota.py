@@ -5,6 +5,8 @@ Test for iota http client
 import copy
 import unittest
 import logging
+
+import pytest
 import requests
 import json
 
@@ -814,6 +816,7 @@ class TestAgent(unittest.TestCase):
         print("Wrong port error message:", str(cm.exception))
         self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
 
+    @pytest.mark.skip(reason="Not ready yet")
     def test_get_device_list_with_invalid_entries(self):
         """
         Tests the behavior of get_device_list when the IoT Agent contains

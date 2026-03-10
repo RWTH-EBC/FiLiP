@@ -33,10 +33,14 @@ class TestMQTTClient(unittest.TestCase):
             service=settings.FIWARE_SERVICE, service_path=settings.FIWARE_SERVICEPATH
         )
         self.service_group_json = ServiceGroup(
-            apikey=settings.FIWARE_SERVICEPATH.strip("/"), resource="/iot/json"
+            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
+            resource="/iot/json",
+            entity_type="Thing",
         )
         self.service_group_ul = ServiceGroup(
-            apikey=settings.FIWARE_SERVICEPATH.strip("/"), resource="/iot/d"
+            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
+            resource="/iot/d",
+            entity_type="Thing",
         )
 
         # create a device configuration
