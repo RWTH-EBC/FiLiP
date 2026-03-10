@@ -46,6 +46,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         *,
         session: requests.Session = None,
         fiware_header: FiwareLDHeader = None,
+        create_tenant: bool = False,
         **kwargs,
     ):
         """
@@ -75,7 +76,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         # default downlink content JSON-LD
         self.headers.update({"Accept": "application/ld+json"})
 
-        if init_header.ngsild_tenant is not None:
+        if create_tenant and init_header.ngsild_tenant is not None:
             self.__make_tenant()
 
     def __pagination(

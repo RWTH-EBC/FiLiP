@@ -77,7 +77,10 @@ class TestContextBroker(unittest.TestCase):
         session.mount("https://", adapter)
         session.mount("http://", adapter)
         self.client = ContextBrokerLDClient(
-            fiware_header=self.fiware_header, session=session, url=settings.LD_CB_URL
+            fiware_header=self.fiware_header,
+            session=session,
+            url=settings.LD_CB_URL,
+            create_tenant=True,
         )
         clear_context_broker_ld(cb_ld_client=self.client)
 
