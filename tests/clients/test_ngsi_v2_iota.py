@@ -1264,6 +1264,47 @@ class TestAgent(unittest.TestCase):
         print("Wrong port get_loglevel_of_agent() error message:", str(cm.exception))
         self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
 
+    def test_notification_command(self):
+        # create group with MQTT transport
+        service_group = ServiceGroup(
+            service=self.fiware_header.service,
+            subservice=self.fiware_header.service_path,
+            apikey="test_notification",
+            resource="/iot/json",
+            entity_type="Actuator",
+            endpoint="mqtt:mqtt-broker:1883",
+            cmdMode="notification",
+            commands=[DeviceCommand(name="test_cmd")],
+        )
+        self.client.post_groups([service_group], update=True)
+
+        # create device with the same api key and use notification as command mode
+        device = Device(
+            device_id="actuator:001",
+            entity_name="actuator:001",
+            entity_type="Actuator",
+            transport="MQTT",
+            cmdMode="notification",
+            apikey="test_notification",
+            commands=[DeviceCommand(name="test_cmd")],
+        )
+        self.client.post_device(device=device)
+        time.sleep(2)
+
+        # update the command
+        with ContextBrokerClient(
+            url=settings.CB_URL, fiware_header=self.fiware_header
+        ) as cbc:
+            cbc.update_attribute_value(
+                entity_id=device.entity_name,
+                entity_type=device.entity_type,
+                attr_name="test_cmd",
+                value="on",
+                forcedUpdate=True,
+            )
+        # check the mqtt.
+        time.sleep(2)
+
     def tearDown(self) -> None:
         """
         Cleanup test server
