@@ -3,6 +3,7 @@ Test for iota http client
 """
 
 import copy
+import time
 import unittest
 import logging
 
