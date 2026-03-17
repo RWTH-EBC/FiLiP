@@ -317,6 +317,14 @@
         <span class="s2">&quot;be used to override the global ones for specific types of &quot;</span>
         <span class="s2">&quot;devices.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Endpoint where the group of device is going to receive commands, if any.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cmdMode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default. &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
 <div class="viewcode-block" id="ServiceGroup.validate_cbHost"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.validate_cbHost">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;cbHost&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
@@ -496,6 +504,10 @@
     <span class="p">)</span>
     <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceCommand</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of commands of the device&quot;</span>
+    <span class="p">)</span>
+    <span class="n">cmdMode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Legacy &quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceAttribute</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of active attributes of the device&quot;</span>

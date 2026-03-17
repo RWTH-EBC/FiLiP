@@ -883,33 +883,35 @@ filip/models/ngsi_v2/base.py:410:4: R0911: Too many return statements (26/6) (to
 filip/models/ngsi_v2/base.py:410:4: R0912: Too many branches (31/12) (too-many-branches)
 filip/models/ngsi_v2/base.py:30:0: C0411: standard import "from typing import Union, Optional, Pattern, List, Dict, Any" should be placed before "from aenum import Enum" (wrong-import-order)
 ************* Module filip.models.ngsi_v2.iot
-filip/models/ngsi_v2/iot.py:458:0: C0301: Line too long (113/100) (line-too-long)
+filip/models/ngsi_v2/iot.py:248:0: C0301: Line too long (222/100) (line-too-long)
+filip/models/ngsi_v2/iot.py:432:0: C0301: Line too long (221/100) (line-too-long)
+filip/models/ngsi_v2/iot.py:470:0: C0301: Line too long (113/100) (line-too-long)
 filip/models/ngsi_v2/iot.py:11:0: E0401: Unable to import 'pytz' (import-error)
 filip/models/ngsi_v2/iot.py:12:0: E0401: Unable to import 'pydantic' (import-error)
 filip/models/ngsi_v2/iot.py:123:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
 filip/models/ngsi_v2/iot.py:183:4: W0107: Unnecessary pass statement (unnecessary-pass)
-filip/models/ngsi_v2/iot.py:245:4: C0103: Method name "validate_cbHost" doesn't conform to snake_case naming style (invalid-name)
-filip/models/ngsi_v2/iot.py:569:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:576:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
-filip/models/ngsi_v2/iot.py:577:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:582:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
-filip/models/ngsi_v2/iot.py:583:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:253:4: C0103: Method name "validate_cbHost" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/iot.py:581:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
 filip/models/ngsi_v2/iot.py:588:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
 filip/models/ngsi_v2/iot.py:589:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
 filip/models/ngsi_v2/iot.py:594:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
-filip/models/ngsi_v2/iot.py:601:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
-filip/models/ngsi_v2/iot.py:607:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
-filip/models/ngsi_v2/iot.py:631:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:634:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:637:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:640:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:646:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
-filip/models/ngsi_v2/iot.py:656:16: W0707: Consider explicitly re-raising using 'except ValueError as exc' and 'raise KeyError(msg) from exc' (raise-missing-from)
-filip/models/ngsi_v2/iot.py:673:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:675:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:677:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:679:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/iot.py:685:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/models/ngsi_v2/iot.py:595:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:600:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/iot.py:601:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:606:16: C2801: Unnecessarily calls dunder method __setattr__. Set attribute directly or use setattr built-in function. (unnecessary-dunder-call)
+filip/models/ngsi_v2/iot.py:613:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/models/ngsi_v2/iot.py:619:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/models/ngsi_v2/iot.py:643:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:646:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:649:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:652:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:658:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/models/ngsi_v2/iot.py:668:16: W0707: Consider explicitly re-raising using 'except ValueError as exc' and 'raise KeyError(msg) from exc' (raise-missing-from)
+filip/models/ngsi_v2/iot.py:685:15: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:687:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:689:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:691:17: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/iot.py:697:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
 ************* Module filip.models.ngsi_v2.registrations
 filip/models/ngsi_v2/registrations.py:8:0: E0401: Unable to import 'aenum' (import-error)
 filip/models/ngsi_v2/registrations.py:9:0: E0401: Unable to import 'pydantic' (import-error)
@@ -1047,10 +1049,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         "If attrs is not used, the order is arbitrary. "
         "Example:"
         "[ 'Ford', 'black', 78.3 ]",
-    )
-
-
-# NGSIv2 entity models (duplicate-code)
+    ) (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[132:157]
 ==filip.clients.ngsi_v2.cb:[138:164]
@@ -1073,9 +1072,10 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
                 return items
             res.raise_for_status()
 
+    # MANAGEMENT API
     def get_version(self) -> Dict:
         """
-        Gets version of Orion-LD context broker
+        Gets version of IoT Agent
         Returns:
             Dictionary with response
         """ (duplicate-code)
@@ -1091,6 +1091,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
@@ -1119,7 +1120,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         description="Id of an entity in an NGSI context broker. Allowed "
         "characters are the ones in the plain ASCII set, except "
         "the following ones: control characters, "
-        "whitespace, &, ?, / and #." (duplicate-code)
+        "whitespace, &, ?, / and #.", (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[297:308]
 ==filip.models.ngsi_v2.subscriptions:[48:59]
@@ -1163,17 +1164,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        """
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        """ (duplicate-code)
+                return False (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[119:130]
 ==filip.clients.ngsi_v2.cb:[125:136]
@@ -1206,8 +1197,6 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
-    """Type of object that is referenced by an id/iri"""
-
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1314,7 +1303,9 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    ) (duplicate-code)
+    )
+
+ (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[7:14]
 ==filip.models.ngsi_v2.base:[7:14]
@@ -1339,23 +1330,6 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 
         return True
 
-    def is_logically_equivalent_to(
-        self,
-        datatype: "Datatype",
-        vocabulary: "Vocabulary",
-        old_vocabulary: "Vocabulary",
-    ) -> bool:
-        """Test if this datatype is logically equivalent to the given datatype
-
-        Args:
-            datatype (Datatype): Datatype to compare against
-            vocabulary (Vocabulary): Not used, but needed to keep signature the
-                same as other entities
-            old_vocabulary (Vocabulary): Not used, but needed to keep signature
-                the same as other entities
-        Returns:
-            bool
-        """
  (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[712:719]
@@ -1428,16 +1402,17 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[463:469]
-                        Point,
-                        MultiPoint,
-                        LineString,
-                        MultiLineString,
-                        Polygon,
-                        MultiPolygon, (duplicate-code)
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon, (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[363:372]
 ==filip.models.ngsi_v2.iot:[165:171]
@@ -1445,24 +1420,30 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
-
- (duplicate-code)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if "#" in iri:
-        index = iri.find("#")
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind("/")
-        return iri[:index]
+        if "#" in iri:
+            index = iri.find("#")
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind("/")
+            return iri[:index]
 
- (duplicate-code)
+    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
+        """Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        """ (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[733:739]
 ==filip.clients.ngsi_v2.cb:[1750:1756]
@@ -1535,7 +1516,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
             params["limit"] = 1000  # maximum items per request
         else:
             params["limit"] = limit
- (duplicate-code)
+        # add count option if not present (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[164:170]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1677,17 +1658,18 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload) (duplicate-code)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 
 -----------------------------------
-Your code has been rated at 7.64/10
+Your code has been rated at 7.63/10
 
