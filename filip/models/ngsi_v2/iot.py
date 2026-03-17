@@ -239,6 +239,14 @@ class ServiceGroup(BaseModel):
         "be used to override the global ones for specific types of "
         "devices.",
     )
+    endpoint: Optional[str] = Field(
+        default=None,
+        description="Endpoint where the group of device is going to receive commands, if any.",
+    )
+    cmdMode: Optional[str] = Field(
+        default=None,
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default. ",
+    )
 
     @field_validator("cbHost")
     @classmethod
@@ -418,6 +426,10 @@ class Device(DeviceSettings):
     )
     commands: List[DeviceCommand] = Field(
         default=[], description="List of commands of the device"
+    )
+    cmdMode: str = Field(
+        default="Legacy ",
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default.",
     )
     attributes: List[DeviceAttribute] = Field(
         default=[], description="List of active attributes of the device"
