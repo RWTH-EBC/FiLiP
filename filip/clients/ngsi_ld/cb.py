@@ -46,7 +46,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         *,
         session: requests.Session = None,
         fiware_header: FiwareLDHeader = None,
-        create_tenant: bool = False,
+        create_tenant: bool = True,
         **kwargs,
     ):
         """
