@@ -171,6 +171,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - CRATE_HEAP_SIZE=1g
+      - CRATE_JAVA_OPTS=-XX:-UseContainerSupport
     logging: *logging-high
 
   orion-ld:
