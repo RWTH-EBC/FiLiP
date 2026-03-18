@@ -1070,9 +1070,10 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
                 return items
             res.raise_for_status()
 
+    # MANAGEMENT API
     def get_version(self) -> Dict:
         """
-        Gets version of Orion-LD context broker
+        Gets version of IoT Agent
         Returns:
             Dictionary with response
         """ (duplicate-code)
@@ -1117,7 +1118,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         description="Id of an entity in an NGSI context broker. Allowed "
         "characters are the ones in the plain ASCII set, except "
         "the following ones: control characters, "
-        "whitespace, &, ?, / and #." (duplicate-code)
+        "whitespace, &, ?, / and #.", (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[297:308]
 ==filip.models.ngsi_v2.subscriptions:[48:59]
@@ -1203,6 +1204,8 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
+
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1267,6 +1270,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) > 0:
+                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1336,6 +1340,23 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 
         return True
 
+    def is_logically_equivalent_to(
+        self,
+        datatype: "Datatype",
+        vocabulary: "Vocabulary",
+        old_vocabulary: "Vocabulary",
+    ) -> bool:
+        """Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        """
  (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[713:720]
@@ -1408,7 +1429,6 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
@@ -1521,7 +1541,7 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
             params["limit"] = 1000  # maximum items per request
         else:
             params["limit"] = limit
- (duplicate-code)
+        # add count option if not present (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[164:170]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1658,23 +1678,22 @@ filip/models/ngsi_ld/subscriptions.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(
-        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
-    ) -> str:
+    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload) (duplicate-code)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
-filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/models/ngsi_ld/subscriptions.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 
 -----------------------------------
 Your code has been rated at 7.64/10
