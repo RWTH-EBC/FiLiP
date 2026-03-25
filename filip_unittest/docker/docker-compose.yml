@@ -22,7 +22,7 @@ x-logging-high: &logging-high # Used by: cratedb, iot-agent-json
 services:
 
   orion:
-    image: fiware/orion:3.10.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
+    image: fiware/orion:4.2.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
     hostname: orion
     container_name: "orion"
     restart: always
@@ -50,7 +50,7 @@ services:
     logging: *logging-medium
 
   mongo-db:
-    image: mongo:5.0.24
+    image: mongo:8.0.20
     hostname: mongo-db
     container_name: "mongo-db"
     restart: always
