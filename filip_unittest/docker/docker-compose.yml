@@ -158,7 +158,7 @@ services:
     logging: *logging-low
 
   crate:
-    image: crate:4.8.4 # Please check release notes!
+    image: crate:5.8.6 # Please check release notes!
     hostname: crate
     container_name: crate
     restart: always
@@ -171,6 +171,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - CRATE_HEAP_SIZE=1g
+      - CRATE_JAVA_OPTS=-XX:-UseContainerSupport
     logging: *logging-high
 
   orion-ld:
