@@ -240,28 +240,44 @@ class TestClient(unittest.TestCase):
         )
         mock_session = MagicMock(spec=requests.Session)
         mock_session.headers = {}
-        mock_session.get.return_value = MagicMock()
+
+        verbs = ["get", "post", "put", "patch", "delete", "options", "head"]
+
+        # Mock all HTTP verb methods on the session
+        for verb in verbs:
+            getattr(mock_session, verb).return_value = MagicMock()
 
         client = BaseHttpClient(
             url="https://example.com", session=mock_session, fiware_header=secure_header
         )
 
-        # Trigger two separate requests
-        client.get("https://example.com/test1")
-        time.sleep(1)  # Ensure the clock moves forward
-        client.get("https://example.com/test2")
+        seen_authorizations = set()
 
-        # Extract the headers used in both calls
-        first_call_headers = mock_session.get.call_args_list[0].kwargs["headers"]
-        second_call_headers = mock_session.get.call_args_list[1].kwargs["headers"]
+        for verb in verbs:
+            # Call the corresponding method on the client dynamically (e.g., client.get)
+            client_method = getattr(client, verb)
+            client_method(f"https://example.com/test_{verb}")
 
-        # Verify they are different
-        self.assertNotEqual(
-            first_call_headers["authorization"], second_call_headers["authorization"]
-        )
+            # Extract the headers used in this specific session mock call
+            session_mock_method = getattr(mock_session, verb)
+            call_headers = session_mock_method.call_args_list[0].kwargs["headers"]
+            auth_header = call_headers["authorization"]
 
-        # Verify they both start with "Bearer"
-        self.assertTrue(first_call_headers["authorization"].startswith("Bearer"))
+            # Verify it starts with "Bearer"
+            self.assertTrue(auth_header.startswith("Bearer"))
+
+            # Verify this exact token hasn't been generated in previous calls
+            self.assertNotIn(
+                auth_header,
+                seen_authorizations,
+                f"Header failed to update for {verb.upper()} request",
+            )
+
+            # Store the header to compare against future calls
+            seen_authorizations.add(auth_header)
+
+            # Ensure the clock moves forward slightly for the next time.time() call
+            time.sleep(0.01)
 
     def tearDown(self) -> None:
         """
