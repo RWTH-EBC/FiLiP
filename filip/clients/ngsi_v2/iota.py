@@ -101,11 +101,11 @@ class IoTAClient(BaseHttpClient):
         for group in service_groups:
             if group.service:
                 assert (
-                    group.service == self.headers["fiware-service"]
+                    group.service == self.fiware_service
                 ), "Service group service does not math fiware service"
             if group.subservice:
                 assert (
-                    group.subservice == self.headers["fiware-servicepath"]
+                    group.subservice == self.fiware_service_path
                 ), "Service group subservice does not match fiware service path"
 
         url = urljoin(self.base_url, "iot/services")
@@ -810,8 +810,10 @@ class IoTAClient(BaseHttpClient):
         """
         url = urljoin(self.base_url, "admin/log")
         headers = self.headers.copy()
-        del headers["fiware-service"]
-        del headers["fiware-servicepath"]
+        if headers.get("fiware-service"):
+            del headers["fiware-service"]
+        if headers.get("fiware-servicepath"):
+            del headers["fiware-servicepath"]
         try:
             res = self.get(url=url, headers=headers)
             if res.ok:
