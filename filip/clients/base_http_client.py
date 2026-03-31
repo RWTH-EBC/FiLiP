@@ -50,12 +50,12 @@ class BaseHttpClient:
             self.logger.debug("Checking url style...")
             self.base_url = validate_http_url(url)
 
+        self._headers: Dict = {}
         if session:
             self.session = session
             self._external_session = True
         else:
             self.session = None
-            self._headers = {}
 
         if not fiware_header:
             self.fiware_headers = FiwareHeader()
@@ -69,7 +69,7 @@ class BaseHttpClient:
     def __enter__(self):
         if not self.session:
             self.session = requests.Session()
-            self.headers.update(self.fiware_headers.model_dump(by_alias=True))
+            self.session.headers.update(self._headers)
             self._external_session = False
         return self
 
@@ -116,7 +116,6 @@ class BaseHttpClient:
             self._fiware_headers = FiwareLDHeader.parse_raw(headers)
         else:
             raise TypeError(f"Invalid headers! {type(headers)}")
-        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def fiware_service(self) -> str:
@@ -138,7 +137,6 @@ class BaseHttpClient:
             None
         """
         self._fiware_headers.service = service
-        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def fiware_service_path(self) -> str:
@@ -160,7 +158,6 @@ class BaseHttpClient:
             None
         """
         self._fiware_headers.service_path = service_path
-        self.headers.update(self.fiware_headers.model_dump(by_alias=True))
 
     @property
     def headers(self):
@@ -172,6 +169,17 @@ class BaseHttpClient:
         if self.session:
             return self.session.headers
         return self._headers
+
+    def _inject_fiware_headers(self, kwargs: Dict) -> Dict:
+        headers = kwargs.pop("headers", None)
+        request_headers = {}
+        if not self.session:
+            request_headers.update(self._headers)
+        request_headers.update(self.fiware_headers.model_dump(by_alias=True))
+        if headers:
+            request_headers.update(headers)
+        kwargs["headers"] = request_headers
+        return kwargs
 
     # modification to requests api
     def get(
@@ -192,6 +200,7 @@ class BaseHttpClient:
         """
 
         kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
+        kwargs = self._inject_fiware_headers(kwargs)
 
         if self.session:
             return self.session.get(url=url, params=params, **kwargs)
@@ -210,6 +219,7 @@ class BaseHttpClient:
             requests.Response
         """
         kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
+        kwargs = self._inject_fiware_headers(kwargs)
 
         if self.session:
             return self.session.options(url=url, **kwargs)
@@ -232,6 +242,7 @@ class BaseHttpClient:
             requests.Response
         """
         kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
+        kwargs = self._inject_fiware_headers(kwargs)
 
         if self.session:
             return self.session.head(url=url, params=params, **kwargs)
@@ -260,6 +271,7 @@ class BaseHttpClient:
 
         """
         kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
+        kwargs = self._inject_fiware_headers(kwargs)
 
         if self.session:
             return self.session.post(url=url, data=data, json=json, **kwargs)
@@ -289,6 +301,7 @@ class BaseHttpClient:
             request.Response
         """
         kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
+        kwargs = self._inject_fiware_headers(kwargs)
 
         if self.session:
             return self.session.put(url=url, data=data, json=json, **kwargs)
@@ -318,6 +331,7 @@ class BaseHttpClient:
             request.Response
         """
         kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
+        kwargs = self._inject_fiware_headers(kwargs)
 
         if self.session:
             return self.session.patch(url=url, data=data, json=json, **kwargs)
@@ -336,6 +350,7 @@ class BaseHttpClient:
             request.Response
         """
         kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
+        kwargs = self._inject_fiware_headers(kwargs)
 
         if self.session:
             return self.session.delete(url=url, **kwargs)

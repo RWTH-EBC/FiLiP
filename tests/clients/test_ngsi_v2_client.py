@@ -5,12 +5,13 @@ Test for filip.core.client
 import unittest
 import json
 import requests
-
+from unittest.mock import MagicMock
 from pathlib import Path
-
 from filip.clients.exceptions import BaseHttpClientException
-
-from filip.models.base import FiwareHeader
+import time
+from filip.models.base import FiwareHeader, FiwareHeaderSecure
+from filip.clients.base_http_client import BaseHttpClient
+from pydantic import computed_field
 from filip.clients.ngsi_v2.client import HttpClient, HttpClientConfig
 from filip.models.ngsi_v2 import ContextEntity
 from tests.config import settings, generate_servicepath
@@ -222,6 +223,45 @@ class TestClient(unittest.TestCase):
         )
         with self.assertRaises(BaseHttpClientException):
             client = HttpClient(config=config, fiware_header=self.fh)
+
+    def test_dynamic_header_update(self):
+        """Ensure secure headers refresh without reinstantiating the client."""
+
+        class DynamicFiwareHeader(FiwareHeader):
+            @computed_field
+            @property
+            def authorization(self) -> str:
+                # This code runs every single time someone touches .authorization
+                return f"Bearer {time.time()}"
+
+        secure_header = DynamicFiwareHeader(
+            service=self.fh.service,
+            service_path=self.fh.service_path,
+        )
+        mock_session = MagicMock(spec=requests.Session)
+        mock_session.headers = {}
+        mock_session.get.return_value = MagicMock()
+
+        client = BaseHttpClient(
+            url="https://example.com", session=mock_session, fiware_header=secure_header
+        )
+
+        # Trigger two separate requests
+        client.get("https://example.com/test1")
+        time.sleep(1)  # Ensure the clock moves forward
+        client.get("https://example.com/test2")
+
+        # Extract the headers used in both calls
+        first_call_headers = mock_session.get.call_args_list[0].kwargs["headers"]
+        second_call_headers = mock_session.get.call_args_list[1].kwargs["headers"]
+
+        # Verify they are different
+        self.assertNotEqual(
+            first_call_headers["authorization"], second_call_headers["authorization"]
+        )
+
+        # Verify they both start with "Bearer"
+        self.assertTrue(first_call_headers["authorization"].startswith("Bearer"))
 
     def tearDown(self) -> None:
         """
