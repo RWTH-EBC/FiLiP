@@ -573,7 +573,7 @@ filip/clients/ngsi_v2/iota.py:400:0: C0301: Line too long (114/100) (line-too-lo
 filip/clients/ngsi_v2/iota.py:484:0: C0301: Line too long (107/100) (line-too-long)
 filip/clients/ngsi_v2/iota.py:521:0: C0301: Line too long (118/100) (line-too-long)
 filip/clients/ngsi_v2/iota.py:798:0: C0301: Line too long (106/100) (line-too-long)
-filip/clients/ngsi_v2/iota.py:822:0: C0301: Line too long (108/100) (line-too-long)
+filip/clients/ngsi_v2/iota.py:824:0: C0301: Line too long (108/100) (line-too-long)
 filip/clients/ngsi_v2/iota.py:12:0: E0401: Unable to import 'requests' (import-error)
 filip/clients/ngsi_v2/iota.py:13:0: E0401: Unable to import 'pydantic' (import-error)
 filip/clients/ngsi_v2/iota.py:14:0: E0401: Unable to import 'pydantic.type_adapter' (import-error)
@@ -599,7 +599,7 @@ filip/clients/ngsi_v2/iota.py:721:8: C0415: Import outside toplevel (filip.model
 filip/clients/ngsi_v2/iota.py:724:12: C0415: Import outside toplevel (filip.models.base.DataType) (import-outside-toplevel)
 filip/clients/ngsi_v2/iota.py:764:12: C0415: Import outside toplevel (filip.clients.ngsi_v2.ContextBrokerClient) (import-outside-toplevel)
 filip/clients/ngsi_v2/iota.py:805:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_v2/iota.py:848:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
+filip/clients/ngsi_v2/iota.py:850:0: W1404: Implicit string concatenation found in call (implicit-str-concat)
 filip/clients/ngsi_v2/iota.py:9:0: W0611: Unused Optional imported from typing (unused-import)
 ************* Module filip.clients.ngsi_v2.quantumleap
 filip/clients/ngsi_v2/quantumleap.py:1:0: C0302: Too many lines in module (1308/1000) (too-many-lines)
@@ -1041,10 +1041,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         "If attrs is not used, the order is arbitrary. "
         "Example:"
         "[ 'Ford', 'black', 78.3 ]",
-    )
-
-
-# NGSIv2 entity models (duplicate-code)
+    ) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.iot:[143:154]
 ==filip.models.ngsi_v2.subscriptions:[48:59]
@@ -1071,7 +1068,6 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
@@ -1117,7 +1113,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         description="Id of an entity in an NGSI context broker. Allowed "
         "characters are the ones in the plain ASCII set, except "
         "the following ones: control characters, "
-        "whitespace, &, ?, / and #.", (duplicate-code)
+        "whitespace, &, ?, / and #." (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[971:981]
 ==filip.clients.ngsi_v2.cb:[1853:1873]
@@ -1130,7 +1126,17 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False (duplicate-code)
+                return False
+
+    def update_registration(self, registration: Registration):
+        """
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        """ (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[357:369]
 ==filip.models.ngsi_v2.base:[358:369]
@@ -1143,7 +1149,6 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
@@ -1186,6 +1191,8 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
+
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1236,25 +1243,25 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[133:141]
 ==filip.clients.ngsi_v2.cb:[125:133]
-                res = self.request(
-                    method=method.value,
-                    url=url,
-                    params=params,
-                    headers=headers,
-                    data=data,
-                )
-                if res.ok: (duplicate-code)
+        res = self.request(
+            method=method.value,
+            url=url,
+            params=params,
+            headers=headers,
+            data=data,
+        )
+        if res.ok: (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[119:127]
 ==filip.clients.ngsi_v2.cb:[139:147]
-                res = self.request(
-                    method=method.value,
-                    url=url,
-                    params=params,
-                    headers=headers,
-                    data=data,
-                )
-                if res.ok: (duplicate-code)
+        res = self.request(
+            method=method.value,
+            url=url,
+            params=params,
+            headers=headers,
+            data=data,
+        )
+        if res.ok: (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.semantics_models:[126:137]
 ==filip.semantics.vocabulary.entities:[659:670]
@@ -1273,7 +1280,6 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) > 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1301,7 +1307,9 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    ) (duplicate-code)
+    )
+
+ (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[162:169]
 ==filip.clients.ngsi_v2.iota:[67:74]
@@ -1505,6 +1513,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[1665:1671]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1530,16 +1539,25 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if "#" in iri:
-        index = iri.find("#")
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind("/")
-        return iri[:index]
+        if "#" in iri:
+            index = iri.find("#")
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind("/")
+            return iri[:index]
 
- (duplicate-code)
+    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
+        """Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        """ (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.iot:[11:16]
 ==filip.models.ngsi_v2.subscriptions:[8:13]
@@ -1660,7 +1678,8 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 
         if limit is None:
             limit = inf
-        params["limit"] = 1000 if limit > 1000 else limit (duplicate-code)
+        params["limit"] = 1000 if limit > 1000 else limit
+ (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[613:619]
 ==filip.clients.ngsi_v2.quantumleap:[253:258]
@@ -1687,15 +1706,16 @@ from filip.semantics.vocabulary import (
     IdType,
     Vocabulary, (duplicate-code)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 
 -----------------------------------
 Your code has been rated at 7.64/10
