@@ -225,59 +225,68 @@ class TestClient(unittest.TestCase):
             client = HttpClient(config=config, fiware_header=self.fh)
 
     def test_dynamic_header_update(self):
-        """Ensure secure headers refresh without reinstantiating the client."""
+        """Ensure every HTTP helper re-fetches secure headers per request."""
 
         class DynamicFiwareHeader(FiwareHeader):
             @computed_field
             @property
             def authorization(self) -> str:
-                # This code runs every single time someone touches .authorization
                 return f"Bearer {time.time()}"
 
         secure_header = DynamicFiwareHeader(
             service=self.fh.service,
             service_path=self.fh.service_path,
         )
+
         mock_session = MagicMock(spec=requests.Session)
         mock_session.headers = {}
-
-        verbs = ["get", "post", "put", "patch", "delete", "options", "head"]
-
-        # Mock all HTTP verb methods on the session
-        for verb in verbs:
-            getattr(mock_session, verb).return_value = MagicMock()
+        mock_session.request.return_value = MagicMock()
 
         client = BaseHttpClient(
             url="https://example.com", session=mock_session, fiware_header=secure_header
         )
 
+        verbs_with_payloads = {
+            "get": {"params": {"q": "1"}},
+            "post": {"json": {"foo": "bar"}},
+            "put": {"data": "payload"},
+            "patch": {"json": {"patch": True}},
+            "delete": {},
+            "options": {},
+            "head": {},
+        }
+
         seen_authorizations = set()
 
-        for verb in verbs:
-            # Call the corresponding method on the client dynamically (e.g., client.get)
+        for verb, payload in verbs_with_payloads.items():
+            mock_session.request.reset_mock()
             client_method = getattr(client, verb)
-            client_method(f"https://example.com/test_{verb}")
+            client_method(f"https://example.com/test_{verb}", **payload)
 
-            # Extract the headers used in this specific session mock call
-            session_mock_method = getattr(mock_session, verb)
-            call_headers = session_mock_method.call_args_list[0].kwargs["headers"]
+            call = mock_session.request.call_args
+            call_headers = call.kwargs["headers"]
             auth_header = call_headers["authorization"]
 
-            # Verify it starts with "Bearer"
             self.assertTrue(auth_header.startswith("Bearer"))
-
-            # Verify this exact token hasn't been generated in previous calls
             self.assertNotIn(
                 auth_header,
                 seen_authorizations,
                 f"Header failed to update for {verb.upper()} request",
             )
+            self.assertEqual(call.kwargs["method"], verb.upper())
 
-            # Store the header to compare against future calls
             seen_authorizations.add(auth_header)
-
-            # Ensure the clock moves forward slightly for the next time.time() call
             time.sleep(0.01)
+
+        # Also verify direct usage of the shared request helper refreshes headers
+        mock_session.request.reset_mock()
+        client.request(
+            method="POST",
+            url="https://example.com/direct",
+            json={"direct": True},
+        )
+        direct_headers = mock_session.request.call_args.kwargs["headers"]
+        self.assertTrue(direct_headers["authorization"].startswith("Bearer"))
 
     def tearDown(self) -> None:
         """

@@ -92,7 +92,7 @@ class ContextBrokerClient(BaseHttpClient):
         *,
         method: PaginationMethod = PaginationMethod.GET,
         url: str,
-        headers: Dict,
+        headers: Dict = None,
         limit: Union[PositiveInt, PositiveFloat] = None,
         params: Dict = None,
         data: str = None,
@@ -116,44 +116,41 @@ class ContextBrokerClient(BaseHttpClient):
             object:
 
         """
+        params = copy.deepcopy(params) if params else {}
+        headers = copy.deepcopy(headers) if headers else None
+
         if limit is None:
             limit = inf
-        if limit > 1000:
-            params["limit"] = 1000  # maximum items per request
-        else:
-            params["limit"] = limit
+        params["limit"] = 1000 if limit > 1000 else limit
 
-        if self.session:
-            session = self.session
-        else:
-            session = requests.Session()
-        with session:
-            res = session.request(
-                method=method, url=url, params=params, headers=headers, data=data
-            )
-            if res.ok:
-                items = res.json()
-                # do pagination
-                count = int(res.headers["Fiware-Total-Count"])
+        res = self.request(
+            method=method.value,
+            url=url,
+            params=params,
+            headers=headers,
+            data=data,
+        )
+        if res.ok:
+            items = res.json()
+            count = int(res.headers["Fiware-Total-Count"])
 
-                while len(items) < limit and len(items) < count:
-                    # Establishing the offset from where entities are retrieved
-                    params["offset"] = len(items)
-                    params["limit"] = min(1000, (limit - len(items)))
-                    res = session.request(
-                        method=method,
-                        url=url,
-                        params=params,
-                        headers=headers,
-                        data=data,
-                    )
-                    if res.ok:
-                        items.extend(res.json())
-                    else:
-                        res.raise_for_status()
-                self.logger.debug("Received: %s", items)
-                return items
-            res.raise_for_status()
+            while len(items) < limit and len(items) < count:
+                params["offset"] = len(items)
+                params["limit"] = min(1000, (limit - len(items)))
+                res = self.request(
+                    method=method.value,
+                    url=url,
+                    params=params,
+                    headers=headers,
+                    data=data,
+                )
+                if res.ok:
+                    items.extend(res.json())
+                else:
+                    res.raise_for_status()
+            self.logger.debug("Received: %s", items)
+            return items
+        res.raise_for_status()
 
     # MANAGEMENT API
     def get_version(self) -> Dict:

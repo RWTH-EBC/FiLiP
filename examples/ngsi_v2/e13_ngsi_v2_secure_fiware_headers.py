@@ -1,7 +1,7 @@
 """
 Example e13: Obtain FIWARE tokens via python-keycloak and refresh them per request.
-The DynamicFiwareHeader class uses a TokenProvider to fetch and cache tokens, refreshing them before they expire.
-The access token is checked everytime before sending the request.
+The FiwareHeaderSecureKeycloak class uses a KeycloakTokenManager to fetch and cache tokens, refreshing them before they
+expire so every outgoing request receives a fresh Authorization header.
 """
 
 import os
@@ -29,8 +29,8 @@ CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "demo-client")
 CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET", "demo-secret")
 
 
-class TokenProvider:
-    """Caches and refreshes tokens before they expire."""
+class KeycloakTokenManager:
+    """Caches and refreshes client-credential tokens coming from python-keycloak."""
 
     def __init__(
         self,
@@ -60,44 +60,52 @@ class TokenProvider:
         return self._token
 
 
-class DynamicFiwareHeader(FiwareHeader):
-    """Fiware header that fetches authorization on demand."""
+class FiwareHeaderSecureKeycloak(FiwareHeader):
+    """Fiware header that fetches Keycloak authorization on demand."""
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    _token_provider: TokenProvider = PrivateAttr(default=None)
+    _token_manager: KeycloakTokenManager = PrivateAttr(default=None)
 
-    def __init__(self, *, token_provider: TokenProvider, **data):
+    def __init__(self, *, token_manager: KeycloakTokenManager, **data):
         super().__init__(**data)
-        self._token_provider = token_provider
+        self._token_manager = token_manager
 
     @computed_field(alias="authorization", return_type=str)
     def authorization(self) -> str:
-        return f"Bearer {self._token_provider.get_token()}"
+        return f"Bearer {self._token_manager.get_token()}"
+
+
+def demonstrate_dynamic_requests(
+    client: ContextBrokerClient, header: FiwareHeader
+) -> None:
+    """Print successive Authorization headers to show automatic refreshes."""
+
+    for attempt in range(2):
+        headers = header.model_dump(by_alias=True)
+        print(f"Attempt {attempt + 1} Authorization: {headers['authorization']}")
+        try:
+            client.get_entity_list(limit=0)
+        except Exception as exc:
+            print(f"Call #{attempt + 1} failed in demo environment: {exc}")
+        time.sleep(2)
 
 
 if __name__ == "__main__":
-    token_provider = TokenProvider(
+    token_manager = KeycloakTokenManager(
         keycloak_host=KEYCLOAK_HOST,
         realm_name=KEYCLOAK_REALM,
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
     )
 
-    fiware_header = DynamicFiwareHeader(
+    fiware_header = FiwareHeaderSecureKeycloak(
         service=SERVICE,
         service_path=SERVICE_PATH,
-        token_provider=token_provider,
+        token_manager=token_manager,
     )
 
     cb_client = ContextBrokerClient(
         url=CB_URL, fiware_header=fiware_header, session=session
     )
 
-    for attempt in range(2):
-        headers = fiware_header.model_dump(by_alias=True)
-        print(f"Attempt {attempt + 1} Authorization: {headers['authorization']}")
-        try:
-            cb_client.get_entity_list()
-        except Exception as exc:
-            print(f"Call #{attempt + 1} failed in demo environment: {exc}")
-        time.sleep(2)
+    demonstrate_dynamic_requests(client=cb_client, header=fiware_header)

@@ -181,6 +181,34 @@ class BaseHttpClient:
         kwargs["headers"] = request_headers
         return kwargs
 
+    def request(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Union[Dict, List[Tuple], ByteString] = None,
+        data: Union[Dict, ByteString, List[Tuple], IO, str] = None,
+        json: Dict = None,
+        **kwargs,
+    ) -> requests.Response:
+        """Central request helper to keep FIWARE headers in sync."""
+
+        merged_kwargs = dict(kwargs)
+        for key, value in self.kwargs.items():
+            merged_kwargs.setdefault(key, value)
+        if params is not None:
+            merged_kwargs["params"] = params
+        if data is not None:
+            merged_kwargs["data"] = data
+        if json is not None:
+            merged_kwargs["json"] = json
+
+        merged_kwargs = self._inject_fiware_headers(merged_kwargs)
+
+        if self.session:
+            return self.session.request(method=method, url=url, **merged_kwargs)
+        return requests.request(method=method, url=url, **merged_kwargs)
+
     # modification to requests api
     def get(
         self, url: str, params: Union[Dict, List[Tuple], ByteString] = None, **kwargs
@@ -199,12 +227,7 @@ class BaseHttpClient:
             requests.Response
         """
 
-        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
-        kwargs = self._inject_fiware_headers(kwargs)
-
-        if self.session:
-            return self.session.get(url=url, params=params, **kwargs)
-        return requests.get(url=url, params=params, **kwargs)
+        return self.request(method="GET", url=url, params=params, **kwargs)
 
     def options(self, url: str, **kwargs) -> requests.Response:
         """
@@ -218,12 +241,7 @@ class BaseHttpClient:
         Returns:
             requests.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
-        kwargs = self._inject_fiware_headers(kwargs)
-
-        if self.session:
-            return self.session.options(url=url, **kwargs)
-        return requests.options(url=url, **kwargs)
+        return self.request(method="OPTIONS", url=url, **kwargs)
 
     def head(
         self, url: str, params: Union[Dict, List[Tuple], ByteString] = None, **kwargs
@@ -241,12 +259,7 @@ class BaseHttpClient:
         Returns:
             requests.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
-        kwargs = self._inject_fiware_headers(kwargs)
-
-        if self.session:
-            return self.session.head(url=url, params=params, **kwargs)
-        return requests.head(url=url, params=params, **kwargs)
+        return self.request(method="HEAD", url=url, params=params, **kwargs)
 
     def post(
         self,
@@ -270,12 +283,7 @@ class BaseHttpClient:
         Returns:
 
         """
-        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
-        kwargs = self._inject_fiware_headers(kwargs)
-
-        if self.session:
-            return self.session.post(url=url, data=data, json=json, **kwargs)
-        return requests.post(url=url, data=data, json=json, **kwargs)
+        return self.request(method="POST", url=url, data=data, json=json, **kwargs)
 
     def put(
         self,
@@ -300,12 +308,7 @@ class BaseHttpClient:
         Returns:
             request.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
-        kwargs = self._inject_fiware_headers(kwargs)
-
-        if self.session:
-            return self.session.put(url=url, data=data, json=json, **kwargs)
-        return requests.put(url=url, data=data, json=json, **kwargs)
+        return self.request(method="PUT", url=url, data=data, json=json, **kwargs)
 
     def patch(
         self,
@@ -330,12 +333,7 @@ class BaseHttpClient:
         Returns:
             request.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
-        kwargs = self._inject_fiware_headers(kwargs)
-
-        if self.session:
-            return self.session.patch(url=url, data=data, json=json, **kwargs)
-        return requests.patch(url=url, data=data, json=json, **kwargs)
+        return self.request(method="PATCH", url=url, data=data, json=json, **kwargs)
 
     def delete(self, url: str, **kwargs) -> requests.Response:
         """
@@ -349,12 +347,7 @@ class BaseHttpClient:
         Returns:
             request.Response
         """
-        kwargs.update({k: v for k, v in self.kwargs.items() if k not in kwargs.keys()})
-        kwargs = self._inject_fiware_headers(kwargs)
-
-        if self.session:
-            return self.session.delete(url=url, **kwargs)
-        return requests.delete(url=url, **kwargs)
+        return self.request(method="DELETE", url=url, **kwargs)
 
     def log_error(self, err: requests.RequestException, msg: str = None) -> None:
         """
