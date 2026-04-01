@@ -155,7 +155,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         Returns:
             Dictionary with response
         """
-        url = urljoin(self.base_url, "/version")
+        url = urljoin(self.base_url, "version")
         try:
             res = self.get(url=url)
             if res.ok:
