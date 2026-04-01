@@ -124,6 +124,7 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">session</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fiware_header</span><span class="p">:</span> <span class="n">FiwareLDHeader</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">create_tenant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -153,7 +154,7 @@
         <span class="c1"># default downlink content JSON-LD</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/ld+json&quot;</span><span class="p">})</span>
 
-        <span class="k">if</span> <span class="n">init_header</span><span class="o">.</span><span class="n">ngsild_tenant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">create_tenant</span> <span class="ow">and</span> <span class="n">init_header</span><span class="o">.</span><span class="n">ngsild_tenant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__make_tenant</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__pagination</span><span class="p">(</span>

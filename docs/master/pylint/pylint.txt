@@ -495,43 +495,43 @@ filip/clients/base_http_client.py:338:72: C0201: Consider iterating the dictiona
 filip/clients/base_http_client.py:7:0: C0411: standard import "from typing import Dict, ByteString, List, IO, Tuple, Union" should be placed before "from pydantic import AnyHttpUrl" (wrong-import-order)
 filip/clients/base_http_client.py:11:0: C0411: standard import "from enum import Enum" should be placed before "from pydantic import AnyHttpUrl" (wrong-import-order)
 ************* Module filip.clients.ngsi_ld.cb
-filip/clients/ngsi_ld/cb.py:276:0: C0301: Line too long (178/100) (line-too-long)
+filip/clients/ngsi_ld/cb.py:277:0: C0301: Line too long (178/100) (line-too-long)
 filip/clients/ngsi_ld/cb.py:11:0: E0401: Unable to import 'requests' (import-error)
 filip/clients/ngsi_ld/cb.py:12:0: E0401: Unable to import 'pydantic' (import-error)
-filip/clients/ngsi_ld/cb.py:81:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:152:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:182:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:236:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
-filip/clients/ngsi_ld/cb.py:198:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:261:8: C0103: Argument name "geometryProperty" doesn't conform to snake_case naming style (invalid-name)
-filip/clients/ngsi_ld/cb.py:255:4: R0913: Too many arguments (6/5) (too-many-arguments)
-filip/clients/ngsi_ld/cb.py:299:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
-filip/clients/ngsi_ld/cb.py:301:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-filip/clients/ngsi_ld/cb.py:310:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
-filip/clients/ngsi_ld/cb.py:255:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:335:8: C0103: Argument name "q" doesn't conform to snake_case naming style (invalid-name)
-filip/clients/ngsi_ld/cb.py:329:4: R0913: Too many arguments (12/5) (too-many-arguments)
-filip/clients/ngsi_ld/cb.py:329:4: R0914: Too many local variables (20/15) (too-many-locals)
-filip/clients/ngsi_ld/cb.py:407:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
-filip/clients/ngsi_ld/cb.py:409:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-filip/clients/ngsi_ld/cb.py:423:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
-filip/clients/ngsi_ld/cb.py:329:4: R0912: Too many branches (15/12) (too-many-branches)
-filip/clients/ngsi_ld/cb.py:464:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:434:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:516:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:551:33: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-filip/clients/ngsi_ld/cb.py:562:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:594:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:622:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:696:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:659:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:723:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:793:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:803:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/clients/ngsi_ld/cb.py:836:20: C0103: Variable name "successList" doesn't conform to snake_case naming style (invalid-name)
-filip/clients/ngsi_ld/cb.py:917:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
-filip/clients/ngsi_ld/cb.py:941:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:943:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:82:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:153:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:183:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:237:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/ngsi_ld/cb.py:199:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:262:8: C0103: Argument name "geometryProperty" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:256:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_ld/cb.py:300:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
+filip/clients/ngsi_ld/cb.py:302:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:311:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_ld/cb.py:256:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:336:8: C0103: Argument name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:330:4: R0913: Too many arguments (12/5) (too-many-arguments)
+filip/clients/ngsi_ld/cb.py:330:4: R0914: Too many local variables (20/15) (too-many-locals)
+filip/clients/ngsi_ld/cb.py:408:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
+filip/clients/ngsi_ld/cb.py:410:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:424:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_ld/cb.py:330:4: R0912: Too many branches (15/12) (too-many-branches)
+filip/clients/ngsi_ld/cb.py:465:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:435:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:517:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:552:33: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:563:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:595:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:623:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:697:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:660:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:724:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:794:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:804:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/clients/ngsi_ld/cb.py:837:20: C0103: Variable name "successList" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:918:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
+filip/clients/ngsi_ld/cb.py:942:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:944:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
 filip/clients/ngsi_ld/cb.py:16:0: W0611: Unused AttrsFormat imported from filip.models.ngsi_v2.base (unused-import)
 filip/clients/ngsi_ld/cb.py:29:0: W0611: Unused Query imported from filip.models.ngsi_v2.context (unused-import)
 ************* Module filip.clients.mqtt.client
@@ -1053,7 +1053,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 
 # NGSIv2 entity models (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[132:159]
+==filip.clients.ngsi_ld.cb:[133:160]
 ==filip.clients.ngsi_v2.cb:[138:166]
                 while len(items) < limit and len(items) < count:
                     # Establishing the offset from where entities are retrieved
@@ -1154,9 +1154,9 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         description="Id of an entity in an NGSI context broker. Allowed "
         "characters are the ones in the plain ASCII set, except "
         "the following ones: control characters, "
-        "whitespace, &, ?, / and #.", (duplicate-code)
+        "whitespace, &, ?, / and #." (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[974:984]
+==filip.clients.ngsi_ld.cb:[975:985]
 ==filip.clients.ngsi_v2.cb:[1856:1876]
                     '"value" "entity_id"}'
                 )
@@ -1167,9 +1167,19 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False (duplicate-code)
+                return False
+
+    def update_registration(self, registration: Registration):
+        """
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        """ (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[119:130]
+==filip.clients.ngsi_ld.cb:[120:131]
 ==filip.clients.ngsi_v2.cb:[125:136]
         if self.session:
             session = self.session
@@ -1197,7 +1207,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[767:776]
+==filip.clients.ngsi_ld.cb:[768:777]
 ==filip.clients.ngsi_v2.cb:[1649:1658]
                     exclude_none=True,
                 ),
@@ -1209,7 +1219,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             msg = f"Could not update subscription {subscription.id}" (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[496:505]
+==filip.clients.ngsi_ld.cb:[497:506]
 ==filip.clients.ngsi_v2.cb:[1189:1198]
             assert attr_name is not None, (
                 "Missing name for attribute. "
@@ -1224,6 +1234,8 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
+
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1247,7 +1259,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         "attributes by their values only, leaving out "
         "the information about type and metadata. " (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[731:739]
+==filip.clients.ngsi_ld.cb:[732:740]
 ==filip.clients.ngsi_v2.cb:[1583:1591]
         url = urljoin(
             self.base_url, f"{self._url_version}/subscriptions/{subscription_id}"
@@ -1258,7 +1270,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 self.logger.debug("Received: %s", res.json()) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[640:651]
+==filip.clients.ngsi_ld.cb:[641:652]
 ==filip.clients.ngsi_v2.cb:[1438:1449]
         url = urljoin(self.base_url, f"{self._url_version}/subscriptions/")
         headers = self.headers.copy()
@@ -1316,9 +1328,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    )
-
- (duplicate-code)
+    ) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[165:172]
 ==filip.clients.ngsi_v2.iota:[67:74]
@@ -1330,7 +1340,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             self.logger.error(err) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[712:719]
+==filip.clients.ngsi_ld.cb:[713:720]
 ==filip.clients.ngsi_v2.cb:[1565:1572]
             )
             if res.ok:
@@ -1340,7 +1350,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             msg = "Could not send subscription!" (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[688:695]
+==filip.clients.ngsi_ld.cb:[689:696]
 ==filip.clients.ngsi_v2.cb:[1516:1523]
             ):
                 self.logger.info("Subscription already exists")
@@ -1350,7 +1360,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
                     self.update_subscription(subscription)
                 else: (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[641:651]
+==filip.clients.ngsi_ld.cb:[642:652]
 ==filip.clients.ngsi_v2.cb:[1693:1703]
         headers = self.headers.copy()
         params = {}
@@ -1363,7 +1373,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
                 limit=limit, url=url, params=params, headers=headers
             ) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[288:295]
+==filip.clients.ngsi_ld.cb:[289:296]
 ==filip.clients.ngsi_v2.cb:[526:533]
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
@@ -1386,6 +1396,23 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 
         return True
 
+    def is_logically_equivalent_to(
+        self,
+        datatype: "Datatype",
+        vocabulary: "Vocabulary",
+        old_vocabulary: "Vocabulary",
+    ) -> bool:
+        """Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        """
  (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[363:372]
@@ -1394,11 +1421,8 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
-
- (duplicate-code)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.registrations:[131:137]
 ==filip.models.ngsi_v2.subscriptions:[546:552]
@@ -1417,17 +1441,16 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[463:469]
-                        Point,
-                        MultiPoint,
-                        LineString,
-                        MultiLineString,
-                        Polygon,
-                        MultiPolygon, (duplicate-code)
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon, (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[164:170]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1438,7 +1461,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
                 return res.json()
             res.raise_for_status() (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[733:739]
+==filip.clients.ngsi_ld.cb:[734:740]
 ==filip.clients.ngsi_v2.cb:[1750:1756]
         )
         headers = self.headers.copy()
@@ -1447,7 +1470,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 self.logger.debug("Received: %s", res.json()) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[785:799]
+==filip.clients.ngsi_ld.cb:[786:800]
 ==filip.clients.ngsi_v2.cb:[1666:1680]
         url = urljoin(
             self.base_url, f"{self._url_version}/subscriptions/{subscription_id}"
@@ -1464,7 +1487,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             msg = f"Could not delete subscription {subscription_id}" (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[787:793]
+==filip.clients.ngsi_ld.cb:[788:794]
 ==filip.clients.ngsi_v2.cb:[1903:1909]
         )
         headers = self.headers.copy()
@@ -1473,16 +1496,17 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 self.logger.info( (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[615:622]
+==filip.clients.ngsi_ld.cb:[616:623]
 ==filip.clients.ngsi_v2.cb:[1668:1674]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info( (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[289:295]
+==filip.clients.ngsi_ld.cb:[290:296]
 ==filip.clients.ngsi_v2.cb:[591:597]
         headers = self.headers.copy()
         params = {}
@@ -1491,7 +1515,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         if attrs:
             params.update({"attrs": ",".join(attrs)}) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[228:234]
+==filip.clients.ngsi_ld.cb:[229:235]
 ==filip.clients.ngsi_v2.cb:[282:288]
             )
             if res.ok:
@@ -1500,7 +1524,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             res.raise_for_status()
         except requests.RequestException as err: (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[109:116]
+==filip.clients.ngsi_ld.cb:[110:117]
 ==filip.clients.ngsi_v2.cb:[118:125]
         if limit is None:
             limit = inf
@@ -1508,20 +1532,29 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             params["limit"] = 1000  # maximum items per request
         else:
             params["limit"] = limit
-        # add count option if not present (duplicate-code)
+ (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if "#" in iri:
-        index = iri.find("#")
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind("/")
-        return iri[:index]
+        if "#" in iri:
+            index = iri.find("#")
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind("/")
+            return iri[:index]
 
- (duplicate-code)
+    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
+        """Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        """ (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.iot:[11:16]
 ==filip.models.ngsi_v2.subscriptions:[8:13]
@@ -1559,13 +1592,15 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:
+    def encode_msg(
+        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
+    ) -> str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[966:971]
+==filip.clients.ngsi_ld.cb:[967:972]
 ==filip.clients.ngsi_v2.cb:[1848:1853]
         elif isinstance(relationship, dict):
             _sentinel = object()
@@ -1573,7 +1608,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             if destination_id is _sentinel:
                 raise ValueError( (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[761:766]
+==filip.clients.ngsi_ld.cb:[762:767]
 ==filip.clients.ngsi_v2.cb:[1635:1640]
         try:
             res = self.patch(
@@ -1581,7 +1616,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
                 headers=headers,
                 data=subscription.model_dump_json( (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[304:309]
+==filip.clients.ngsi_ld.cb:[305:310]
 ==filip.clients.ngsi_v2.cb:[539:544]
         try:
             res = self.get(url=url, params=params, headers=headers)
@@ -1589,7 +1624,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json()) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[584:591]
+==filip.clients.ngsi_ld.cb:[585:592]
 ==filip.clients.ngsi_v2.cb:[1255:1260]
         headers = self.headers.copy()
         params = {}
@@ -1597,17 +1632,15 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             params.update({"type": entity_type})
         try: (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[583:590]
+==filip.clients.ngsi_ld.cb:[584:591]
 ==filip.clients.ngsi_v2.cb:[526:531]
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
-            params.update({"type": entity_type})
- (duplicate-code)
+            params.update({"type": entity_type}) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[705:710]
+==filip.clients.ngsi_ld.cb:[706:711]
 ==filip.clients.ngsi_v2.cb:[1548:1553]
         try:
             res = self.post(
@@ -1615,7 +1648,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
                 headers=headers,
                 data=subscription.model_dump_json( (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[553:558]
+==filip.clients.ngsi_ld.cb:[554:559]
 ==filip.clients.ngsi_v2.cb:[1985:1990]
         try:
             res = self.post(
@@ -1623,7 +1656,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
                 headers=headers,
                 params=params, (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[190:195]
+==filip.clients.ngsi_ld.cb:[191:196]
 ==filip.clients.ngsi_v2.cb:[167:172]
             if res.ok:
                 return res.json()
@@ -1631,7 +1664,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             self.logger.error(err) (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[616:622]
+==filip.clients.ngsi_ld.cb:[617:623]
 ==filip.clients.ngsi_v2.quantumleap:[253:258]
         headers = self.headers.copy()
 
@@ -1640,7 +1673,7 @@ filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 self.logger.info( (duplicate-code)
 filip/utils/iot.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[160:165]
+==filip.clients.ngsi_ld.cb:[161:166]
 ==filip.clients.ngsi_v2.iota:[69:74]
             if res.ok:
                 return res.json()
@@ -1656,16 +1689,15 @@ from filip.semantics.vocabulary import (
     IdType,
     Vocabulary, (duplicate-code)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
+filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
 filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
-filip/utils/iot.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 
 -----------------------------------
 Your code has been rated at 7.64/10
