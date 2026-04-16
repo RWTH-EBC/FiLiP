@@ -26,7 +26,6 @@ INSTALL_REQUIRES = [
     "PyLD~=2.0.4",
     "pyjexl~=0.3.0",
     "packaging~=24.1",
-    "matplotlib~=3.9.4",
 ]
 
 SETUP_REQUIRES = INSTALL_REQUIRES.copy()
@@ -84,7 +83,7 @@ setuptools.setup(
     extras_require={
         "development": ["pre-commit~=4.0.1"],
         "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
-        "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
+        "tutorials": ["plotly~=5.24.1", "matplotlib~=3.9.4"],
         ":python_version < '3.9'": ["pandas~=2.1.4"],
         ":python_version >= '3.9'": ["pandas>=2.1.4,<2.4.0"],
     },
