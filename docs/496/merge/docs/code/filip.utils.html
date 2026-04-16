@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>filip.utils package &mdash; FiLiP 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+
+  
+      <script src="../_static/jquery.js"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+      <script src="../_static/doctools.js"></script>
+      <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../contents.html" class="icon icon-home">
+            FiLiP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">FiLiP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute as a user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#contribute-as-a-developer">Contribute as a developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About FiLiP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../contents.html">FiLiP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">filip.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/RWTH-EBC/filip/blob/master/docs/source/code/filip.utils.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-filip.utils">
+<span id="filip-utils-package"></span><h1>filip.utils package<a class="headerlink" href="#module-filip.utils" title="Permalink to this heading"></a></h1>
+<p>Utility module for helper functions</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-filip.utils.cleanup">
+<span id="filip-utils-cleanup-module"></span><h2>filip.utils.cleanup module<a class="headerlink" href="#module-filip.utils.cleanup" title="Permalink to this heading"></a></h2>
+<p>Functions to clean up a tenant within a fiware based platform.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.cleanup.clean_test">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.cleanup.</span></span><span class="sig-name descname"><span class="pre">clean_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_servicepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iota_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ql_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient" title="filip.clients.ngsi_v2.cb.ContextBrokerClient"><span class="pre">ContextBrokerClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iota_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient" title="filip.clients.ngsi_v2.iota.IoTAClient"><span class="pre">IoTAClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ql_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient" title="filip.clients.ngsi_v2.quantumleap.QuantumLeapClient"><span class="pre">QuantumLeapClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/cleanup.html#clean_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.cleanup.clean_test" title="Permalink to this definition"></a></dt>
+<dd><p>Decorator to clean up the server before and after the test</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This does not substitute a proper TearDown method, because a failing
+test will not execute the clean up after the error. Since this would
+mean an unnecessary error handling. We actually want a test to fail
+with proper messages.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fiware_service</strong> – tenant</p></li>
+<li><p><strong>fiware_servicepath</strong> – tenant path</p></li>
+<li><p><strong>cb_url</strong> – url of context broker service</p></li>
+<li><p><strong>iota_url</strong> – url of IoT-Agent service</p></li>
+<li><p><strong>ql_url</strong> – url of quantumleap service</p></li>
+<li><p><strong>cb_client</strong> – enables TLS communication if created with Session object, only needed for self-signed certificates</p></li>
+<li><p><strong>iota_client</strong> – enables TLS communication if created with Session object, only needed for self-signed certificates</p></li>
+<li><p><strong>ql_client</strong> – enables TLS communication if created with Session object, only needed for self-signed certificates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decorator for clean tests</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.cleanup.clear_all">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.cleanup.</span></span><span class="sig-name descname"><span class="pre">clear_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iota_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ql_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient" title="filip.clients.ngsi_v2.cb.ContextBrokerClient"><span class="pre">ContextBrokerClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iota_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient" title="filip.clients.ngsi_v2.iota.IoTAClient"><span class="pre">IoTAClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ql_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient" title="filip.clients.ngsi_v2.quantumleap.QuantumLeapClient"><span class="pre">QuantumLeapClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/cleanup.html#clear_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.cleanup.clear_all" title="Permalink to this definition"></a></dt>
+<dd><p>Clears all services that a url is provided for.
+If cb_url is provided, the registration will also be deleted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fiware_header</strong> – </p></li>
+<li><p><strong>cb_url</strong> – url of the context broker service</p></li>
+<li><p><strong>iota_url</strong> – url of the IoT-Agent service</p></li>
+<li><p><strong>ql_url</strong> – url of the QuantumLeap service</p></li>
+<li><p><strong>cb_client</strong> – enables TLS communication if created with Session object, only needed
+for self-signed certificates</p></li>
+<li><p><strong>iota_client</strong> – enables TLS communication if created with Session object, only needed
+for self-signed certificates</p></li>
+<li><p><strong>ql_client</strong> – enables TLS communication if created with Session object, only needed
+for self-signed certificates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.cleanup.clear_context_broker">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.cleanup.</span></span><span class="sig-name descname"><span class="pre">clear_context_broker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_registrations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient" title="filip.clients.ngsi_v2.cb.ContextBrokerClient"><span class="pre">ContextBrokerClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/cleanup.html#clear_context_broker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.cleanup.clear_context_broker" title="Permalink to this definition"></a></dt>
+<dd><p>Function deletes all entities, registrations and subscriptions for a
+given fiware header. To use TLS connection you need to provide the cb_client parameter
+as an argument with the Session object including the certificate and private key.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Always clear the devices first because the IoT-Agent will otherwise
+through errors if it cannot find its registration anymore.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – Url of the context broker service</p></li>
+<li><p><strong>fiware_header</strong> – header of the tenant</p></li>
+<li><p><strong>cb_client</strong> – enables TLS communication if created with Session object, only needed
+for self-signed certificates</p></li>
+<li><p><strong>clear_registrations</strong> – Determines whether registrations should be deleted.
+If registrations are deleted while devices with commands
+still exist, these devices become unreachable.
+Only set to true once such devices are cleared.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.cleanup.clear_context_broker_ld">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.cleanup.</span></span><span class="sig-name descname"><span class="pre">clear_context_broker_ld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_ld_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareLDHeader" title="filip.models.base.FiwareLDHeader"><span class="pre">FiwareLDHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cb_ld_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_ld.html#filip.clients.ngsi_ld.cb.ContextBrokerLDClient" title="filip.clients.ngsi_ld.cb.ContextBrokerLDClient"><span class="pre">ContextBrokerLDClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/cleanup.html#clear_context_broker_ld"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.cleanup.clear_context_broker_ld" title="Permalink to this definition"></a></dt>
+<dd><p>Function deletes all entities and subscriptions for a tenant in an LD context broker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – Url of the context broker LD</p></li>
+<li><p><strong>fiware_ld_header</strong> – header of the NGSI-LD tenant</p></li>
+<li><p><strong>cb_ld_client</strong> – NGSI-LD context broker client object</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.cleanup.clear_iot_agent">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.cleanup.</span></span><span class="sig-name descname"><span class="pre">clear_iot_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Url</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iota_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.iota.IoTAClient" title="filip.clients.ngsi_v2.iota.IoTAClient"><span class="pre">IoTAClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/cleanup.html#clear_iot_agent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.cleanup.clear_iot_agent" title="Permalink to this definition"></a></dt>
+<dd><p>Function deletes all device groups and devices for a
+given fiware header. To use TLS connection you need to provide the iota_client parameter
+as an argument with the Session object including the certificate and private key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – Url of the iot agent service</p></li>
+<li><p><strong>fiware_header</strong> – header of the tenant</p></li>
+<li><p><strong>iota_client</strong> – enables TLS communication if created with Session object, only needed for self-signed certificates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.cleanup.clear_quantumleap">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.cleanup.</span></span><span class="sig-name descname"><span class="pre">clear_quantumleap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ql_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.quantumleap.QuantumLeapClient" title="filip.clients.ngsi_v2.quantumleap.QuantumLeapClient"><span class="pre">QuantumLeapClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/cleanup.html#clear_quantumleap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.cleanup.clear_quantumleap" title="Permalink to this definition"></a></dt>
+<dd><p>Function deletes all data for a given fiware header. To use TLS connection you need to provide the ql_client parameter
+as an argument with the Session object including the certificate and private key.
+:param url: Url of the quantumleap service
+:param fiware_header: header of the tenant
+:param ql_client: enables TLS communication if created with Session object, only needed for self-signed certificates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-filip.utils.data">
+<span id="filip-utils-data-module"></span><h2>filip.utils.data module<a class="headerlink" href="#module-filip.utils.data" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.data.load_datapackage">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.data.</span></span><span class="sig-name descname"><span class="pre">load_datapackage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">package_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/data.html#load_datapackage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.data.load_datapackage" title="Permalink to this definition"></a></dt>
+<dd><p>Downloads data package from online source and stores it as hdf-file in
+filip.data named by the &lt;filename&gt;.hdf.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Valid url to where the data package is hosted</p></li>
+<li><p><strong>package_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – name of the cached file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict of dataframes</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-filip.utils.datetime">
+<span id="filip-utils-datetime-module"></span><h2>filip.utils.datetime module<a class="headerlink" href="#module-filip.utils.datetime" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.datetime.convert_datetime_to_iso_8601_with_z_suffix">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.datetime.</span></span><span class="sig-name descname"><span class="pre">convert_datetime_to_iso_8601_with_z_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/datetime.html#convert_datetime_to_iso_8601_with_z_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.datetime.convert_datetime_to_iso_8601_with_z_suffix" title="Permalink to this definition"></a></dt>
+<dd><p>Converts datetime object to iso8601 notation with z-suffix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> – datetime object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>String in iso 8601 notation with z-suffix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.datetime.transform_to_utc_datetime">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.datetime.</span></span><span class="sig-name descname"><span class="pre">transform_to_utc_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/datetime.html#transform_to_utc_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.datetime.transform_to_utc_datetime" title="Permalink to this definition"></a></dt>
+<dd><p>Converts datetime object to utc datetime object with zone</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> – </p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</section>
+<section id="module-filip.utils.filter">
+<span id="filip-utils-filter-module"></span><h2>filip.utils.filter module<a class="headerlink" href="#module-filip.utils.filter" title="Permalink to this heading"></a></h2>
+<p>Filter functions to keep client code clean and easy to use.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.filter.filter_device_list">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.filter.</span></span><span class="sig-name descname"><span class="pre">filter_device_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/filter.html#filter_device_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.filter.filter_device_list" title="Permalink to this definition"></a></dt>
+<dd><p>Filter the given device list based on conditions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>devices</strong> – device list that need to be filtered</p></li>
+<li><p><strong>device_ids</strong> – A list of device_id as filter condition</p></li>
+<li><p><strong>entity_names</strong> – A list of entity_name (e.g. entity_id) as filter condition.</p></li>
+<li><p><strong>entity_types</strong> – A list of entity_type as filter condition</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matching devices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.filter.filter_group_list">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.filter.</span></span><span class="sig-name descname"><span class="pre">filter_group_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikeys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup" title="filip.models.ngsi_v2.iot.ServiceGroup"><span class="pre">ServiceGroup</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/filter.html#filter_group_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.filter.filter_group_list" title="Permalink to this definition"></a></dt>
+<dd><p>Filter service group based on resource and apikey.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group_list</strong> – The list of service groups that need to be filtered</p></li>
+<li><p><strong>resources</strong> – see ServiceGroup model</p></li>
+<li><p><strong>apikeys</strong> – see ServiceGroup</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: a single service group or Not Found Error</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.filter.filter_subscriptions_by_entity">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.filter.</span></span><span class="sig-name descname"><span class="pre">filter_subscriptions_by_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiware_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><span class="pre">FiwareHeader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subscriptions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Subscription" title="filip.models.ngsi_v2.subscriptions.Subscription"><span class="pre">Subscription</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Subscription" title="filip.models.ngsi_v2.subscriptions.Subscription"><span class="pre">Subscription</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/filter.html#filter_subscriptions_by_entity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.filter.filter_subscriptions_by_entity" title="Permalink to this definition"></a></dt>
+<dd><p>Function that filters subscriptions based on the entity id or id pattern
+and entity type or type pattern. The function can be used in two ways,
+wither pass list of subscriptions to filter based on entity or directly pass
+client information to filter subscriptions in a single request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity_id</strong> – Id of the entity to be matched</p></li>
+<li><p><strong>entity_type</strong> – Type of the entity to be matched</p></li>
+<li><p><strong>url</strong> – Url of the context broker service</p></li>
+<li><p><strong>fiware_header</strong> – Fiware header of the tenant</p></li>
+<li><p><strong>subscriptions</strong> – List of subscriptions to filter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of subscriptions by entity</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-filip.utils.geo_ql">
+<span id="filip-utils-geo-ql-module"></span><h2>filip.utils.geo_ql module<a class="headerlink" href="#module-filip.utils.geo_ql" title="Permalink to this heading"></a></h2>
+<p>Implementation of geo query language</p>
+</section>
+<section id="module-filip.utils.iot">
+<span id="filip-utils-iot-module"></span><h2>filip.utils.iot module<a class="headerlink" href="#module-filip.utils.iot" title="Permalink to this heading"></a></h2>
+<p>Helper functions to handle the devices related with the IoT Agent</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.iot.filter_device_list">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.iot.</span></span><span class="sig-name descname"><span class="pre">filter_device_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.Device" title="filip.models.ngsi_v2.iot.Device"><span class="pre">Device</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/iot.html#filter_device_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.iot.filter_device_list" title="Permalink to this definition"></a></dt>
+<dd><p>Filter the given device list based on conditions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>devices</strong> – device list that need to be filtered</p></li>
+<li><p><strong>device_ids</strong> – A list of device_id as filter condition</p></li>
+<li><p><strong>entity_names</strong> – A list of entity_name (e.g. entity_id) as filter condition.</p></li>
+<li><p><strong>entity_types</strong> – A list of entity_type as filter condition</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matching devices</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-filip.utils.model_generation">
+<span id="filip-utils-model-generation-module"></span><h2>filip.utils.model_generation module<a class="headerlink" href="#module-filip.utils.model_generation" title="Permalink to this heading"></a></h2>
+<p>Code generator for data models from schema.json descriptions</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.model_generation.create_context_entity_model">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.model_generation.</span></span><span class="sig-name descname"><span class="pre">create_context_entity_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.14)"><span class="pre">Type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="filip.models.ngsi_v2.html#filip.models.ngsi_v2.context.ContextEntity" title="filip.models.ngsi_v2.context.ContextEntity"><span class="pre">ContextEntity</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/filip/utils/model_generation.html#create_context_entity_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.model_generation.create_context_entity_model" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a ContextEntity-Model from a dict:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – name of the model</p></li>
+<li><p><strong>data</strong> – dictionary containing the data structure</p></li>
+<li><p><strong>validators</strong> (<em>optional</em>) – validators for the new model</p></li>
+<li><p><strong>path</strong> – if present the model will written to <a href="#id1"><span class="problematic" id="id2">*</span></a>.py file if file ending
+<a href="#id3"><span class="problematic" id="id4">*</span></a>.py is used and to json-schema if <a href="#id5"><span class="problematic" id="id6">*</span></a>.json is used.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">username_alphanumeric</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="go">        assert v.value.isalnum(), &#39;must be numeric&#39;</span>
+<span class="go">        return value</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">create_context_entity_model</span><span class="p">(</span>
+<span class="go">                name=&#39;MyModel&#39;,</span>
+<span class="go">                data={</span>
+<span class="go">                    &#39;id&#39;: &#39;MyId&#39;,</span>
+<span class="go">                    &#39;type&#39;:&#39;MyType&#39;,</span>
+<span class="go">                    &#39;temp&#39;: &#39;MyProperty&#39;}</span>
+<span class="go">                {&#39;validate_test&#39;: validator(&#39;temperature&#39;)(</span>
+<span class="go">                    username_alphanumeric)})</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ContextEntity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.model_generation.create_data_model_file">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.model_generation.</span></span><span class="sig-name descname"><span class="pre">create_data_model_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/urllib.parse.html#urllib.parse.ParseResult" title="(in Python v3.14)"><span class="pre">ParseResult</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">InputFileType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">InputFileType.JsonSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/model_generation.html#create_data_model_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.model_generation.create_data_model_file" title="Permalink to this definition"></a></dt>
+<dd><p>This will create a data model from data model definitions. The schemas
+can either downloaded from a url or passed as str or dict. Allowed input
+types are defined but the underlying toolbox.</p>
+<p>Many data models suited for FIWARE are located here:
+<a class="reference external" href="https://github.com/smart-data-models/data-models">https://github.com/smart-data-models/data-models</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – path where the generated code should saved</p></li>
+<li><p><strong>url</strong> – url to download the definition from</p></li>
+<li><p><strong>schema_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <cite>auto</cite>, <cite>openapi</cite>, <cite>jsonschema</cite>, <cite>json</cite>, <cite>yaml</cite>, <cite>dict</cite>, <cite>csv</cite></p></li>
+<li><p><strong>class_name</strong> – classname for the model class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span>
+            <span class="p">},</span>
+        <span class="s2">&quot;street_name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+           <span class="p">},</span>
+        <span class="s2">&quot;street_type&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Street&quot;</span><span class="p">,</span> <span class="s2">&quot;Avenue&quot;</span><span class="p">,</span> <span class="s2">&quot;Boulevard&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-filip.utils.simple_ql">
+<span id="filip-utils-simple-ql-module"></span><h2>filip.utils.simple_ql module<a class="headerlink" href="#module-filip.utils.simple_ql" title="Permalink to this heading"></a></h2>
+<p>The Simple Query Language provides a simplified syntax to retrieve entities
+which match a set of conditions. A query is composed by a list of
+statements separated by the ‘;’ character. Each statement expresses a
+matching condition. The query returns all the entities that match all
+the matching conditions (AND logical operator).</p>
+<p>For further details of the language please refer to:</p>
+<p><a class="reference external" href="https://telefonicaid.github.io/fiware-orion/api/v2/stable/">https://telefonicaid.github.io/fiware-orion/api/v2/stable/</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.utils.simple_ql.</span></span><span class="sig-name descname"><span class="pre">Operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value=&lt;no_arg&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#Operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.Operator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The list of operators (and the format of the values they use) is as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.EQUAL">
+<span class="sig-name descname"><span class="pre">EQUAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'=='</span></em><a class="headerlink" href="#filip.utils.simple_ql.Operator.EQUAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.GREATER_OR_EQUAL">
+<span class="sig-name descname"><span class="pre">GREATER_OR_EQUAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&gt;='</span></em><a class="headerlink" href="#filip.utils.simple_ql.Operator.GREATER_OR_EQUAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.GREATER_THAN">
+<span class="sig-name descname"><span class="pre">GREATER_THAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&gt;'</span></em><a class="headerlink" href="#filip.utils.simple_ql.Operator.GREATER_THAN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.LESS_OR_EQUAL">
+<span class="sig-name descname"><span class="pre">LESS_OR_EQUAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&lt;='</span></em><a class="headerlink" href="#filip.utils.simple_ql.Operator.LESS_OR_EQUAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.LESS_THAN">
+<span class="sig-name descname"><span class="pre">LESS_THAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&lt;'</span></em><a class="headerlink" href="#filip.utils.simple_ql.Operator.LESS_THAN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.MATCH_PATTERN">
+<span class="sig-name descname"><span class="pre">MATCH_PATTERN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'~='</span></em><a class="headerlink" href="#filip.utils.simple_ql.Operator.MATCH_PATTERN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.UNEQUAL">
+<span class="sig-name descname"><span class="pre">UNEQUAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'!='</span></em><a class="headerlink" href="#filip.utils.simple_ql.Operator.UNEQUAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.Operator.list">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#Operator.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.Operator.list" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of all valid values</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryStatement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.utils.simple_ql.</span></span><span class="sig-name descname"><span class="pre">QueryStatement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.utils.simple_ql.Operator" title="filip.utils.simple_ql.Operator"><span class="pre">Operator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryStatement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryStatement" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code></p>
+<p>Simple query statement</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryStatement.parse_str">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryStatement.parse_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryStatement.parse_str" title="Permalink to this definition"></a></dt>
+<dd><p>Generates QueryStatement form string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>QueryStatement</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryStatement.to_str">
+<span class="sig-name descname"><span class="pre">to_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryStatement.to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryStatement.to_str" title="Permalink to this definition"></a></dt>
+<dd><p>Parses QueryStatement to String</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryStatement.validate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryStatement.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryStatement.validate" title="Permalink to this definition"></a></dt>
+<dd><p>Validates statements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – </p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryString">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.utils.simple_ql.</span></span><span class="sig-name descname"><span class="pre">QueryString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.utils.simple_ql.QueryStatement" title="filip.utils.simple_ql.QueryStatement"><span class="pre">QueryStatement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.utils.simple_ql.QueryStatement" title="filip.utils.simple_ql.QueryStatement"><span class="pre">QueryStatement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryString" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class for validated QueryStrings that can be used in api clients</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryString.parse_str">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryString.parse_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryString.parse_str" title="Permalink to this definition"></a></dt>
+<dd><p>Creates QueryString from string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>QueryString</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryString.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.utils.simple_ql.QueryStatement" title="filip.utils.simple_ql.QueryStatement"><span class="pre">QueryStatement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.utils.simple_ql.QueryStatement" title="filip.utils.simple_ql.QueryStatement"><span class="pre">QueryStatement</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryString.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryString.remove" title="Permalink to this definition"></a></dt>
+<dd><p>Remove Statement from QueryString
+:param qs:</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryString.to_str">
+<span class="sig-name descname"><span class="pre">to_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryString.to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryString.to_str" title="Permalink to this definition"></a></dt>
+<dd><p>Parsing self.qs to string object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>query string that can be added to requests as parameter</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryString.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#filip.utils.simple_ql.QueryStatement" title="filip.utils.simple_ql.QueryStatement"><span class="pre">QueryStatement</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#filip.utils.simple_ql.QueryStatement" title="filip.utils.simple_ql.QueryStatement"><span class="pre">QueryStatement</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryString.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryString.update" title="Permalink to this definition"></a></dt>
+<dd><p>Adds or updates QueryStatement within QueryString. First to arguments
+must match an existing argument for update. This redundant rules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qs</strong> – Query statement to add to the string object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.utils.simple_ql.QueryString.validate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/simple_ql.html#QueryString.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.simple_ql.QueryString.validate" title="Permalink to this definition"></a></dt>
+<dd><p>validate QueryString</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-filip.utils.validators">
+<span id="filip-utils-validators-module"></span><h2>filip.utils.validators module<a class="headerlink" href="#module-filip.utils.validators" title="Permalink to this heading"></a></h2>
+<p>Helper functions to prohibit boiler plate code</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.utils.validators.FiwareRegex">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">FiwareRegex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value=&lt;no_arg&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#FiwareRegex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.FiwareRegex" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Collection of Regex expression used to check if the value of a Pydantic
+field, can be used in the related Fiware field. The regexes here are primarily
+defined based on the identifiers syntax restriction:
+<a class="reference external" href="https://fiware-orion.readthedocs.io/en/stable/orion-api.html#identifiers-syntax-restrictions">https://fiware-orion.readthedocs.io/en/stable/orion-api.html#identifiers-syntax-restrictions</a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.FiwareRegex.attribute_name">
+<span class="sig-name descname"><span class="pre">attribute_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'(?!^id$)(?!^type$)(?!^geo:json$)(^((?![\\&quot;\'&lt;&gt;()=;</span> <span class="pre">§&amp;/#?])[\\x00-\\x7F])*$)'</span></em><a class="headerlink" href="#filip.utils.validators.FiwareRegex.attribute_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.FiwareRegex.attribute_value">
+<span class="sig-name descname"><span class="pre">attribute_value</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'(^((?![\\&quot;\'&lt;&gt;()=;]).)*$)'</span></em><a class="headerlink" href="#filip.utils.validators.FiwareRegex.attribute_value" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.FiwareRegex.standard">
+<span class="sig-name descname"><span class="pre">standard</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'(^((?![?&amp;#/\\&quot;\'</span> <span class="pre">])[\\x00-\\x7F])*$)'</span></em><a class="headerlink" href="#filip.utils.validators.FiwareRegex.standard" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.FiwareRegex.string_protect">
+<span class="sig-name descname"><span class="pre">string_protect</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'(?!^id$)(?!^type$)(?!^geo:json$)(^((?![?&amp;#/\\&quot;\'</span> <span class="pre">])[\\x00-\\x7F])*$)'</span></em><a class="headerlink" href="#filip.utils.validators.FiwareRegex.string_protect" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.ignore_none_input">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">ignore_none_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#ignore_none_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.ignore_none_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.match_regex">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">match_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#match_regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.match_regex" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_escape_character_free">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_escape_character_free</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_escape_character_free"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_escape_character_free" title="Permalink to this definition"></a></dt>
+<dd><p>Function that checks whether a value contains a string part that starts
+or end with ‘ or “.
+the function iterates to break down each complex data-structure to its
+fundamental string parts.
+Each value of a list is examined
+Of dictionaries each value is examined, keys are skipped, as they are ok
+for Fiware</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – the string to check</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>validated string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_expression_language">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_expression_language</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expressionLanguage</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_expression_language"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_expression_language" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_attribute_name_regex">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_attribute_name_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_attribute_name_regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_attribute_name_regex" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_attribute_value_regex">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_attribute_value_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_attribute_value_regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_attribute_value_regex" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_datatype_standard">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_datatype_standard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_datatype_standard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_datatype_standard" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_datatype_string_protect">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_datatype_string_protect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_datatype_string_protect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_datatype_string_protect" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_service">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_service" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_service_path">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_service_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_service_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_service_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_standard_regex">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_standard_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_standard_regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_standard_regex" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_fiware_string_protect_regex">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_fiware_string_protect_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_fiware_string_protect_regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_fiware_string_protect_regex" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_http_url">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_http_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Url</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_http_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_http_url" title="Permalink to this definition"></a></dt>
+<dd><p>Function checks whether the host has “http” added in case of http as
+protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>AnyHttpUrl</em>) – the url for the host / port</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>validated url</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_jexl_expression">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_jexl_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_jexl_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_jexl_expression" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_mqtt_topic">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_mqtt_topic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_mqtt_topic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_mqtt_topic" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_mqtt_url">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_mqtt_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Url</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_mqtt_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_mqtt_url" title="Permalink to this definition"></a></dt>
+<dd><p>Function that checks whether a url is valid mqtt endpoint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> – the url for the target endpoint</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>validated url</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2026, RWTH Aachen University, E.ON Energy Research Center, Institute for Energy Efficient Buildings and Indoor Climate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
