@@ -1227,6 +1227,42 @@ class TestContextBroker(unittest.TestCase):
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
         cb_url=settings.CB_URL,
     )
+    def test_override_entity_attributes(self):
+        entity1 = self.entity.model_copy(deep=True)
+        entity1.add_attributes({"pressure": ContextAttribute(type="xyz", value=1050)})
+
+        # initial entity
+        self.client.post_entity(entity1)
+
+        # get entity in normal (non keyValues) format
+        entity1_full = self.client.get_entity(entity_id=entity1.id)
+
+        # override a single attribute value
+        entity1_full.temperature.value = 30
+        self.client.override_entity(entity=entity1_full, key_values=False)
+
+        updated_entity = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1_full, updated_entity)
+
+        # test replace all attributes
+        entity1_full_dict = entity1_full.model_dump()
+
+        # update temperature again
+        entity1_full_dict["temperature"]["value"] = 40
+
+        self.client.override_entity(
+            entity=ContextEntity(**entity1_full_dict),
+            key_values=False,
+        )
+
+        updated_entity = self.client.get_entity(entity_id=entity1.id)
+        self.assertEqual(entity1_full_dict, updated_entity.model_dump())
+
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+    )
     def test_update_entity_keyvalues(self):
         entity1 = self.entity.model_copy(deep=True)
         # initial entity
