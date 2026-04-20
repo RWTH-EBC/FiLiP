@@ -1248,6 +1248,7 @@ class TestContextBroker(unittest.TestCase):
         entity1_full_dict = entity1_full.model_dump()
 
         # update temperature again
+        entity1_full_dict["pressure"]["value"] = 40
         entity1_full_dict["temperature"]["value"] = 40
 
         self.client.override_entity(
