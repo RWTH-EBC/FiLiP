@@ -84,7 +84,7 @@ setuptools.setup(
     extras_require={
         "development": ["pre-commit~=4.0.1"],
         "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
-        "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3"],
+        "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3", "python-keycloak~=7.1.1"],
         ":python_version < '3.9'": ["pandas~=2.1.4"],
         ":python_version >= '3.9'": ["pandas>=2.1.4,<2.4.0"],
     },

@@ -92,7 +92,7 @@ class ContextBrokerClient(BaseHttpClient):
         *,
         method: PaginationMethod = PaginationMethod.GET,
         url: str,
-        headers: Dict,
+        headers: Dict = None,
         limit: Union[PositiveInt, PositiveFloat] = None,
         params: Dict = None,
         data: str = None,
@@ -116,32 +116,36 @@ class ContextBrokerClient(BaseHttpClient):
             object:
 
         """
+        params = copy.deepcopy(params) if params else {}
+        headers = copy.deepcopy(headers) if headers else None
+
         if limit is None:
             limit = inf
-        if limit > 1000:
-            params["limit"] = 1000  # maximum items per request
-        else:
-            params["limit"] = limit
+        params["limit"] = 1000 if limit > 1000 else limit
 
-        if self.session:
-            session = self.session
-        else:
-            session = requests.Session()
-        with session:
-            res = session.request(
-                method=method, url=url, params=params, headers=headers, data=data
+        original_session = self.session
+        temporary_session = None
+        if self.session is None:
+            temporary_session = requests.Session()
+            self.session = temporary_session
+
+        try:
+            res = self.request(
+                method=method.value,
+                url=url,
+                params=params,
+                headers=headers,
+                data=data,
             )
             if res.ok:
                 items = res.json()
-                # do pagination
                 count = int(res.headers["Fiware-Total-Count"])
 
                 while len(items) < limit and len(items) < count:
-                    # Establishing the offset from where entities are retrieved
                     params["offset"] = len(items)
                     params["limit"] = min(1000, (limit - len(items)))
-                    res = session.request(
-                        method=method,
+                    res = self.request(
+                        method=method.value,
                         url=url,
                         params=params,
                         headers=headers,
@@ -154,7 +158,10 @@ class ContextBrokerClient(BaseHttpClient):
                 self.logger.debug("Received: %s", items)
                 return items
             res.raise_for_status()
-
+        finally:
+            if temporary_session is not None:
+                temporary_session.close()
+                self.session = original_session
     # MANAGEMENT API
     def get_version(self) -> Dict:
         """
