@@ -102,7 +102,7 @@ class IoTAClient(BaseHttpClient):
             if group.service:
                 assert (
                     group.service == self.fiware_service
-                ), "Service group service does not math fiware service"
+                ), "Service group service does not match fiware service"
             if group.subservice:
                 assert (
                     group.subservice == self.fiware_service_path
