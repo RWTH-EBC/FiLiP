@@ -179,11 +179,11 @@
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">service_groups</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">service</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="p">(</span>
-                    <span class="n">group</span><span class="o">.</span><span class="n">service</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-service&quot;</span><span class="p">]</span>
-                <span class="p">),</span> <span class="s2">&quot;Service group service does not math fiware service&quot;</span>
+                    <span class="n">group</span><span class="o">.</span><span class="n">service</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">fiware_service</span>
+                <span class="p">),</span> <span class="s2">&quot;Service group service does not match fiware service&quot;</span>
             <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">subservice</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="p">(</span>
-                    <span class="n">group</span><span class="o">.</span><span class="n">subservice</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-servicepath&quot;</span><span class="p">]</span>
+                    <span class="n">group</span><span class="o">.</span><span class="n">subservice</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">fiware_service_path</span>
                 <span class="p">),</span> <span class="s2">&quot;Service group subservice does not match fiware service path&quot;</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;iot/services&quot;</span><span class="p">)</span>
@@ -888,8 +888,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="s2">&quot;admin/log&quot;</span><span class="p">)</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-service&quot;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-servicepath&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fiware-service&quot;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-service&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fiware-servicepath&quot;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;fiware-servicepath&quot;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
