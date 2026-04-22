@@ -117,35 +117,47 @@ class ContextBrokerLDClient(BaseHttpClient):
         if "count" not in params:
             params.update({"count": "true"})
 
-        res = self.request(
-            method=method.value,
-            url=url,
-            params=params,
-            headers=headers,
-            data=data,
-        )
-        if res.ok:
-            items = res.json()
-            count = int(res.headers["NGSILD-Results-Count"])
+        temp_session = None
+        if self.session is None:
+            temp_session = requests.Session()
 
-            while len(items) < limit and len(items) < count:
-                params["offset"] = len(items)
-                params["limit"] = min(1000, (limit - len(items)))
-                res = self.request(
+        try:
+            def do_request(request_params):
+                if temp_session is not None:
+                    return temp_session.request(
+                        method=method.value,
+                        url=url,
+                        params=request_params,
+                        headers=headers,
+                        data=data,
+                    )
+                return self.request(
                     method=method.value,
                     url=url,
-                    params=params,
+                    params=request_params,
                     headers=headers,
                     data=data,
                 )
-                if res.ok:
-                    items.extend(res.json())
-                else:
-                    res.raise_for_status()
-            self.logger.debug("Received: %s", items)
-            return items
-        res.raise_for_status()
 
+            res = do_request(params)
+            if res.ok:
+                items = res.json()
+                count = int(res.headers["NGSILD-Results-Count"])
+
+                while len(items) < limit and len(items) < count:
+                    params["offset"] = len(items)
+                    params["limit"] = min(1000, (limit - len(items)))
+                    res = do_request(params)
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                self.logger.debug("Received: %s", items)
+                return items
+            res.raise_for_status()
+        finally:
+            if temp_session is not None:
+                temp_session.close()
     def get_version(self) -> Dict:
         """
         Gets version of Orion-LD context broker
