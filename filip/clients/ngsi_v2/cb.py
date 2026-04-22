@@ -123,35 +123,45 @@ class ContextBrokerClient(BaseHttpClient):
             limit = inf
         params["limit"] = 1000 if limit > 1000 else limit
 
-        res = self.request(
-            method=method.value,
-            url=url,
-            params=params,
-            headers=headers,
-            data=data,
-        )
-        if res.ok:
-            items = res.json()
-            count = int(res.headers["Fiware-Total-Count"])
+        original_session = self.session
+        temporary_session = None
+        if self.session is None:
+            temporary_session = requests.Session()
+            self.session = temporary_session
 
-            while len(items) < limit and len(items) < count:
-                params["offset"] = len(items)
-                params["limit"] = min(1000, (limit - len(items)))
-                res = self.request(
-                    method=method.value,
-                    url=url,
-                    params=params,
-                    headers=headers,
-                    data=data,
-                )
-                if res.ok:
-                    items.extend(res.json())
-                else:
-                    res.raise_for_status()
-            self.logger.debug("Received: %s", items)
-            return items
-        res.raise_for_status()
+        try:
+            res = self.request(
+                method=method.value,
+                url=url,
+                params=params,
+                headers=headers,
+                data=data,
+            )
+            if res.ok:
+                items = res.json()
+                count = int(res.headers["Fiware-Total-Count"])
 
+                while len(items) < limit and len(items) < count:
+                    params["offset"] = len(items)
+                    params["limit"] = min(1000, (limit - len(items)))
+                    res = self.request(
+                        method=method.value,
+                        url=url,
+                        params=params,
+                        headers=headers,
+                        data=data,
+                    )
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                self.logger.debug("Received: %s", items)
+                return items
+            res.raise_for_status()
+        finally:
+            if temporary_session is not None:
+                temporary_session.close()
+                self.session = original_session
     # MANAGEMENT API
     def get_version(self) -> Dict:
         """
