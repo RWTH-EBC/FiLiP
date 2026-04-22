@@ -1035,7 +1035,11 @@ class ContextBrokerClient(BaseHttpClient):
         return self.replace_entity_attributes(
             entity_id=entity.id,
             entity_type=entity.type,
-            attrs=entity.get_attributes(),
+            attrs=(
+                entity.get_attributes(strict_data_type=False)
+                if isinstance(entity, ContextEntity)
+                else entity.get_attributes()
+            ),
             **kwargs,
         )
 
