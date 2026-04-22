@@ -117,20 +117,15 @@ class ContextBrokerLDClient(BaseHttpClient):
         if "count" not in params:
             params.update({"count": "true"})
 
-        temp_session = None
+        original_session = self.session
+        temporary_session = None
         if self.session is None:
-            temp_session = requests.Session()
+            temporary_session = requests.Session()
+            self.session = temporary_session
 
         try:
+
             def do_request(request_params):
-                if temp_session is not None:
-                    return temp_session.request(
-                        method=method.value,
-                        url=url,
-                        params=request_params,
-                        headers=headers,
-                        data=data,
-                    )
                 return self.request(
                     method=method.value,
                     url=url,
@@ -156,8 +151,10 @@ class ContextBrokerLDClient(BaseHttpClient):
                 return items
             res.raise_for_status()
         finally:
-            if temp_session is not None:
-                temp_session.close()
+            if temporary_session is not None:
+                temporary_session.close()
+                self.session = original_session
+
     def get_version(self) -> Dict:
         """
         Gets version of Orion-LD context broker
