@@ -1113,7 +1113,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_entity_attributes</span><span class="p">(</span>
             <span class="n">entity_id</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">entity_type</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-            <span class="n">attrs</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">(),</span>
+            <span class="n">attrs</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">(</span><span class="n">strict_data_type</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">ContextEntity</span><span class="p">)</span>
+                <span class="k">else</span> <span class="n">entity</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
+            <span class="p">),</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
