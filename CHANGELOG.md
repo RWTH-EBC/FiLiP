@@ -1,4 +1,5 @@
-### v0.7.5
+### v0.7.x
+- fix: allow dynamic header composition in v2 http client ([#493](https://github.com/RWTH-EBC/FiLiP/pull/493))
 - chore: non-strict attribute types when updating ContextEntity ([#497](https://github.com/RWTH-EBC/FiLiP/pull/497))
 
 ### v0.7.4
