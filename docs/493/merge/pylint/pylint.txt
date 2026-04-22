@@ -386,42 +386,42 @@ filip/clients/ngsi_v2/quantumleap.py:1229:20: W0108: Lambda may not be necessary
 filip/clients/ngsi_v2/quantumleap.py:1292:4: C0116: Missing function or method docstring (missing-function-docstring)
 filip/clients/ngsi_v2/quantumleap.py:1299:31: W0640: Cell variable entity_group defined in loop (cell-var-from-loop)
 ************* Module filip.clients.ngsi_ld.cb
-filip/clients/ngsi_ld/cb.py:286:0: C0301: Line too long (178/100) (line-too-long)
+filip/clients/ngsi_ld/cb.py:283:0: C0301: Line too long (178/100) (line-too-long)
 filip/clients/ngsi_ld/cb.py:12:0: E0401: Unable to import 'requests' (import-error)
 filip/clients/ngsi_ld/cb.py:13:0: E0401: Unable to import 'pydantic' (import-error)
-filip/clients/ngsi_ld/cb.py:162:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:192:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:246:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
-filip/clients/ngsi_ld/cb.py:208:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:271:8: C0103: Argument name "geometryProperty" doesn't conform to snake_case naming style (invalid-name)
-filip/clients/ngsi_ld/cb.py:265:4: R0913: Too many arguments (6/5) (too-many-arguments)
-filip/clients/ngsi_ld/cb.py:309:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
-filip/clients/ngsi_ld/cb.py:311:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-filip/clients/ngsi_ld/cb.py:320:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
-filip/clients/ngsi_ld/cb.py:265:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:345:8: C0103: Argument name "q" doesn't conform to snake_case naming style (invalid-name)
-filip/clients/ngsi_ld/cb.py:339:4: R0913: Too many arguments (12/5) (too-many-arguments)
-filip/clients/ngsi_ld/cb.py:339:4: R0914: Too many local variables (20/15) (too-many-locals)
-filip/clients/ngsi_ld/cb.py:417:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
-filip/clients/ngsi_ld/cb.py:419:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-filip/clients/ngsi_ld/cb.py:433:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
-filip/clients/ngsi_ld/cb.py:339:4: R0912: Too many branches (15/12) (too-many-branches)
-filip/clients/ngsi_ld/cb.py:474:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:444:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:526:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:561:33: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-filip/clients/ngsi_ld/cb.py:572:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:604:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:632:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:706:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:669:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:733:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/clients/ngsi_ld/cb.py:803:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:813:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/clients/ngsi_ld/cb.py:846:20: C0103: Variable name "successList" doesn't conform to snake_case naming style (invalid-name)
-filip/clients/ngsi_ld/cb.py:927:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
-filip/clients/ngsi_ld/cb.py:951:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-filip/clients/ngsi_ld/cb.py:953:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:159:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:189:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:243:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/clients/ngsi_ld/cb.py:205:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:268:8: C0103: Argument name "geometryProperty" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:262:4: R0913: Too many arguments (6/5) (too-many-arguments)
+filip/clients/ngsi_ld/cb.py:306:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
+filip/clients/ngsi_ld/cb.py:308:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:317:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_ld/cb.py:262:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:342:8: C0103: Argument name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:336:4: R0913: Too many arguments (12/5) (too-many-arguments)
+filip/clients/ngsi_ld/cb.py:336:4: R0914: Too many local variables (20/15) (too-many-locals)
+filip/clients/ngsi_ld/cb.py:414:15: R1714: Consider merging these comparisons with 'in' by using 'options not in ('keyValues', 'sysAttrs')'. Use a set instead if elements are hashable. (consider-using-in)
+filip/clients/ngsi_ld/cb.py:416:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:430:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/clients/ngsi_ld/cb.py:336:4: R0912: Too many branches (15/12) (too-many-branches)
+filip/clients/ngsi_ld/cb.py:471:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:441:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:523:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:558:33: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+filip/clients/ngsi_ld/cb.py:569:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:601:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:629:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:703:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:666:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:730:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/clients/ngsi_ld/cb.py:800:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:810:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/clients/ngsi_ld/cb.py:843:20: C0103: Variable name "successList" doesn't conform to snake_case naming style (invalid-name)
+filip/clients/ngsi_ld/cb.py:924:8: R1720: Unnecessary "else" after "raise", remove the "else" and de-indent the code inside it (no-else-raise)
+filip/clients/ngsi_ld/cb.py:948:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+filip/clients/ngsi_ld/cb.py:950:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
 filip/clients/ngsi_ld/cb.py:17:0: W0611: Unused AttrsFormat imported from filip.models.ngsi_v2.base (unused-import)
 filip/clients/ngsi_ld/cb.py:30:0: W0611: Unused Query imported from filip.models.ngsi_v2.context (unused-import)
 ************* Module filip.semantics.semantics_manager
@@ -1040,7 +1040,33 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         "If attrs is not used, the order is arbitrary. "
         "Example:"
         "[ 'Ford', 'black', 78.3 ]",
-    ) (duplicate-code)
+    )
+
+
+# NGSIv2 entity models (duplicate-code)
+filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[146:166]
+==filip.clients.ngsi_v2.cb:[153:173]
+                    if res.ok:
+                        items.extend(res.json())
+                    else:
+                        res.raise_for_status()
+                self.logger.debug("Received: %s", items)
+                return items
+            res.raise_for_status()
+        finally:
+            if temporary_session is not None:
+                temporary_session.close()
+                self.session = original_session
+
+    def get_version(self) -> Dict:
+        """
+        Gets version of Orion-LD context broker
+        Returns:
+            Dictionary with response
+        """
+        url = urljoin(self.base_url, "version")
+        try: (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[403:415]
 ==filip.models.ngsi_v2.context:[166:177]
@@ -1112,7 +1138,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         min_length=1,
     ) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[984:994]
+==filip.clients.ngsi_ld.cb:[981:991]
 ==filip.clients.ngsi_v2.cb:[1863:1883]
                     '"value" "entity_id"}'
                 )
@@ -1123,17 +1149,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        """
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        """ (duplicate-code)
+                return False (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[357:369]
 ==filip.models.ngsi_v2.base:[358:369]
@@ -1163,7 +1179,7 @@ class IdType(str, Enum):
 
  (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[777:786]
+==filip.clients.ngsi_ld.cb:[774:783]
 ==filip.clients.ngsi_v2.cb:[1656:1665]
                     exclude_none=True,
                 ),
@@ -1175,7 +1191,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             msg = f"Could not update subscription {subscription.id}" (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[506:515]
+==filip.clients.ngsi_ld.cb:[503:512]
 ==filip.clients.ngsi_v2.cb:[1196:1205]
             assert attr_name is not None, (
                 "Missing name for attribute. "
@@ -1226,7 +1242,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             return True
  (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[741:749]
+==filip.clients.ngsi_ld.cb:[738:746]
 ==filip.clients.ngsi_v2.cb:[1590:1598]
         url = urljoin(
             self.base_url, f"{self._url_version}/subscriptions/{subscription_id}"
@@ -1237,7 +1253,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 self.logger.debug("Received: %s", res.json()) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[650:661]
+==filip.clients.ngsi_ld.cb:[647:658]
 ==filip.clients.ngsi_v2.cb:[1445:1456]
         url = urljoin(self.base_url, f"{self._url_version}/subscriptions/")
         headers = self.headers.copy()
@@ -1250,17 +1266,6 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             items = self.__pagination(
                 limit=limit, url=url, params=params, headers=headers
             ) (duplicate-code)
-filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[151:159]
-==filip.clients.ngsi_v2.cb:[153:161]
-                    if res.ok:
-                        items.extend(res.json())
-                    else:
-                        res.raise_for_status()
-                self.logger.debug("Received: %s", items)
-                return items
-            res.raise_for_status()
-        finally: (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[7:14]
 ==filip.models.ngsi_v2.base:[7:14]
@@ -1314,7 +1319,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         """
  (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[722:729]
+==filip.clients.ngsi_ld.cb:[719:726]
 ==filip.clients.ngsi_v2.cb:[1572:1579]
             )
             if res.ok:
@@ -1324,7 +1329,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             msg = "Could not send subscription!" (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[698:705]
+==filip.clients.ngsi_ld.cb:[695:702]
 ==filip.clients.ngsi_v2.cb:[1523:1530]
             ):
                 self.logger.info("Subscription already exists")
@@ -1334,7 +1339,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
                     self.update_subscription(subscription)
                 else: (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[651:661]
+==filip.clients.ngsi_ld.cb:[648:658]
 ==filip.clients.ngsi_v2.cb:[1700:1710]
         headers = self.headers.copy()
         params = {}
@@ -1347,7 +1352,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
                 limit=limit, url=url, params=params, headers=headers
             ) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[298:305]
+==filip.clients.ngsi_ld.cb:[295:302]
 ==filip.clients.ngsi_v2.cb:[533:540]
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
@@ -1375,6 +1380,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
@@ -1392,11 +1398,8 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
-
- (duplicate-code)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.registrations:[131:137]
 ==filip.models.ngsi_v2.subscriptions:[546:552]
@@ -1409,18 +1412,27 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if "#" in iri:
-        index = iri.find("#")
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind("/")
-        return iri[:index]
+        if "#" in iri:
+            index = iri.find("#")
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind("/")
+            return iri[:index]
 
- (duplicate-code)
+    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
+        """Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        """ (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[743:749]
+==filip.clients.ngsi_ld.cb:[740:746]
 ==filip.clients.ngsi_v2.cb:[1757:1763]
         )
         headers = self.headers.copy()
@@ -1429,7 +1441,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 self.logger.debug("Received: %s", res.json()) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[795:809]
+==filip.clients.ngsi_ld.cb:[792:806]
 ==filip.clients.ngsi_v2.cb:[1673:1687]
         url = urljoin(
             self.base_url, f"{self._url_version}/subscriptions/{subscription_id}"
@@ -1446,7 +1458,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             msg = f"Could not delete subscription {subscription_id}" (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[797:803]
+==filip.clients.ngsi_ld.cb:[794:800]
 ==filip.clients.ngsi_v2.cb:[1910:1916]
         )
         headers = self.headers.copy()
@@ -1455,16 +1467,17 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 self.logger.info( (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[625:632]
+==filip.clients.ngsi_ld.cb:[622:629]
 ==filip.clients.ngsi_v2.cb:[1675:1681]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
                 self.logger.info( (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[299:305]
+==filip.clients.ngsi_ld.cb:[296:302]
 ==filip.clients.ngsi_v2.cb:[598:604]
         headers = self.headers.copy()
         params = {}
@@ -1473,7 +1486,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         if attrs:
             params.update({"attrs": ",".join(attrs)}) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[238:244]
+==filip.clients.ngsi_ld.cb:[235:241]
 ==filip.clients.ngsi_v2.cb:[289:295]
             )
             if res.ok:
@@ -1481,6 +1494,17 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
                 return res.headers.get("Location")
             res.raise_for_status()
         except requests.RequestException as err: (duplicate-code)
+filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
+==filip.clients.ngsi_ld.cb:[120:128]
+==filip.clients.ngsi_v2.cb:[125:132]
+        original_session = self.session
+        temporary_session = None
+        if self.session is None:
+            temporary_session = requests.Session()
+            self.session = temporary_session
+
+        try:
+ (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[171:177]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1507,7 +1531,7 @@ from filip.semantics.vocabulary import (
     IdType,
     Vocabulary, (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[976:981]
+==filip.clients.ngsi_ld.cb:[973:978]
 ==filip.clients.ngsi_v2.cb:[1855:1860]
         elif isinstance(relationship, dict):
             _sentinel = object()
@@ -1515,7 +1539,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
             if destination_id is _sentinel:
                 raise ValueError( (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[771:776]
+==filip.clients.ngsi_ld.cb:[768:773]
 ==filip.clients.ngsi_v2.cb:[1642:1647]
         try:
             res = self.patch(
@@ -1523,7 +1547,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
                 headers=headers,
                 data=subscription.model_dump_json( (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[314:319]
+==filip.clients.ngsi_ld.cb:[311:316]
 ==filip.clients.ngsi_v2.cb:[546:551]
         try:
             res = self.get(url=url, params=params, headers=headers)
@@ -1531,23 +1555,27 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
                 self.logger.info("Entity successfully retrieved!")
                 self.logger.debug("Received: %s", res.json()) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[594:601]
+==filip.clients.ngsi_ld.cb:[591:598]
 ==filip.clients.ngsi_v2.cb:[1262:1267]
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
             params.update({"type": entity_type})
+
         try: (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[593:600]
+==filip.clients.ngsi_ld.cb:[590:597]
 ==filip.clients.ngsi_v2.cb:[533:538]
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
-            params.update({"type": entity_type}) (duplicate-code)
+            params.update({"type": entity_type})
+ (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[563:568]
+==filip.clients.ngsi_ld.cb:[560:565]
 ==filip.clients.ngsi_v2.cb:[1992:1997]
         try:
             res = self.post(
@@ -1555,7 +1583,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
                 headers=headers,
                 params=params, (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[715:720]
+==filip.clients.ngsi_ld.cb:[712:717]
 ==filip.clients.ngsi_v2.cb:[1555:1560]
         try:
             res = self.post(
@@ -1563,7 +1591,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
                 headers=headers,
                 data=subscription.model_dump_json( (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[200:205]
+==filip.clients.ngsi_ld.cb:[197:202]
 ==filip.clients.ngsi_v2.cb:[205:210]
             if res.ok:
                 return res.json()
@@ -1571,7 +1599,7 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
         except requests.RequestException as err:
             self.logger.error(err) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
-==filip.clients.ngsi_ld.cb:[170:175]
+==filip.clients.ngsi_ld.cb:[167:172]
 ==filip.clients.ngsi_v2.cb:[174:179]
             if res.ok:
                 return res.json()
@@ -1624,19 +1652,20 @@ filip/models/ngsi_ld/__init__.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:
+    def encode_msg(
+        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
+    ) -> str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload) (duplicate-code)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
+filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
-filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
+filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
-filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 filip/models/ngsi_ld/__init__.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
