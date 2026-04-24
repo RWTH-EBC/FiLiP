@@ -16,7 +16,6 @@ INSTALL_REQUIRES = [
     "pandas_datapackage_reader~=0.18.0",
     "pydantic>=2.6.0,<2.9.0",
     "pydantic-settings>=2.0.0,<2.3.0",
-    "geojson_pydantic~=1.0.2",
     "stringcase>=1.2.0",
     "regex~=2023.10.3",
     "requests~=2.32.0",
@@ -28,8 +27,6 @@ INSTALL_REQUIRES = [
     "packaging~=24.1",
     "matplotlib~=3.9.4",
 ]
-
-SETUP_REQUIRES = INSTALL_REQUIRES.copy()
 
 
 def get_version():
@@ -72,19 +69,18 @@ setuptools.setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
-        "License :: OSI Approved :: BSD License",
     ],
     keywords=["iot", "fiware", "semantic"],
     packages=setuptools.find_packages(
         exclude=["tests", "tests.*", "img", "tutorials.*", "tutorials"]
     ),
     package_data={"filip": ["data/unece-units/*.csv"]},
-    setup_requires=SETUP_REQUIRES,
+    license="BSD-3-Clause",
     # optional modules
     extras_require={
         "development": ["pre-commit~=4.0.1"],
         "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
-        "tutorials": ["plotly==5.24.1", "matplotlib~=3.4.3", "python-keycloak~=7.1.1"],
+        "tutorials": ["plotly==5.24.1", "matplotlib~=3.9.4", "python-keycloak~=7.1.1"],
         ":python_version < '3.9'": ["pandas~=2.1.4"],
         ":python_version >= '3.9'": ["pandas>=2.1.4,<2.4.0"],
     },
