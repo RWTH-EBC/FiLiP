@@ -2894,7 +2894,10 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )</pre></td>
+    )
+
+
+# NGSIv2 entity models</pre></td>
             </tr>
             
             <tr>
@@ -2996,7 +2999,9 @@
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
+
+</pre></td>
             </tr>
             
             <tr>
@@ -3110,6 +3115,8 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
+
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -3308,9 +3315,7 @@ from geojson_pydantic import (
         &#34;By default, the entities are represented in normalized &#34;
         &#34;mode. However, using the attrsFormat modifier, a &#34;
         &#34;simplified representation mode can be requested.&#34;
-    )
-
-</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -3468,7 +3473,6 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )</pre></td>
             </tr>
             
@@ -3482,12 +3486,12 @@ from geojson_pydantic import (
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[463:469]
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon,</pre></td>
+                        Point,
+                        MultiPoint,
+                        LineString,
+                        MultiLineString,
+                        Polygon,
+                        MultiPolygon,</pre></td>
             </tr>
             
             <tr>
@@ -3811,8 +3815,10 @@ from filip.semantics.vocabulary import (
 ==filip.clients.ngsi_v2.cb:[1266:1271]
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
+
         try:</pre></td>
             </tr>
             
@@ -3829,10 +3835,8 @@ from filip.semantics.vocabulary import (
         url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
-            params.update({&#34;type&#34;: entity_type})
-</pre></td>
+            params.update({&#34;type&#34;: entity_type})</pre></td>
             </tr>
             
             <tr>
@@ -3918,8 +3922,7 @@ from filip.semantics.vocabulary import (
 
         if limit is None:
             limit = inf
-        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit
-</pre></td>
+        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit</pre></td>
             </tr>
             
             <tr>
@@ -4028,47 +4031,7 @@ from filip.semantics.vocabulary import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
                 <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
             </tr>
             
             <tr>
@@ -4088,7 +4051,37 @@ from filip.semantics.vocabulary import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -4109,6 +4102,16 @@ from filip.semantics.vocabulary import (
                 <td>R0401</td>
                 <td></td>
                 <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
         </table>
