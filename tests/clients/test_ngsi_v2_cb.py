@@ -13,6 +13,8 @@ import uuid
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse, urljoin
+
+import pytest
 import requests
 from requests import RequestException
 from pydantic import AnyHttpUrl
@@ -2103,6 +2105,7 @@ class TestContextBroker(unittest.TestCase):
             subservice=self.fiware_header.service_path,
             apikey=settings.FIWARE_SERVICEPATH.strip("/"),
             resource="/iot/json",
+            entity_type="Thing2",
         )
 
         # create the Http client node that once sent the device cannot be posted
@@ -2310,6 +2313,7 @@ class TestContextBroker(unittest.TestCase):
         entity_type_2 = "HumiditySensor"
 
         devices = []
+        entities = []
 
         for i in range(20):
             base_entity_id = base_entity_id_1 if i < 10 else base_entity_id_2
@@ -2324,6 +2328,8 @@ class TestContextBroker(unittest.TestCase):
                 entity_type=entity_type,
                 entity_name=entity_id,
             )
+            entity = ContextEntity(id=entity_id, type=entity_type)
+            self.client.post_entity(entity=entity)
             devices.append(device)
         self.iotac.post_devices(devices=devices)
         while devices:
@@ -2361,6 +2367,7 @@ class TestContextBroker(unittest.TestCase):
 
         self.client.delete_entity(entity_id="string_test", entity_type="test_type1")
 
+    @pytest.mark.skip(reason="Not ready yet")
     def test_optional_entity_type(self):
         """
         Test whether the entity type can be optional

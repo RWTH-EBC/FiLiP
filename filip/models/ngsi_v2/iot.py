@@ -217,7 +217,6 @@ class ServiceGroup(BaseModel):
         "property-of-a-property is created instead.",
     )
     entity_type: Optional[str] = Field(
-        default=None,
         description="name of the Entity type to assign to the group. "
         "Allowed characters "
         "are the ones in the plain ASCII set, except the following "
@@ -239,6 +238,14 @@ class ServiceGroup(BaseModel):
         description="Context Broker connection information. This options can "
         "be used to override the global ones for specific types of "
         "devices.",
+    )
+    endpoint: Optional[str] = Field(
+        default=None,
+        description="Endpoint where the group of device is going to receive commands, if any.",
+    )
+    cmdMode: Optional[str] = Field(
+        default=None,
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default. ",
     )
 
     @field_validator("cbHost")
@@ -419,6 +426,10 @@ class Device(DeviceSettings):
     )
     commands: List[DeviceCommand] = Field(
         default=[], description="List of commands of the device"
+    )
+    cmdMode: str = Field(
+        default="Legacy ",
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default.",
     )
     attributes: List[DeviceAttribute] = Field(
         default=[], description="List of active attributes of the device"
