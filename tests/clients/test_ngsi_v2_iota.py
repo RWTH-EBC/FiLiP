@@ -567,7 +567,9 @@ class TestAgent(unittest.TestCase):
         device = Device(**self.device)
         device.add_command(DeviceCommand(name="dummy_cmd"))
         self.client.post_device(device=device)
-        clear_context_broker(settings.CB_URL, self.fiware_header)
+        cb_client.delete_entity(
+            entity_id=device.entity_name, entity_type=device.entity_type
+        )
         self.assertEqual(len(cb_client.get_registration_list()), 1)
 
         clear_iot_agent(settings.IOTA_JSON_URL, self.fiware_header)
