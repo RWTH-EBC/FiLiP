@@ -1,3 +1,6 @@
+### v0.7.6
+- fix: exception handling in checking broker version ([#503](https://github.com/RWTH-EBC/FiLiP/pull/503))
+
 ### v0.7.5
 - fix: allow dynamic header composition in v2 http client ([#493](https://github.com/RWTH-EBC/FiLiP/pull/493))
 - fix: allow non-standard attribute types when updating ContextEntity ([#497](https://github.com/RWTH-EBC/FiLiP/pull/497))
