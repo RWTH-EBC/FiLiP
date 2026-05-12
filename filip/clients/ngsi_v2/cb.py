@@ -162,6 +162,7 @@ class ContextBrokerClient(BaseHttpClient):
             if temporary_session is not None:
                 temporary_session.close()
                 self.session = original_session
+
     # MANAGEMENT API
     def get_version(self) -> Dict:
         """
@@ -185,13 +186,20 @@ class ContextBrokerClient(BaseHttpClient):
         Checks whether the used Orion version is greater or equal than the minimum required orion version of
         the current filip version
         """
-        orion_version = self.get_version()["orion"]["version"]
-        if version.parse(orion_version) < version.parse(settings.MINIMUM_ORION_VERSION):
-            self.logger.warning(
-                f"You are using orion version {orion_version}. There was a breaking change in Orion Version "
-                f"{settings.MINIMUM_ORION_VERSION}, therefore functionality is not assured when using "
-                f"version {orion_version}."
-            )
+        try:
+            orion_version = self.get_version()["orion"]["version"]
+            if version.parse(orion_version) < version.parse(
+                settings.MINIMUM_ORION_VERSION
+            ):
+                self.logger.warning(
+                    f"You are using orion version {orion_version}. There was a breaking change in Orion Version "
+                    f"{settings.MINIMUM_ORION_VERSION}, therefore functionality is not assured when using "
+                    f"version {orion_version}."
+                )
+        except requests.RequestException as err:
+            self.logger.error(err)
+            msg = f"Fetch version fails, reason: {err.args}"
+            raise BaseHttpClientException(message=msg, response=err.response) from err
 
     def get_resources(self) -> Dict:
         """
