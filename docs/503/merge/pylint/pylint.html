@@ -2922,9 +2922,10 @@
                 temporary_session.close()
                 self.session = original_session
 
+    # MANAGEMENT API
     def get_version(self) -&gt; Dict:
         &#34;&#34;&#34;
-        Gets version of Orion-LD context broker
+        Gets version of IoT Agent
         Returns:
             Dictionary with response
         &#34;&#34;&#34;
@@ -2999,7 +3000,9 @@
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
+
+</pre></td>
             </tr>
             
             <tr>
@@ -3021,7 +3024,7 @@
         description=&#34;Id of an entity in an NGSI context broker. Allowed &#34;
         &#34;characters are the ones in the plain ASCII set, except &#34;
         &#34;the following ones: control characters, &#34;
-        &#34;whitespace, &amp;, ?, / and #.&#34;</pre></td>
+        &#34;whitespace, &amp;, ?, / and #.&#34;,</pre></td>
             </tr>
             
             <tr>
@@ -3066,17 +3069,7 @@
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        &#34;&#34;&#34;
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        &#34;&#34;&#34;</pre></td>
+                return False</pre></td>
             </tr>
             
             <tr>
@@ -3114,6 +3107,8 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
+
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -3223,6 +3218,7 @@ class IdType(str, Enum):
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) &gt; 0:
+                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -3311,9 +3307,7 @@ from geojson_pydantic import (
         &#34;By default, the entities are represented in normalized &#34;
         &#34;mode. However, using the attrsFormat modifier, a &#34;
         &#34;simplified representation mode can be requested.&#34;
-    )
-
-</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -3624,7 +3618,6 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1687:1693]
         )
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -3683,8 +3676,7 @@ from geojson_pydantic import (
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try:
-</pre></td>
+        try:</pre></td>
             </tr>
             
             <tr>
@@ -3802,10 +3794,8 @@ from filip.semantics.vocabulary import (
 ==filip.clients.ngsi_v2.cb:[1274:1279]
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
-
         try:</pre></td>
             </tr>
             
@@ -4011,16 +4001,6 @@ from filip.semantics.vocabulary import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
                 <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
             </tr>
             
@@ -4032,6 +4012,16 @@ from filip.semantics.vocabulary import (
                 <td>R0401</td>
                 <td></td>
                 <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip -&gt; filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.quantumleap)</pre></td>
             </tr>
             
             <tr>
@@ -4091,7 +4081,7 @@ from filip.semantics.vocabulary import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
             <tr>
@@ -4111,7 +4101,7 @@ from filip.semantics.vocabulary import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
         </table>
