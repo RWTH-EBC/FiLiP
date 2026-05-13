@@ -25,7 +25,6 @@ INSTALL_REQUIRES = [
     "PyLD~=2.0.4",
     "pyjexl~=0.3.0",
     "packaging~=24.1",
-    "matplotlib~=3.9.4",
 ]
 
 
