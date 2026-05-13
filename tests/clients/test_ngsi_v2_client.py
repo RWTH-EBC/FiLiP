@@ -5,12 +5,13 @@ Test for filip.core.client
 import unittest
 import json
 import requests
-
+from unittest.mock import MagicMock
 from pathlib import Path
-
 from filip.clients.exceptions import BaseHttpClientException
-
-from filip.models.base import FiwareHeader
+import time
+from filip.models.base import FiwareHeader, FiwareHeaderSecure
+from filip.clients.base_http_client import BaseHttpClient
+from pydantic import computed_field
 from filip.clients.ngsi_v2.client import HttpClient, HttpClientConfig
 from filip.models.ngsi_v2 import ContextEntity
 from tests.config import settings, generate_servicepath
@@ -222,6 +223,70 @@ class TestClient(unittest.TestCase):
         )
         with self.assertRaises(BaseHttpClientException):
             client = HttpClient(config=config, fiware_header=self.fh)
+
+    def test_dynamic_header_update(self):
+        """Ensure every HTTP helper re-fetches secure headers per request."""
+
+        class DynamicFiwareHeader(FiwareHeader):
+            @computed_field
+            @property
+            def authorization(self) -> str:
+                return f"Bearer {time.time()}"
+
+        secure_header = DynamicFiwareHeader(
+            service=self.fh.service,
+            service_path=self.fh.service_path,
+        )
+
+        mock_session = MagicMock(spec=requests.Session)
+        mock_session.headers = {}
+        mock_session.request.return_value = MagicMock()
+
+        client = BaseHttpClient(
+            url="https://example.com", session=mock_session, fiware_header=secure_header
+        )
+
+        verbs_with_payloads = {
+            "get": {"params": {"q": "1"}},
+            "post": {"json": {"foo": "bar"}},
+            "put": {"data": "payload"},
+            "patch": {"json": {"patch": True}},
+            "delete": {},
+            "options": {},
+            "head": {},
+        }
+
+        seen_authorizations = set()
+
+        for verb, payload in verbs_with_payloads.items():
+            mock_session.request.reset_mock()
+            client_method = getattr(client, verb)
+            client_method(f"https://example.com/test_{verb}", **payload)
+
+            call = mock_session.request.call_args
+            call_headers = call.kwargs["headers"]
+            auth_header = call_headers["authorization"]
+
+            self.assertTrue(auth_header.startswith("Bearer"))
+            self.assertNotIn(
+                auth_header,
+                seen_authorizations,
+                f"Header failed to update for {verb.upper()} request",
+            )
+            self.assertEqual(call.kwargs["method"], verb.upper())
+
+            seen_authorizations.add(auth_header)
+            time.sleep(0.01)
+
+        # Also verify direct usage of the shared request helper refreshes headers
+        mock_session.request.reset_mock()
+        client.request(
+            method="POST",
+            url="https://example.com/direct",
+            json={"direct": True},
+        )
+        direct_headers = mock_session.request.call_args.kwargs["headers"]
+        self.assertTrue(direct_headers["authorization"].startswith("Bearer"))
 
     def tearDown(self) -> None:
         """

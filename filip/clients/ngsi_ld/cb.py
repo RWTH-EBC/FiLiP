@@ -5,6 +5,7 @@ Context Broker Module for API Client
 import re
 import json
 import os
+import copy
 from math import inf
 from typing import Any, Dict, List, Union, Optional, Literal
 from urllib.parse import urljoin
@@ -84,7 +85,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         *,
         method: PaginationMethod = PaginationMethod.GET,
         url: str,
-        headers: Dict,
+        headers: Dict = None,
         limit: Union[PositiveInt, PositiveFloat] = None,
         params: Dict = None,
         data: str = None,
@@ -108,40 +109,41 @@ class ContextBrokerLDClient(BaseHttpClient):
             object:
 
         """
+        params = copy.deepcopy(params) if params else {}
+        headers = copy.deepcopy(headers) if headers else None
+
         if limit is None:
             limit = inf
-        if limit > 1000:
-            params["limit"] = 1000  # maximum items per request
-        else:
-            params["limit"] = limit
-        # add count option if not present
+        params["limit"] = 1000 if limit > 1000 else limit
         if "count" not in params:
             params.update({"count": "true"})
 
-        if self.session:
-            session = self.session
-        else:
-            session = requests.Session()
-        with session:
-            res = session.request(
-                method=method, url=url, params=params, headers=headers, data=data
-            )
+        original_session = self.session
+        temporary_session = None
+        if self.session is None:
+            temporary_session = requests.Session()
+            self.session = temporary_session
+
+        try:
+
+            def do_request(request_params):
+                return self.request(
+                    method=method.value,
+                    url=url,
+                    params=request_params,
+                    headers=headers,
+                    data=data,
+                )
+
+            res = do_request(params)
             if res.ok:
                 items = res.json()
-                # do pagination
                 count = int(res.headers["NGSILD-Results-Count"])
 
                 while len(items) < limit and len(items) < count:
-                    # Establishing the offset from where entities are retrieved
                     params["offset"] = len(items)
                     params["limit"] = min(1000, (limit - len(items)))
-                    res = session.request(
-                        method=method,
-                        url=url,
-                        params=params,
-                        headers=headers,
-                        data=data,
-                    )
+                    res = do_request(params)
                     if res.ok:
                         items.extend(res.json())
                     else:
@@ -149,6 +151,10 @@ class ContextBrokerLDClient(BaseHttpClient):
                 self.logger.debug("Received: %s", items)
                 return items
             res.raise_for_status()
+        finally:
+            if temporary_session is not None:
+                temporary_session.close()
+                self.session = original_session
 
     def get_version(self) -> Dict:
         """
