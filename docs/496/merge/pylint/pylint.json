@@ -1862,83 +1862,6 @@
         {
             "type": "convention",
             "module": "filip.clients.base_http_client",
-            "obj": "BaseHttpClient.get",
-            "line": 194,
-            "column": 72,
-            "path": "filip/clients/base_http_client.py",
-            "symbol": "consider-iterating-dictionary",
-            "message": "Consider iterating the dictionary directly instead of calling .keys()",
-            "message-id": "C0201"
-        },
-        {
-            "type": "convention",
-            "module": "filip.clients.base_http_client",
-            "obj": "BaseHttpClient.options",
-            "line": 212,
-            "column": 72,
-            "path": "filip/clients/base_http_client.py",
-            "symbol": "consider-iterating-dictionary",
-            "message": "Consider iterating the dictionary directly instead of calling .keys()",
-            "message-id": "C0201"
-        },
-        {
-            "type": "convention",
-            "module": "filip.clients.base_http_client",
-            "obj": "BaseHttpClient.head",
-            "line": 234,
-            "column": 72,
-            "path": "filip/clients/base_http_client.py",
-            "symbol": "consider-iterating-dictionary",
-            "message": "Consider iterating the dictionary directly instead of calling .keys()",
-            "message-id": "C0201"
-        },
-        {
-            "type": "convention",
-            "module": "filip.clients.base_http_client",
-            "obj": "BaseHttpClient.post",
-            "line": 262,
-            "column": 72,
-            "path": "filip/clients/base_http_client.py",
-            "symbol": "consider-iterating-dictionary",
-            "message": "Consider iterating the dictionary directly instead of calling .keys()",
-            "message-id": "C0201"
-        },
-        {
-            "type": "convention",
-            "module": "filip.clients.base_http_client",
-            "obj": "BaseHttpClient.put",
-            "line": 291,
-            "column": 72,
-            "path": "filip/clients/base_http_client.py",
-            "symbol": "consider-iterating-dictionary",
-            "message": "Consider iterating the dictionary directly instead of calling .keys()",
-            "message-id": "C0201"
-        },
-        {
-            "type": "convention",
-            "module": "filip.clients.base_http_client",
-            "obj": "BaseHttpClient.patch",
-            "line": 320,
-            "column": 72,
-            "path": "filip/clients/base_http_client.py",
-            "symbol": "consider-iterating-dictionary",
-            "message": "Consider iterating the dictionary directly instead of calling .keys()",
-            "message-id": "C0201"
-        },
-        {
-            "type": "convention",
-            "module": "filip.clients.base_http_client",
-            "obj": "BaseHttpClient.delete",
-            "line": 338,
-            "column": 72,
-            "path": "filip/clients/base_http_client.py",
-            "symbol": "consider-iterating-dictionary",
-            "message": "Consider iterating the dictionary directly instead of calling .keys()",
-            "message-id": "C0201"
-        },
-        {
-            "type": "convention",
-            "module": "filip.clients.base_http_client",
             "obj": "",
             "line": 7,
             "column": 0,
@@ -2512,7 +2435,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 178,
+            "line": 185,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2523,7 +2446,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 184,
+            "line": 191,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2534,7 +2457,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 185,
+            "line": 192,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2545,7 +2468,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 367,
+            "line": 374,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2556,7 +2479,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 370,
+            "line": 377,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2567,7 +2490,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 378,
+            "line": 385,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2578,7 +2501,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 514,
+            "line": 521,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2589,7 +2512,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 578,
+            "line": 585,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2600,7 +2523,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 1122,
+            "line": 1133,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "line-too-long",
@@ -2615,7 +2538,7 @@
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-lines",
-            "message": "Too many lines in module (2276/1000)",
+            "message": "Too many lines in module (2287/1000)",
             "message-id": "C0302"
         },
         {
@@ -2677,7 +2600,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_version",
-            "line": 159,
+            "line": 166,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -2688,7 +2611,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._check_correct_cb_version",
-            "line": 183,
+            "line": 190,
             "column": 12,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -2699,7 +2622,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_resources",
-            "line": 189,
+            "line": 196,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -2710,7 +2633,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_statistics",
-            "line": 207,
+            "line": 214,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -2721,7 +2644,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.post_entity",
-            "line": 227,
+            "line": 234,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -2732,7 +2655,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.post_entity",
-            "line": 227,
+            "line": 234,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -2743,7 +2666,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_list",
-            "line": 301,
+            "line": 308,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-locals",
@@ -2754,7 +2677,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_list",
-            "line": 444,
+            "line": 451,
             "column": 16,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-else-return",
@@ -2765,7 +2688,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_list",
-            "line": 479,
+            "line": 486,
             "column": 16,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-else-return",
@@ -2776,7 +2699,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_list",
-            "line": 301,
+            "line": 308,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-branches",
@@ -2787,7 +2710,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_list",
-            "line": 301,
+            "line": 308,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-statements",
@@ -2798,7 +2721,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity",
-            "line": 493,
+            "line": 500,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -2809,7 +2732,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity",
-            "line": 493,
+            "line": 500,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -2820,7 +2743,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_attributes",
-            "line": 555,
+            "line": 562,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -2831,7 +2754,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_attributes",
-            "line": 555,
+            "line": 562,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -2842,7 +2765,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.delete_entity",
-            "line": 730,
+            "line": 737,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -2853,7 +2776,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.delete_entity",
-            "line": 778,
+            "line": 785,
             "column": 12,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "import-outside-toplevel",
@@ -2864,7 +2787,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_or_append_entity_attributes",
-            "line": 855,
+            "line": 862,
             "column": 8,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "invalid-name",
@@ -2875,7 +2798,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_or_append_entity_attributes",
-            "line": 847,
+            "line": 854,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -2886,7 +2809,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_or_append_entity_attributes",
-            "line": 847,
+            "line": 854,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-locals",
@@ -2897,7 +2820,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 930,
+            "line": 937,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "implicit-str-concat",
@@ -2908,7 +2831,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_existing_entity_attributes",
-            "line": 945,
+            "line": 952,
             "column": 8,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "invalid-name",
@@ -2919,7 +2842,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_existing_entity_attributes",
-            "line": 938,
+            "line": 945,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -2930,7 +2853,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_existing_entity_attributes",
-            "line": 938,
+            "line": 945,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-locals",
@@ -2941,7 +2864,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 1006,
+            "line": 1013,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "implicit-str-concat",
@@ -2952,7 +2875,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_existing_entity_attributes",
-            "line": 1010,
+            "line": 1017,
             "column": 18,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "f-string-without-interpolation",
@@ -2963,7 +2886,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.replace_entity_attributes",
-            "line": 1042,
+            "line": 1053,
             "column": 8,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "invalid-name",
@@ -2974,7 +2897,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.replace_entity_attributes",
-            "line": 1035,
+            "line": 1046,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -2985,7 +2908,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 1098,
+            "line": 1109,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "implicit-str-concat",
@@ -2996,7 +2919,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_attribute",
-            "line": 1106,
+            "line": 1117,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "too-many-arguments",
@@ -3007,7 +2930,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_attribute",
-            "line": 1106,
+            "line": 1117,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3018,7 +2941,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_attribute",
-            "line": 1112,
+            "line": 1123,
             "column": 8,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "unused-argument",
@@ -3029,7 +2952,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 1226,
+            "line": 1237,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "implicit-str-concat",
@@ -3040,7 +2963,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 1264,
+            "line": 1275,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "implicit-str-concat",
@@ -3051,7 +2974,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_attribute_value",
-            "line": 1275,
+            "line": 1286,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3062,7 +2985,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 1362,
+            "line": 1373,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "implicit-str-concat",
@@ -3073,7 +2996,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_types",
-            "line": 1376,
+            "line": 1387,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3084,7 +3007,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_entity_type",
-            "line": 1408,
+            "line": 1419,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3095,7 +3018,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.post_subscription",
-            "line": 1531,
+            "line": 1542,
             "column": 12,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "redefined-outer-name",
@@ -3106,7 +3029,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.post_subscription",
-            "line": 1456,
+            "line": 1467,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3117,7 +3040,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_subscription",
-            "line": 1575,
+            "line": 1586,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3128,7 +3051,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update_subscription",
-            "line": 1616,
+            "line": 1627,
             "column": 12,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "redefined-outer-name",
@@ -3139,7 +3062,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.delete_subscription",
-            "line": 1674,
+            "line": 1685,
             "column": 16,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -3150,7 +3073,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.post_registration",
-            "line": 1710,
+            "line": 1721,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3161,7 +3084,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.get_registration",
-            "line": 1739,
+            "line": 1750,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3172,7 +3095,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.validate_relationship",
-            "line": 1845,
+            "line": 1856,
             "column": 11,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "consider-merging-isinstance",
@@ -3183,7 +3106,7 @@
             "type": "error",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.validate_relationship",
-            "line": 1856,
+            "line": 1867,
             "column": 32,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-member",
@@ -3194,7 +3117,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.validate_relationship",
-            "line": 1833,
+            "line": 1844,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3205,7 +3128,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "",
-            "line": 1910,
+            "line": 1921,
             "column": 0,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "implicit-str-concat",
@@ -3216,7 +3139,7 @@
             "type": "error",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.update",
-            "line": 1980,
+            "line": 1991,
             "column": 33,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-member",
@@ -3227,7 +3150,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.query",
-            "line": 2006,
+            "line": 2017,
             "column": 8,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "unused-argument",
@@ -3238,7 +3161,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.does_entity_exist",
-            "line": 2124,
+            "line": 2135,
             "column": 4,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -3249,7 +3172,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.patch_entity",
-            "line": 2158,
+            "line": 2169,
             "column": 8,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "invalid-name",
@@ -3260,7 +3183,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient.compare_lists_ignore_order.get_canonical_key.<lambda>",
-            "line": 2203,
+            "line": 2214,
             "column": 51,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "unnecessary-lambda",
@@ -3271,7 +3194,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal._value_is_not_none",
-            "line": 2236,
+            "line": 2247,
             "column": 23,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "use-a-generator",
@@ -3282,7 +3205,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal._value_is_not_none",
-            "line": 2237,
+            "line": 2248,
             "column": 12,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-else-return",
@@ -3293,7 +3216,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal._value_is_not_none",
-            "line": 2238,
+            "line": 2249,
             "column": 23,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "use-a-generator",
@@ -3304,7 +3227,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal",
-            "line": 2247,
+            "line": 2258,
             "column": 15,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "invalid-name",
@@ -3315,7 +3238,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal",
-            "line": 2251,
+            "line": 2262,
             "column": 16,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-else-continue",
@@ -3326,7 +3249,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal",
-            "line": 2257,
+            "line": 2268,
             "column": 16,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-else-continue",
@@ -3337,7 +3260,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal",
-            "line": 2263,
+            "line": 2274,
             "column": 16,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "no-else-continue",
@@ -3348,7 +3271,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.cb",
             "obj": "ContextBrokerClient._subscription_dicts_are_equal",
-            "line": 2266,
+            "line": 2277,
             "column": 20,
             "path": "filip/clients/ngsi_v2/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -3502,7 +3425,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_v2.iota",
             "obj": "",
-            "line": 822,
+            "line": 824,
             "column": 0,
             "path": "filip/clients/ngsi_v2/iota.py",
             "symbol": "line-too-long",
@@ -3788,7 +3711,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_v2.iota",
             "obj": "",
-            "line": 848,
+            "line": 850,
             "column": 0,
             "path": "filip/clients/ngsi_v2/iota.py",
             "symbol": "implicit-str-concat",
@@ -4107,7 +4030,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "",
-            "line": 277,
+            "line": 283,
             "column": 0,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "line-too-long",
@@ -4118,7 +4041,7 @@
             "type": "error",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "",
-            "line": 11,
+            "line": 12,
             "column": 0,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "import-error",
@@ -4129,7 +4052,7 @@
             "type": "error",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "",
-            "line": 12,
+            "line": 13,
             "column": 0,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "import-error",
@@ -4139,19 +4062,8 @@
         {
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
-            "obj": "ContextBrokerLDClient.__pagination",
-            "line": 82,
-            "column": 4,
-            "path": "filip/clients/ngsi_ld/cb.py",
-            "symbol": "inconsistent-return-statements",
-            "message": "Either all return statements in a function should return an expression, or none of them should.",
-            "message-id": "R1710"
-        },
-        {
-            "type": "refactor",
-            "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_version",
-            "line": 153,
+            "line": 159,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4162,7 +4074,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_statistics",
-            "line": 183,
+            "line": 189,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4173,7 +4085,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.post_entity",
-            "line": 237,
+            "line": 243,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "no-else-return",
@@ -4184,7 +4096,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.post_entity",
-            "line": 199,
+            "line": 205,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4195,7 +4107,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity",
-            "line": 262,
+            "line": 268,
             "column": 8,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "invalid-name",
@@ -4206,7 +4118,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity",
-            "line": 256,
+            "line": 262,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "too-many-arguments",
@@ -4217,7 +4129,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity",
-            "line": 300,
+            "line": 306,
             "column": 15,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "consider-using-in",
@@ -4228,7 +4140,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity",
-            "line": 302,
+            "line": 308,
             "column": 20,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "f-string-without-interpolation",
@@ -4239,7 +4151,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity",
-            "line": 311,
+            "line": 317,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "no-else-return",
@@ -4250,7 +4162,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity",
-            "line": 256,
+            "line": 262,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4261,7 +4173,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity_list",
-            "line": 336,
+            "line": 342,
             "column": 8,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "invalid-name",
@@ -4272,7 +4184,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity_list",
-            "line": 330,
+            "line": 336,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "too-many-arguments",
@@ -4283,7 +4195,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity_list",
-            "line": 330,
+            "line": 336,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "too-many-locals",
@@ -4294,7 +4206,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity_list",
-            "line": 408,
+            "line": 414,
             "column": 15,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "consider-using-in",
@@ -4305,7 +4217,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity_list",
-            "line": 410,
+            "line": 416,
             "column": 20,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "f-string-without-interpolation",
@@ -4316,7 +4228,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity_list",
-            "line": 424,
+            "line": 430,
             "column": 12,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "no-else-return",
@@ -4327,7 +4239,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_entity_list",
-            "line": 330,
+            "line": 336,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "too-many-branches",
@@ -4338,7 +4250,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.replace_existing_attributes_of_entity",
-            "line": 465,
+            "line": 471,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4349,7 +4261,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.replace_existing_attributes_of_entity",
-            "line": 435,
+            "line": 441,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4360,7 +4272,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.update_entity_attribute",
-            "line": 517,
+            "line": 523,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4371,7 +4283,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.append_entity_attributes",
-            "line": 552,
+            "line": 558,
             "column": 33,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "f-string-without-interpolation",
@@ -4382,7 +4294,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.append_entity_attributes",
-            "line": 563,
+            "line": 569,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4393,7 +4305,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.delete_entity_by_id",
-            "line": 595,
+            "line": 601,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4404,7 +4316,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.delete_attribute",
-            "line": 623,
+            "line": 629,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4415,7 +4327,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.post_subscription",
-            "line": 697,
+            "line": 703,
             "column": 20,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4426,7 +4338,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.post_subscription",
-            "line": 660,
+            "line": 666,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4437,7 +4349,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.get_subscription",
-            "line": 724,
+            "line": 730,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4448,7 +4360,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.delete_subscription",
-            "line": 794,
+            "line": 800,
             "column": 16,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4459,7 +4371,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.log_multi_errors",
-            "line": 804,
+            "line": 810,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "missing-function-docstring",
@@ -4470,7 +4382,7 @@
             "type": "convention",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.handle_multi_status_response",
-            "line": 837,
+            "line": 843,
             "column": 20,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "invalid-name",
@@ -4481,7 +4393,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.entity_batch_operation",
-            "line": 918,
+            "line": 924,
             "column": 8,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "no-else-raise",
@@ -4492,7 +4404,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.entity_batch_operation",
-            "line": 942,
+            "line": 948,
             "column": 12,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "logging-fstring-interpolation",
@@ -4503,7 +4415,7 @@
             "type": "refactor",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "ContextBrokerLDClient.validate_relationship",
-            "line": 944,
+            "line": 950,
             "column": 4,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "inconsistent-return-statements",
@@ -4514,7 +4426,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "",
-            "line": 16,
+            "line": 17,
             "column": 0,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "unused-import",
@@ -4525,7 +4437,7 @@
             "type": "warning",
             "module": "filip.clients.ngsi_ld.cb",
             "obj": "",
-            "line": 29,
+            "line": 30,
             "column": 0,
             "path": "filip/clients/ngsi_ld/cb.py",
             "symbol": "unused-import",
@@ -10799,7 +10711,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[179:201]\n==filip.models.ngsi_v2.context:[48:67]\n        \"Example: \"\n        \"{\"\n        \"  'id': 'R12345',\"\n        \"  'type': 'Room',\"\n        \"  'temperature': 22\"\n        \"}\",\n    )\n    VALUES = (\n        \"values\",\n        \"Key value message representation. \"\n        \"This mode represents the entity as an array of \"\n        \"attribute values. Information about id and type is \"\n        \"left out. See example below. The order of the \"\n        \"attributes in the array is specified by the attrs \"\n        \"URI param (e.g. attrs=branch,colour,engine). \"\n        \"If attrs is not used, the order is arbitrary. \"\n        \"Example:\"\n        \"[ 'Ford', 'black', 78.3 ]\",\n    )\n\n\n# NGSIv2 entity models",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[179:201]\n==filip.models.ngsi_v2.context:[48:67]\n        \"Example: \"\n        \"{\"\n        \"  'id': 'R12345',\"\n        \"  'type': 'Room',\"\n        \"  'temperature': 22\"\n        \"}\",\n    )\n    VALUES = (\n        \"values\",\n        \"Key value message representation. \"\n        \"This mode represents the entity as an array of \"\n        \"attribute values. Information about id and type is \"\n        \"left out. See example below. The order of the \"\n        \"attributes in the array is specified by the attrs \"\n        \"URI param (e.g. attrs=branch,colour,engine). \"\n        \"If attrs is not used, the order is arbitrary. \"\n        \"Example:\"\n        \"[ 'Ford', 'black', 78.3 ]\",\n    )",
             "message-id": "R0801"
         },
         {
@@ -10810,7 +10722,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[133:160]\n==filip.clients.ngsi_v2.cb:[138:166]\n                while len(items) < limit and len(items) < count:\n                    # Establishing the offset from where entities are retrieved\n                    params[\"offset\"] = len(items)\n                    params[\"limit\"] = min(1000, (limit - len(items)))\n                    res = session.request(\n                        method=method,\n                        url=url,\n                        params=params,\n                        headers=headers,\n                        data=data,\n                    )\n                    if res.ok:\n                        items.extend(res.json())\n                    else:\n                        res.raise_for_status()\n                self.logger.debug(\"Received: %s\", items)\n                return items\n            res.raise_for_status()\n\n    def get_version(self) -> Dict:\n        \"\"\"\n        Gets version of Orion-LD context broker\n        Returns:\n            Dictionary with response\n        \"\"\"\n        url = urljoin(self.base_url, \"version\")\n        try:",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[146:166]\n==filip.clients.ngsi_v2.cb:[153:173]\n                    if res.ok:\n                        items.extend(res.json())\n                    else:\n                        res.raise_for_status()\n                self.logger.debug(\"Received: %s\", items)\n                return items\n            res.raise_for_status()\n        finally:\n            if temporary_session is not None:\n                temporary_session.close()\n                self.session = original_session\n    # MANAGEMENT API\n    def get_version(self) -> Dict:\n        \"\"\"\n        Gets version of IoT Agent\n        Returns:\n            Dictionary with response\n        \"\"\"\n        url = urljoin(self.base_url, \"version\")\n        try:",
             "message-id": "R0801"
         },
         {
@@ -10821,7 +10733,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[403:415]\n==filip.models.ngsi_v2.context:[166:177]\n        ...,\n        title=\"Entity Type\",\n        description=\"Id of an entity in an NGSI context broker. \"\n        \"Allowed characters are the ones in the plain ASCII set, \"\n        \"except the following ones: control characters, \"\n        \"whitespace, &, ?, / and #.\",\n        json_schema_extra={\"example\": \"Room\"},\n        max_length=256,\n        min_length=1,\n        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe\n        frozen=True,\n    )",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[403:415]\n==filip.models.ngsi_v2.context:[166:177]\n        ...,\n        title=\"Entity Type\",\n        description=\"Id of an entity in an NGSI context broker. \"\n        \"Allowed characters are the ones in the plain ASCII set, \"\n        \"except the following ones: control characters, \"\n        \"whitespace, &, ?, / and #.\",\n        json_schema_extra={\"example\": \"Room\"},\n        max_length=256,\n        min_length=1,\n        frozen=True,\n    )",
             "message-id": "R0801"
         },
         {
@@ -10843,7 +10755,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[297:309]\n==filip.models.ngsi_v2.iot:[143:157]\n    type: Union[DataType, str] = Field(\n        default=DataType.TEXT,\n        description=\"The attribute type represents the NGSI value type of the \"\n        \"attribute value. Note that FIWARE NGSI has its own type \"\n        \"system for attribute values, so NGSI value types are not \"\n        \"the same as JSON types. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n    )\n    valid_type = field_validator(\"type\")(validate_fiware_datatype_string_protect)",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[297:309]\n==filip.models.ngsi_v2.iot:[143:157]\n    type: Union[DataType, str] = Field(\n        default=DataType.TEXT,\n        description=\"The attribute type represents the NGSI value type of the \"\n        \"attribute value. Note that FIWARE NGSI has its own type \"\n        \"system for attribute values, so NGSI value types are not \"\n        \"the same as JSON types. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n    )\n    valid_type = field_validator(\"type\")(validate_fiware_datatype_string_protect)\n\n",
             "message-id": "R0801"
         },
         {
@@ -10876,7 +10788,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[975:985]\n==filip.clients.ngsi_v2.cb:[1856:1876]\n                    '\"value\" \"entity_id\"}'\n                )\n        else:\n            raise ValueError(\"Invalid relationship type.\")\n        try:\n            destination_entity = self.get_entity(entity_id=destination_id)\n            return destination_entity.id == destination_id\n        except requests.RequestException as err:\n            if err.response.status_code == 404:\n                return False",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[981:991]\n==filip.clients.ngsi_v2.cb:[1867:1887]\n                    '\"value\" \"entity_id\"}'\n                )\n        else:\n            raise ValueError(\"Invalid relationship type.\")\n        try:\n            destination_entity = self.get_entity(entity_id=destination_id)\n            return destination_entity.id == destination_id\n        except requests.RequestException as err:\n            if err.response.status_code == 404:\n                return False\n\n    def update_registration(self, registration: Registration):\n        \"\"\"\n        Only the fields included in the request are updated in the registration.\n\n        Args:\n            registration: Registration to update\n        Returns:\n\n        \"\"\"",
             "message-id": "R0801"
         },
         {
@@ -10887,18 +10799,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[120:131]\n==filip.clients.ngsi_v2.cb:[125:136]\n        if self.session:\n            session = self.session\n        else:\n            session = requests.Session()\n        with session:\n            res = session.request(\n                method=method, url=url, params=params, headers=headers, data=data\n            )\n            if res.ok:\n                items = res.json()\n                # do pagination",
-            "message-id": "R0801"
-        },
-        {
-            "type": "refactor",
-            "module": "filip.models.ngsi_ld.__init__",
-            "obj": "",
-            "line": 1,
-            "column": 0,
-            "path": "filip/models/ngsi_ld/__init__.py",
-            "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[357:369]\n==filip.models.ngsi_v2.base:[358:369]\n    name: str = Field(\n        title=\"Attribute name\",\n        description=\"The attribute name describes what kind of property the \"\n        \"attribute value represents of the entity, for example \"\n        \"current_speed. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n        # Make it FIWARE-Safe\n    )",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[357:369]\n==filip.models.ngsi_v2.base:[358:369]\n    name: str = Field(\n        title=\"Attribute name\",\n        description=\"The attribute name describes what kind of property the \"\n        \"attribute value represents of the entity, for example \"\n        \"current_speed. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n        # pattern=FiwareRegex.string_protect.value,\n        # Make it FIWARE-Safe\n    )",
             "message-id": "R0801"
         },
         {
@@ -10920,7 +10821,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[768:777]\n==filip.clients.ngsi_v2.cb:[1649:1658]\n                    exclude_none=True,\n                ),\n            )\n            if res.ok:\n                self.logger.info(\"Subscription successfully updated!\")\n            else:\n                res.raise_for_status()\n        except requests.RequestException as err:\n            msg = f\"Could not update subscription {subscription.id}\"",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[774:783]\n==filip.clients.ngsi_v2.cb:[1660:1669]\n                    exclude_none=True,\n                ),\n            )\n            if res.ok:\n                self.logger.info(\"Subscription successfully updated!\")\n            else:\n                res.raise_for_status()\n        except requests.RequestException as err:\n            msg = f\"Could not update subscription {subscription.id}\"",
             "message-id": "R0801"
         },
         {
@@ -10931,7 +10832,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[497:506]\n==filip.clients.ngsi_v2.cb:[1189:1198]\n            assert attr_name is not None, (\n                \"Missing name for attribute. \"\n                \"attr_name must be present if\"\n                \"attr is of type ContextAttribute\"\n            )\n        else:\n            assert attr_name is None, (\n                \"Invalid argument attr_name. Do not set \"\n                \"attr_name if attr is of type \"",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[503:512]\n==filip.clients.ngsi_v2.cb:[1200:1209]\n            assert attr_name is not None, (\n                \"Missing name for attribute. \"\n                \"attr_name must be present if\"\n                \"attr is of type ContextAttribute\"\n            )\n        else:\n            assert attr_name is None, (\n                \"Invalid argument attr_name. Do not set \"\n                \"attr_name if attr is of type \"",
             "message-id": "R0801"
         },
         {
@@ -10964,7 +10865,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.semantics.semantics_models:[107:116]\n==filip.semantics.vocabulary.entities:[638:648]\n            if len(self.allowed_chars) > 0:\n                # if allowed chars is empty all chars are allowed\n                for char in value:\n                    if char not in self.allowed_chars:\n                        return False\n            for char in self.forbidden_chars:\n                if char in value:\n                    return False\n            return True\n",
+            "message": "Similar lines in 2 files\n==filip.semantics.semantics_models:[107:116]\n==filip.semantics.vocabulary.entities:[638:648]\n            if len(self.allowed_chars) > 0:\n                for char in value:\n                    if char not in self.allowed_chars:\n                        return False\n            for char in self.forbidden_chars:\n                if char in value:\n                    return False\n            return True\n",
             "message-id": "R0801"
         },
         {
@@ -10975,7 +10876,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[732:740]\n==filip.clients.ngsi_v2.cb:[1583:1591]\n        url = urljoin(\n            self.base_url, f\"{self._url_version}/subscriptions/{subscription_id}\"\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.get(url=url, headers=headers)\n            if res.ok:\n                self.logger.debug(\"Received: %s\", res.json())",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[738:746]\n==filip.clients.ngsi_v2.cb:[1594:1602]\n        url = urljoin(\n            self.base_url, f\"{self._url_version}/subscriptions/{subscription_id}\"\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.get(url=url, headers=headers)\n            if res.ok:\n                self.logger.debug(\"Received: %s\", res.json())",
             "message-id": "R0801"
         },
         {
@@ -10986,7 +10887,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[641:652]\n==filip.clients.ngsi_v2.cb:[1438:1449]\n        url = urljoin(self.base_url, f\"{self._url_version}/subscriptions/\")\n        headers = self.headers.copy()\n        params = {}\n\n        # We always use the 'count' option to check weather pagination is\n        # required\n        params.update({\"options\": \"count\"})\n        try:\n            items = self.__pagination(\n                limit=limit, url=url, params=params, headers=headers\n            )",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[647:658]\n==filip.clients.ngsi_v2.cb:[1449:1460]\n        url = urljoin(self.base_url, f\"{self._url_version}/subscriptions/\")\n        headers = self.headers.copy()\n        params = {}\n\n        # We always use the 'count' option to check weather pagination is\n        # required\n        params.update({\"options\": \"count\"})\n        try:\n            items = self.__pagination(\n                limit=limit, url=url, params=params, headers=headers\n            )",
             "message-id": "R0801"
         },
         {
@@ -11030,7 +10931,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[713:720]\n==filip.clients.ngsi_v2.cb:[1565:1572]\n            )\n            if res.ok:\n                self.logger.info(\"Subscription successfully created!\")\n                return res.headers[\"Location\"].split(\"/\")[-1]\n            res.raise_for_status()\n        except requests.RequestException as err:\n            msg = \"Could not send subscription!\"",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[719:726]\n==filip.clients.ngsi_v2.cb:[1576:1583]\n            )\n            if res.ok:\n                self.logger.info(\"Subscription successfully created!\")\n                return res.headers[\"Location\"].split(\"/\")[-1]\n            res.raise_for_status()\n        except requests.RequestException as err:\n            msg = \"Could not send subscription!\"",
             "message-id": "R0801"
         },
         {
@@ -11041,7 +10942,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[689:696]\n==filip.clients.ngsi_v2.cb:[1516:1523]\n            ):\n                self.logger.info(\"Subscription already exists\")\n                if update:\n                    self.logger.info(\"Updated subscription\")\n                    subscription.id = ex_sub.id\n                    self.update_subscription(subscription)\n                else:",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[695:702]\n==filip.clients.ngsi_v2.cb:[1527:1534]\n            ):\n                self.logger.info(\"Subscription already exists\")\n                if update:\n                    self.logger.info(\"Updated subscription\")\n                    subscription.id = ex_sub.id\n                    self.update_subscription(subscription)\n                else:",
             "message-id": "R0801"
         },
         {
@@ -11052,7 +10953,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[642:652]\n==filip.clients.ngsi_v2.cb:[1693:1703]\n        headers = self.headers.copy()\n        params = {}\n\n        # We always use the 'count' option to check weather pagination is\n        # required\n        params.update({\"options\": \"count\"})\n        try:\n            items = self.__pagination(\n                limit=limit, url=url, params=params, headers=headers\n            )",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[648:658]\n==filip.clients.ngsi_v2.cb:[1704:1714]\n        headers = self.headers.copy()\n        params = {}\n\n        # We always use the 'count' option to check weather pagination is\n        # required\n        params.update({\"options\": \"count\"})\n        try:\n            items = self.__pagination(\n                limit=limit, url=url, params=params, headers=headers\n            )",
             "message-id": "R0801"
         },
         {
@@ -11063,7 +10964,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[289:296]\n==filip.clients.ngsi_v2.cb:[526:533]\n        url = urljoin(self.base_url, f\"{self._url_version}/entities/{entity_id}\")\n        headers = self.headers.copy()\n        params = {}\n        if entity_type:\n            params.update({\"type\": entity_type})\n        if attrs:\n            params.update({\"attrs\": \",\".join(attrs)})",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[295:302]\n==filip.clients.ngsi_v2.cb:[533:540]\n        url = urljoin(self.base_url, f\"{self._url_version}/entities/{entity_id}\")\n        headers = self.headers.copy()\n        params = {}\n        if entity_type:\n            params.update({\"type\": entity_type})\n        if attrs:\n            params.update({\"attrs\": \",\".join(attrs)})",
             "message-id": "R0801"
         },
         {
@@ -11074,7 +10975,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[165:172]\n==filip.clients.ngsi_v2.iota:[67:74]\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()\n        except requests.RequestException as err:\n            self.logger.error(err)",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[172:179]\n==filip.clients.ngsi_v2.iota:[67:74]\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()\n        except requests.RequestException as err:\n            self.logger.error(err)",
             "message-id": "R0801"
         },
         {
@@ -11085,7 +10986,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[159:166]\n==filip.models.ngsi_v2.base:[361:369]\n        \"attribute value represents of the entity, for example \"\n        \"current_speed. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n    )",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[159:166]\n==filip.models.ngsi_v2.base:[361:369]\n        \"attribute value represents of the entity, for example \"\n        \"current_speed. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n        # Make it FIWARE-Safe\n    )",
             "message-id": "R0801"
         },
         {
@@ -11107,7 +11008,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[363:372]\n==filip.models.ngsi_v2.iot:[165:171]\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n    )\n    valid_name = field_validator(\"name\")(validate_fiware_attribute_name_regex)",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[363:372]\n==filip.models.ngsi_v2.iot:[165:171]\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n        # Make it FIWARE-Safe\n    )\n    valid_name = field_validator(\"name\")(validate_fiware_attribute_name_regex)\n\n",
             "message-id": "R0801"
         },
         {
@@ -11129,7 +11030,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.semantics.ontology_parser.rdfparser:[77:87]\n==filip.semantics.vocabulary.vocabulary:[551:570]\n    if \"#\" in iri:\n        index = iri.find(\"#\")\n        return iri[:index]\n    else:\n        # for example if uri looks like:\n        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH\n        index = iri.rfind(\"/\")\n        return iri[:index]\n\n",
+            "message": "Similar lines in 2 files\n==filip.semantics.ontology_parser.rdfparser:[77:87]\n==filip.semantics.vocabulary.vocabulary:[551:570]\n        if \"#\" in iri:\n            index = iri.find(\"#\")\n            return iri[:index]\n        else:\n            # for example if uri looks like:\n            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH\n            index = iri.rfind(\"/\")\n            return iri[:index]\n\n    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:\n        \"\"\"Get the entity with the given iri\n        Fast efficient methode\n\n        Args:\n            iri (str)\n\n        Returns:\n            Entity or None if iri does not belong to an Entity\n        \"\"\"",
             "message-id": "R0801"
         },
         {
@@ -11140,7 +11041,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[734:740]\n==filip.clients.ngsi_v2.cb:[1750:1756]\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.get(url=url, headers=headers)\n            if res.ok:\n                self.logger.debug(\"Received: %s\", res.json())",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[740:746]\n==filip.clients.ngsi_v2.cb:[1761:1767]\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.get(url=url, headers=headers)\n            if res.ok:\n                self.logger.debug(\"Received: %s\", res.json())",
             "message-id": "R0801"
         },
         {
@@ -11151,7 +11052,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[786:800]\n==filip.clients.ngsi_v2.cb:[1666:1680]\n        url = urljoin(\n            self.base_url, f\"{self._url_version}/subscriptions/{subscription_id}\"\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(\n                    f\"Subscription '{subscription_id}' \" f\"successfully deleted!\"\n                )\n            else:\n                res.raise_for_status()\n        except requests.RequestException as err:\n            msg = f\"Could not delete subscription {subscription_id}\"",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[792:806]\n==filip.clients.ngsi_v2.cb:[1677:1691]\n        url = urljoin(\n            self.base_url, f\"{self._url_version}/subscriptions/{subscription_id}\"\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(\n                    f\"Subscription '{subscription_id}' \" f\"successfully deleted!\"\n                )\n            else:\n                res.raise_for_status()\n        except requests.RequestException as err:\n            msg = f\"Could not delete subscription {subscription_id}\"",
             "message-id": "R0801"
         },
         {
@@ -11162,7 +11063,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[788:794]\n==filip.clients.ngsi_v2.cb:[1903:1909]\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[794:800]\n==filip.clients.ngsi_v2.cb:[1914:1920]\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
             "message-id": "R0801"
         },
         {
@@ -11173,7 +11074,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[616:623]\n==filip.clients.ngsi_v2.cb:[1668:1674]\n        )\n        headers = self.headers.copy()\n\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[622:629]\n==filip.clients.ngsi_v2.cb:[1679:1685]\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
             "message-id": "R0801"
         },
         {
@@ -11184,7 +11085,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[290:296]\n==filip.clients.ngsi_v2.cb:[591:597]\n        headers = self.headers.copy()\n        params = {}\n        if entity_type:\n            params.update({\"type\": entity_type})\n        if attrs:\n            params.update({\"attrs\": \",\".join(attrs)})",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[296:302]\n==filip.clients.ngsi_v2.cb:[598:604]\n        headers = self.headers.copy()\n        params = {}\n        if entity_type:\n            params.update({\"type\": entity_type})\n        if attrs:\n            params.update({\"attrs\": \",\".join(attrs)})",
             "message-id": "R0801"
         },
         {
@@ -11195,7 +11096,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[229:235]\n==filip.clients.ngsi_v2.cb:[282:288]\n            )\n            if res.ok:\n                self.logger.info(\"Entity successfully posted!\")\n                return res.headers.get(\"Location\")\n            res.raise_for_status()\n        except requests.RequestException as err:",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[235:241]\n==filip.clients.ngsi_v2.cb:[289:295]\n            )\n            if res.ok:\n                self.logger.info(\"Entity successfully posted!\")\n                return res.headers.get(\"Location\")\n            res.raise_for_status()\n        except requests.RequestException as err:",
             "message-id": "R0801"
         },
         {
@@ -11206,7 +11107,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[110:117]\n==filip.clients.ngsi_v2.cb:[118:125]\n        if limit is None:\n            limit = inf\n        if limit > 1000:\n            params[\"limit\"] = 1000  # maximum items per request\n        else:\n            params[\"limit\"] = limit\n",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[120:128]\n==filip.clients.ngsi_v2.cb:[125:132]\n        original_session = self.session\n        temporary_session = None\n        if self.session is None:\n            temporary_session = requests.Session()\n            self.session = temporary_session\n\n        try:\n",
             "message-id": "R0801"
         },
         {
@@ -11217,7 +11118,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[164:170]\n==filip.clients.ngsi_v2.quantumleap:[70:76]\n        url = urljoin(self.base_url, \"version\")\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[171:177]\n==filip.clients.ngsi_v2.quantumleap:[70:76]\n        url = urljoin(self.base_url, \"version\")\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()",
             "message-id": "R0801"
         },
         {
@@ -11250,7 +11151,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[967:972]\n==filip.clients.ngsi_v2.cb:[1848:1853]\n        elif isinstance(relationship, dict):\n            _sentinel = object()\n            destination_id = relationship.get(\"value\", _sentinel)\n            if destination_id is _sentinel:\n                raise ValueError(",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[973:978]\n==filip.clients.ngsi_v2.cb:[1859:1864]\n        elif isinstance(relationship, dict):\n            _sentinel = object()\n            destination_id = relationship.get(\"value\", _sentinel)\n            if destination_id is _sentinel:\n                raise ValueError(",
             "message-id": "R0801"
         },
         {
@@ -11261,7 +11162,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[762:767]\n==filip.clients.ngsi_v2.cb:[1635:1640]\n        try:\n            res = self.patch(\n                url=url,\n                headers=headers,\n                data=subscription.model_dump_json(",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[768:773]\n==filip.clients.ngsi_v2.cb:[1646:1651]\n        try:\n            res = self.patch(\n                url=url,\n                headers=headers,\n                data=subscription.model_dump_json(",
             "message-id": "R0801"
         },
         {
@@ -11272,7 +11173,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[305:310]\n==filip.clients.ngsi_v2.cb:[539:544]\n        try:\n            res = self.get(url=url, params=params, headers=headers)\n            if res.ok:\n                self.logger.info(\"Entity successfully retrieved!\")\n                self.logger.debug(\"Received: %s\", res.json())",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[311:316]\n==filip.clients.ngsi_v2.cb:[546:551]\n        try:\n            res = self.get(url=url, params=params, headers=headers)\n            if res.ok:\n                self.logger.info(\"Entity successfully retrieved!\")\n                self.logger.debug(\"Received: %s\", res.json())",
             "message-id": "R0801"
         },
         {
@@ -11283,7 +11184,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[585:592]\n==filip.clients.ngsi_v2.cb:[1255:1260]\n        headers = self.headers.copy()\n        params = {}\n\n        if entity_type:\n            params.update({\"type\": entity_type})\n\n        try:",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[591:598]\n==filip.clients.ngsi_v2.cb:[1266:1271]\n        headers = self.headers.copy()\n        params = {}\n        if entity_type:\n            params.update({\"type\": entity_type})\n        try:",
             "message-id": "R0801"
         },
         {
@@ -11294,7 +11195,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[584:591]\n==filip.clients.ngsi_v2.cb:[526:531]\n        url = urljoin(self.base_url, f\"{self._url_version}/entities/{entity_id}\")\n        headers = self.headers.copy()\n        params = {}\n\n        if entity_type:\n            params.update({\"type\": entity_type})\n",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[590:597]\n==filip.clients.ngsi_v2.cb:[533:538]\n        url = urljoin(self.base_url, f\"{self._url_version}/entities/{entity_id}\")\n        headers = self.headers.copy()\n        params = {}\n\n        if entity_type:\n            params.update({\"type\": entity_type})\n",
             "message-id": "R0801"
         },
         {
@@ -11305,7 +11206,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[554:559]\n==filip.clients.ngsi_v2.cb:[1985:1990]\n        try:\n            res = self.post(\n                url=url,\n                headers=headers,\n                params=params,",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[560:565]\n==filip.clients.ngsi_v2.cb:[1996:2001]\n        try:\n            res = self.post(\n                url=url,\n                headers=headers,\n                params=params,",
             "message-id": "R0801"
         },
         {
@@ -11316,7 +11217,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[706:711]\n==filip.clients.ngsi_v2.cb:[1548:1553]\n        try:\n            res = self.post(\n                url=url,\n                headers=headers,\n                data=subscription.model_dump_json(",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[712:717]\n==filip.clients.ngsi_v2.cb:[1559:1564]\n        try:\n            res = self.post(\n                url=url,\n                headers=headers,\n                data=subscription.model_dump_json(",
             "message-id": "R0801"
         },
         {
@@ -11327,7 +11228,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[191:196]\n==filip.clients.ngsi_v2.cb:[198:203]\n            if res.ok:\n                return res.json()\n            res.raise_for_status()\n        except requests.RequestException as err:\n            self.logger.error(err)",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[197:202]\n==filip.clients.ngsi_v2.cb:[205:210]\n            if res.ok:\n                return res.json()\n            res.raise_for_status()\n        except requests.RequestException as err:\n            self.logger.error(err)",
             "message-id": "R0801"
         },
         {
@@ -11338,7 +11239,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[161:166]\n==filip.clients.ngsi_v2.cb:[167:172]\n            if res.ok:\n                return res.json()\n            res.raise_for_status()\n        except requests.RequestException as err:\n            self.logger.error(err)",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[167:172]\n==filip.clients.ngsi_v2.cb:[174:179]\n            if res.ok:\n                return res.json()\n            res.raise_for_status()\n        except requests.RequestException as err:\n            self.logger.error(err)",
             "message-id": "R0801"
         },
         {
@@ -11349,7 +11250,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[1669:1674]\n==filip.clients.ngsi_v2.quantumleap:[253:258]\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[111:117]\n==filip.clients.ngsi_v2.cb:[118:125]\n        params = copy.deepcopy(params) if params else {}\n        headers = copy.deepcopy(headers) if headers else None\n\n        if limit is None:\n            limit = inf\n        params[\"limit\"] = 1000 if limit > 1000 else limit",
             "message-id": "R0801"
         },
         {
@@ -11360,7 +11261,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[196:201]\n==filip.clients.ngsi_v2.quantumleap:[71:76]\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[1680:1685]\n==filip.clients.ngsi_v2.quantumleap:[253:258]\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
             "message-id": "R0801"
         },
         {
@@ -11371,7 +11272,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[165:170]\n==filip.clients.ngsi_v2.quantumleap:[96:101]\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[203:208]\n==filip.clients.ngsi_v2.quantumleap:[71:76]\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()",
             "message-id": "R0801"
         },
         {
@@ -11382,7 +11283,18 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[1216:1221]\n==filip.clients.ngsi_v2.iota:[259:264]\n        try:\n            res = self.put(\n                url=url,\n                headers=headers,\n                params=params,",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[172:177]\n==filip.clients.ngsi_v2.quantumleap:[96:101]\n        try:\n            res = self.get(url=url, headers=self.headers)\n            if res.ok:\n                return res.json()\n            res.raise_for_status()",
+            "message-id": "R0801"
+        },
+        {
+            "type": "refactor",
+            "module": "filip.models.ngsi_ld.__init__",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "filip/models/ngsi_ld/__init__.py",
+            "symbol": "duplicate-code",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_v2.cb:[1227:1232]\n==filip.clients.ngsi_v2.iota:[259:264]\n        try:\n            res = self.put(\n                url=url,\n                headers=headers,\n                params=params,",
             "message-id": "R0801"
         },
         {
@@ -11415,7 +11327,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client)",
+            "message": "Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap)",
             "message-id": "R0401"
         },
         {
@@ -11426,7 +11338,7 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap)",
+            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb)",
             "message-id": "R0401"
         },
         {
@@ -11470,7 +11382,18 @@
             "column": 0,
             "path": "filip/models/ngsi_ld/__init__.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb)",
+            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client)",
+            "message-id": "R0401"
+        },
+        {
+            "type": "refactor",
+            "module": "filip.models.ngsi_ld.__init__",
+            "obj": "",
+            "line": 1,
+            "column": 0,
+            "path": "filip/models/ngsi_ld/__init__.py",
+            "symbol": "cyclic-import",
+            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota)",
             "message-id": "R0401"
         },
         {
@@ -11642,7 +11565,7 @@
                 "warning": 2
             },
             "filip.clients.base_http_client": {
-                "convention": 11,
+                "convention": 4,
                 "error": 2,
                 "fatal": 0,
                 "info": 0,
@@ -11737,7 +11660,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 40,
-                "statement": 819,
+                "statement": 824,
                 "warning": 19
             },
             "filip.clients.ngsi_v2.iota": {
@@ -11746,7 +11669,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 12,
-                "statement": 311,
+                "statement": 313,
                 "warning": 6
             },
             "filip.clients.ngsi_v2.quantumleap": {
@@ -11772,8 +11695,8 @@
                 "error": 2,
                 "fatal": 0,
                 "info": 0,
-                "refactor": 19,
-                "statement": 405,
+                "refactor": 18,
+                "statement": 413,
                 "warning": 13
             },
             "filip.clients.ngsi_ld.__init__": {
@@ -12042,7 +11965,7 @@
                 "error": 0,
                 "fatal": 0,
                 "info": 0,
-                "refactor": 65,
+                "refactor": 66,
                 "statement": 0,
                 "warning": 0
             }
@@ -12062,7 +11985,7 @@
             "missing-function-docstring": 49,
             "no-member": 11,
             "import-outside-toplevel": 17,
-            "consider-iterating-dictionary": 9,
+            "consider-iterating-dictionary": 2,
             "raise-missing-from": 8,
             "misplaced-bare-raise": 1,
             "too-many-instance-attributes": 2,
@@ -12078,7 +12001,7 @@
             "pointless-exception-statement": 1,
             "missing-class-docstring": 8,
             "useless-parent-delegation": 3,
-            "inconsistent-return-statements": 44,
+            "inconsistent-return-statements": 43,
             "unused-private-member": 2,
             "attribute-defined-outside-init": 1,
             "too-many-lines": 4,
@@ -12125,7 +12048,7 @@
             "broad-exception-caught": 2,
             "not-an-iterable": 2,
             "duplicate-code": 55,
-            "cyclic-import": 10
+            "cyclic-import": 11
         },
         "code_type_count": {
             "code": 0,
@@ -12136,94 +12059,94 @@
         },
         "dependencies": {
             "filip.config": [
-                "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.client",
                 "filip.clients.ngsi_v2.cb",
-                "filip",
-                "filip.clients.ngsi_v2.client"
+                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.iota",
+                "filip.clients.ngsi_ld.cb",
+                "filip"
             ],
             "filip.clients.ngsi_v2": [
-                "filip.utils.filter",
-                "filip.clients.ngsi_v2.iota",
+                "filip.clients.ngsi_v2.client",
                 "filip.semantics.semantics_manager",
                 "filip.clients.ngsi_v2.cb",
-                "filip",
                 "filip.utils.cleanup",
-                "filip.clients.ngsi_v2.client"
+                "filip.clients.ngsi_v2.iota",
+                "filip",
+                "filip.utils.filter"
             ],
             "typing_extensions": [
                 "filip.models.ngsi_v2.units",
-                "filip.models.ngsi_ld.context",
-                "filip.custom_types"
+                "filip.custom_types",
+                "filip.models.ngsi_ld.context"
             ],
             "filip.models": [
+                "filip.semantics.semantics_models",
                 "filip.semantics.semantics_manager",
-                "filip.utils.filter",
                 "filip.utils.cleanup",
-                "filip.semantics.semantics_models"
+                "filip.utils.filter"
             ],
             "filip.models.ngsi_v2.iot": [
-                "filip.utils.filter",
-                "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_models",
-                "filip.semantics.semantics_manager",
                 "filip.utils.iot",
-                "filip.clients.mqtt.client"
+                "filip.semantics.semantics_manager",
+                "filip.clients.mqtt.client",
+                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.iota",
+                "filip.utils.filter"
             ],
             "filip.models.ngsi_v2.subscriptions": [
-                "filip.utils.filter",
                 "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.utils.filter"
             ],
             "filip.models.ngsi_v2.context": [
+                "filip.semantics.semantics_manager",
+                "filip.clients.ngsi_v2.cb",
+                "filip.utils.model_generation",
+                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.iota",
                 "filip.models.ngsi_v2.subscriptions",
                 "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_models",
-                "filip.semantics.semantics_manager",
-                "filip.models.ngsi_v2",
-                "filip.clients.ngsi_v2.cb",
-                "filip.utils.model_generation"
+                "filip.models.ngsi_v2"
             ],
             "filip.utils.filter": [
-                "filip.clients.ngsi_v2.iota",
-                "filip.utils.iot"
+                "filip.utils.iot",
+                "filip.clients.ngsi_v2.iota"
             ],
             "filip.custom_types": [
                 "filip.models.ngsi_v2.subscriptions",
                 "filip.utils.validators"
             ],
             "filip.models.base": [
-                "filip.models.ngsi_v2.units",
-                "filip.clients.ngsi_v2.iota",
-                "filip.utils.validators",
-                "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_ld.cb",
-                "filip.semantics.semantics_manager",
-                "filip.semantics.semantics_models",
-                "filip.semantics.ontology_parser.rdfparser",
-                "filip.clients.ngsi_v2.cb",
-                "filip.semantics.ontology_parser.vocabulary_builder",
-                "filip.models",
                 "filip.semantics.vocabulary.vocabulary",
-                "filip.models.ngsi_v2.context",
-                "filip.models.ngsi_v2.base",
-                "filip.clients.base_http_client",
+                "filip.models.ngsi_v2.units",
                 "filip.models.ngsi_v2.iot",
                 "filip.clients.ngsi_v2.client",
-                "filip.semantics.vocabulary.source"
+                "filip.models",
+                "filip.semantics.semantics_manager",
+                "filip.semantics.ontology_parser.vocabulary_builder",
+                "filip.semantics.ontology_parser.rdfparser",
+                "filip.models.ngsi_v2.context",
+                "filip.clients.ngsi_v2.cb",
+                "filip.semantics.semantics_models",
+                "filip.semantics.vocabulary.source",
+                "filip.clients.ngsi_v2.iota",
+                "filip.clients.base_http_client",
+                "filip.clients.ngsi_ld.cb",
+                "filip.clients.ngsi_v2.quantumleap",
+                "filip.models.ngsi_v2.base",
+                "filip.utils.validators"
             ],
             "filip.utils.validators": [
-                "filip.models.ngsi_v2.subscriptions",
-                "filip.semantics.semantics_models",
-                "filip.models.ngsi_ld.context",
+                "filip.models.ngsi_v2.iot",
+                "filip.models.base",
                 "filip.utils.data",
                 "filip.models.ngsi_v2.context",
-                "filip.models.ngsi_v2.base",
+                "filip.models.ngsi_v2.subscriptions",
+                "filip.semantics.semantics_models",
                 "filip.utils",
-                "filip.models.ngsi_v2.iot",
-                "filip.models.base"
+                "filip.models.ngsi_v2.base",
+                "filip.models.ngsi_ld.context"
             ],
             "filip.utils.datetime": [
                 "filip.utils"
@@ -12232,24 +12155,24 @@
                 "filip.utils.cleanup"
             ],
             "filip.models.ngsi_ld.context": [
-                "filip.utils.cleanup",
                 "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.quantumleap"
+                "filip.clients.ngsi_v2.quantumleap",
+                "filip.utils.cleanup"
             ],
             "filip.utils": [
-                "filip.clients.base_http_client",
-                "filip.clients.mqtt.encoder.base_encoder"
+                "filip.clients.mqtt.encoder.base_encoder",
+                "filip.clients.base_http_client"
             ],
             "filip.clients.mqtt.encoder": [
                 "filip.clients.mqtt.encoder.json",
-                "filip.clients.mqtt.encoder.ulralight",
-                "filip.clients.mqtt.client"
+                "filip.clients.mqtt.client",
+                "filip.clients.mqtt.encoder.ulralight"
             ],
             "filip.models.mqtt": [
-                "filip.clients.mqtt.encoder.json",
-                "filip.clients.mqtt.encoder.ulralight",
                 "filip.clients.mqtt.encoder.base_encoder",
-                "filip.clients.mqtt.client"
+                "filip.clients.mqtt.encoder.json",
+                "filip.clients.mqtt.client",
+                "filip.clients.mqtt.encoder.ulralight"
             ],
             "filip.clients.mqtt.client": [
                 "filip.clients.mqtt"
@@ -12264,39 +12187,39 @@
                 "filip.clients.mqtt.encoder"
             ],
             "filip.clients.base_http_client": [
-                "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_v2.quantumleap",
+                "filip.clients.ngsi_v2.client",
                 "filip.clients.ngsi_v2.cb",
-                "filip.clients.ngsi_v2.client"
+                "filip.clients.ngsi_v2.iota",
+                "filip.clients.ngsi_ld.cb",
+                "filip.clients.ngsi_v2.quantumleap"
             ],
             "packaging.version": [
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.utils.simple_ql": [
                 "filip.semantics.semantics_manager",
-                "filip.models.ngsi_v2.base",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.models.ngsi_v2.base"
             ],
             "filip.models.ngsi_v2.base": [
-                "filip.models.ngsi_v2.subscriptions",
-                "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.cb",
+                "filip.models.ngsi_v2.iot",
                 "filip.models.ngsi_v2.context",
+                "filip.clients.ngsi_v2.cb",
+                "filip.models.ngsi_v2.subscriptions",
                 "filip.models.ngsi_v2.registrations",
-                "filip.models.ngsi_v2.iot"
+                "filip.clients.ngsi_ld.cb"
             ],
             "filip.models.ngsi_v2.registrations": [
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.clients.exceptions": [
-                "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.clients.ngsi_v2.iota"
             ],
             "filip.clients.ngsi_v2.iota": [
-                "filip.clients.ngsi_v2",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.clients.ngsi_v2"
             ],
             "filip.clients.ngsi_v2.cb": [
                 "filip.clients.ngsi_v2",
@@ -12318,16 +12241,16 @@
                 "filip.clients.ngsi_ld.cb"
             ],
             "filip.semantics.vocabulary": [
-                "filip.semantics.vocabulary.entities",
-                "filip.semantics.vocabulary.combined_relations",
+                "filip.semantics.vocabulary.vocabulary",
                 "filip.semantics.semantics_manager",
-                "filip.semantics.ontology_parser.rdfparser",
-                "filip.semantics.ontology_parser.post_processer",
                 "filip.semantics.ontology_parser.vocabulary_builder",
                 "filip.semantics.vocabulary_configurator",
-                "filip.semantics.vocabulary.vocabulary",
-                "filip.semantics.vocabulary.relation",
-                "filip.semantics.vocabulary.source"
+                "filip.semantics.ontology_parser.rdfparser",
+                "filip.semantics.vocabulary.combined_relations",
+                "filip.semantics.vocabulary.source",
+                "filip.semantics.vocabulary.entities",
+                "filip.semantics.ontology_parser.post_processer",
+                "filip.semantics.vocabulary.relation"
             ],
             "filip.semantics.semantics_models": [
                 "filip.semantics.semantics_manager"
@@ -12359,8 +12282,8 @@
                 "filip.semantics.vocabulary.entities"
             ],
             "filip.semantics.vocabulary.vocabulary": [
-                "filip.semantics.vocabulary.relation",
-                "filip.semantics.vocabulary"
+                "filip.semantics.vocabulary",
+                "filip.semantics.vocabulary.relation"
             ],
             "filip.semantics.vocabulary.relation": [
                 "filip.semantics.vocabulary"
@@ -12386,9 +12309,9 @@
             "percent_duplicated_lines": 0.0
         },
         "node_count": {
-            "function": 59,
+            "function": 60,
             "klass": 167,
-            "method": 597,
+            "method": 599,
             "module": 58
         },
         "undocumented": {
@@ -12397,16 +12320,16 @@
             "method": 36,
             "module": 8
         },
-        "convention": 331,
+        "convention": 324,
         "error": 164,
         "fatal": 0,
         "info": 0,
         "refactor": 264,
-        "statement": 6897,
+        "statement": 6912,
         "warning": 215,
         "global_note": 0,
-        "nb_duplicated_lines": 400,
-        "percent_duplicated_lines": 1.799370220422852
+        "nb_duplicated_lines": 389,
+        "percent_duplicated_lines": 1.7477647481691154
     },
     "previous": {
         "bad_names": {
@@ -12543,7 +12466,7 @@
                 "warning": 2
             },
             "filip.clients.base_http_client": {
-                "convention": 11,
+                "convention": 4,
                 "error": 2,
                 "fatal": 0,
                 "info": 0,
@@ -12638,7 +12561,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 40,
-                "statement": 819,
+                "statement": 824,
                 "warning": 19
             },
             "filip.clients.ngsi_v2.iota": {
@@ -12647,7 +12570,7 @@
                 "fatal": 0,
                 "info": 0,
                 "refactor": 12,
-                "statement": 311,
+                "statement": 313,
                 "warning": 6
             },
             "filip.clients.ngsi_v2.quantumleap": {
@@ -12673,8 +12596,8 @@
                 "error": 2,
                 "fatal": 0,
                 "info": 0,
-                "refactor": 19,
-                "statement": 405,
+                "refactor": 18,
+                "statement": 413,
                 "warning": 13
             },
             "filip.clients.ngsi_ld.__init__": {
@@ -12963,7 +12886,7 @@
             "missing-function-docstring": 49,
             "no-member": 11,
             "import-outside-toplevel": 17,
-            "consider-iterating-dictionary": 9,
+            "consider-iterating-dictionary": 2,
             "raise-missing-from": 8,
             "misplaced-bare-raise": 1,
             "too-many-instance-attributes": 2,
@@ -12979,7 +12902,7 @@
             "pointless-exception-statement": 1,
             "missing-class-docstring": 8,
             "useless-parent-delegation": 3,
-            "inconsistent-return-statements": 44,
+            "inconsistent-return-statements": 43,
             "unused-private-member": 2,
             "attribute-defined-outside-init": 1,
             "too-many-lines": 4,
@@ -13037,94 +12960,94 @@
         },
         "dependencies": {
             "filip.config": [
+                "filip.clients.ngsi_v2.client",
+                "filip.clients.ngsi_v2.cb",
+                "filip.semantics.semantics_models",
                 "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_ld.cb",
-                "filip.semantics.semantics_models",
-                "filip.clients.ngsi_v2.cb",
-                "filip",
-                "filip.clients.ngsi_v2.client"
+                "filip"
             ],
             "filip.clients.ngsi_v2": [
-                "filip.utils.filter",
-                "filip.clients.ngsi_v2.iota",
+                "filip.clients.ngsi_v2.client",
                 "filip.semantics.semantics_manager",
                 "filip.clients.ngsi_v2.cb",
-                "filip",
                 "filip.utils.cleanup",
-                "filip.clients.ngsi_v2.client"
+                "filip.clients.ngsi_v2.iota",
+                "filip",
+                "filip.utils.filter"
             ],
             "typing_extensions": [
                 "filip.models.ngsi_v2.units",
-                "filip.models.ngsi_ld.context",
-                "filip.custom_types"
+                "filip.custom_types",
+                "filip.models.ngsi_ld.context"
             ],
             "filip.models": [
+                "filip.semantics.semantics_models",
                 "filip.semantics.semantics_manager",
-                "filip.utils.filter",
                 "filip.utils.cleanup",
-                "filip.semantics.semantics_models"
+                "filip.utils.filter"
             ],
             "filip.models.ngsi_v2.iot": [
-                "filip.utils.filter",
-                "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_models",
-                "filip.semantics.semantics_manager",
                 "filip.utils.iot",
-                "filip.clients.mqtt.client"
+                "filip.semantics.semantics_manager",
+                "filip.clients.mqtt.client",
+                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.iota",
+                "filip.utils.filter"
             ],
             "filip.models.ngsi_v2.subscriptions": [
-                "filip.utils.filter",
                 "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.utils.filter"
             ],
             "filip.models.ngsi_v2.context": [
-                "filip.models.ngsi_v2.subscriptions",
-                "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_models",
                 "filip.semantics.semantics_manager",
-                "filip.models.ngsi_v2",
+                "filip.utils.model_generation",
+                "filip.models.ngsi_v2.subscriptions",
+                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_v2.cb",
-                "filip.utils.model_generation"
+                "filip.clients.ngsi_ld.cb",
+                "filip.models.ngsi_v2"
             ],
             "filip.utils.filter": [
-                "filip.clients.ngsi_v2.iota",
-                "filip.utils.iot"
+                "filip.utils.iot",
+                "filip.clients.ngsi_v2.iota"
             ],
             "filip.custom_types": [
                 "filip.models.ngsi_v2.subscriptions",
                 "filip.utils.validators"
             ],
             "filip.models.base": [
+                "filip.models.ngsi_v2.iot",
+                "filip.semantics.vocabulary.vocabulary",
                 "filip.models.ngsi_v2.units",
+                "filip.clients.ngsi_v2.client",
+                "filip.clients.base_http_client",
+                "filip.models",
+                "filip.semantics.semantics_manager",
+                "filip.semantics.ontology_parser.vocabulary_builder",
+                "filip.semantics.ontology_parser.rdfparser",
+                "filip.models.ngsi_v2.context",
+                "filip.clients.ngsi_v2.cb",
+                "filip.semantics.vocabulary.source",
+                "filip.models.ngsi_v2.base",
+                "filip.clients.ngsi_v2.iota",
+                "filip.semantics.semantics_models",
                 "filip.clients.ngsi_ld.cb",
                 "filip.clients.ngsi_v2.quantumleap",
-                "filip.utils.validators",
-                "filip.semantics.semantics_models",
-                "filip.semantics.ontology_parser.rdfparser",
-                "filip.semantics.semantics_manager",
-                "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_v2.cb",
-                "filip.models",
-                "filip.semantics.ontology_parser.vocabulary_builder",
-                "filip.models.ngsi_v2.base",
-                "filip.models.ngsi_v2.context",
-                "filip.semantics.vocabulary.vocabulary",
-                "filip.clients.base_http_client",
-                "filip.models.ngsi_v2.iot",
-                "filip.clients.ngsi_v2.client",
-                "filip.semantics.vocabulary.source"
+                "filip.utils.validators"
             ],
             "filip.utils.validators": [
-                "filip.models.ngsi_v2.subscriptions",
-                "filip.semantics.semantics_models",
-                "filip.models.ngsi_ld.context",
-                "filip.utils.data",
-                "filip.models.ngsi_v2.base",
-                "filip.models.ngsi_v2.context",
-                "filip.utils",
                 "filip.models.ngsi_v2.iot",
-                "filip.models.base"
+                "filip.models.base",
+                "filip.utils.data",
+                "filip.models.ngsi_v2.context",
+                "filip.semantics.semantics_models",
+                "filip.models.ngsi_v2.base",
+                "filip.models.ngsi_ld.context",
+                "filip.utils",
+                "filip.models.ngsi_v2.subscriptions"
             ],
             "filip.utils.datetime": [
                 "filip.utils"
@@ -13133,13 +13056,13 @@
                 "filip.utils.cleanup"
             ],
             "filip.models.ngsi_ld.context": [
-                "filip.utils.cleanup",
                 "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.quantumleap"
+                "filip.clients.ngsi_v2.quantumleap",
+                "filip.utils.cleanup"
             ],
             "filip.utils": [
-                "filip.clients.base_http_client",
-                "filip.clients.mqtt.encoder.base_encoder"
+                "filip.clients.mqtt.encoder.base_encoder",
+                "filip.clients.base_http_client"
             ],
             "filip.clients.mqtt.encoder": [
                 "filip.clients.mqtt.encoder.json",
@@ -13147,9 +13070,9 @@
                 "filip.clients.mqtt.encoder.ulralight"
             ],
             "filip.models.mqtt": [
+                "filip.clients.mqtt.encoder.base_encoder",
                 "filip.clients.mqtt.encoder.json",
                 "filip.clients.mqtt.client",
-                "filip.clients.mqtt.encoder.base_encoder",
                 "filip.clients.mqtt.encoder.ulralight"
             ],
             "filip.clients.mqtt.client": [
@@ -13165,39 +13088,39 @@
                 "filip.clients.mqtt.encoder"
             ],
             "filip.clients.base_http_client": [
+                "filip.clients.ngsi_v2.client",
+                "filip.clients.ngsi_v2.cb",
                 "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_v2.cb",
-                "filip.clients.ngsi_v2.client"
+                "filip.clients.ngsi_v2.quantumleap"
             ],
             "packaging.version": [
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.utils.simple_ql": [
                 "filip.semantics.semantics_manager",
-                "filip.models.ngsi_v2.base",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.models.ngsi_v2.base"
             ],
             "filip.models.ngsi_v2.base": [
-                "filip.models.ngsi_v2.subscriptions",
-                "filip.clients.ngsi_ld.cb",
-                "filip.clients.ngsi_v2.cb",
+                "filip.models.ngsi_v2.iot",
                 "filip.models.ngsi_v2.context",
+                "filip.clients.ngsi_v2.cb",
+                "filip.models.ngsi_v2.subscriptions",
                 "filip.models.ngsi_v2.registrations",
-                "filip.models.ngsi_v2.iot"
+                "filip.clients.ngsi_ld.cb"
             ],
             "filip.models.ngsi_v2.registrations": [
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.clients.exceptions": [
-                "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.clients.ngsi_v2.iota"
             ],
             "filip.clients.ngsi_v2.iota": [
-                "filip.clients.ngsi_v2",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.clients.ngsi_v2"
             ],
             "filip.clients.ngsi_v2.cb": [
                 "filip.clients.ngsi_v2",
@@ -13219,16 +13142,16 @@
                 "filip.clients.ngsi_ld.cb"
             ],
             "filip.semantics.vocabulary": [
-                "filip.semantics.vocabulary.entities",
-                "filip.semantics.vocabulary.combined_relations",
-                "filip.semantics.ontology_parser.rdfparser",
-                "filip.semantics.semantics_manager",
-                "filip.semantics.ontology_parser.post_processer",
-                "filip.semantics.ontology_parser.vocabulary_builder",
                 "filip.semantics.vocabulary.vocabulary",
+                "filip.semantics.semantics_manager",
+                "filip.semantics.ontology_parser.vocabulary_builder",
                 "filip.semantics.vocabulary_configurator",
-                "filip.semantics.vocabulary.relation",
-                "filip.semantics.vocabulary.source"
+                "filip.semantics.ontology_parser.rdfparser",
+                "filip.semantics.vocabulary.combined_relations",
+                "filip.semantics.vocabulary.source",
+                "filip.semantics.vocabulary.entities",
+                "filip.semantics.ontology_parser.post_processer",
+                "filip.semantics.vocabulary.relation"
             ],
             "filip.semantics.semantics_models": [
                 "filip.semantics.semantics_manager"
@@ -13255,13 +13178,13 @@
                 "filip.semantics.ontology_parser.post_processer"
             ],
             "filip.semantics.vocabulary.source": [
+                "filip.semantics.vocabulary.entities",
                 "filip.semantics.vocabulary",
-                "filip.semantics.vocabulary.relation",
-                "filip.semantics.vocabulary.entities"
+                "filip.semantics.vocabulary.relation"
             ],
             "filip.semantics.vocabulary.vocabulary": [
-                "filip.semantics.vocabulary.relation",
-                "filip.semantics.vocabulary"
+                "filip.semantics.vocabulary",
+                "filip.semantics.vocabulary.relation"
             ],
             "filip.semantics.vocabulary.relation": [
                 "filip.semantics.vocabulary"
@@ -13287,9 +13210,9 @@
             "percent_duplicated_lines": 0.0
         },
         "node_count": {
-            "function": 59,
+            "function": 60,
             "klass": 167,
-            "method": 597,
+            "method": 599,
             "module": 58
         },
         "undocumented": {
@@ -13298,15 +13221,15 @@
             "method": 36,
             "module": 8
         },
-        "convention": 331,
+        "convention": 324,
         "error": 164,
         "fatal": 0,
         "info": 0,
-        "refactor": 264,
-        "statement": 6897,
+        "refactor": 263,
+        "statement": 6912,
         "warning": 215,
-        "global_note": 7.636653617514861,
-        "nb_duplicated_lines": 400,
-        "percent_duplicated_lines": 1.799370220422852
+        "global_note": 7.653356481481481,
+        "nb_duplicated_lines": 389,
+        "percent_duplicated_lines": 1.7477647481691154
     }
 }
