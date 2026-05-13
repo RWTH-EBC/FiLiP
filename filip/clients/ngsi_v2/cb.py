@@ -197,9 +197,7 @@ class ContextBrokerClient(BaseHttpClient):
                     f"version {orion_version}."
                 )
         except requests.RequestException as err:
-            self.logger.error(err)
-            msg = f"Fetch version fails, reason: {err.args}"
-            raise BaseHttpClientException(message=msg, response=err.response) from err
+            self.logger.error(f"Check version fails, reason: {err.args}")
 
     def get_resources(self) -> Dict:
         """
