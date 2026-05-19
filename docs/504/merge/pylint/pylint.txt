@@ -1057,10 +1057,10 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
             if temporary_session is not None:
                 temporary_session.close()
                 self.session = original_session
-
+    # MANAGEMENT API
     def get_version(self) -> Dict:
         """
-        Gets version of Orion-LD context broker
+        Gets version of IoT Agent
         Returns:
             Dictionary with response
         """
@@ -1078,6 +1078,7 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
@@ -1106,7 +1107,7 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
         description="Id of an entity in an NGSI context broker. Allowed "
         "characters are the ones in the plain ASCII set, except "
         "the following ones: control characters, "
-        "whitespace, &, ?, / and #." (duplicate-code)
+        "whitespace, &, ?, / and #.", (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[297:308]
 ==filip.models.ngsi_v2.subscriptions:[48:59]
@@ -1135,7 +1136,9 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect) (duplicate-code)
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
+
+ (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[981:991]
 ==filip.clients.ngsi_v2.cb:[1867:1887]
@@ -1167,6 +1170,8 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
+
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1273,9 +1278,7 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    )
-
- (duplicate-code)
+    ) (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[7:14]
 ==filip.models.ngsi_v2.base:[7:14]
@@ -1372,7 +1375,6 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
@@ -1454,7 +1456,6 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[1679:1685]
         )
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1486,7 +1487,8 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try: (duplicate-code)
+        try:
+ (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[171:177]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1633,16 +1635,14 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(
-        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
-    ) -> str:
+    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload) (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
+filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
