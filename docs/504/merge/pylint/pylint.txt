@@ -1057,10 +1057,10 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
             if temporary_session is not None:
                 temporary_session.close()
                 self.session = original_session
-    # MANAGEMENT API
+
     def get_version(self) -> Dict:
         """
-        Gets version of IoT Agent
+        Gets version of Orion-LD context broker
         Returns:
             Dictionary with response
         """
@@ -1151,7 +1151,17 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False (duplicate-code)
+                return False
+
+    def update_registration(self, registration: Registration):
+        """
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        """ (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[357:369]
 ==filip.models.ngsi_v2.base:[358:369]
@@ -1164,6 +1174,7 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
@@ -1379,12 +1390,12 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[463:469]
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon, (duplicate-code)
+                        Point,
+                        MultiPoint,
+                        LineString,
+                        MultiLineString,
+                        Polygon,
+                        MultiPolygon, (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[363:372]
 ==filip.models.ngsi_v2.iot:[165:171]
@@ -1397,25 +1408,16 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-        if "#" in iri:
-            index = iri.find("#")
-            return iri[:index]
-        else:
-            # for example if uri looks like:
-            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-            index = iri.rfind("/")
-            return iri[:index]
+    if "#" in iri:
+        index = iri.find("#")
+        return iri[:index]
+    else:
+        # for example if uri looks like:
+        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+        index = iri.rfind("/")
+        return iri[:index]
 
-    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
-        """Get the entity with the given iri
-        Fast efficient methode
-
-        Args:
-            iri (str)
-
-        Returns:
-            Entity or None if iri does not belong to an Entity
-        """ (duplicate-code)
+ (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[740:746]
 ==filip.clients.ngsi_v2.cb:[1761:1767]
@@ -1456,6 +1458,7 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[1679:1685]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1487,8 +1490,7 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try:
- (duplicate-code)
+        try: (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[171:177]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1641,15 +1643,16 @@ filip/models/ngsi_ld/context.py:1:0: R0801: Similar lines in 2 files
         elif msg_type == IoTAMQTTMessageType.MULTI:
             payload = super()._parse_timestamp(payload=payload) (duplicate-code)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
+filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
-filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
+filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/models/ngsi_ld/context.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 
 -----------------------------------
 Your code has been rated at 7.65/10
