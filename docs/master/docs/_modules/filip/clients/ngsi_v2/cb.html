@@ -240,6 +240,7 @@
             <span class="k">if</span> <span class="n">temporary_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">temporary_session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">original_session</span>
+
     <span class="c1"># MANAGEMENT API</span>
 <div class="viewcode-block" id="ContextBrokerClient.get_version"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_version">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -263,13 +264,18 @@
 <span class="sd">        Checks whether the used Orion version is greater or equal than the minimum required orion version of</span>
 <span class="sd">        the current filip version</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">orion_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_version</span><span class="p">()[</span><span class="s2">&quot;orion&quot;</span><span class="p">][</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">orion_version</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">MINIMUM_ORION_VERSION</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;You are using orion version </span><span class="si">{</span><span class="n">orion_version</span><span class="si">}</span><span class="s2">. There was a breaking change in Orion Version &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">MINIMUM_ORION_VERSION</span><span class="si">}</span><span class="s2">, therefore functionality is not assured when using &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;version </span><span class="si">{</span><span class="n">orion_version</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">orion_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_version</span><span class="p">()[</span><span class="s2">&quot;orion&quot;</span><span class="p">][</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">orion_version</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">MINIMUM_ORION_VERSION</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;You are using orion version </span><span class="si">{</span><span class="n">orion_version</span><span class="si">}</span><span class="s2">. There was a breaking change in Orion Version &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">MINIMUM_ORION_VERSION</span><span class="si">}</span><span class="s2">, therefore functionality is not assured when using &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;version </span><span class="si">{</span><span class="n">orion_version</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Check version fails, reason: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ContextBrokerClient.get_resources"><a class="viewcode-back" href="../../../../code/filip.clients.ngsi_v2.html#filip.clients.ngsi_v2.cb.ContextBrokerClient.get_resources">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_resources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
