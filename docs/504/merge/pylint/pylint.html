@@ -2938,10 +2938,7 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )
-
-
-# NGSIv2 entity models</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -3053,29 +3050,6 @@
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[297:308]
-==filip.models.ngsi_v2.subscriptions:[48:59]
-    type: Union[DataType, str] = Field(
-        default=DataType.TEXT,
-        description=&#34;The attribute type represents the NGSI value type of the &#34;
-        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
-        &#34;system for attribute values, so NGSI value types are not &#34;
-        &#34;the same as JSON types. Allowed characters &#34;
-        &#34;are the ones in the plain ASCII set, except the following &#34;
-        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
-        max_length=256,
-        min_length=1,
-    )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[297:309]
 ==filip.models.ngsi_v2.iot:[143:157]
     type: Union[DataType, str] = Field(
@@ -3090,6 +3064,29 @@
         min_length=1,
     )
     valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.models.ngsi_v2.base:[297:308]
+==filip.models.ngsi_v2.subscriptions:[48:59]
+    type: Union[DataType, str] = Field(
+        default=DataType.TEXT,
+        description=&#34;The attribute type represents the NGSI value type of the &#34;
+        &#34;attribute value. Note that FIWARE NGSI has its own type &#34;
+        &#34;system for attribute values, so NGSI value types are not &#34;
+        &#34;the same as JSON types. Allowed characters &#34;
+        &#34;are the ones in the plain ASCII set, except the following &#34;
+        &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
+        max_length=256,
+        min_length=1,
+    )</pre></td>
             </tr>
             
             <tr>
@@ -3133,32 +3130,8 @@
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
-==filip.semantics.vocabulary.vocabulary:[93:106]
-class IdType(str, Enum):
-    class_ = &#34;Class&#34;
-    object_property = &#34;Object Property&#34;
-    data_property = &#34;Data Property&#34;
-    datatype = &#34;Datatype&#34;
-    relation = &#34;Relation&#34;
-    combined_relation = &#34;Combined Relation&#34;
-    individual = &#34;Individual&#34;
-    source = &#34;Source&#34;
-
-</pre></td>
             </tr>
             
             <tr>
@@ -3211,6 +3184,31 @@ class IdType(str, Enum):
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
+==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
+==filip.semantics.vocabulary.vocabulary:[93:106]
+class IdType(str, Enum):
+    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
+
+    class_ = &#34;Class&#34;
+    object_property = &#34;Object Property&#34;
+    data_property = &#34;Data Property&#34;
+    datatype = &#34;Datatype&#34;
+    relation = &#34;Relation&#34;
+    combined_relation = &#34;Combined Relation&#34;
+    individual = &#34;Individual&#34;
+    source = &#34;Source&#34;
+
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[169:178]
 ==filip.models.ngsi_v2.context:[37:46]
     _init_ = &#34;value __doc__&#34;
@@ -3222,50 +3220,6 @@ class IdType(str, Enum):
         &#34;This mode represents the entity &#34;
         &#34;attributes by their values only, leaving out &#34;
         &#34;the information about type and metadata. &#34;</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.semantics_models:[126:137]
-==filip.semantics.vocabulary.entities:[659:670]
-                    return False
-
-            if not self.number_range_min == &#34;/&#34;:
-                if number &lt; self.number_range_min:
-                    return False
-            if not self.number_range_max == &#34;/&#34;:
-                if number &gt; self.number_range_max:
-                    return False
-
-            return True
-</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>duplicate-code</code></td>
-                <td>R0801</td>
-                <td></td>
-                <td><pre>Similar lines in 2 files
-==filip.semantics.semantics_models:[107:116]
-==filip.semantics.vocabulary.entities:[638:648]
-            if len(self.allowed_chars) &gt; 0:
-                for char in value:
-                    if char not in self.allowed_chars:
-                        return False
-            for char in self.forbidden_chars:
-                if char in value:
-                    return False
-            return True
-</pre></td>
             </tr>
             
             <tr>
@@ -3319,15 +3273,41 @@ class IdType(str, Enum):
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_ld.context:[880:887]
-==filip.models.ngsi_v2.subscriptions:[98:107]
-        description=&#34;is an array with the notification data itself which &#34;
-        &#34;includes the entity and all concerned attributes. Each &#34;
-        &#34;element in the array corresponds to a different entity. &#34;
-        &#34;By default, the entities are represented in normalized &#34;
-        &#34;mode. However, using the attrsFormat modifier, a &#34;
-        &#34;simplified representation mode can be requested.&#34;
-    )</pre></td>
+==filip.semantics.semantics_models:[126:137]
+==filip.semantics.vocabulary.entities:[659:670]
+                    return False
+
+            if not self.number_range_min == &#34;/&#34;:
+                if number &lt; self.number_range_min:
+                    return False
+            if not self.number_range_max == &#34;/&#34;:
+                if number &gt; self.number_range_max:
+                    return False
+
+            return True
+</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.semantics.semantics_models:[107:116]
+==filip.semantics.vocabulary.entities:[638:648]
+            if len(self.allowed_chars) &gt; 0:
+                # if allowed chars is empty all chars are allowed
+                for char in value:
+                    if char not in self.allowed_chars:
+                        return False
+            for char in self.forbidden_chars:
+                if char in value:
+                    return False
+            return True
+</pre></td>
             </tr>
             
             <tr>
@@ -3357,20 +3337,15 @@ from geojson_pydantic import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.semantics.semantics_models:[141:153]
-==filip.semantics.vocabulary.entities:[674:703]
-            try:
-                from dateutil.parser import parse
-
-                parse(value, fuzzy=False)
-                return True
-
-            except ValueError:
-                return False
-
-        return True
-
-</pre></td>
+==filip.models.ngsi_ld.context:[880:887]
+==filip.models.ngsi_v2.subscriptions:[98:107]
+        description=&#34;is an array with the notification data itself which &#34;
+        &#34;includes the entity and all concerned attributes. Each &#34;
+        &#34;element in the array corresponds to a different entity. &#34;
+        &#34;By default, the entities are represented in normalized &#34;
+        &#34;mode. However, using the attrsFormat modifier, a &#34;
+        &#34;simplified representation mode can be requested.&#34;
+    )</pre></td>
             </tr>
             
             <tr>
@@ -3479,14 +3454,37 @@ from geojson_pydantic import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.registrations:[131:137]
-==filip.models.ngsi_v2.subscriptions:[546:552]
-        &#34;attribute is set to expired (no matter if the client &#34;
-        &#34;updates it to active/inactive). Also, for subscriptions &#34;
-        &#34;experiencing problems with notifications, the status is &#34;
-        &#34;set to failed. As soon as the notifications start working &#34;
-        &#34;again, the status is changed back to active.&#34;,
-    )</pre></td>
+==filip.semantics.semantics_models:[141:153]
+==filip.semantics.vocabulary.entities:[674:703]
+            try:
+                from dateutil.parser import parse
+
+                parse(value, fuzzy=False)
+                return True
+
+            except ValueError:
+                return False
+
+        return True
+
+    def is_logically_equivalent_to(
+        self,
+        datatype: &#34;Datatype&#34;,
+        vocabulary: &#34;Vocabulary&#34;,
+        old_vocabulary: &#34;Vocabulary&#34;,
+    ) -&gt; bool:
+        &#34;&#34;&#34;Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        &#34;&#34;&#34;
+</pre></td>
             </tr>
             
             <tr>
@@ -3505,6 +3503,7 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     )</pre></td>
             </tr>
             
@@ -3540,11 +3539,8 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)
-
-</pre></td>
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
             </tr>
             
             <tr>
@@ -3555,27 +3551,14 @@ from geojson_pydantic import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.semantics.ontology_parser.rdfparser:[77:87]
-==filip.semantics.vocabulary.vocabulary:[551:570]
-        if &#34;#&#34; in iri:
-            index = iri.find(&#34;#&#34;)
-            return iri[:index]
-        else:
-            # for example if uri looks like:
-            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-            index = iri.rfind(&#34;/&#34;)
-            return iri[:index]
-
-    def get_entity_by_iri(self, iri: str) -&gt; Union[None, Entity]:
-        &#34;&#34;&#34;Get the entity with the given iri
-        Fast efficient methode
-
-        Args:
-            iri (str)
-
-        Returns:
-            Entity or None if iri does not belong to an Entity
-        &#34;&#34;&#34;</pre></td>
+==filip.models.ngsi_v2.registrations:[131:137]
+==filip.models.ngsi_v2.subscriptions:[546:552]
+        &#34;attribute is set to expired (no matter if the client &#34;
+        &#34;updates it to active/inactive). Also, for subscriptions &#34;
+        &#34;experiencing problems with notifications, the status is &#34;
+        &#34;set to failed. As soon as the notifications start working &#34;
+        &#34;again, the status is changed back to active.&#34;,
+    )</pre></td>
             </tr>
             
             <tr>
@@ -3710,7 +3693,8 @@ from geojson_pydantic import (
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try:</pre></td>
+        try:
+</pre></td>
             </tr>
             
             <tr>
@@ -3739,13 +3723,18 @@ from geojson_pydantic import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.iot:[11:16]
-==filip.models.ngsi_v2.subscriptions:[8:13]
-from pydantic import (
-    field_validator,
-    model_validator,
-    ConfigDict,
-    BaseModel,</pre></td>
+==filip.semantics.ontology_parser.rdfparser:[77:87]
+==filip.semantics.vocabulary.vocabulary:[551:570]
+    if &#34;#&#34; in iri:
+        index = iri.find(&#34;#&#34;)
+        return iri[:index]
+    else:
+        # for example if uri looks like:
+        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+        index = iri.rfind(&#34;/&#34;)
+        return iri[:index]
+
+</pre></td>
             </tr>
             
             <tr>
@@ -3756,13 +3745,13 @@ from pydantic import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.semantics.ontology_parser.post_processer:[14:19]
-==filip.semantics.ontology_parser.rdfparser:[10:15]
-from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
-from filip.semantics.vocabulary import (
-    Source,
-    IdType,
-    Vocabulary,</pre></td>
+==filip.models.ngsi_v2.iot:[11:16]
+==filip.models.ngsi_v2.subscriptions:[8:13]
+from pydantic import (
+    field_validator,
+    model_validator,
+    ConfigDict,
+    BaseModel,</pre></td>
             </tr>
             
             <tr>
@@ -3935,8 +3924,24 @@ from filip.semantics.vocabulary import (
 
         if limit is None:
             limit = inf
-        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit
-</pre></td>
+        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>duplicate-code</code></td>
+                <td>R0801</td>
+                <td></td>
+                <td><pre>Similar lines in 2 files
+==filip.clients.ngsi_v2.cb:[1227:1232]
+==filip.clients.ngsi_v2.iota:[259:264]
+        try:
+            res = self.put(
+                url=url,
+                headers=headers,
+                params=params,</pre></td>
             </tr>
             
             <tr>
@@ -3998,13 +4003,15 @@ from filip.semantics.vocabulary import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.clients.ngsi_v2.cb:[1227:1232]
-==filip.clients.ngsi_v2.iota:[259:264]
-        try:
-            res = self.put(
-                url=url,
-                headers=headers,
-                params=params,</pre></td>
+==filip.clients.mqtt.encoder.json:[23:30]
+==filip.clients.mqtt.encoder.ulralight:[29:38]
+        return apikey, device_id, payload
+
+    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -&gt; str:
+        if msg_type == IoTAMQTTMessageType.SINGLE:
+            return payload
+        elif msg_type == IoTAMQTTMessageType.MULTI:
+            payload = super()._parse_timestamp(payload=payload)</pre></td>
             </tr>
             
             <tr>
@@ -4015,17 +4022,13 @@ from filip.semantics.vocabulary import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.clients.mqtt.encoder.json:[23:30]
-==filip.clients.mqtt.encoder.ulralight:[29:38]
-        return apikey, device_id, payload
-
-    def encode_msg(
-        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
-    ) -&gt; str:
-        if msg_type == IoTAMQTTMessageType.SINGLE:
-            return payload
-        elif msg_type == IoTAMQTTMessageType.MULTI:
-            payload = super()._parse_timestamp(payload=payload)</pre></td>
+==filip.semantics.ontology_parser.post_processer:[14:19]
+==filip.semantics.ontology_parser.rdfparser:[10:15]
+from filip.semantics.ontology_parser.vocabulary_builder import VocabularyBuilder
+from filip.semantics.vocabulary import (
+    Source,
+    IdType,
+    Vocabulary,</pre></td>
             </tr>
             
             <tr>
@@ -4065,37 +4068,7 @@ from filip.semantics.vocabulary import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
             </tr>
             
             <tr>
@@ -4135,7 +4108,37 @@ from filip.semantics.vocabulary import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -11719,73 +11722,8 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>too-many-instance-attributes</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>line-too-long</td>
-                <td>38</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-arguments</td>
-                <td>16</td>
-            </tr>
-            
-            <tr>
-                <td>raise-missing-from</td>
-                <td>8</td>
-            </tr>
-            
-            <tr>
-                <td>missing-function-docstring</td>
-                <td>49</td>
-            </tr>
-            
-            <tr>
-                <td>using-constant-test</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>redefined-argument-from-local</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>raising-format-tuple</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-locals</td>
-                <td>22</td>
-            </tr>
-            
-            <tr>
-                <td>pointless-statement</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>unused-argument</td>
-                <td>13</td>
-            </tr>
-            
-            <tr>
-                <td>function-redefined</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>cell-var-from-loop</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>no-else-break</td>
-                <td>2</td>
+                <td>no-else-return</td>
+                <td>53</td>
             </tr>
             
             <tr>
@@ -11794,113 +11732,13 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>useless-parent-delegation</td>
-                <td>3</td>
+                <td>line-too-long</td>
+                <td>38</td>
             </tr>
             
             <tr>
-                <td>no-else-return</td>
-                <td>53</td>
-            </tr>
-            
-            <tr>
-                <td>inconsistent-return-statements</td>
-                <td>43</td>
-            </tr>
-            
-            <tr>
-                <td>missing-module-docstring</td>
-                <td>8</td>
-            </tr>
-            
-            <tr>
-                <td>missing-class-docstring</td>
-                <td>8</td>
-            </tr>
-            
-            <tr>
-                <td>pointless-exception-statement</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-lines</td>
-                <td>4</td>
-            </tr>
-            
-            <tr>
-                <td>logging-fstring-interpolation</td>
-                <td>12</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-branches</td>
-                <td>15</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-statements</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>import-outside-toplevel</td>
-                <td>17</td>
-            </tr>
-            
-            <tr>
-                <td>implicit-str-concat</td>
-                <td>18</td>
-            </tr>
-            
-            <tr>
-                <td>f-string-without-interpolation</td>
-                <td>21</td>
-            </tr>
-            
-            <tr>
-                <td>redefined-outer-name</td>
-                <td>4</td>
-            </tr>
-            
-            <tr>
-                <td>consider-merging-isinstance</td>
+                <td>redefined-argument-from-local</td>
                 <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>no-member</td>
-                <td>11</td>
-            </tr>
-            
-            <tr>
-                <td>unnecessary-lambda</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>use-a-generator</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>no-else-continue</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-public-methods</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>no-else-raise</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>broad-exception-raised</td>
-                <td>10</td>
             </tr>
             
             <tr>
@@ -11909,8 +11747,33 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>missing-function-docstring</td>
+                <td>49</td>
+            </tr>
+            
+            <tr>
+                <td>no-member</td>
+                <td>11</td>
+            </tr>
+            
+            <tr>
+                <td>import-outside-toplevel</td>
+                <td>17</td>
+            </tr>
+            
+            <tr>
                 <td>consider-iterating-dictionary</td>
                 <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>raise-missing-from</td>
+                <td>8</td>
+            </tr>
+            
+            <tr>
+                <td>implicit-str-concat</td>
+                <td>18</td>
             </tr>
             
             <tr>
@@ -11919,48 +11782,23 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>unused-private-member</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>attribute-defined-outside-init</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>consider-using-in</td>
-                <td>2</td>
-            </tr>
-            
-            <tr>
-                <td>protected-access</td>
-                <td>11</td>
-            </tr>
-            
-            <tr>
-                <td>unnecessary-dunder-call</td>
-                <td>14</td>
-            </tr>
-            
-            <tr>
-                <td>too-many-return-statements</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>try-except-raise</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>unneeded-not</td>
+                <td>missing-module-docstring</td>
                 <td>8</td>
+            </tr>
+            
+            <tr>
+                <td>misplaced-bare-raise</td>
+                <td>1</td>
             </tr>
             
             <tr>
                 <td>superfluous-parens</td>
                 <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-lines</td>
+                <td>4</td>
             </tr>
             
             <tr>
@@ -11979,8 +11817,38 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>too-many-return-statements</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-branches</td>
+                <td>15</td>
+            </tr>
+            
+            <tr>
+                <td>broad-exception-raised</td>
+                <td>10</td>
+            </tr>
+            
+            <tr>
                 <td>unnecessary-pass</td>
                 <td>6</td>
+            </tr>
+            
+            <tr>
+                <td>function-redefined</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>unnecessary-dunder-call</td>
+                <td>14</td>
+            </tr>
+            
+            <tr>
+                <td>protected-access</td>
+                <td>11</td>
             </tr>
             
             <tr>
@@ -11989,8 +11857,18 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>too-many-locals</td>
+                <td>22</td>
+            </tr>
+            
+            <tr>
                 <td>unnecessary-comprehension</td>
                 <td>4</td>
+            </tr>
+            
+            <tr>
+                <td>inconsistent-return-statements</td>
+                <td>43</td>
             </tr>
             
             <tr>
@@ -12001,6 +11879,16 @@ from filip.semantics.vocabulary import (
             <tr>
                 <td>consider-using-get</td>
                 <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>unneeded-not</td>
+                <td>8</td>
+            </tr>
+            
+            <tr>
+                <td>unused-argument</td>
+                <td>13</td>
             </tr>
             
             <tr>
@@ -12019,23 +11907,48 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>wrong-import-position</td>
-                <td>4</td>
+                <td>f-string-without-interpolation</td>
+                <td>21</td>
             </tr>
             
             <tr>
-                <td>reimported</td>
+                <td>too-many-statements</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>no-else-raise</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>try-except-raise</td>
                 <td>1</td>
             </tr>
             
             <tr>
-                <td>consider-using-enumerate</td>
+                <td>logging-fstring-interpolation</td>
+                <td>12</td>
+            </tr>
+            
+            <tr>
+                <td>too-many-arguments</td>
+                <td>16</td>
+            </tr>
+            
+            <tr>
+                <td>redefined-outer-name</td>
                 <td>4</td>
             </tr>
             
             <tr>
-                <td>consider-using-f-string</td>
-                <td>4</td>
+                <td>too-many-public-methods</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>broad-exception-caught</td>
+                <td>2</td>
             </tr>
             
             <tr>
@@ -12064,8 +11977,28 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>broad-exception-caught</td>
-                <td>2</td>
+                <td>wrong-import-position</td>
+                <td>4</td>
+            </tr>
+            
+            <tr>
+                <td>reimported</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>consider-using-enumerate</td>
+                <td>4</td>
+            </tr>
+            
+            <tr>
+                <td>consider-using-f-string</td>
+                <td>4</td>
+            </tr>
+            
+            <tr>
+                <td>missing-class-docstring</td>
+                <td>8</td>
             </tr>
             
             <tr>
@@ -12074,8 +12007,78 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>misplaced-bare-raise</td>
+                <td>too-many-instance-attributes</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>using-constant-test</td>
                 <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>raising-format-tuple</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>pointless-statement</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>cell-var-from-loop</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>no-else-break</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>useless-parent-delegation</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>pointless-exception-statement</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>unused-private-member</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>attribute-defined-outside-init</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>consider-merging-isinstance</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>unnecessary-lambda</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>use-a-generator</td>
+                <td>2</td>
+            </tr>
+            
+            <tr>
+                <td>no-else-continue</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>consider-using-in</td>
+                <td>2</td>
             </tr>
             
             <tr>
@@ -12119,6 +12122,101 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>filip.utils.simple_ql</td>
+                <td>15</td>
+            </tr>
+            
+            <tr>
+                <td>filip.utils.filter</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>filip.utils.validators</td>
+                <td>40</td>
+            </tr>
+            
+            <tr>
+                <td>filip.utils.model_generation</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>filip.utils.datetime</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip.utils.cleanup</td>
+                <td>13</td>
+            </tr>
+            
+            <tr>
+                <td>filip.utils.data</td>
+                <td>8</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.semantics_models</td>
+                <td>127</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary_configurator</td>
+                <td>33</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.semantics_manager</td>
+                <td>44</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary.source</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary.entities</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary.combined_relations</td>
+                <td>12</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary.vocabulary</td>
+                <td>44</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.vocabulary.relation</td>
+                <td>28</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.ontology_parser.vocabulary_builder</td>
+                <td>17</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.ontology_parser.post_processer</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>filip.semantics.ontology_parser.rdfparser</td>
+                <td>35</td>
+            </tr>
+            
+            <tr>
                 <td>filip.clients.base_http_client</td>
                 <td>7</td>
             </tr>
@@ -12144,23 +12242,13 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>filip.clients.mqtt.encoder.ulralight</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
                 <td>filip.clients.mqtt.encoder.base_encoder</td>
                 <td>2</td>
             </tr>
             
             <tr>
-                <td>filip.clients.ngsi_v2.cb</td>
-                <td>85</td>
-            </tr>
-            
-            <tr>
-                <td>filip.clients.ngsi_v2.iota</td>
-                <td>33</td>
+                <td>filip.clients.mqtt.encoder.ulralight</td>
+                <td>7</td>
             </tr>
             
             <tr>
@@ -12169,113 +12257,23 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>filip.clients.ngsi_v2.cb</td>
+                <td>85</td>
+            </tr>
+            
+            <tr>
                 <td>filip.clients.ngsi_v2.quantumleap</td>
                 <td>27</td>
             </tr>
             
             <tr>
-                <td>filip.clients.ngsi_ld.cb</td>
-                <td>38</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.semantics_manager</td>
-                <td>44</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.semantics_models</td>
-                <td>127</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary_configurator</td>
+                <td>filip.clients.ngsi_v2.iota</td>
                 <td>33</td>
             </tr>
             
             <tr>
-                <td>filip.semantics.vocabulary.relation</td>
-                <td>28</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.entities</td>
-                <td>30</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.combined_relations</td>
-                <td>12</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.vocabulary</td>
-                <td>44</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.vocabulary.source</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.ontology_parser.vocabulary_builder</td>
-                <td>17</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.ontology_parser.rdfparser</td>
-                <td>35</td>
-            </tr>
-            
-            <tr>
-                <td>filip.semantics.ontology_parser.post_processer</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.datetime</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.validators</td>
-                <td>40</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.filter</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.simple_ql</td>
-                <td>15</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.data</td>
-                <td>8</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.cleanup</td>
-                <td>13</td>
-            </tr>
-            
-            <tr>
-                <td>filip.utils.model_generation</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.mqtt</td>
-                <td>1</td>
+                <td>filip.clients.ngsi_ld.cb</td>
+                <td>38</td>
             </tr>
             
             <tr>
@@ -12289,23 +12287,13 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>filip.models.mqtt</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
                 <td>filip.models.ngsi_v2.timeseries</td>
                 <td>6</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.units</td>
-                <td>10</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.base</td>
-                <td>22</td>
-            </tr>
-            
-            <tr>
-                <td>filip.models.ngsi_v2.iot</td>
-                <td>27</td>
             </tr>
             
             <tr>
@@ -12314,8 +12302,8 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>filip.models.ngsi_v2.context</td>
-                <td>30</td>
+                <td>filip.models.ngsi_v2.base</td>
+                <td>22</td>
             </tr>
             
             <tr>
@@ -12324,13 +12312,28 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>filip.models.ngsi_ld.base</td>
-                <td>3</td>
+                <td>filip.models.ngsi_v2.context</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.units</td>
+                <td>10</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_v2.iot</td>
+                <td>27</td>
             </tr>
             
             <tr>
                 <td>filip.models.ngsi_ld.subscriptions</td>
                 <td>16</td>
+            </tr>
+            
+            <tr>
+                <td>filip.models.ngsi_ld.base</td>
+                <td>3</td>
             </tr>
             
             <tr>
@@ -12364,6 +12367,101 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>filip/utils/simple_ql.py</td>
+                <td>15</td>
+            </tr>
+            
+            <tr>
+                <td>filip/utils/filter.py</td>
+                <td>3</td>
+            </tr>
+            
+            <tr>
+                <td>filip/utils/validators.py</td>
+                <td>40</td>
+            </tr>
+            
+            <tr>
+                <td>filip/utils/model_generation.py</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>filip/utils/datetime.py</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip/utils/cleanup.py</td>
+                <td>13</td>
+            </tr>
+            
+            <tr>
+                <td>filip/utils/data.py</td>
+                <td>8</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/semantics_models.py</td>
+                <td>127</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary_configurator.py</td>
+                <td>33</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/semantics_manager.py</td>
+                <td>44</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary/source.py</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary/entities.py</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary/combined_relations.py</td>
+                <td>12</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary/__init__.py</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary/vocabulary.py</td>
+                <td>44</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/vocabulary/relation.py</td>
+                <td>28</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/ontology_parser/vocabulary_builder.py</td>
+                <td>17</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/ontology_parser/post_processer.py</td>
+                <td>7</td>
+            </tr>
+            
+            <tr>
+                <td>filip/semantics/ontology_parser/rdfparser.py</td>
+                <td>35</td>
+            </tr>
+            
+            <tr>
                 <td>filip/clients/base_http_client.py</td>
                 <td>7</td>
             </tr>
@@ -12389,23 +12487,13 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>filip/clients/mqtt/encoder/ulralight.py</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
                 <td>filip/clients/mqtt/encoder/base_encoder.py</td>
                 <td>2</td>
             </tr>
             
             <tr>
-                <td>filip/clients/ngsi_v2/cb.py</td>
-                <td>85</td>
-            </tr>
-            
-            <tr>
-                <td>filip/clients/ngsi_v2/iota.py</td>
-                <td>33</td>
+                <td>filip/clients/mqtt/encoder/ulralight.py</td>
+                <td>7</td>
             </tr>
             
             <tr>
@@ -12414,113 +12502,23 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>filip/clients/ngsi_v2/cb.py</td>
+                <td>85</td>
+            </tr>
+            
+            <tr>
                 <td>filip/clients/ngsi_v2/quantumleap.py</td>
                 <td>27</td>
             </tr>
             
             <tr>
-                <td>filip/clients/ngsi_ld/cb.py</td>
-                <td>38</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/semantics_manager.py</td>
-                <td>44</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/semantics_models.py</td>
-                <td>127</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary_configurator.py</td>
+                <td>filip/clients/ngsi_v2/iota.py</td>
                 <td>33</td>
             </tr>
             
             <tr>
-                <td>filip/semantics/vocabulary/relation.py</td>
-                <td>28</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/entities.py</td>
-                <td>30</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/combined_relations.py</td>
-                <td>12</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/__init__.py</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/vocabulary.py</td>
-                <td>44</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/vocabulary/source.py</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/ontology_parser/vocabulary_builder.py</td>
-                <td>17</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/ontology_parser/rdfparser.py</td>
-                <td>35</td>
-            </tr>
-            
-            <tr>
-                <td>filip/semantics/ontology_parser/post_processer.py</td>
-                <td>7</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/datetime.py</td>
-                <td>1</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/validators.py</td>
-                <td>40</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/filter.py</td>
-                <td>3</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/simple_ql.py</td>
-                <td>15</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/data.py</td>
-                <td>8</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/cleanup.py</td>
-                <td>13</td>
-            </tr>
-            
-            <tr>
-                <td>filip/utils/model_generation.py</td>
-                <td>5</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/mqtt.py</td>
-                <td>1</td>
+                <td>filip/clients/ngsi_ld/cb.py</td>
+                <td>38</td>
             </tr>
             
             <tr>
@@ -12534,23 +12532,13 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
+                <td>filip/models/mqtt.py</td>
+                <td>1</td>
+            </tr>
+            
+            <tr>
                 <td>filip/models/ngsi_v2/timeseries.py</td>
                 <td>6</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/units.py</td>
-                <td>10</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/base.py</td>
-                <td>22</td>
-            </tr>
-            
-            <tr>
-                <td>filip/models/ngsi_v2/iot.py</td>
-                <td>27</td>
             </tr>
             
             <tr>
@@ -12559,8 +12547,8 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>filip/models/ngsi_v2/context.py</td>
-                <td>30</td>
+                <td>filip/models/ngsi_v2/base.py</td>
+                <td>22</td>
             </tr>
             
             <tr>
@@ -12569,13 +12557,28 @@ from filip.semantics.vocabulary import (
             </tr>
             
             <tr>
-                <td>filip/models/ngsi_ld/base.py</td>
-                <td>3</td>
+                <td>filip/models/ngsi_v2/context.py</td>
+                <td>30</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/units.py</td>
+                <td>10</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_v2/iot.py</td>
+                <td>27</td>
             </tr>
             
             <tr>
                 <td>filip/models/ngsi_ld/subscriptions.py</td>
                 <td>16</td>
+            </tr>
+            
+            <tr>
+                <td>filip/models/ngsi_ld/base.py</td>
+                <td>3</td>
             </tr>
             
             <tr>
