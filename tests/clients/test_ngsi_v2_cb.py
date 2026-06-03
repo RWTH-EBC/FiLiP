@@ -110,6 +110,16 @@ class TestContextBroker(unittest.TestCase):
             }
         )
 
+    def test_check_version(self) -> None:
+        """
+        Test version check will not block the instantiation
+        """
+        with ContextBrokerClient(
+            url="http://example.com", fiware_header=self.fiware_header
+        ) as client:
+            with self.assertRaises(RequestException):
+                version = client.get_version()
+
     def test_url_composition(self):
         """
         Test URL composition for context broker client

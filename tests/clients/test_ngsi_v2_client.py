@@ -221,8 +221,15 @@ class TestClient(unittest.TestCase):
             iota_url=url_with_ssl_error,
             ql_url=url_with_ssl_error,
         )
+        client = HttpClient(config=config, fiware_header=self.fh)
         with self.assertRaises(BaseHttpClientException):
-            client = HttpClient(config=config, fiware_header=self.fh)
+            client.cb.post_entity(entity=ContextEntity(id="test", type="test"))
+        with self.assertRaises(BaseHttpClientException):
+            client.cb.patch_entity(entity=ContextEntity(id="test", type="test"))
+        with self.assertRaises(BaseHttpClientException):
+            client.iota.does_device_exists(device_id="test")
+        with self.assertRaises(BaseHttpClientException):
+            client.timeseries.get_version()
 
     def test_dynamic_header_update(self):
         """Ensure every HTTP helper re-fetches secure headers per request."""
