@@ -24,10 +24,8 @@
 
 # ## Import packages
 import json
-from pathlib import Path
 import time
 from urllib.parse import urlparse
-import matplotlib.pyplot as plt
 import paho.mqtt.client as mqtt
 
 # import from filip
@@ -36,7 +34,7 @@ from filip.utils.cleanup import clear_context_broker, clear_iot_agent
 
 # import simulation model
 from tutorials.ngsi_v2.simulation_model import SimulationModel
-from n5geh_cluster_tutorials.init_clients import iota_client, cb_client, ql_client
+from tutorials.n5geh_cluster.init_clients import iota_client, cb_client, ql_client
 
 # ## Parameters
 
