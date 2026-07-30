@@ -7,7 +7,7 @@ import logging
 import itertools
 import warnings
 from enum import Enum
-from typing import Any, Dict, Optional, List, Union
+from typing import Any, Dict, Optional, List, Union, Literal
 import pytz
 from pydantic import (
     field_validator,
@@ -243,9 +243,11 @@ class ServiceGroup(BaseModel):
         default=None,
         description="Endpoint where the group of device is going to receive commands, if any.",
     )
-    cmdMode: Optional[str] = Field(
+    cmdMode: Literal["advancedNotification", "notification", "legacy"] | None = Field(
         default=None,
-        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default. ",
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification."
+        " Legacy is based on registers. notification based on simplified schema of subscriptions."
+        " Legacy by default. ",
     )
 
     @field_validator("cbHost")
@@ -427,9 +429,11 @@ class Device(DeviceSettings):
     commands: List[DeviceCommand] = Field(
         default=[], description="List of commands of the device"
     )
-    cmdMode: str = Field(
-        default="Legacy ",
-        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default.",
+    cmdMode: Literal["advancedNotification", "notification", "legacy"] | None = Field(
+        default=None,
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. "
+        "Legacy is based on registers. notification based on simplified schema of subscriptions. "
+        "Legacy by default.",
     )
     attributes: List[DeviceAttribute] = Field(
         default=[], description="List of active attributes of the device"
