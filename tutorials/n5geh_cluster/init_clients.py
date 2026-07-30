@@ -17,6 +17,11 @@ CB_URL = "https://n5geh.eonerc.rwth-aachen.de/orion/"
 IOTA_URL = "https://n5geh.eonerc.rwth-aachen.de/iota/"
 QL_URL = "https://n5geh.eonerc.rwth-aachen.de/ql/"
 QL_URL_INTERNAL = "http://quantumleap-quantumleap.timeseries.svc.cluster.local:8668"
+# MQTT settings
+MQTT_BROKER_URL = "mqtt://mqtt.n5geh.eonerc.rwth-aachen.de:8883"
+MQTT_USER = "ebcdev"
+MQTT_PW = "ebcdev"
+MQTT_INTERNAL_URL = "mqtt://emqx-listeners.emqx.svc.cluster.local:1883"
 
 # FIWARE-Service
 SERVICE = "ebcdev1"

@@ -59,7 +59,7 @@ COM_STEP = 60 * 60 * 0.25  # 15 min steps
 # ==========================================
 # 2. PROVISIONING (Registering Devices)
 # ==========================================
-def provision_device(apikey, entity_type, device_id, entity_name):
+def provision_temperature_sensor(apikey, entity_type, device_id, entity_name):
     """
     Helper function to register a device group, the device itself,
     and set up the subscription to save data to the historical database.
@@ -67,10 +67,13 @@ def provision_device(apikey, entity_type, device_id, entity_name):
     print(f"\n[Provisioning] Setting up {entity_type} ({entity_name})...")
 
     # 1. Create a service group for this type of sensor
-    service_group = ServiceGroup(
-        apikey=apikey, resource="/iot/json", entity_type=entity_type
-    )
-    iota_client.post_group(service_group=service_group, update=True)
+    # The best practice of service is to create a service group for each type of device
+    existing_groups = iota_client.get_group_list()
+    if entity_type not in [g.entity_type for g in existing_groups]:
+        service_group = ServiceGroup(
+            apikey=apikey, resource="/iot/json", entity_type=entity_type
+        )
+        iota_client.post_group(service_group=service_group, update=True)
 
     # 2. Define the attributes our device will send
     attr_sim_time = DeviceAttribute(name="sim_time", type="Number")
@@ -108,7 +111,7 @@ def provision_device(apikey, entity_type, device_id, entity_name):
 # ==========================================
 # 3. PUBLISHER (Simulate & Send Data)
 # ==========================================
-def run_simulation_and_publish():
+def run_simulation_and_publish(pause_time=0.1):
     """
     Runs the temperature simulation and publishes the data for both
     devices to the IoT Agent via MQTT.
@@ -167,7 +170,7 @@ def run_simulation_and_publish():
         print(f"[Publisher] Sent data for sim_time: {sim_model.t_sim}s")
 
         sim_model.do_step(int(t_sim + COM_STEP))
-        time.sleep(0.1)  # Brief pause to allow platform processing
+        time.sleep(pause_time)  # Brief pause to allow platform processing
 
     mqttc.loop_stop()
     mqttc.disconnect()
@@ -177,7 +180,7 @@ def run_simulation_and_publish():
 # ==========================================
 # 4. DATA RETRIEVAL
 # ==========================================
-def fetch_historical_data(entity_id, entity_type, expected_records):
+def fetch_historical_data(entity_id, entity_type, attr_name, last_n):
     """
     Retrieves the stored history from the QuantumLeap time-series database
     and neatly unpacks it into lists for plotting.
@@ -188,12 +191,12 @@ def fetch_historical_data(entity_id, entity_type, expected_records):
     history = ql_client.get_entity_by_id(
         entity_id=entity_id,
         entity_type=entity_type,
-        last_n=expected_records,
+        last_n=last_n,
     )
 
     # Extract specific attributes from the returned data structure
     temperatures = [
-        attr.values for attr in history.attributes if attr.attrName == "temperature"
+        attr.values for attr in history.attributes if attr.attrName == attr_name
     ][0]
     sim_times = [
         attr.values for attr in history.attributes if attr.attrName == "sim_time"
@@ -245,13 +248,13 @@ if __name__ == "__main__":
     clear_quantumleap(ql_client=ql_client)
 
     # 2. Provision devices in the FIWARE platform
-    provision_device(
+    provision_temperature_sensor(
         apikey=APIKEY_WS,
         entity_type="WeatherStation",
         device_id="device:001",
         entity_name="urn:ngsi-ld:WeatherStation:001",
     )
-    provision_device(
+    provision_temperature_sensor(
         apikey=APIKEY_TS,
         entity_type="TemperatureSensor",
         device_id="device:002",
@@ -274,13 +277,15 @@ if __name__ == "__main__":
     time_ws, temp_ws = fetch_historical_data(
         entity_id="urn:ngsi-ld:WeatherStation:001",
         entity_type="WeatherStation",
-        expected_records=expected_records,
+        attr_name="temperature",
+        last_n=expected_records,
     )
 
     time_ts, temp_ts = fetch_historical_data(
         entity_id="urn:ngsi-ld:TemperatureSensor:001",
         entity_type="TemperatureSensor",
-        expected_records=expected_records,
+        attr_name="temperature",
+        last_n=expected_records,
     )
 
     # 5. Plot the retrieved data

@@ -21,13 +21,11 @@ import paho.mqtt.client as mqtt
 
 # Import simulation model
 from tutorials.ngsi_v2.simulation_model import SimulationModel
+from tutorials.n5geh_cluster.init_clients import MQTT_BROKER_URL, MQTT_USER, MQTT_PW
 
 # ==========================================
 # 1. PARAMETERS
 # ==========================================
-MQTT_BROKER_URL = "mqtt://mqtt.n5geh.eonerc.rwth-aachen.de:8883"
-MQTT_USER = "ebcdev"
-MQTT_PW = "ebcdev"
 # TODO allowed Topics: /json/ebc_dev_apikey<1~5>/#
 TOPIC_WEATHER_STATION = "/json/ebc_dev_apikey1/weather_station"
 
