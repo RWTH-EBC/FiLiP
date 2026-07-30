@@ -16,6 +16,7 @@ urllib3.disable_warnings()
 CB_URL = "https://n5geh.eonerc.rwth-aachen.de/orion/"
 IOTA_URL = "https://n5geh.eonerc.rwth-aachen.de/iota/"
 QL_URL = "https://n5geh.eonerc.rwth-aachen.de/ql/"
+QL_URL_INTERNAL = "http://quantumleap-quantumleap.timeseries.svc.cluster.local:8668"
 
 # FIWARE-Service
 SERVICE = "ebcdev1"
