@@ -6,8 +6,6 @@ import copy
 import time
 import unittest
 import logging
-
-import pytest
 import requests
 import json
 
@@ -819,7 +817,6 @@ class TestAgent(unittest.TestCase):
         print("Wrong port error message:", str(cm.exception))
         self.assertIsInstance(cm.exception.__cause__, requests.RequestException)
 
-    @pytest.mark.skip(reason="Not ready yet")
     def test_get_device_list_with_invalid_entries(self):
         """
         Tests the behavior of get_device_list when the IoT Agent contains
@@ -1269,15 +1266,14 @@ class TestAgent(unittest.TestCase):
 
     def test_notification_command(self):
         # create group with MQTT transport
+        apikey = "test_notification"
         service_group = ServiceGroup(
             service=self.fiware_header.service,
             subservice=self.fiware_header.service_path,
-            apikey="test_notification",
+            apikey=apikey,
             resource="/iot/json",
             entity_type="Actuator",
-            endpoint="mqtt:mqtt-broker:1883",
-            cmdMode="notification",
-            commands=[DeviceCommand(name="test_cmd")],
+            transport="MQTT",
         )
         self.client.post_groups([service_group], update=True)
 
@@ -1288,7 +1284,7 @@ class TestAgent(unittest.TestCase):
             entity_type="Actuator",
             transport="MQTT",
             cmdMode="notification",
-            apikey="test_notification",
+            apikey=apikey,
             commands=[DeviceCommand(name="test_cmd")],
         )
         self.client.post_device(device=device)
@@ -1302,11 +1298,15 @@ class TestAgent(unittest.TestCase):
                 entity_id=device.entity_name,
                 entity_type=device.entity_type,
                 attr_name="test_cmd",
-                value="on",
+                value=1,
                 forcedUpdate=True,
             )
-        # check the mqtt.
-        time.sleep(2)
+            # check the notification.
+            time.sleep(2)
+            subs = cbc.get_subscription_list()
+            sub = subs[0]
+            self.assertIn(device.entity_name, sub.subject.model_dump_json())
+            self.assertTrue(int(sub.notification.lastSuccessCode) < 400)
 
     def tearDown(self) -> None:
         """

@@ -224,6 +224,11 @@ class ServiceGroup(BaseModel):
         max_length=256,
         min_length=1,
     )
+    transport: Optional[Union[TransportProtocol, str]] = Field(
+        default=None,
+        description="Name of the device transport protocol, for the IoT Agents "
+        "with multiple transport protocols.",
+    )
     valid_entity_type = field_validator("entity_type")(
         validate_fiware_datatype_standard
     )
