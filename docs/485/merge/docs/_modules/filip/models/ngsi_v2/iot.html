@@ -85,7 +85,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pytz</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">field_validator</span><span class="p">,</span>
@@ -302,6 +302,11 @@
         <span class="n">max_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">TransportProtocol</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the device transport protocol, for the IoT Agents &quot;</span>
+        <span class="s2">&quot;with multiple transport protocols.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">valid_entity_type</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">&quot;entity_type&quot;</span><span class="p">)(</span>
         <span class="n">validate_fiware_datatype_standard</span>
     <span class="p">)</span>
@@ -321,9 +326,11 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Endpoint where the group of device is going to receive commands, if any.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">cmdMode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">cmdMode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;advancedNotification&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">,</span> <span class="s2">&quot;legacy&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default. &quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command mode that will use iotagent with CB: legacy, notification and advancedNotification.&quot;</span>
+        <span class="s2">&quot; Legacy is based on registers. notification based on simplified schema of subscriptions.&quot;</span>
+        <span class="s2">&quot; Legacy by default. &quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
 <div class="viewcode-block" id="ServiceGroup.validate_cbHost"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.validate_cbHost">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;cbHost&quot;</span><span class="p">)</span>
@@ -505,9 +512,11 @@
     <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceCommand</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of commands of the device&quot;</span>
     <span class="p">)</span>
-    <span class="n">cmdMode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Legacy &quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command mode that will use iotagent with CB: legacy, notification and advancedNotification. Legacy is based on registers. notification based on simplified schema of subscriptions. Legacy by default.&quot;</span><span class="p">,</span>
+    <span class="n">cmdMode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;advancedNotification&quot;</span><span class="p">,</span> <span class="s2">&quot;notification&quot;</span><span class="p">,</span> <span class="s2">&quot;legacy&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command mode that will use iotagent with CB: legacy, notification and advancedNotification. &quot;</span>
+        <span class="s2">&quot;Legacy is based on registers. notification based on simplified schema of subscriptions. &quot;</span>
+        <span class="s2">&quot;Legacy by default.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceAttribute</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of active attributes of the device&quot;</span>

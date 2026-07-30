@@ -1028,10 +1028,7 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )
-
-
-# NGSIv2 entity models</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -1056,10 +1053,9 @@
                 temporary_session.close()
                 self.session = original_session
 
-    # MANAGEMENT API
     def get_version(self) -&gt; Dict:
         &#34;&#34;&#34;
-        Gets version of IoT Agent
+        Gets version of Orion-LD context broker
         Returns:
             Dictionary with response
         &#34;&#34;&#34;
@@ -1109,7 +1105,6 @@
         json_schema_extra={&#34;example&#34;: &#34;Room&#34;},
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     )</pre></td>
             </tr>
@@ -1167,7 +1162,9 @@
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
+
+</pre></td>
             </tr>
             
             <tr>
@@ -1268,6 +1265,8 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
+
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -1532,6 +1531,23 @@ class IdType(str, Enum):
 
         return True
 
+    def is_logically_equivalent_to(
+        self,
+        datatype: &#34;Datatype&#34;,
+        vocabulary: &#34;Vocabulary&#34;,
+        old_vocabulary: &#34;Vocabulary&#34;,
+    ) -&gt; bool:
+        &#34;&#34;&#34;Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        &#34;&#34;&#34;
 </pre></td>
             </tr>
             
@@ -1816,12 +1832,12 @@ from geojson_pydantic import (
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[463:469]
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon,</pre></td>
+                        Point,
+                        MultiPoint,
+                        LineString,
+                        MultiLineString,
+                        Polygon,
+                        MultiPolygon,</pre></td>
             </tr>
             
             <tr>
@@ -1957,10 +1973,8 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1272:1277]
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
-
         try:</pre></td>
             </tr>
             
@@ -2047,7 +2061,8 @@ from geojson_pydantic import (
 
         if limit is None:
             limit = inf
-        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit</pre></td>
+        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit
+</pre></td>
             </tr>
             
             <tr>
@@ -2061,6 +2076,7 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_ld.cb:[623:629]
 ==filip.clients.ngsi_v2.quantumleap:[253:258]
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -2125,7 +2141,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -2135,7 +2151,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
+                <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
             </tr>
             
             <tr>
@@ -2155,7 +2171,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
             <tr>
@@ -2175,7 +2191,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
             <tr>
@@ -2206,6 +2222,16 @@ from pydantic import (
                 <td>R0401</td>
                 <td></td>
                 <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.ulralight)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
             </tr>
             
             <tr>
@@ -5215,37 +5241,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>248</td>
-                <td>0</td>
-                <td>convention</td>
-                <td><code>line-too-long</code></td>
-                <td>C0301</td>
-                <td></td>
-                <td><pre>Line too long (222/100)</pre></td>
-            </tr>
-            
-            <tr>
                 <td>253</td>
-                <td>4</td>
-                <td>convention</td>
-                <td><code>invalid-name</code></td>
-                <td>C0103</td>
-                <td>ServiceGroup.validate_cbHost</td>
-                <td><pre>Method name &#34;validate_cbHost&#34; doesn&#39;t conform to snake_case naming style</pre></td>
-            </tr>
-            
-            <tr>
-                <td>432</td>
-                <td>0</td>
-                <td>convention</td>
-                <td><code>line-too-long</code></td>
-                <td>C0301</td>
-                <td></td>
-                <td><pre>Line too long (221/100)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>470</td>
                 <td>0</td>
                 <td>convention</td>
                 <td><code>line-too-long</code></td>
@@ -5255,7 +5251,37 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>581</td>
+                <td>260</td>
+                <td>4</td>
+                <td>convention</td>
+                <td><code>invalid-name</code></td>
+                <td>C0103</td>
+                <td>ServiceGroup.validate_cbHost</td>
+                <td><pre>Method name &#34;validate_cbHost&#34; doesn&#39;t conform to snake_case naming style</pre></td>
+            </tr>
+            
+            <tr>
+                <td>439</td>
+                <td>0</td>
+                <td>convention</td>
+                <td><code>line-too-long</code></td>
+                <td>C0301</td>
+                <td></td>
+                <td><pre>Line too long (114/100)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>479</td>
+                <td>0</td>
+                <td>convention</td>
+                <td><code>line-too-long</code></td>
+                <td>C0301</td>
+                <td></td>
+                <td><pre>Line too long (113/100)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>590</td>
                 <td>15</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5265,7 +5291,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>588</td>
+                <td>597</td>
                 <td>16</td>
                 <td>convention</td>
                 <td><code>unnecessary-dunder-call</code></td>
@@ -5275,7 +5301,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>589</td>
+                <td>598</td>
                 <td>17</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5285,7 +5311,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>594</td>
+                <td>603</td>
                 <td>16</td>
                 <td>convention</td>
                 <td><code>unnecessary-dunder-call</code></td>
@@ -5295,7 +5321,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>595</td>
+                <td>604</td>
                 <td>17</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5305,7 +5331,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>600</td>
+                <td>609</td>
                 <td>16</td>
                 <td>convention</td>
                 <td><code>unnecessary-dunder-call</code></td>
@@ -5315,7 +5341,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>601</td>
+                <td>610</td>
                 <td>17</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5325,7 +5351,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>606</td>
+                <td>615</td>
                 <td>16</td>
                 <td>convention</td>
                 <td><code>unnecessary-dunder-call</code></td>
@@ -5335,7 +5361,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>613</td>
+                <td>622</td>
                 <td>0</td>
                 <td>warning</td>
                 <td><code>implicit-str-concat</code></td>
@@ -5345,47 +5371,27 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>619</td>
+                <td>628</td>
                 <td>0</td>
                 <td>warning</td>
                 <td><code>implicit-str-concat</code></td>
                 <td>W1404</td>
                 <td></td>
                 <td><pre>Implicit string concatenation found in call</pre></td>
-            </tr>
-            
-            <tr>
-                <td>643</td>
-                <td>15</td>
-                <td>convention</td>
-                <td><code>unidiomatic-typecheck</code></td>
-                <td>C0123</td>
-                <td>Device.update_attribute</td>
-                <td><pre>Use isinstance() rather than type() for a typecheck.</pre></td>
-            </tr>
-            
-            <tr>
-                <td>646</td>
-                <td>17</td>
-                <td>convention</td>
-                <td><code>unidiomatic-typecheck</code></td>
-                <td>C0123</td>
-                <td>Device.update_attribute</td>
-                <td><pre>Use isinstance() rather than type() for a typecheck.</pre></td>
-            </tr>
-            
-            <tr>
-                <td>649</td>
-                <td>17</td>
-                <td>convention</td>
-                <td><code>unidiomatic-typecheck</code></td>
-                <td>C0123</td>
-                <td>Device.update_attribute</td>
-                <td><pre>Use isinstance() rather than type() for a typecheck.</pre></td>
             </tr>
             
             <tr>
                 <td>652</td>
+                <td>15</td>
+                <td>convention</td>
+                <td><code>unidiomatic-typecheck</code></td>
+                <td>C0123</td>
+                <td>Device.update_attribute</td>
+                <td><pre>Use isinstance() rather than type() for a typecheck.</pre></td>
+            </tr>
+            
+            <tr>
+                <td>655</td>
                 <td>17</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5396,6 +5402,26 @@ from pydantic import (
             
             <tr>
                 <td>658</td>
+                <td>17</td>
+                <td>convention</td>
+                <td><code>unidiomatic-typecheck</code></td>
+                <td>C0123</td>
+                <td>Device.update_attribute</td>
+                <td><pre>Use isinstance() rather than type() for a typecheck.</pre></td>
+            </tr>
+            
+            <tr>
+                <td>661</td>
+                <td>17</td>
+                <td>convention</td>
+                <td><code>unidiomatic-typecheck</code></td>
+                <td>C0123</td>
+                <td>Device.update_attribute</td>
+                <td><pre>Use isinstance() rather than type() for a typecheck.</pre></td>
+            </tr>
+            
+            <tr>
+                <td>667</td>
                 <td>0</td>
                 <td>warning</td>
                 <td><code>implicit-str-concat</code></td>
@@ -5405,7 +5431,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>668</td>
+                <td>677</td>
                 <td>16</td>
                 <td>warning</td>
                 <td><code>raise-missing-from</code></td>
@@ -5415,7 +5441,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>685</td>
+                <td>694</td>
                 <td>15</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5425,7 +5451,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>687</td>
+                <td>696</td>
                 <td>17</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5435,7 +5461,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>689</td>
+                <td>698</td>
                 <td>17</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5445,7 +5471,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>691</td>
+                <td>700</td>
                 <td>17</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -5455,7 +5481,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>697</td>
+                <td>706</td>
                 <td>0</td>
                 <td>warning</td>
                 <td><code>implicit-str-concat</code></td>
@@ -11685,7 +11711,7 @@ from pydantic import (
             
             <tr>
                 <td>refactor</td>
-                <td>330</td>
+                <td>331</td>
             </tr>
             
             <tr>
@@ -12110,7 +12136,7 @@ from pydantic import (
             
             <tr>
                 <td>cyclic-import</td>
-                <td>10</td>
+                <td>11</td>
             </tr>
             
         </table>
@@ -12355,7 +12381,7 @@ from pydantic import (
             
             <tr>
                 <td>filip.clients.ngsi_v2.cb</td>
-                <td>151</td>
+                <td>152</td>
             </tr>
             
         </table>
@@ -12600,7 +12626,7 @@ from pydantic import (
             
             <tr>
                 <td>filip/clients/ngsi_v2/cb.py</td>
-                <td>151</td>
+                <td>152</td>
             </tr>
             
         </table>
