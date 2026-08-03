@@ -2,6 +2,7 @@
 Test module for context broker models
 """
 
+import datetime
 import unittest
 from typing import List
 from pydantic_core import PydanticCustomError
@@ -386,6 +387,10 @@ class TestContextModels(unittest.TestCase):
         attr3 = ContextAttribute(**attr1.model_dump(exclude={"metadata"}), metadata=md3)
         self.assertEqual(attr1, attr2)
         self.assertEqual(attr1, attr3)
+
+        # validate DateTime serialization
+        md4 = Metadata(type="DateTime", value=datetime.datetime.now(tz=datetime.UTC))
+        attr4 = ContextAttribute(**attr1.model_dump(exclude={"metadata"}), metadata=md4)
 
     def test_cb_entity(self) -> None:
         """
