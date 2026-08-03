@@ -389,7 +389,11 @@ class TestContextModels(unittest.TestCase):
         self.assertEqual(attr1, attr3)
 
         # validate DateTime serialization
-        md4 = Metadata(type="DateTime", value=datetime.datetime.now(tz=datetime.UTC))
+        md4 = NamedMetadata(
+            name="changedTime",
+            type="DateTime",
+            value=datetime.datetime.now(tz=datetime.UTC),
+        )
         attr4 = ContextAttribute(**attr1.model_dump(exclude={"metadata"}), metadata=md4)
 
     def test_cb_entity(self) -> None:
