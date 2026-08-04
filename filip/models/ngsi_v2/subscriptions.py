@@ -16,22 +16,27 @@ from pydantic import (
     Json,
 )
 from .base import AttrsFormat, EntityPattern, Http, Status, Expression
-from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic
+from filip.utils.validators import (
+    validate_mqtt_url,
+    validate_mqtt_topic,
+    validate_kafka_url,
+    validate_kafka_topic,
+    validate_kafka_topic_template,
+    KafkaSaslMechanism,
+    KafkaSecurityProtocol,
+)
 from filip.models.ngsi_v2.context import ContextEntity
 from filip.models.ngsi_v2.base import EntityPattern, Expression, DataType
-from filip.custom_types import AnyMqttUrl
+from filip.custom_types import AnyMqttUrl, AnyKafkaUrl
 import warnings
 
 # The pydantic models still have a .json() function, but this method is deprecated.
+# This affects the custom notification models, i.e. HttpCustom, MqttCustom and
+# KafkaCustom, which all define a "json" field.
 warnings.filterwarnings(
     "ignore",
     category=UserWarning,
-    message='Field name "json" shadows an attribute in parent "Http"',
-)
-warnings.filterwarnings(
-    "ignore",
-    category=UserWarning,
-    message='Field name "json" shadows an attribute in parent "Mqtt"',
+    message=r'Field name "json" in "\w+" shadows an attribute in parent',
 )
 
 
@@ -251,6 +256,146 @@ class MqttCustom(Mqtt):
         return self
 
 
+class Kafka(BaseModel):
+    """
+    Model for notifications sent via Kafka
+    https://fiware-orion.readthedocs.io/en/master/user/kafka_notifications.html
+    """
+
+    url: Union[AnyKafkaUrl, str] = Field(
+        description="to specify the Kafka broker endpoint to use. URL must "
+        "start with kafka:// and never contains a path (i.e. it "
+        "only includes host and port). To address a whole cluster, the "
+        "endpoints of multiple brokers can be given as a comma separated "
+        "list, e.g. kafka://broker1:9092,broker2:9092"
+    )
+    topic: str = Field(
+        description="to specify the Kafka topic to use",
+        min_length=1,
+        max_length=249,
+    )
+    valid_topic = field_validator("topic")(validate_kafka_topic)
+    key: Optional[str] = Field(
+        default=None,
+        description="to specify the Kafka message key to use. If omitted or "
+        "set to null, the notification is sent with a null key and the "
+        "destination partition is assigned automatically according to the "
+        "producer configuration.",
+    )
+    user: Optional[str] = Field(
+        default=None,
+        description="user name used for Kafka SASL authentication. Must be "
+        "used together with passwd.",
+    )
+    passwd: Optional[str] = Field(
+        default=None,
+        description="passphrase used for Kafka SASL authentication. Must be "
+        "used together with user. It is always obfuscated when retrieving "
+        "subscription information.",
+    )
+    saslMechanism: Optional[KafkaSaslMechanism] = Field(
+        default=None,
+        description="SASL mechanism to use when authentication is enabled. "
+        "Mandatory if user and passwd are set.",
+    )
+    securityProtocol: Optional[KafkaSecurityProtocol] = Field(
+        default=None,
+        description="Kafka security protocol to use when authentication is "
+        "enabled. If omitted, SASL_SSL is used by default when "
+        "authentication is enabled, i.e. when user and passwd are set.",
+    )
+
+    @field_validator("url")
+    @classmethod
+    def check_url(cls, value):
+        """
+        Check if url has a valid structure
+        Args:
+            value: url to validate
+        Returns:
+            validated url
+        """
+        return validate_kafka_url(url=value)
+
+    @model_validator(mode="after")
+    def validate_authentication(self):
+        """
+        Check that the fields required for SASL authentication are consistent
+
+        Returns:
+            validated model
+        """
+        if bool(self.user) != bool(self.passwd):
+            raise ValueError(
+                "'user' and 'passwd' must be used together in kafka notifications."
+            )
+        if self.user and self.saslMechanism is None:
+            raise ValueError(
+                "'saslMechanism' is mandatory if 'user' and 'passwd' are set."
+            )
+        return self
+
+
+class KafkaCustom(Kafka):
+    """
+    Model for custom notification patterns sent via Kafka
+    https://fiware-orion.readthedocs.io/en/master/user/kafka_notifications.html
+    """
+
+    topic: str = Field(
+        description="to specify the Kafka topic to use. Macro replacement is "
+        "also performed for this field, i.e. a topic based on an attribute. "
+        "Therefore the maximum topic length of 249 characters can only be "
+        "checked by the context broker at notification time.",
+        min_length=1,
+    )
+    valid_topic = field_validator("topic")(validate_kafka_topic_template)
+    key: Optional[str] = Field(
+        default=None,
+        description="to specify the Kafka message key to use. Macro "
+        "replacement is also performed for this field. If omitted or set to "
+        "null, the notification is sent with a null key.",
+    )
+    headers: Optional[Dict[str, Union[str, Json]]] = Field(
+        default=None,
+        description="a key-map of headers that are included in notification "
+        "messages. Next to the headers that Orion sends by default, i.e. "
+        "Fiware-Service, Fiware-ServicePath, Fiware-Correlator and "
+        "Ngsiv2-AttrsFormat, custom headers can be defined here. Note that "
+        "attempts to overwrite Fiware-Correlator and Ngsiv2-AttrsFormat are "
+        "ignored by the context broker.",
+    )
+    payload: Optional[str] = Field(
+        default=None,
+        description="the payload to be used in notifications. If omitted, the "
+        'default payload (see "Notification Messages" sections) '
+        "is used.",
+    )
+    json: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="get a json as notification. If omitted, the default"
+        'payload (see "Notification Messages" sections) is used.',
+    )
+    ngsi: Optional[NgsiPayload] = Field(
+        default=None,
+        description="get an NGSI-v2 normalized entity as notification.If omitted, "
+        'the default payload (see "Notification Messages" sections) is used.',
+    )
+
+    @model_validator(mode="after")
+    def validate_notification_payloads(self):
+        fields = [self.payload, self.json, self.ngsi]
+        filled_fields = [field for field in fields if field is not None]
+
+        if len(filled_fields) > 1:
+            raise ValueError(
+                "Only one of payload, json or ngsi fields accepted at the "
+                "same time in kafkaCustom."
+            )
+
+        return self
+
+
 class Notification(BaseModel):
     """
     If the notification attributes are left empty, all attributes will be
@@ -268,25 +413,37 @@ class Notification(BaseModel):
         default=None,
         description="It is used to convey parameters for notifications "
         "delivered through the HTTP protocol. Cannot be used "
-        'together with "httpCustom, mqtt, mqttCustom"',
+        'together with "httpCustom, mqtt, mqttCustom, kafka, kafkaCustom"',
     )
     httpCustom: Optional[HttpCustom] = Field(
         default=None,
         description="It is used to convey parameters for notifications "
         "delivered through the HTTP protocol. Cannot be used "
-        'together with "http"',
+        'together with "http, mqtt, mqttCustom, kafka, kafkaCustom"',
     )
     mqtt: Optional[Mqtt] = Field(
         default=None,
         description="It is used to convey parameters for notifications "
         "delivered through the MQTT protocol. Cannot be used "
-        'together with "http, httpCustom, mqttCustom"',
+        'together with "http, httpCustom, mqttCustom, kafka, kafkaCustom"',
     )
     mqttCustom: Optional[MqttCustom] = Field(
         default=None,
         description="It is used to convey parameters for notifications "
         "delivered through the MQTT protocol. Cannot be used "
-        'together with "http, httpCustom, mqtt"',
+        'together with "http, httpCustom, mqtt, kafka, kafkaCustom"',
+    )
+    kafka: Optional[Kafka] = Field(
+        default=None,
+        description="It is used to convey parameters for notifications "
+        "delivered through the Kafka protocol. Cannot be used "
+        'together with "http, httpCustom, mqtt, mqttCustom, kafkaCustom"',
+    )
+    kafkaCustom: Optional[KafkaCustom] = Field(
+        default=None,
+        description="It is used to convey parameters for notifications "
+        "delivered through the Kafka protocol. Cannot be used "
+        'together with "http, httpCustom, mqtt, mqttCustom, kafka"',
     )
     attrs: Optional[List[str]] = Field(
         default=None,
@@ -364,12 +521,6 @@ class Notification(BaseModel):
     )
 
     @model_validator(mode="after")
-    def validate_http(self):
-        if self.httpCustom is not None:
-            assert self.http is None
-        return self
-
-    @model_validator(mode="after")
     def validate_attr(self):
         if self.exceptAttrs is not None:
             assert self.attrs is None
@@ -377,37 +528,30 @@ class Notification(BaseModel):
 
     @model_validator(mode="after")
     def validate_endpoints(self):
-        if self.http is not None:
-            assert all(
-                (
-                    v is None
-                    for k, v in self.model_dump().items()
-                    if k in ["httpCustom", "mqtt", "mqttCustom"]
-                )
+        """
+        Check that the notification is delivered via a single endpoint, i.e.
+        that at most one of the transport protocol specific fields is used
+
+        Returns:
+            validated model
+        """
+        used_endpoints = [
+            endpoint
+            for endpoint in (
+                "http",
+                "httpCustom",
+                "mqtt",
+                "mqttCustom",
+                "kafka",
+                "kafkaCustom",
             )
-        elif self.httpCustom is not None:
-            assert all(
-                (
-                    v is None
-                    for k, v in self.model_dump().items()
-                    if k in ["http", "mqtt", "mqttCustom"]
-                )
-            )
-        elif self.mqtt is not None:
-            assert all(
-                (
-                    v is None
-                    for k, v in self.model_dump().items()
-                    if k in ["http", "httpCustom", "mqttCustom"]
-                )
-            )
-        else:
-            assert all(
-                (
-                    v is None
-                    for k, v in self.model_dump().items()
-                    if k in ["http", "httpCustom", "mqtt"]
-                )
+            if getattr(self, endpoint) is not None
+        ]
+        if len(used_endpoints) > 1:
+            raise ValueError(
+                f"Only one notification endpoint is allowed, but the "
+                f"following are used at the same time: "
+                f"{', '.join(used_endpoints)}"
             )
         return self
 

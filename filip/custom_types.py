@@ -7,3 +7,4 @@ from typing_extensions import Annotated
 from pydantic_core import Url
 
 AnyMqttUrl = Annotated[Url, UrlConstraints(allowed_schemes=["mqtt"])]
+AnyKafkaUrl = Annotated[Url, UrlConstraints(allowed_schemes=["kafka"])]
