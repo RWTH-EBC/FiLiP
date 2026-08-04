@@ -351,8 +351,7 @@ if __name__ == "__main__":
         temp_min=TEMPERATURE_MIN,
         temp_start=TEMPERATURE_ZONE_START,
     )
-
-    # -> CHANGED: Pass sim_model to the actuator
+    # pass sim_model to the actuator
     actuator_mqttc = setup_heater_actuator(
         broker_url=MQTT_BROKER_URL_EXPOSED,
         topic=COMMAND_TOPIC,
