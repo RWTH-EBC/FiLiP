@@ -2,6 +2,8 @@
 - update: deprecate support for python 3.9 ([#504](https://github.com/RWTH-EBC/FiLiP/pull/504))
 - update: from ``requests~=2.32.0`` to ``requests~=2.33.0`` in dependency ([#504](https://github.com/RWTH-EBC/FiLiP/pull/504))
 - fix: exception handling in checking broker version ([#503](https://github.com/RWTH-EBC/FiLiP/pull/503))
+- fix: datatime validation in metadata ([#513](https://github.com/RWTH-EBC/FiLiP/pull/513))
+
 
 ### v0.7.5
 - fix: allow dynamic header composition in v2 http client ([#493](https://github.com/RWTH-EBC/FiLiP/pull/493))
