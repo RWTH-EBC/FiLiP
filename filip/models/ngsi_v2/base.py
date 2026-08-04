@@ -28,6 +28,7 @@ from pydantic import (
 )
 
 from typing import Union, Optional, Pattern, List, Dict, Any
+from typing_extensions import Self
 
 from filip.models.base import DataType
 from filip.models.ngsi_v2.units import validate_unit_data, Unit
@@ -227,12 +228,18 @@ class Metadata(BaseModel):
     )
 
     @field_validator("value")
-    def validate_value(cls, value, info: ValidationInfo):
-        assert json.dumps(value), "metadata not serializable"
-
+    def validate_value_for_unit(cls, value, info: ValidationInfo):
+        """
+        This validator will validate the UnitModel if the type is 'unit'.
+        """
         if info.data.get("type").casefold() == "unit":
             value = Unit.model_validate(value)
         return value
+
+    @model_validator(mode="after")
+    def validate_serializability(self) -> Self:
+        self.model_dump(mode="json")
+        return self
 
 
 class NamedMetadata(Metadata):
