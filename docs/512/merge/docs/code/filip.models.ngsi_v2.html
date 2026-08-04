@@ -519,7 +519,8 @@ attributes, each piece of metadata has.</p>
 </dd>
 <dt class="field-even">Validators<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value" title="filip.models.ngsi_v2.base.Metadata.validate_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.value" title="filip.models.ngsi_v2.base.Metadata.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_serializability" title="filip.models.ngsi_v2.base.Metadata.validate_serializability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_serializability</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value_for_unit" title="filip.models.ngsi_v2.base.Metadata.validate_value_for_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_for_unit</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.value" title="filip.models.ngsi_v2.base.Metadata.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.type" title="filip.models.ngsi_v2.base.Metadata.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
 </ul>
 </dd>
@@ -537,6 +538,7 @@ attributes, each piece of metadata has.</p>
 </dd>
 <dt class="field-even">Validated by<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_serializability" title="filip.models.ngsi_v2.base.Metadata.validate_serializability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_serializability</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
 </ul>
 </dd>
@@ -550,16 +552,23 @@ attributes, each piece of metadata has.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value" title="filip.models.ngsi_v2.base.Metadata.validate_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_serializability" title="filip.models.ngsi_v2.base.Metadata.validate_serializability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_serializability</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value_for_unit" title="filip.models.ngsi_v2.base.Metadata.validate_value_for_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_for_unit</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method pydantic_validator">
-<dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Metadata.validate_value">
-<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_value</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.value" title="filip.models.ngsi_v2.base.Metadata.value"><em class="xref py py-obj"><span class="pre">value</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Metadata.validate_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Metadata.validate_value" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Metadata.validate_serializability">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_serializability</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Metadata.validate_serializability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Metadata.validate_serializability" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Metadata.validate_value_for_unit">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_value_for_unit</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.value" title="filip.models.ngsi_v2.base.Metadata.value"><em class="xref py py-obj"><span class="pre">value</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/base.html#Metadata.validate_value_for_unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.base.Metadata.validate_value_for_unit" title="Permalink to this definition"></a></dt>
+<dd><p>This validator will validate the UnitModel if the type is ‘unit’.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -579,7 +588,7 @@ attributes, each piece of metadata has.</p>
 <dt class="field-even">Validators<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.validate_data" title="filip.models.ngsi_v2.base.NamedMetadata.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a> » <code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span> <span class="pre">fields</span></code></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value" title="filip.models.ngsi_v2.base.Metadata.validate_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.value" title="filip.models.ngsi_v2.base.NamedMetadata.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value_for_unit" title="filip.models.ngsi_v2.base.Metadata.validate_value_for_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_for_unit</span></code></a> » <a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.value" title="filip.models.ngsi_v2.base.NamedMetadata.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.name" title="filip.models.ngsi_v2.base.NamedMetadata.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.type" title="filip.models.ngsi_v2.base.NamedMetadata.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></li>
 </ul>
@@ -599,6 +608,7 @@ attributes, each piece of metadata has.</p>
 <dt class="field-even">Validated by<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.validate_data" title="filip.models.ngsi_v2.base.NamedMetadata.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_serializability" title="filip.models.ngsi_v2.base.Metadata.validate_serializability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_serializability</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
 </ul>
 </dd>
@@ -619,6 +629,7 @@ attributes, each piece of metadata has.</p>
 <dt class="field-even">Validated by<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.validate_data" title="filip.models.ngsi_v2.base.NamedMetadata.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_serializability" title="filip.models.ngsi_v2.base.Metadata.validate_serializability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_serializability</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code></p></li>
 </ul>
 </dd>
@@ -633,7 +644,8 @@ attributes, each piece of metadata has.</p>
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.NamedMetadata.validate_data" title="filip.models.ngsi_v2.base.NamedMetadata.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a></p></li>
-<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value" title="filip.models.ngsi_v2.base.Metadata.validate_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_serializability" title="filip.models.ngsi_v2.base.Metadata.validate_serializability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_serializability</span></code></a></p></li>
+<li><p><a class="reference internal" href="#filip.models.ngsi_v2.base.Metadata.validate_value_for_unit" title="filip.models.ngsi_v2.base.Metadata.validate_value_for_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_value_for_unit</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
