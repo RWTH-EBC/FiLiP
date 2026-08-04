@@ -1046,10 +1046,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "If attrs is not used, the order is arbitrary. "
         "Example:"
         "[ 'Ford', 'black', 78.3 ]",
-    )
-
-
-# NGSIv2 entity models (duplicate-code)
+    ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[146:166]
 ==filip.clients.ngsi_v2.cb:[153:174]
@@ -1100,7 +1097,6 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
@@ -1115,17 +1111,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        """
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        """ (duplicate-code)
+                return False (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[297:309]
 ==filip.models.ngsi_v2.iot:[143:157]
@@ -1220,7 +1206,6 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
@@ -1266,6 +1251,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) > 0:
+                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1353,23 +1339,6 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 
         return True
 
-    def is_logically_equivalent_to(
-        self,
-        datatype: "Datatype",
-        vocabulary: "Vocabulary",
-        old_vocabulary: "Vocabulary",
-    ) -> bool:
-        """Test if this datatype is logically equivalent to the given datatype
-
-        Args:
-            datatype (Datatype): Datatype to compare against
-            vocabulary (Vocabulary): Not used, but needed to keep signature the
-                same as other entities
-            old_vocabulary (Vocabulary): Not used, but needed to keep signature
-                the same as other entities
-        Returns:
-            bool
-        """
  (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[7:14]
@@ -1505,11 +1474,8 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
-
- (duplicate-code)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.registrations:[131:137]
 ==filip.models.ngsi_v2.subscriptions:[546:552]
@@ -1528,6 +1494,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
@@ -1612,10 +1579,8 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
-            params.update({"type": entity_type})
- (duplicate-code)
+            params.update({"type": entity_type}) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[712:717]
 ==filip.clients.ngsi_v2.cb:[1565:1570]
@@ -1648,12 +1613,12 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 
         if limit is None:
             limit = inf
-        params["limit"] = 1000 if limit > 1000 else limit
- (duplicate-code)
+        params["limit"] = 1000 if limit > 1000 else limit (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[623:629]
 ==filip.clients.ngsi_v2.quantumleap:[253:258]
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1683,16 +1648,16 @@ from pydantic import (
     ConfigDict,
     BaseModel, (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 
 -----------------------------------
 Your code has been rated at 7.65/10

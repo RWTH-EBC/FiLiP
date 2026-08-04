@@ -1381,7 +1381,6 @@ class IdType(str, Enum):
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) &gt; 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1684,6 +1683,7 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1685:1691]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1756,16 +1756,25 @@ from geojson_pydantic import (
                 <td><pre>Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if &#34;#&#34; in iri:
-        index = iri.find(&#34;#&#34;)
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind(&#34;/&#34;)
-        return iri[:index]
+        if &#34;#&#34; in iri:
+            index = iri.find(&#34;#&#34;)
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind(&#34;/&#34;)
+            return iri[:index]
 
-</pre></td>
+    def get_entity_by_iri(self, iri: str) -&gt; Union[None, Entity]:
+        &#34;&#34;&#34;Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -2069,7 +2078,8 @@ from geojson_pydantic import (
 
         if limit is None:
             limit = inf
-        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit</pre></td>
+        params[&#34;limit&#34;] = 1000 if limit &gt; 1000 else limit
+</pre></td>
             </tr>
             
             <tr>
@@ -2148,7 +2158,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
+                <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
             </tr>
             
             <tr>
@@ -2158,7 +2168,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
             </tr>
             
             <tr>
@@ -2178,7 +2188,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
             <tr>
@@ -2198,7 +2208,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
+                <td><pre>Cyclic import (filip.semantics.vocabulary -&gt; filip.semantics.vocabulary.relation -&gt; filip.semantics.vocabulary.vocabulary)</pre></td>
             </tr>
             
             <tr>
@@ -2208,7 +2218,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
             </tr>
             
             <tr>
