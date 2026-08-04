@@ -36,7 +36,7 @@ KEYCLOAK_REALM = "EBC-Dev"
 # TODO explain the convention of the client id
 CLIENT_ID = f"{SERVICE}-admin"
 # TODO get credentials from passbolt
-CLIENT_SECRET = "8hCCzHuTxYVcOCZ3NiWPjVJzcI077908"
+CLIENT_SECRET = ""
 
 # Initialize the token manager once
 global_token_manager = KeycloakTokenManager(
