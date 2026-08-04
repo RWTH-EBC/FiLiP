@@ -1040,10 +1040,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "If attrs is not used, the order is arbitrary. "
         "Example:"
         "[ 'Ford', 'black', 78.3 ]",
-    )
-
-
-# NGSIv2 entity models (duplicate-code)
+    ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[146:166]
 ==filip.clients.ngsi_v2.cb:[153:174]
@@ -1093,6 +1090,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
@@ -1107,7 +1105,17 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False (duplicate-code)
+                return False
+
+    def update_registration(self, registration: Registration):
+        """
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        """ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[304:316]
 ==filip.models.ngsi_v2.iot:[143:157]
@@ -1122,7 +1130,9 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect) (duplicate-code)
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
+
+ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[304:315]
 ==filip.models.ngsi_v2.subscriptions:[48:59]
@@ -1178,8 +1188,6 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
-    """Type of object that is referenced by an id/iri"""
-
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1460,25 +1468,16 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-        if "#" in iri:
-            index = iri.find("#")
-            return iri[:index]
-        else:
-            # for example if uri looks like:
-            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-            index = iri.rfind("/")
-            return iri[:index]
+    if "#" in iri:
+        index = iri.find("#")
+        return iri[:index]
+    else:
+        # for example if uri looks like:
+        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+        index = iri.rfind("/")
+        return iri[:index]
 
-    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
-        """Get the entity with the given iri
-        Fast efficient methode
-
-        Args:
-            iri (str)
-
-        Returns:
-            Entity or None if iri does not belong to an Entity
-        """ (duplicate-code)
+ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[370:379]
 ==filip.models.ngsi_v2.iot:[165:171]
@@ -1509,17 +1508,16 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[470:476]
-                        Point,
-                        MultiPoint,
-                        LineString,
-                        MultiLineString,
-                        Polygon,
-                        MultiPolygon, (duplicate-code)
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon, (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[173:178]
 ==filip.clients.ngsi_v2.quantumleap:[96:101]
@@ -1549,9 +1547,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(
-        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
-    ) -> str:
+    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
@@ -1630,11 +1626,13 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 
         if limit is None:
             limit = inf
-        params["limit"] = 1000 if limit > 1000 else limit (duplicate-code)
+        params["limit"] = 1000 if limit > 1000 else limit
+ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[623:629]
 ==filip.clients.ngsi_v2.quantumleap:[253:258]
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1666,12 +1664,12 @@ from pydantic import (
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 
 -----------------------------------
