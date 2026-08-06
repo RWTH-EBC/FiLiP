@@ -127,7 +127,7 @@ class FiwareHeaderSecure(FiwareHeader):
     authorization: str = Field(
         alias="authorization",
         default="",
-        max_length=3000,
+        max_length=8192,
         description="authorization key",
         pattern=r".*",
     )
