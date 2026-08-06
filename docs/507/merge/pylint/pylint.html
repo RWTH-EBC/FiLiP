@@ -1008,7 +1008,7 @@
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[179:201]
+==filip.models.ngsi_v2.base:[180:202]
 ==filip.models.ngsi_v2.context:[48:67]
         &#34;Example: &#34;
         &#34;{&#34;
@@ -1028,7 +1028,10 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )</pre></td>
+    )
+
+
+# NGSIv2 entity models</pre></td>
             </tr>
             
             <tr>
@@ -1105,7 +1108,6 @@
         json_schema_extra={&#34;example&#34;: &#34;Room&#34;},
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     )</pre></td>
             </tr>
@@ -1129,17 +1131,7 @@
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        &#34;&#34;&#34;
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        &#34;&#34;&#34;</pre></td>
+                return False</pre></td>
             </tr>
             
             <tr>
@@ -1150,7 +1142,7 @@
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[297:309]
+==filip.models.ngsi_v2.base:[304:316]
 ==filip.models.ngsi_v2.iot:[143:157]
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
@@ -1163,9 +1155,7 @@
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
-
-</pre></td>
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
             </tr>
             
             <tr>
@@ -1176,7 +1166,7 @@
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[297:308]
+==filip.models.ngsi_v2.base:[304:315]
 ==filip.models.ngsi_v2.subscriptions:[48:59]
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
@@ -1266,8 +1256,6 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
-    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
-
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -1289,7 +1277,7 @@ class IdType(str, Enum):
                 <td></td>
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[357:369]
-==filip.models.ngsi_v2.base:[358:369]
+==filip.models.ngsi_v2.base:[365:376]
     name: str = Field(
         title=&#34;Attribute name&#34;,
         description=&#34;The attribute name describes what kind of property the &#34;
@@ -1299,7 +1287,6 @@ class IdType(str, Enum):
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )</pre></td>
             </tr>
@@ -1399,7 +1386,7 @@ class IdType(str, Enum):
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[169:178]
+==filip.models.ngsi_v2.base:[170:179]
 ==filip.models.ngsi_v2.context:[37:46]
     _init_ = &#34;value __doc__&#34;
 
@@ -1683,7 +1670,6 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1685:1691]
         )
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1756,25 +1742,16 @@ from geojson_pydantic import (
                 <td><pre>Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-        if &#34;#&#34; in iri:
-            index = iri.find(&#34;#&#34;)
-            return iri[:index]
-        else:
-            # for example if uri looks like:
-            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-            index = iri.rfind(&#34;/&#34;)
-            return iri[:index]
+    if &#34;#&#34; in iri:
+        index = iri.find(&#34;#&#34;)
+        return iri[:index]
+    else:
+        # for example if uri looks like:
+        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+        index = iri.rfind(&#34;/&#34;)
+        return iri[:index]
 
-    def get_entity_by_iri(self, iri: str) -&gt; Union[None, Entity]:
-        &#34;&#34;&#34;Get the entity with the given iri
-        Fast efficient methode
-
-        Args:
-            iri (str)
-
-        Returns:
-            Entity or None if iri does not belong to an Entity
-        &#34;&#34;&#34;</pre></td>
+</pre></td>
             </tr>
             
             <tr>
@@ -1785,17 +1762,14 @@ from geojson_pydantic import (
                 <td>R0801</td>
                 <td></td>
                 <td><pre>Similar lines in 2 files
-==filip.models.ngsi_v2.base:[363:372]
+==filip.models.ngsi_v2.base:[370:379]
 ==filip.models.ngsi_v2.iot:[165:171]
         &#34;are the ones in the plain ASCII set, except the following &#34;
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)
-
-</pre></td>
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
             </tr>
             
             <tr>
@@ -1825,7 +1799,7 @@ from geojson_pydantic import (
                 <td></td>
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[159:166]
-==filip.models.ngsi_v2.base:[361:369]
+==filip.models.ngsi_v2.base:[368:376]
         &#34;attribute value represents of the entity, for example &#34;
         &#34;current_speed. Allowed characters &#34;
         &#34;are the ones in the plain ASCII set, except the following &#34;
@@ -1844,7 +1818,7 @@ from geojson_pydantic import (
                 <td></td>
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
-==filip.models.ngsi_v2.base:[463:469]
+==filip.models.ngsi_v2.base:[470:476]
     Point,
     MultiPoint,
     LineString,
@@ -2008,8 +1982,10 @@ from geojson_pydantic import (
         url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
-            params.update({&#34;type&#34;: entity_type})</pre></td>
+            params.update({&#34;type&#34;: entity_type})
+</pre></td>
             </tr>
             
             <tr>
@@ -2093,7 +2069,6 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_ld.cb:[623:629]
 ==filip.clients.ngsi_v2.quantumleap:[253:258]
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -2168,7 +2143,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
@@ -2218,17 +2193,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
             </tr>
             
             <tr>
@@ -2248,7 +2213,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
             </tr>
             
             <tr>
@@ -2258,7 +2223,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
             </tr>
             
             <tr>
@@ -4770,7 +4735,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>68</td>
+                <td>69</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4780,7 +4745,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>146</td>
+                <td>147</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4790,7 +4755,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>146</td>
+                <td>147</td>
                 <td>34</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -4800,7 +4765,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>146</td>
+                <td>147</td>
                 <td>4</td>
                 <td>refactor</td>
                 <td><code>inconsistent-return-statements</code></td>
@@ -4810,7 +4775,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>151</td>
+                <td>152</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4820,7 +4785,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>151</td>
+                <td>152</td>
                 <td>41</td>
                 <td>warning</td>
                 <td><code>unused-argument</code></td>
@@ -4830,7 +4795,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>153</td>
+                <td>154</td>
                 <td>12</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -4840,7 +4805,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>155</td>
+                <td>156</td>
                 <td>12</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -4850,17 +4815,17 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>230</td>
+                <td>240</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
                 <td>C0116</td>
-                <td>Metadata.validate_value</td>
+                <td>Metadata.validate_serializability</td>
                 <td><pre>Missing function or method docstring</pre></td>
             </tr>
             
             <tr>
-                <td>257</td>
+                <td>264</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4870,7 +4835,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>268</td>
+                <td>275</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4880,7 +4845,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>328</td>
+                <td>335</td>
                 <td>11</td>
                 <td>convention</td>
                 <td><code>unidiomatic-typecheck</code></td>
@@ -4890,7 +4855,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>400</td>
+                <td>407</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4900,7 +4865,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>410</td>
+                <td>417</td>
                 <td>4</td>
                 <td>refactor</td>
                 <td><code>too-many-return-statements</code></td>
@@ -4910,7 +4875,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>410</td>
+                <td>417</td>
                 <td>4</td>
                 <td>refactor</td>
                 <td><code>too-many-branches</code></td>
@@ -4920,7 +4885,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>451</td>
+                <td>458</td>
                 <td>16</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -4930,7 +4895,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>477</td>
+                <td>484</td>
                 <td>20</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -4940,7 +4905,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>497</td>
+                <td>504</td>
                 <td>16</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -11768,7 +11733,7 @@ from pydantic import (
             
             <tr>
                 <td>refactor</td>
-                <td>332</td>
+                <td>331</td>
             </tr>
             
             <tr>
@@ -12193,7 +12158,7 @@ from pydantic import (
             
             <tr>
                 <td>cyclic-import</td>
-                <td>11</td>
+                <td>10</td>
             </tr>
             
         </table>
@@ -12438,7 +12403,7 @@ from pydantic import (
             
             <tr>
                 <td>filip.clients.ngsi_v2.cb</td>
-                <td>152</td>
+                <td>151</td>
             </tr>
             
         </table>
@@ -12683,7 +12648,7 @@ from pydantic import (
             
             <tr>
                 <td>filip/clients/ngsi_v2/cb.py</td>
-                <td>152</td>
+                <td>151</td>
             </tr>
             
         </table>

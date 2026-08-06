@@ -259,24 +259,24 @@ filip/models/ngsi_v2/iot.py:686:0: W1404: Implicit string concatenation found in
 filip/models/ngsi_v2/base.py:7:0: E0401: Unable to import 'aenum' (import-error)
 filip/models/ngsi_v2/base.py:8:0: E0401: Unable to import 'geojson_pydantic' (import-error)
 filip/models/ngsi_v2/base.py:18:0: E0401: Unable to import 'pydantic' (import-error)
-filip/models/ngsi_v2/base.py:68:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/base.py:153:12: C0103: Attribute name "q" doesn't conform to snake_case naming style (invalid-name)
-filip/models/ngsi_v2/base.py:155:12: C0103: Attribute name "mq" doesn't conform to snake_case naming style (invalid-name)
-filip/models/ngsi_v2/base.py:146:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/base.py:146:34: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
-filip/models/ngsi_v2/base.py:146:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
-filip/models/ngsi_v2/base.py:151:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/base.py:151:41: W0613: Unused argument 'info' (unused-argument)
-filip/models/ngsi_v2/base.py:230:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/base.py:257:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/base.py:268:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/base.py:328:11: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
-filip/models/ngsi_v2/base.py:400:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/base.py:451:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
-filip/models/ngsi_v2/base.py:477:20: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
-filip/models/ngsi_v2/base.py:497:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
-filip/models/ngsi_v2/base.py:410:4: R0911: Too many return statements (26/6) (too-many-return-statements)
-filip/models/ngsi_v2/base.py:410:4: R0912: Too many branches (31/12) (too-many-branches)
+filip/models/ngsi_v2/base.py:69:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:154:12: C0103: Attribute name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/base.py:156:12: C0103: Attribute name "mq" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/base.py:147:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:147:34: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/base.py:147:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+filip/models/ngsi_v2/base.py:152:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:152:41: W0613: Unused argument 'info' (unused-argument)
+filip/models/ngsi_v2/base.py:240:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:264:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:275:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:335:11: C0123: Use isinstance() rather than type() for a typecheck. (unidiomatic-typecheck)
+filip/models/ngsi_v2/base.py:407:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/base.py:458:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/base.py:484:20: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/base.py:504:16: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/base.py:417:4: R0911: Too many return statements (26/6) (too-many-return-statements)
+filip/models/ngsi_v2/base.py:417:4: R0912: Too many branches (31/12) (too-many-branches)
 filip/models/ngsi_v2/base.py:30:0: C0411: standard import "from typing import Union, Optional, Pattern, List, Dict, Any" should be placed before "from aenum import Enum" (wrong-import-order)
 ************* Module filip.models.ngsi_v2.timeseries
 filip/models/ngsi_v2/timeseries.py:9:0: E0401: Unable to import 'numpy' (import-error)
@@ -1026,7 +1026,7 @@ filip/clients/ngsi_v2/cb.py:10:0: W0611: Unused Enum imported from enum (unused-
 filip/clients/ngsi_v2/cb.py:16:0: W0611: Unused Optional imported from typing (unused-import)
 filip/clients/ngsi_v2/cb.py:26:0: W0611: Unused PropertyFormat imported from filip.models.ngsi_v2.context (unused-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
-==filip.models.ngsi_v2.base:[179:201]
+==filip.models.ngsi_v2.base:[180:202]
 ==filip.models.ngsi_v2.context:[48:67]
         "Example: "
         "{"
@@ -1062,10 +1062,9 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
                 temporary_session.close()
                 self.session = original_session
 
-    # MANAGEMENT API
     def get_version(self) -> Dict:
         """
-        Gets version of IoT Agent
+        Gets version of Orion-LD context broker
         Returns:
             Dictionary with response
         """
@@ -1111,9 +1110,19 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False (duplicate-code)
+                return False
+
+    def update_registration(self, registration: Registration):
+        """
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        """ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
-==filip.models.ngsi_v2.base:[297:309]
+==filip.models.ngsi_v2.base:[304:316]
 ==filip.models.ngsi_v2.iot:[143:157]
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
@@ -1126,11 +1135,9 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
-
- (duplicate-code)
+    valid_type = field_validator("type")(validate_fiware_datatype_string_protect) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
-==filip.models.ngsi_v2.base:[297:308]
+==filip.models.ngsi_v2.base:[304:315]
 ==filip.models.ngsi_v2.subscriptions:[48:59]
     type: Union[DataType, str] = Field(
         default=DataType.TEXT,
@@ -1184,6 +1191,8 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
+
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1196,7 +1205,7 @@ class IdType(str, Enum):
  (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[357:369]
-==filip.models.ngsi_v2.base:[358:369]
+==filip.models.ngsi_v2.base:[365:376]
     name: str = Field(
         title="Attribute name",
         description="The attribute name describes what kind of property the "
@@ -1206,6 +1215,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
@@ -1261,7 +1271,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
             return True
  (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
-==filip.models.ngsi_v2.base:[169:178]
+==filip.models.ngsi_v2.base:[170:179]
 ==filip.models.ngsi_v2.context:[37:46]
     _init_ = "value __doc__"
 
@@ -1339,6 +1349,23 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 
         return True
 
+    def is_logically_equivalent_to(
+        self,
+        datatype: "Datatype",
+        vocabulary: "Vocabulary",
+        old_vocabulary: "Vocabulary",
+    ) -> bool:
+        """Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        """
  (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[7:14]
@@ -1359,9 +1386,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    )
-
- (duplicate-code)
+    ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[172:178]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1468,14 +1493,17 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
             Entity or None if iri does not belong to an Entity
         """ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
-==filip.models.ngsi_v2.base:[363:372]
+==filip.models.ngsi_v2.base:[370:379]
 ==filip.models.ngsi_v2.iot:[165:171]
         "are the ones in the plain ASCII set, except the following "
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
+
+ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.registrations:[131:137]
 ==filip.models.ngsi_v2.subscriptions:[546:552]
@@ -1487,7 +1515,7 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[159:166]
-==filip.models.ngsi_v2.base:[361:369]
+==filip.models.ngsi_v2.base:[368:376]
         "attribute value represents of the entity, for example "
         "current_speed. Allowed characters "
         "are the ones in the plain ASCII set, except the following "
@@ -1498,13 +1526,13 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
     ) (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
-==filip.models.ngsi_v2.base:[463:469]
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon, (duplicate-code)
+==filip.models.ngsi_v2.base:[470:476]
+                        Point,
+                        MultiPoint,
+                        LineString,
+                        MultiLineString,
+                        Polygon,
+                        MultiPolygon, (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[173:178]
 ==filip.clients.ngsi_v2.quantumleap:[96:101]
@@ -1568,10 +1596,8 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[1272:1277]
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
             params.update({"type": entity_type})
-
         try: (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[590:597]
@@ -1613,7 +1639,8 @@ filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 
         if limit is None:
             limit = inf
-        params["limit"] = 1000 if limit > 1000 else limit (duplicate-code)
+        params["limit"] = 1000 if limit > 1000 else limit
+ (duplicate-code)
 filip/clients/ngsi_v2/cb.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[623:629]
 ==filip.clients.ngsi_v2.quantumleap:[253:258]
@@ -1647,8 +1674,8 @@ from pydantic import (
     model_validator,
     ConfigDict,
     BaseModel, (duplicate-code)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
+filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
@@ -1656,7 +1683,6 @@ filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.semantics.vocabular
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
-filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 filip/clients/ngsi_v2/cb.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 
 -----------------------------------
