@@ -76,21 +76,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for filip.clients.exceptions</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Module for client specific exceptions</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests.models</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestException</span>
 
 
 <div class="viewcode-block" id="BaseHttpClientException"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.exceptions.BaseHttpClientException">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BaseHttpClientException</span><span class="p">(</span><span class="n">RequestException</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Base exception class for all HTTP clients. The response of a request will be available in the exception.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message (str): Error message</span>
 <span class="sd">        response (Response): Response object</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Response</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">response</span></div>

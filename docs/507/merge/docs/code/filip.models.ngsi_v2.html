@@ -123,8 +123,8 @@ containing the following properties:</p>
 <p>Values of entity attributes. For adding it you need to nest it into a
 dict in order to give it a name.</p>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">,</span>
-<span class="go">            &quot;metadata&quot;: &lt;...&gt;}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">,</span>
+<span class="go">            "metadata": &lt;...&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">attr</span> <span class="o">=</span> <span class="n">BaseAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -798,9 +798,9 @@ containing the following properties:</p>
 <p>Values of entity attributes. For adding it you need to nest it into a
 dict in order to give it a name.</p>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">,</span>
-<span class="go">            &quot;type&quot;: &lt;...&gt;,</span>
-<span class="go">            &quot;metadata&quot;: &lt;...&gt;}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"value"</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">,</span>
+<span class="go">            "type": &lt;...&gt;,</span>
+<span class="go">            "metadata": &lt;...&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">attr</span> <span class="o">=</span> <span class="n">ContextAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -839,9 +839,9 @@ the name of the attribute and whose representation is described by the
 “ContextAttribute”-model. Obviously, <cite>id</cite> and <cite>type</cite> are
 not allowed as attribute names.</p>
 <p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;MyId&#39;</span><span class="p">,</span>
-<span class="go">            &#39;type&#39;: &#39;MyType&#39;,</span>
-<span class="go">            &#39;my_attr&#39;: {&#39;value&#39;: 20, &#39;type&#39;: &#39;Number&#39;}}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'id'</span><span class="p">:</span> <span class="s1">'MyId'</span><span class="p">,</span>
+<span class="go">            'type': 'MyType',</span>
+<span class="go">            'my_attr': {'value': 20, 'type': 'Number'}}</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">entity</span> <span class="o">=</span> <span class="n">ContextEntity</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 </pre></div>

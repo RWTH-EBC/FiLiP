@@ -91,7 +91,7 @@
 
 
 <div class="viewcode-block" id="load_datapackage"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.data.load_datapackage">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">load_datapackage</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Downloads data package from online source and stores it as hdf-file in</span>
 <span class="sd">    filip.data named by the &lt;filename&gt;.hdf.</span>
 
@@ -101,19 +101,19 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Dict of dataframes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># validate arguments</span>
     <span class="n">validate_http_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
 
     <span class="c1"># create directory for data if not exists</span>
     <span class="n">validate_http_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span>
     <span class="n">path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">package_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">package_path</span><span class="p">):</span>
         <span class="c1"># read data from filip.data if exists</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found existing data package in &#39;filip.data&#39;&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Found existing data package in 'filip.data'"</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">package_path</span><span class="p">):</span>
@@ -128,25 +128,25 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># download external data and store data</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;Could not find data package in &#39;filip.data&#39;. Will &quot;</span>
-            <span class="s2">&quot;try to download from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"Could not find data package in 'filip.data'. Will "</span>
+            <span class="s2">"try to download from </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
             <span class="n">url</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">read_datapackage</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
             <span class="c1"># rename keys</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">package_path</span><span class="p">)</span>
 
             <span class="c1"># store data in filip.data</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">v</span><span class="p">:</span> <span class="n">DataFrame</span> <span class="o">=</span> <span class="n">v</span>
                 <span class="n">v</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[:]</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-                <span class="n">table_filepath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">package_path</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\\</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+                <span class="n">table_filepath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">package_path</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\\</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'-'</span><span class="p">,</span><span class="w"> </span><span class="s1">'_'</span><span class="p">)</span><span class="si">}</span><span class="s2">.csv"</span>
                 <span class="n">v</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">table_filepath</span><span class="p">)</span>
 
         <span class="k">except</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to load data package!&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Failed to load data package!"</span><span class="p">)</span>
             <span class="k">raise</span>
     <span class="k">return</span> <span class="n">data</span></div>
 </pre></div>

@@ -182,25 +182,25 @@ section:</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt.encoder</span><span class="w"> </span><span class="kn">import</span> <span class="n">IoTA_Json</span>
 
 <span class="c1"># create a device configuration</span>
-<span class="n">device_attr</span> <span class="o">=</span> <span class="n">DeviceAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
-                              <span class="n">object_id</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
-                              <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Number&quot;</span><span class="p">)</span>
-<span class="n">device_command</span> <span class="o">=</span> <span class="n">DeviceCommand</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;heater&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Boolean&quot;</span><span class="p">)</span>
-<span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
-                <span class="n">entity_name</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
-                <span class="n">entity_type</span><span class="o">=</span><span class="s1">&#39;Thing&#39;</span><span class="p">,</span>
-                <span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;IoTA-JSON&#39;</span><span class="p">,</span>
-                <span class="n">transport</span><span class="o">=</span><span class="s1">&#39;MQTT&#39;</span><span class="p">,</span>
+<span class="n">device_attr</span> <span class="o">=</span> <span class="n">DeviceAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'temperature'</span><span class="p">,</span>
+                              <span class="n">object_id</span><span class="o">=</span><span class="s1">'t'</span><span class="p">,</span>
+                              <span class="nb">type</span><span class="o">=</span><span class="s2">"Number"</span><span class="p">)</span>
+<span class="n">device_command</span> <span class="o">=</span> <span class="n">DeviceCommand</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'heater'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">"Boolean"</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">'MyDevice'</span><span class="p">,</span>
+                <span class="n">entity_name</span><span class="o">=</span><span class="s1">'MyDevice'</span><span class="p">,</span>
+                <span class="n">entity_type</span><span class="o">=</span><span class="s1">'Thing'</span><span class="p">,</span>
+                <span class="n">protocol</span><span class="o">=</span><span class="s1">'IoTA-JSON'</span><span class="p">,</span>
+                <span class="n">transport</span><span class="o">=</span><span class="s1">'MQTT'</span><span class="p">,</span>
                 <span class="n">apikey</span><span class="o">=</span><span class="n">YourApiKey</span><span class="p">,</span>
                 <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="n">device_attr</span><span class="p">],</span>
                 <span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="n">device_command</span><span class="p">])</span>
 
-<span class="n">service_group</span> <span class="o">=</span> <span class="n">ServiceGroup</span><span class="p">(</span><span class="n">apikey</span><span class="o">=</span><span class="s2">&quot;YourApiKey&quot;</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="s2">&quot;/iot&quot;</span><span class="p">)</span>
+<span class="n">service_group</span> <span class="o">=</span> <span class="n">ServiceGroup</span><span class="p">(</span><span class="n">apikey</span><span class="o">=</span><span class="s2">"YourApiKey"</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="s2">"/iot"</span><span class="p">)</span>
 
-<span class="n">mqttc</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;YourID&quot;</span><span class="p">,</span>
+<span class="n">mqttc</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="p">(</span><span class="n">client_id</span><span class="o">=</span><span class="s2">"YourID"</span><span class="p">,</span>
                    <span class="n">userdata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                    <span class="n">protocol</span><span class="o">=</span><span class="n">mqtt</span><span class="o">.</span><span class="n">MQTTv5</span><span class="p">,</span>
-                   <span class="n">transport</span><span class="o">=</span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
+                   <span class="n">transport</span><span class="o">=</span><span class="s2">"tcp"</span><span class="p">,</span>
                    <span class="n">_devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">device</span><span class="p">],</span>
                    <span class="n">service_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_group</span><span class="p">])</span>
 
@@ -223,11 +223,11 @@ section:</p>
 <span class="n">mqttc</span><span class="o">.</span><span class="n">loop_start</span><span class="p">()</span>
 
 <span class="c1"># publish a multi-measurement for a device</span>
-<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">})</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">'MyDevice'</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s1">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">})</span>
 
 <span class="c1"># publish a single measurement for a device</span>
-<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
-              <span class="n">attribute_name</span><span class="o">=</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">'MyDevice'</span><span class="p">,</span>
+              <span class="n">attribute_name</span><span class="o">=</span><span class="s1">'temperature'</span><span class="p">,</span>
               <span class="n">payload</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
 
 <span class="c1"># adding timestamps to measurements using the client</span>
@@ -236,9 +236,9 @@ section:</p>
 <span class="c1"># adding timestamps to measurements in payload</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
-<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">&#39;MyDevice&#39;</span><span class="p">,</span>
-              <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
-                       <span class="s1">&#39;timeInstant&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">astimezone</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()},</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s1">'MyDevice'</span><span class="p">,</span>
+              <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s1">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                       <span class="s1">'timeInstant'</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">astimezone</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()},</span>
               <span class="n">timestamp</span><span class="o">=</span><span class="n">true</span><span class="p">)</span>
 
 <span class="c1"># stop network loop and disconnect cleanly</span>
@@ -272,7 +272,7 @@ This function should have the following format:</p></li>
                    <span class="n">command_name</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">payload</span><span class="p">)),</span>
                    <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
 
-<span class="n">mqttc</span><span class="o">.</span><span class="n">add_command_callback</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;MyDevice&quot;</span><span class="p">,</span>
+<span class="n">mqttc</span><span class="o">.</span><span class="n">add_command_callback</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s2">"MyDevice"</span><span class="p">,</span>
                            <span class="n">callback</span><span class="o">=</span><span class="n">on_command</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -393,7 +393,7 @@ Returns:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt</span><span class="w"> </span><span class="kn">import</span> <span class="n">MQTTClient</span>
 
 <span class="n">mqttc</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="p">()</span>
-<span class="n">device</span> <span class="o">=</span> <span class="n">mqttc</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;MyDeviceId&quot;</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">mqttc</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="s2">"MyDeviceId"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
 </pre></div>
@@ -433,7 +433,7 @@ Returns:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">filip.clients.mqtt</span><span class="w"> </span><span class="kn">import</span> <span class="n">MQTTClient</span>
 
 <span class="n">mqttc</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="p">()</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">mqttc</span><span class="o">.</span><span class="n">get_service_group</span><span class="p">(</span><span class="n">apikey</span><span class="o">=</span><span class="s2">&quot;MyAPIKEY&quot;</span><span class="p">)</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">mqttc</span><span class="o">.</span><span class="n">get_service_group</span><span class="p">(</span><span class="n">apikey</span><span class="o">=</span><span class="s2">"MyAPIKEY"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
 </pre></div>

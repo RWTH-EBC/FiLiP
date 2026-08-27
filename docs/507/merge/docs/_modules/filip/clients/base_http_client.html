@@ -76,9 +76,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for filip.clients.base_http_client</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Base http client module</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyHttpUrl</span>
@@ -90,16 +90,16 @@
 
 
 <div class="viewcode-block" id="NgsiURLVersion"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.NgsiURLVersion">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NgsiURLVersion</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    URL part that defines the NGSI version for the API.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">v2_url</span> <span class="o">=</span> <span class="s2">&quot;v2&quot;</span>
-    <span class="n">ld_url</span> <span class="o">=</span> <span class="s2">&quot;ngsi-ld/v1&quot;</span></div>
+    <span class="n">v2_url</span> <span class="o">=</span> <span class="s2">"v2"</span>
+    <span class="n">ld_url</span> <span class="o">=</span> <span class="s2">"ngsi-ld/v1"</span></div>
 
 
 <div class="viewcode-block" id="BaseHttpClient"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BaseHttpClient</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Base client for all derived api-clients.</span>
 
 <span class="sd">    Args:</span>
@@ -109,7 +109,7 @@
 <span class="sd">        fiware_header: Fiware header object required for multi tenancy</span>
 <span class="sd">        **kwargs: Optional arguments that ``request`` takes.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -120,12 +120,12 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Creating </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking url style...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking url style..."</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">validate_http_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -140,7 +140,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span> <span class="o">=</span> <span class="n">fiware_header</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"headers"</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">kwargs</span>
 
     <span class="c1"># Context Manager Protocol</span>
@@ -156,17 +156,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fiware_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FiwareHeader</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get fiware header</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            FiwareHeader</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span>
 
     <span class="nd">@fiware_headers</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fiware_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">FiwareHeader</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sets new fiware header</span>
 
 <span class="sd">        Args:</span>
@@ -174,12 +174,12 @@
 <span class="sd">                object or as dict.</span>
 
 <span class="sd">        Example:</span>
-<span class="sd">            {fiware-service: &quot;MyService&quot;,</span>
-<span class="sd">             fiware-servicepath: &quot;/MyServicePath&quot;}</span>
+<span class="sd">            {fiware-service: "MyService",</span>
+<span class="sd">             fiware-servicepath: "/MyServicePath"}</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">FiwareHeader</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">headers</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">FiwareLDHeader</span><span class="p">):</span>
@@ -193,70 +193,70 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span> <span class="o">=</span> <span class="n">FiwareLDHeader</span><span class="o">.</span><span class="n">parse_raw</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid headers! </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid headers! </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fiware_service</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get current fiware service</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            str</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="o">.</span><span class="n">service</span>
 
     <span class="nd">@fiware_service</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fiware_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set new fiware service</span>
 <span class="sd">        Args:</span>
 <span class="sd">            service:</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">service</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fiware_service_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get current fiware service path</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            str</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="o">.</span><span class="n">service_path</span>
 
     <span class="nd">@fiware_service_path</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fiware_service_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set new fiware service path</span>
 <span class="sd">        Args:</span>
-<span class="sd">            service_path (str): New fiware service path. Must start with &#39;/&#39;</span>
+<span class="sd">            service_path (str): New fiware service path. Must start with '/'</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fiware_headers</span><span class="o">.</span><span class="n">service_path</span> <span class="o">=</span> <span class="n">service_path</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return current session headers</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            dict with headers</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">headers</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_inject_fiware_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"headers"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">request_headers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">:</span>
             <span class="n">request_headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">)</span>
         <span class="n">request_headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fiware_headers</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">headers</span><span class="p">:</span>
             <span class="n">request_headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request_headers</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"headers"</span><span class="p">]</span> <span class="o">=</span> <span class="n">request_headers</span>
         <span class="k">return</span> <span class="n">kwargs</span>
 
 <div class="viewcode-block" id="BaseHttpClient.request"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.request">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span>
@@ -269,17 +269,17 @@
         <span class="n">json</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Central request helper to keep FIWARE headers in sync.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Central request helper to keep FIWARE headers in sync."""</span>
 
         <span class="n">merged_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">merged_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">merged_kwargs</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
+            <span class="n">merged_kwargs</span><span class="p">[</span><span class="s2">"params"</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">merged_kwargs</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">merged_kwargs</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
         <span class="k">if</span> <span class="n">json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">merged_kwargs</span><span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span>
+            <span class="n">merged_kwargs</span><span class="p">[</span><span class="s2">"json"</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span>
 
         <span class="n">merged_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inject_fiware_headers</span><span class="p">(</span><span class="n">merged_kwargs</span><span class="p">)</span>
 
@@ -291,7 +291,7 @@
 <div class="viewcode-block" id="BaseHttpClient.get"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.get">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">ByteString</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sends a GET request either using the provided session or the single</span>
 <span class="sd">        session.</span>
 
@@ -303,12 +303,12 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            requests.Response</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"GET"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.options"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.options">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sends an OPTIONS request either using the provided session or the</span>
 <span class="sd">        single session.</span>
 
@@ -318,13 +318,13 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            requests.Response</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"OPTIONS"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.head"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.head">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">head</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">ByteString</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sends a HEAD request either using the provided session or the</span>
 <span class="sd">        single session.</span>
 
@@ -336,8 +336,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            requests.Response</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"HEAD"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.post"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.post">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -346,7 +346,7 @@
         <span class="n">json</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sends a POST request either using the provided session or the</span>
 <span class="sd">        single session.</span>
 
@@ -360,8 +360,8 @@
 
 <span class="sd">        Returns:</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"POST"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.put"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.put">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -370,7 +370,7 @@
         <span class="n">json</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sends a PUT request either using the provided session or the</span>
 <span class="sd">        single session.</span>
 
@@ -385,8 +385,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            request.Response</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"PUT"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.patch"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.patch">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -395,7 +395,7 @@
         <span class="n">json</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sends a PATCH request either using the provided session or the</span>
 <span class="sd">        single session.</span>
 
@@ -410,11 +410,11 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            request.Response</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;PATCH&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"PATCH"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.delete"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.delete">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sends a DELETE request either using the provided session or the</span>
 <span class="sd">        single session.</span>
 
@@ -424,11 +424,11 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            request.Response</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"DELETE"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.log_error"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.log_error">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">log_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Outputs the error messages from the client request function. If</span>
 <span class="sd">        additional information is available in the server response this will</span>
 <span class="sd">        be forwarded to the logging output.</span>
@@ -442,23 +442,23 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span> <span class="ow">and</span> <span class="n">msg</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> Reason: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> Reason: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span> <span class="ow">and</span> <span class="n">msg</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> Reason: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> Reason: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHttpClient.close"><a class="viewcode-back" href="../../../code/filip.clients.html#filip.clients.base_http_client.BaseHttpClient.close">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Close http session</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_external_session</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 </pre></div>

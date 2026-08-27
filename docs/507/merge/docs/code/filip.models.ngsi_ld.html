@@ -324,9 +324,9 @@ the name of the attribute and whose representation is described in the
 “ContextProperty”/”ContextRelationship”-model. Obviously, id and type are
 not allowed to be used as attribute names.</p>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;MyId&#39;</span><span class="p">,</span>
-<span class="go">            &#39;type&#39;: &#39;MyType&#39;,</span>
-<span class="go">            &#39;my_attr&#39;: {&#39;value&#39;: 20}}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'id'</span><span class="p">:</span> <span class="s1">'MyId'</span><span class="p">,</span>
+<span class="go">            'type': 'MyType',</span>
+<span class="go">            'my_attr': {'value': 20}}</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entity</span> <span class="o">=</span> <span class="n">ContextLDEntity</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
@@ -687,7 +687,7 @@ is a string containing the entity’s type name.</p>
 specified further.</p>
 <p>The NGSI type of the attribute is fixed and does not need to be specified.
 .. rubric:: Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"value"</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">attr</span> <span class="o">=</span> <span class="n">ContextProperty</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
@@ -833,7 +833,7 @@ specified further.</p>
 should be specified as the URN. The existence of this entity is not assumed.</p>
 <p>The NGSI type of the attribute is fixed and does not need to be specified.</p>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"object"</span><span class="p">:</span> <span class="o">&lt;...&gt;</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">attr</span> <span class="o">=</span> <span class="n">ContextRelationship</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>

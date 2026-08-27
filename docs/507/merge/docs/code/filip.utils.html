@@ -382,17 +382,17 @@ client information to filter subscriptions in a single request.</p>
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">username_alphanumeric</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="go">        assert v.value.isalnum(), &#39;must be numeric&#39;</span>
+<span class="go">        assert v.value.isalnum(), 'must be numeric'</span>
 <span class="go">        return value</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">create_context_entity_model</span><span class="p">(</span>
-<span class="go">                name=&#39;MyModel&#39;,</span>
+<span class="go">                name='MyModel',</span>
 <span class="go">                data={</span>
-<span class="go">                    &#39;id&#39;: &#39;MyId&#39;,</span>
-<span class="go">                    &#39;type&#39;:&#39;MyType&#39;,</span>
-<span class="go">                    &#39;temp&#39;: &#39;MyProperty&#39;}</span>
-<span class="go">                {&#39;validate_test&#39;: validator(&#39;temperature&#39;)(</span>
+<span class="go">                    'id': 'MyId',</span>
+<span class="go">                    'type':'MyType',</span>
+<span class="go">                    'temp': 'MyProperty'}</span>
+<span class="go">                {'validate_test': validator('temperature')(</span>
 <span class="go">                    username_alphanumeric)})</span>
 </pre></div>
 </div>
@@ -426,17 +426,17 @@ types are defined but the underlying toolbox.</p>
 </dl>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span>
+    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">,</span>
+    <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"number"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"number"</span>
             <span class="p">},</span>
-        <span class="s2">&quot;street_name&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="s2">"street_name"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span>
            <span class="p">},</span>
-        <span class="s2">&quot;street_type&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;enum&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Street&quot;</span><span class="p">,</span> <span class="s2">&quot;Avenue&quot;</span><span class="p">,</span> <span class="s2">&quot;Boulevard&quot;</span><span class="p">]</span>
+        <span class="s2">"street_type"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
+            <span class="s2">"enum"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Street"</span><span class="p">,</span> <span class="s2">"Avenue"</span><span class="p">,</span> <span class="s2">"Boulevard"</span><span class="p">]</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
