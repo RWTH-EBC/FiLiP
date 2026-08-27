@@ -48,3 +48,4 @@ venv
 /tests/semantics/models.py
 /tests/semantics/models2.py
 /.env.filip
+/tutorials/n5geh_cluster/credential.json

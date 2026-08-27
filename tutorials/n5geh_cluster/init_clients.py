@@ -4,8 +4,11 @@ The FiwareHeaderSecureKeycloak class uses a KeycloakTokenManager to fetch and ca
 expire so every outgoing request receives a fresh Authorization header.
 """
 
+import json
 import os
 import time
+from pathlib import Path
+
 import requests
 import urllib3
 from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient, QuantumLeapClient
@@ -33,10 +36,15 @@ KEYCLOAK_REALM = "EBC-Dev"
 #   read: GET requests
 #   write: PUT, PATCH, POST requests
 #   admin: DELETE requests
-# TODO explain the convention of the client id
+
+with open(Path("credential.json"), "r") as f:
+    # read credential
+    creds = json.load(f)
+    service = creds["service"]
+    assert service == SERVICE
+    secret = creds.get("secret")
 CLIENT_ID = f"{SERVICE}-admin"
-# TODO get credentials from passbolt
-CLIENT_SECRET = ""
+CLIENT_SECRET = secret
 
 # Initialize the token manager once
 global_token_manager = KeycloakTokenManager(

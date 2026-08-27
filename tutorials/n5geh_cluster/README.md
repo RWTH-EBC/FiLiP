@@ -56,8 +56,7 @@ QuantumLeap, etc.) are already deployed on the cluster, you only need to
 correctly authenticate yourself:
 
 - **Credentials:** The credentials of the test FIWARE services are provided
-  in Passbolt. Add the correct credentials for your FIWARE service (client
-  id and `CLIENT_SECRET`) in `init_clients.py`.
+  in Passbolt. Add the correct credentials for your FIWARE service in `credential` file.
 - **Client id convention:** The client id is derived from the FIWARE service
   name, e.g. `ebcdev1-admin` for the service `ebcdev1`. It is automatically
   composed as `f"{SERVICE}-admin"` in `init_clients.py`.
