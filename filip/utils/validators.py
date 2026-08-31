@@ -6,10 +6,10 @@ import logging
 import re
 import warnings
 from aenum import Enum
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Union
 from pydantic import AnyHttpUrl, validate_call
 from pydantic_core import PydanticCustomError
-from filip.custom_types import AnyMqttUrl
+from filip.custom_types import AnyMqttUrl, AnyKafkaUrl
 from pyjexl.jexl import JEXL
 from pyjexl.parser import Transform
 from pyjexl.exceptions import ParseError
@@ -50,6 +50,29 @@ class FiwareRegex(str, Enum):
     )
 
 
+class KafkaSaslMechanism(str, Enum):
+    """
+    SASL mechanisms that Orion supports for Kafka notifications
+    """
+
+    _init_ = "value __doc__"
+
+    PLAIN = "PLAIN", "Credentials are sent as plain text"
+    SCRAM_SHA_256 = "SCRAM-SHA-256", "Salted challenge response using SHA-256"
+    SCRAM_SHA_512 = "SCRAM-SHA-512", "Salted challenge response using SHA-512"
+
+
+class KafkaSecurityProtocol(str, Enum):
+    """
+    Security protocols that Orion supports for Kafka notifications
+    """
+
+    _init_ = "value __doc__"
+
+    SASL_PLAINTEXT = "SASL_PLAINTEXT", "SASL authentication over an unencrypted channel"
+    SASL_SSL = "SASL_SSL", "SASL authentication over an SSL encrypted channel"
+
+
 @validate_call
 def validate_http_url(url: AnyHttpUrl) -> str:
     """
@@ -81,6 +104,51 @@ def validate_mqtt_url(url: AnyMqttUrl) -> str:
        validated url
     """
     return str(url) if url else url
+
+
+@validate_call
+def validate_kafka_broker_url(url: AnyKafkaUrl) -> str:
+    """
+    Function that checks whether a url is a valid endpoint of a single kafka
+    broker
+
+    Args:
+        url: the url for the target broker
+
+    Returns:
+       validated url
+    """
+    return str(url) if url else url
+
+
+def validate_kafka_url(url: Union[AnyKafkaUrl, str]) -> str:
+    """
+    Function that checks whether a url is a valid kafka endpoint
+
+    A subscription may address a whole kafka cluster. In that case the url
+    contains the endpoints of multiple brokers as a comma separated list,
+    where only the leading one carries the scheme, e.g.
+    ``kafka://broker1:9092,broker2:9092``.
+
+    Args:
+        url: the url for the target endpoint
+
+    Returns:
+       validated url
+    """
+    if not url:
+        return url
+
+    brokers = [broker.strip() for broker in str(url).split(",")]
+    # all brokers belong to the same cluster, hence they share the scheme of
+    # the leading one
+    validated = [
+        validate_kafka_broker_url(
+            url=broker if "://" in broker else f"kafka://{broker}"
+        ).removeprefix("kafka://")
+        for broker in brokers
+    ]
+    return f"kafka://{','.join(validated)}"
 
 
 def validate_escape_character_free(value: Any) -> Any:
@@ -167,6 +235,46 @@ def validate_fiware_attribute_name_regex(vale: str):
 @ignore_none_input
 def validate_mqtt_topic(topic: str):
     return match_regex(topic, r"^((?![\'\"#+,])[\x00-\x7F])*$")
+
+
+@ignore_none_input
+def validate_kafka_topic(topic: str):
+    """
+    Function that checks whether a topic is a valid kafka topic name
+
+    Kafka restricts topic names to the characters ``a-z``, ``A-Z``, ``0-9``,
+    ``.``, ``_`` and ``-``. Additionally, a topic must not be named ``.`` or
+    ``..``. The maximum length of 249 characters is enforced by the model
+    fields.
+
+    Args:
+        topic: the topic to validate
+
+    Returns:
+       validated topic
+    """
+    return match_regex(topic, r"^(?!\.{1,2}$)[a-zA-Z0-9._\-]+$")
+
+
+@ignore_none_input
+def validate_kafka_topic_template(topic: str):
+    """
+    Function that checks whether a topic is a valid kafka topic name template
+
+    In custom notifications, macro replacement based on the syntax
+    ``${<JEXL expression>}`` is performed for the topic. Hence, next to the
+    characters allowed in a plain kafka topic name, macros are accepted here.
+    Note that the resulting topic name is only known at notification time,
+    therefore neither its length nor the characters contributed by the macros
+    can be checked upfront.
+
+    Args:
+        topic: the topic template to validate
+
+    Returns:
+       validated topic template
+    """
+    return match_regex(topic, r"^(?!\.{1,2}$)(?:[a-zA-Z0-9._\-]|\$\{[^{}]+\})+$")
 
 
 @ignore_none_input
