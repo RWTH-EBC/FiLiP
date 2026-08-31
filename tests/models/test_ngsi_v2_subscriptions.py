@@ -147,8 +147,11 @@ class TestSubscriptions(unittest.TestCase):
 
         # Test topic field validation. Kafka restricts topic names to the
         # characters a-z, A-Z, 0-9, '.', '_' and '-'
+        # Raises error for reserved names (., ..)
         with self.assertRaises(ValueError):
             Kafka(url=self.kafka_url, topic="filip/testing")
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic=".")
         with self.assertRaises(ValueError):
             Kafka(url=self.kafka_url, topic="..")
         with self.assertRaises(ValueError):
