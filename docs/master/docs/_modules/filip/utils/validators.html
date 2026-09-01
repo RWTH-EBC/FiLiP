@@ -76,9 +76,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for filip.utils.validators</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Helper functions to prohibit boiler plate code</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -96,42 +96,42 @@
 
 
 <div class="viewcode-block" id="FiwareRegex"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.FiwareRegex">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">FiwareRegex</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Collection of Regex expression used to check if the value of a Pydantic</span>
 <span class="sd">    field, can be used in the related Fiware field. The regexes here are primarily</span>
 <span class="sd">    defined based on the identifiers syntax restriction:</span>
 <span class="sd">    https://fiware-orion.readthedocs.io/en/stable/orion-api.html#identifiers-syntax-restrictions</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">&quot;value __doc__&quot;</span>
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">"value __doc__"</span>
     <span class="c1">#  Identifiers syntax restriction</span>
     <span class="n">standard</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">r</span><span class="s2">&quot;(^((?![?&amp;#/</span><span class="se">\&quot;</span><span class="s2">&#39; ])[\x00-\x7F])*$)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Prevents any string that contains at least one of the &quot;</span>
-        <span class="s2">&quot;symbols: ? &amp; # / &#39; </span><span class="se">\&quot;</span><span class="s2"> or a whitespace&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">"(^((?![?&amp;#/</span><span class="se">\"</span><span class="s2">' ])[\x00-\x7F])*$)"</span><span class="p">,</span>
+        <span class="s2">"Prevents any string that contains at least one of the "</span>
+        <span class="s2">"symbols: ? &amp; # / ' </span><span class="se">\"</span><span class="s2"> or a whitespace"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">string_protect</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">r</span><span class="s2">&quot;(?!^id$)(?!^type$)(?!^geo:json$)(^((?![?&amp;#/</span><span class="se">\&quot;</span><span class="s2">&#39; ])[\x00-\x7F])*$)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Prevents any string that contains at least one of &quot;</span>
-        <span class="s2">&quot;the symbols: ? &amp; # / &#39; </span><span class="se">\&quot;</span><span class="s2"> or a whitespace.&quot;</span>
-        <span class="s2">&quot;AND the strings: id, type, geo:json&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">"(?!^id$)(?!^type$)(?!^geo:json$)(^((?![?&amp;#/</span><span class="se">\"</span><span class="s2">' ])[\x00-\x7F])*$)"</span><span class="p">,</span>
+        <span class="s2">"Prevents any string that contains at least one of "</span>
+        <span class="s2">"the symbols: ? &amp; # / ' </span><span class="se">\"</span><span class="s2"> or a whitespace."</span>
+        <span class="s2">"AND the strings: id, type, geo:json"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">attribute_name</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">r</span><span class="s2">&quot;(?!^id$)(?!^type$)(?!^geo:json$)(^((?![</span><span class="se">\&quot;</span><span class="s2">&#39;&lt;&gt;()=; §&amp;/#?])[\x00-\x7F])*$)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Prevents any string that contains at least one of the &quot;</span>
-        <span class="s2">&quot;symbols: ( ) &lt; &gt; </span><span class="se">\&quot;</span><span class="s2"> &#39; = ; § &amp; / # ?&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">"(?!^id$)(?!^type$)(?!^geo:json$)(^((?![</span><span class="se">\"</span><span class="s2">'&lt;&gt;()=; §&amp;/#?])[\x00-\x7F])*$)"</span><span class="p">,</span>
+        <span class="s2">"Prevents any string that contains at least one of the "</span>
+        <span class="s2">"symbols: ( ) &lt; &gt; </span><span class="se">\"</span><span class="s2"> ' = ; § &amp; / # ?"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">attribute_value</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">r</span><span class="s2">&quot;(^((?![</span><span class="se">\&quot;</span><span class="s2">&#39;&lt;&gt;()=;]).)*$)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Prevents any string that contains at least one of the &quot;</span>
-        <span class="s2">&quot;symbols: ( ) &lt; &gt; </span><span class="se">\&quot;</span><span class="s2"> &#39; = ; &quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">"(^((?![</span><span class="se">\"</span><span class="s2">'&lt;&gt;()=;]).)*$)"</span><span class="p">,</span>
+        <span class="s2">"Prevents any string that contains at least one of the "</span>
+        <span class="s2">"symbols: ( ) &lt; &gt; </span><span class="se">\"</span><span class="s2"> ' = ; "</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_http_url"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_http_url">[docs]</a><span class="nd">@validate_call</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_http_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function checks whether the host has &quot;http&quot; added in case of http as</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Function checks whether the host has "http" added in case of http as</span>
 <span class="sd">    protocol.</span>
 
 <span class="sd">    Args:</span>
@@ -139,17 +139,17 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        validated url</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="n">url</span>
-    <span class="k">if</span> <span class="n">url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"/"</span><span class="p">:</span>
         <span class="c1"># add trailing slash</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/"</span>
     <span class="k">return</span> <span class="n">url</span></div>
 
 
 <div class="viewcode-block" id="validate_mqtt_url"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_mqtt_url">[docs]</a><span class="nd">@validate_call</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_mqtt_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyMqttUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Function that checks whether a url is valid mqtt endpoint</span>
 
 <span class="sd">    Args:</span>
@@ -157,14 +157,14 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">       validated url</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="n">url</span></div>
 
 
 <div class="viewcode-block" id="validate_escape_character_free"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_escape_character_free">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_escape_character_free</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Function that checks whether a value contains a string part that starts</span>
-<span class="sd">    or end with &#39; or &quot;.</span>
+<span class="sd">    or end with ' or ".</span>
 <span class="sd">    the function iterates to break down each complex data-structure to its</span>
 <span class="sd">    fundamental string parts.</span>
 <span class="sd">    Each value of a list is examined</span>
@@ -176,7 +176,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">       validated string</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
@@ -187,18 +187,18 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">dict_value</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">validate_escape_character_free</span><span class="p">(</span><span class="n">dict_value</span><span class="p">)</span>
-                <span class="c1"># it seems Fiware has no problem if the keys contain &#39; or &quot;</span>
+                <span class="c1"># it seems Fiware has no problem if the keys contain ' or "</span>
                 <span class="c1"># validate_escape_character_free(key)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">inner_list</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                 <span class="n">validate_escape_character_free</span><span class="p">(</span><span class="n">inner_list</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># if a value here is not a string, it will also not contain &#39; or &quot;</span>
+            <span class="c1"># if a value here is not a string, it will also not contain ' or "</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">or</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains &quot;</span> <span class="sa">f</span><span class="s1">&#39;the forbidden char &quot;&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">or</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains &quot;</span> <span class="sa">f</span><span class="s2">&quot;the forbidden char &#39;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">'"'</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">or</span> <span class="s1">'"'</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains "</span> <span class="sa">f</span><span class="s1">'the forbidden char "'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">"'"</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">or</span> <span class="s2">"'"</span> <span class="o">==</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> contains "</span> <span class="sa">f</span><span class="s2">"the forbidden char '"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">values</span></div>
 
 
@@ -206,12 +206,12 @@
     <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">PydanticCustomError</span><span class="p">(</span>
-            <span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;String should match pattern &#39;</span><span class="si">{pattern}</span><span class="s2">&#39;, [type=&#39;</span><span class="si">{error_type}</span><span class="s2">&#39;, input_value=&#39;</span><span class="si">{value}</span><span class="s2">&#39;]&quot;</span><span class="p">,</span>
+            <span class="s2">"string_pattern_mismatch"</span><span class="p">,</span>
+            <span class="s2">"String should match pattern '</span><span class="si">{pattern}</span><span class="s2">', [type='</span><span class="si">{error_type}</span><span class="s2">', input_value='</span><span class="si">{value}</span><span class="s2">']"</span><span class="p">,</span>
             <span class="p">{</span>
-                <span class="s2">&quot;pattern&quot;</span><span class="p">:</span> <span class="n">pattern</span><span class="p">,</span>
-                <span class="s2">&quot;error_type&quot;</span><span class="p">:</span> <span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                <span class="s2">"pattern"</span><span class="p">:</span> <span class="n">pattern</span><span class="p">,</span>
+                <span class="s2">"error_type"</span><span class="p">:</span> <span class="s2">"string_pattern_mismatch"</span><span class="p">,</span>
+                <span class="s2">"value"</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">value</span></div>
@@ -244,7 +244,7 @@
 
 <div class="viewcode-block" id="validate_mqtt_topic"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_mqtt_topic">[docs]</a><span class="nd">@ignore_none_input</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_mqtt_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;^((?![\&#39;</span><span class="se">\&quot;</span><span class="s2">#+,])[\x00-\x7F])*$&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"^((?![\'</span><span class="se">\"</span><span class="s2">#+,])[\x00-\x7F])*$"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_fiware_datatype_standard"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_datatype_standard">[docs]</a><span class="nd">@ignore_none_input</span>
@@ -256,7 +256,7 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">validate_fiware_standard_regex</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_fiware_datatype_string_protect"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_datatype_string_protect">[docs]</a><span class="nd">@ignore_none_input</span>
@@ -268,51 +268,51 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">validate_fiware_string_protect_regex</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_fiware_service_path"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_service_path">[docs]</a><span class="nd">@ignore_none_input</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_service_path</span><span class="p">(</span><span class="n">service_path</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service_path</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service_path</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"^((\/\w*)|(\/\#))*(\,((\/\w*)|(\/\#)))*$"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_fiware_service"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_service">[docs]</a><span class="nd">@ignore_none_input</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_fiware_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\w*$&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"\w*$"</span><span class="p">)</span></div>
 
 
 <span class="n">jexl_transformation_functions</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jsonparse&quot;</span><span class="p">:</span> <span class="s2">&quot;(str) =&gt; JSON.parse(str)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;jsonstringify&quot;</span><span class="p">:</span> <span class="s2">&quot;(obj) =&gt; JSON.stringify(obj)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;indexOf&quot;</span><span class="p">:</span> <span class="s2">&quot;(val, char) =&gt; String(val).indexOf(char)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; String(val).length&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;trim&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; String(val).trim()&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;substr&quot;</span><span class="p">:</span> <span class="s2">&quot;(val, int1, int2) =&gt; String(val).substr(int1, int2)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;addreduce&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr) =&gt; arr.reduce((i, v) =&gt; i + v)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;lengtharray&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr) =&gt; len(arr)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;typeof&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; typeof val&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;isarray&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr) =&gt; Array.isArray(arr)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;isnan&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; isNaN(val)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;parseint&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; parseInt(val)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;parsefloat&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; parseFloat(val)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;toisodate&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; new Date(val).toISOString()&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;timeoffset&quot;</span><span class="p">:</span> <span class="s2">&quot;(isostr) =&gt; new Date(isostr).getTimezoneOffset()&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tostring&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; str(val)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;urlencode&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; encodeURI(val)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;urldecode&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; decodeURI(val)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;replacestr&quot;</span><span class="p">:</span> <span class="s2">&quot;(str, from, to) =&gt; str.replace(from, to)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;replaceregexp&quot;</span><span class="p">:</span> <span class="s2">&quot;(str, reg, to) =&gt; str.replace(reg, to)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;replaceallstr&quot;</span><span class="p">:</span> <span class="s2">&quot;(str, from, to) =&gt; str.replace(from, to)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;replaceallregexp&quot;</span><span class="p">:</span> <span class="s2">&quot;(str, reg, to) =&gt; str.replace(reg, to)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;split&quot;</span><span class="p">:</span> <span class="s2">&quot;(str, ch) =&gt; str.split(ch)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;mapper&quot;</span><span class="p">:</span> <span class="s2">&quot;(val, values, choices) =&gt; choices[values.index(val)]&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;thmapper&quot;</span><span class="p">:</span> <span class="s2">&quot;(val, values, choices) =&gt; choices[next((i for i, v in enumerate(values) if val &lt;= v), None)]&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;bitwisemask&quot;</span><span class="p">:</span> <span class="s2">&quot;(i, mask, op, shf) =&gt; ((int(i) &amp; mask) if op == &#39;&amp;&#39; else ((int(i) | mask) if op == &#39;|&#39; else ((int(i) ^ mask) if op == &#39;^&#39; else int(i))) &gt;&gt; shf)&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;slice&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr, init, end) =&gt; arr[init:end]&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;addset&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr, x) =&gt; list(set(arr).add(x))&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;removeset&quot;</span><span class="p">:</span> <span class="s2">&quot;(arr, x) =&gt; list(set(arr).remove(x))&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;touppercase&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; str(val).upper()&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tolowercase&quot;</span><span class="p">:</span> <span class="s2">&quot;(val) =&gt; str(val).lower()&quot;</span><span class="p">,</span>
+    <span class="s2">"jsonparse"</span><span class="p">:</span> <span class="s2">"(str) =&gt; JSON.parse(str)"</span><span class="p">,</span>
+    <span class="s2">"jsonstringify"</span><span class="p">:</span> <span class="s2">"(obj) =&gt; JSON.stringify(obj)"</span><span class="p">,</span>
+    <span class="s2">"indexOf"</span><span class="p">:</span> <span class="s2">"(val, char) =&gt; String(val).indexOf(char)"</span><span class="p">,</span>
+    <span class="s2">"length"</span><span class="p">:</span> <span class="s2">"(val) =&gt; String(val).length"</span><span class="p">,</span>
+    <span class="s2">"trim"</span><span class="p">:</span> <span class="s2">"(val) =&gt; String(val).trim()"</span><span class="p">,</span>
+    <span class="s2">"substr"</span><span class="p">:</span> <span class="s2">"(val, int1, int2) =&gt; String(val).substr(int1, int2)"</span><span class="p">,</span>
+    <span class="s2">"addreduce"</span><span class="p">:</span> <span class="s2">"(arr) =&gt; arr.reduce((i, v) =&gt; i + v)"</span><span class="p">,</span>
+    <span class="s2">"lengtharray"</span><span class="p">:</span> <span class="s2">"(arr) =&gt; len(arr)"</span><span class="p">,</span>
+    <span class="s2">"typeof"</span><span class="p">:</span> <span class="s2">"(val) =&gt; typeof val"</span><span class="p">,</span>
+    <span class="s2">"isarray"</span><span class="p">:</span> <span class="s2">"(arr) =&gt; Array.isArray(arr)"</span><span class="p">,</span>
+    <span class="s2">"isnan"</span><span class="p">:</span> <span class="s2">"(val) =&gt; isNaN(val)"</span><span class="p">,</span>
+    <span class="s2">"parseint"</span><span class="p">:</span> <span class="s2">"(val) =&gt; parseInt(val)"</span><span class="p">,</span>
+    <span class="s2">"parsefloat"</span><span class="p">:</span> <span class="s2">"(val) =&gt; parseFloat(val)"</span><span class="p">,</span>
+    <span class="s2">"toisodate"</span><span class="p">:</span> <span class="s2">"(val) =&gt; new Date(val).toISOString()"</span><span class="p">,</span>
+    <span class="s2">"timeoffset"</span><span class="p">:</span> <span class="s2">"(isostr) =&gt; new Date(isostr).getTimezoneOffset()"</span><span class="p">,</span>
+    <span class="s2">"tostring"</span><span class="p">:</span> <span class="s2">"(val) =&gt; str(val)"</span><span class="p">,</span>
+    <span class="s2">"urlencode"</span><span class="p">:</span> <span class="s2">"(val) =&gt; encodeURI(val)"</span><span class="p">,</span>
+    <span class="s2">"urldecode"</span><span class="p">:</span> <span class="s2">"(val) =&gt; decodeURI(val)"</span><span class="p">,</span>
+    <span class="s2">"replacestr"</span><span class="p">:</span> <span class="s2">"(str, from, to) =&gt; str.replace(from, to)"</span><span class="p">,</span>
+    <span class="s2">"replaceregexp"</span><span class="p">:</span> <span class="s2">"(str, reg, to) =&gt; str.replace(reg, to)"</span><span class="p">,</span>
+    <span class="s2">"replaceallstr"</span><span class="p">:</span> <span class="s2">"(str, from, to) =&gt; str.replace(from, to)"</span><span class="p">,</span>
+    <span class="s2">"replaceallregexp"</span><span class="p">:</span> <span class="s2">"(str, reg, to) =&gt; str.replace(reg, to)"</span><span class="p">,</span>
+    <span class="s2">"split"</span><span class="p">:</span> <span class="s2">"(str, ch) =&gt; str.split(ch)"</span><span class="p">,</span>
+    <span class="s2">"mapper"</span><span class="p">:</span> <span class="s2">"(val, values, choices) =&gt; choices[values.index(val)]"</span><span class="p">,</span>
+    <span class="s2">"thmapper"</span><span class="p">:</span> <span class="s2">"(val, values, choices) =&gt; choices[next((i for i, v in enumerate(values) if val &lt;= v), None)]"</span><span class="p">,</span>
+    <span class="s2">"bitwisemask"</span><span class="p">:</span> <span class="s2">"(i, mask, op, shf) =&gt; ((int(i) &amp; mask) if op == '&amp;' else ((int(i) | mask) if op == '|' else ((int(i) ^ mask) if op == '^' else int(i))) &gt;&gt; shf)"</span><span class="p">,</span>
+    <span class="s2">"slice"</span><span class="p">:</span> <span class="s2">"(arr, init, end) =&gt; arr[init:end]"</span><span class="p">,</span>
+    <span class="s2">"addset"</span><span class="p">:</span> <span class="s2">"(arr, x) =&gt; list(set(arr).add(x))"</span><span class="p">,</span>
+    <span class="s2">"removeset"</span><span class="p">:</span> <span class="s2">"(arr, x) =&gt; list(set(arr).remove(x))"</span><span class="p">,</span>
+    <span class="s2">"touppercase"</span><span class="p">:</span> <span class="s2">"(val) =&gt; str(val).upper()"</span><span class="p">,</span>
+    <span class="s2">"tolowercase"</span><span class="p">:</span> <span class="s2">"(val) =&gt; str(val).lower()"</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -321,23 +321,23 @@
         <span class="n">jexl_expression</span> <span class="o">=</span> <span class="n">JEXL</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">jexl_expression</span><span class="p">,</span> <span class="n">Transform</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">jexl_expression</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jexl_transformation_functions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">jexl_expression</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> might not supported&quot;</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">jexl_expression</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> might not supported"</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ParseError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid JEXL expression &#39;</span><span class="si">{</span><span class="n">expression</span><span class="si">}</span><span class="s2">&#39; inside the attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; of Device &#39;</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;|&quot;</span> <span class="ow">in</span> <span class="n">expression</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; If the expression contains the transform operator &#39;|&#39; you need to remove the spaces around it.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid JEXL expression '</span><span class="si">{</span><span class="n">expression</span><span class="si">}</span><span class="s2">' inside the attribute '</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">' of Device '</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">'."</span>
+        <span class="k">if</span> <span class="s2">"|"</span> <span class="ow">in</span> <span class="n">expression</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">" If the expression contains the transform operator '|' you need to remove the spaces around it."</span>
         <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">expression</span></div>
 
 
 <div class="viewcode-block" id="validate_expression_language"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_expression_language">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_expression_language</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expressionLanguage</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">expressionLanguage</span> <span class="o">==</span> <span class="s2">&quot;legacy&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">expressionLanguage</span> <span class="o">==</span> <span class="s2">"legacy"</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Using &#39;LEGACY&#39; expression language inside </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;deprecated. Use &#39;JEXL&#39; instead.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Using 'LEGACY' expression language inside </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is "</span>
+            <span class="sa">f</span><span class="s2">"deprecated. Use 'JEXL' instead."</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">expressionLanguage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">expressionLanguage</span> <span class="o">=</span> <span class="s2">&quot;jexl&quot;</span>
+        <span class="n">expressionLanguage</span> <span class="o">=</span> <span class="s2">"jexl"</span>
     <span class="k">return</span> <span class="n">expressionLanguage</span></div>
 </pre></div>
 

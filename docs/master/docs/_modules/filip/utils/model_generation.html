@@ -76,9 +76,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for filip.utils.model_generation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Code generator for data models from schema.json descriptions</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
@@ -101,7 +101,7 @@
     <span class="n">schema_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InputFileType</span><span class="p">]</span> <span class="o">=</span> <span class="n">InputFileType</span><span class="o">.</span><span class="n">JsonSchema</span><span class="p">,</span>
     <span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This will create a data model from data model definitions. The schemas</span>
 <span class="sd">    can either downloaded from a url or passed as str or dict. Allowed input</span>
 <span class="sd">    types are defined but the underlying toolbox.</span>
@@ -125,21 +125,21 @@
 <span class="sd">    Examples::</span>
 
 <span class="sd">        {</span>
-<span class="sd">            &quot;type&quot;: &quot;object&quot;,</span>
-<span class="sd">            &quot;properties&quot;: {</span>
-<span class="sd">                &quot;number&quot;: {</span>
-<span class="sd">                    &quot;type&quot;: &quot;number&quot;</span>
+<span class="sd">            "type": "object",</span>
+<span class="sd">            "properties": {</span>
+<span class="sd">                "number": {</span>
+<span class="sd">                    "type": "number"</span>
 <span class="sd">                    },</span>
-<span class="sd">                &quot;street_name&quot;: {</span>
-<span class="sd">                    &quot;type&quot;: &quot;string&quot;</span>
+<span class="sd">                "street_name": {</span>
+<span class="sd">                    "type": "string"</span>
 <span class="sd">                   },</span>
-<span class="sd">                &quot;street_type&quot;: {</span>
-<span class="sd">                    &quot;type&quot;: &quot;string&quot;,</span>
-<span class="sd">                    &quot;enum&quot;: [&quot;Street&quot;, &quot;Avenue&quot;, &quot;Boulevard&quot;]</span>
+<span class="sd">                "street_type": {</span>
+<span class="sd">                    "type": "string",</span>
+<span class="sd">                    "enum": ["Street", "Avenue", "Boulevard"]</span>
 <span class="sd">                }</span>
 <span class="sd">            }</span>
 <span class="sd">        }</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -149,13 +149,13 @@
 
     <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp</span><span class="p">:</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="si">}</span><span class="s2">.py&quot;</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="si">}</span><span class="s2">.py"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
             <span class="n">schema</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">schema</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Missing argument! Either &#39;url&#39; or &#39;schema&#39; &quot;</span> <span class="s2">&quot;must be provided&quot;</span>
+                <span class="s2">"Missing argument! Either 'url' or 'schema' "</span> <span class="s2">"must be provided"</span>
             <span class="p">)</span>
 
         <span class="n">generate</span><span class="p">(</span>
@@ -174,8 +174,8 @@
     <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">validators</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;ContextEntity&quot;</span><span class="p">]:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">"ContextEntity"</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Creates a ContextEntity-Model from a dict:</span>
 
 <span class="sd">    Args:</span>
@@ -192,29 +192,29 @@
 <span class="sd">    Example:</span>
 
 <span class="sd">        &gt;&gt;&gt; def username_alphanumeric(cls, value):</span>
-<span class="sd">                assert v.value.isalnum(), &#39;must be numeric&#39;</span>
+<span class="sd">                assert v.value.isalnum(), 'must be numeric'</span>
 <span class="sd">                return value</span>
 
 <span class="sd">        &gt;&gt;&gt; model = create_context_entity_model(</span>
-<span class="sd">                        name=&#39;MyModel&#39;,</span>
+<span class="sd">                        name='MyModel',</span>
 <span class="sd">                        data={</span>
-<span class="sd">                            &#39;id&#39;: &#39;MyId&#39;,</span>
-<span class="sd">                            &#39;type&#39;:&#39;MyType&#39;,</span>
-<span class="sd">                            &#39;temp&#39;: &#39;MyProperty&#39;}</span>
-<span class="sd">                        {&#39;validate_test&#39;: validator(&#39;temperature&#39;)(</span>
+<span class="sd">                            'id': 'MyId',</span>
+<span class="sd">                            'type':'MyType',</span>
+<span class="sd">                            'temp': 'MyProperty'}</span>
+<span class="sd">                        {'validate_test': validator('temperature')(</span>
 <span class="sd">                            username_alphanumeric)})</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ContextEntity</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">properties</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">key</span><span class="p">:</span> <span class="p">(</span><span class="n">ContextAttribute</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ContextEntity</span><span class="o">.</span><span class="n">model_fields</span>
     <span class="p">}</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">create_model</span><span class="p">(</span>
-        <span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;GeneratedContextEntity&quot;</span><span class="p">,</span>
+        <span class="n">name</span> <span class="ow">or</span> <span class="s2">"GeneratedContextEntity"</span><span class="p">,</span>
         <span class="n">__base__</span><span class="o">=</span><span class="n">ContextEntity</span><span class="p">,</span>
         <span class="n">__validators__</span><span class="o">=</span><span class="n">validators</span> <span class="ow">or</span> <span class="p">{},</span>
         <span class="o">**</span><span class="n">properties</span><span class="p">,</span>
@@ -227,14 +227,14 @@
 
         <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp</span><span class="p">:</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">uuid4</span><span class="p">()</span><span class="si">}</span><span class="s2">.json"</span><span class="p">)</span>
             <span class="n">output</span><span class="o">.</span><span class="n">touch</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">output</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">output</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".json"</span><span class="p">:</span>
                 <span class="c1"># move temporary file to output directory</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.py&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".py"</span><span class="p">:</span>
                 <span class="n">create_data_model_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span></div>
 </pre></div>

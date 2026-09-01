@@ -81,35 +81,35 @@
 
 
 <div class="viewcode-block" id="GeoQuery"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.GeoQuery">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">GeoQuery</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    GeoQuery used for Subscriptions, as described in NGSI-LD Spec section 5.2.13</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">geometry</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A valid GeoJSON [8] geometry, type excepting GeometryCollection&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"A valid GeoJSON [8] geometry, type excepting GeometryCollection"</span>
     <span class="p">)</span>
     <span class="n">coordinates</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A JSON Array coherent with the geometry type as per &quot;</span>
-        <span class="s2">&quot;IETF RFC 7946 [8]&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"A JSON Array coherent with the geometry type as per "</span>
+        <span class="s2">"IETF RFC 7946 [8]"</span>
     <span class="p">)</span>
     <span class="n">georel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A valid geo-relationship as defined by clause 4.10 (near, &quot;</span>
-        <span class="s2">&quot;within, etc.)&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"A valid geo-relationship as defined by clause 4.10 (near, "</span>
+        <span class="s2">"within, etc.)"</span>
     <span class="p">)</span>
     <span class="n">geoproperty</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Attribute Name as a short-hand string&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Attribute Name as a short-hand string"</span>
     <span class="p">)</span>
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_ngsi_ld_query"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_ld.html#filip.models.ngsi_ld.base.validate_ngsi_ld_query">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_ngsi_ld_query</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Valid query string as described in NGSI-LD Spec section 5.2.12</span>
 <span class="sd">    Args:</span>
 <span class="sd">        q: query string</span>
 <span class="sd">    Returns:</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">q</span></div>
 </pre></div>
 

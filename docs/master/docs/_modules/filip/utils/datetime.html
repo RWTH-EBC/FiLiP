@@ -80,7 +80,7 @@
 
 
 <div class="viewcode-block" id="transform_to_utc_datetime"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.datetime.transform_to_utc_datetime">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">transform_to_utc_datetime</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Converts datetime object to utc datetime object with zone</span>
 
 <span class="sd">    Args:</span>
@@ -88,12 +88,12 @@
 
 <span class="sd">    Returns:</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">tz</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="convert_datetime_to_iso_8601_with_z_suffix"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.datetime.convert_datetime_to_iso_8601_with_z_suffix">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">convert_datetime_to_iso_8601_with_z_suffix</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Converts datetime object to iso8601 notation with z-suffix</span>
 
 <span class="sd">    Args:</span>
@@ -101,9 +101,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        String in iso 8601 notation with z-suffix</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dt</span> <span class="o">=</span> <span class="n">transform_to_utc_datetime</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span></div>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">"</span><span class="p">)[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"Z"</span></div>
 </pre></div>
 
            </div>

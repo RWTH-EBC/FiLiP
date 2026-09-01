@@ -76,9 +76,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for filip.clients.mqtt.encoder.json</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Json encoder class for all IoTA-JSON MQTT message encoders</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
@@ -87,16 +87,16 @@
 
 
 <div class="viewcode-block" id="Json"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Json</span><span class="p">(</span><span class="n">BaseEncoder</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Json encoder class for all IoTA-JSON MQTT message encoders</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;/json&quot;</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="s2">"/json"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Json.decode_message"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.decode_message">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">decode_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+<div class="viewcode-block" id="Json.decode_message"><a class="viewcode-back" href="../../../../../code/filip.clients.mqtt.encoder.html#filip.clients.mqtt.encoder.json.Json.decode_message">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">decode_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
         <span class="n">apikey</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">decode_message</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">apikey</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">payload</span></div>

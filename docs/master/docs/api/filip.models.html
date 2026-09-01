@@ -59,7 +59,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#filip.models.base.DataType"><code class="docutils literal notranslate"><span class="pre">DataType</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.models.base.FiwareHeader"><code class="docutils literal notranslate"><span class="pre">FiwareHeader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.models.base.FiwareHeaderSecure"><code class="docutils literal notranslate"><span class="pre">FiwareHeaderSecure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.FiwareHeaderSecureDynamic"><code class="docutils literal notranslate"><span class="pre">FiwareHeaderSecureDynamic</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.models.base.FiwareLDHeader"><code class="docutils literal notranslate"><span class="pre">FiwareLDHeader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filip.models.base.KeycloakTokenManager"><code class="docutils literal notranslate"><span class="pre">KeycloakTokenManager</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.models.base.LogLevel"><code class="docutils literal notranslate"><span class="pre">LogLevel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.models.base.NgsiVersion"><code class="docutils literal notranslate"><span class="pre">NgsiVersion</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filip.models.base.PaginationMethod"><code class="docutils literal notranslate"><span class="pre">PaginationMethod</span></code></a></li>
@@ -990,12 +992,44 @@ Context Brokers to support hierarchical scopes:
 <dl class="field-list simple">
 <dt class="field-odd">Constraints<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>max_length</strong> = 3000</p></li>
+<li><p><strong>max_length</strong> = 8192</p></li>
 <li><p><strong>pattern</strong> = .*</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="filip.models.base.FiwareHeaderSecureDynamic">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.base.</span></span><span class="sig-name descname"><span class="pre">FiwareHeaderSecureDynamic</span></span><a class="reference internal" href="../_modules/filip/models/base.html#FiwareHeaderSecureDynamic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.base.FiwareHeaderSecureDynamic" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../code/filip.models.html#filip.models.base.FiwareHeader" title="filip.models.base.FiwareHeader"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiwareHeader</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>populate_by_name</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_assignment</strong>: <em>bool = True</em></p></li>
+<li><p><strong>arbitrary_types_allowed</strong>: <em>bool = True</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../code/filip.models.html#filip.models.base.FiwareHeaderSecureDynamic.token_manager" title="filip.models.base.FiwareHeaderSecureDynamic.token_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">token_manager</span> <span class="pre">(filip.models.base.KeycloakTokenManager)</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Validators<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="filip.models.base.FiwareHeaderSecureDynamic.token_manager">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">token_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../code/filip.models.html#filip.models.base.KeycloakTokenManager" title="filip.models.base.KeycloakTokenManager"><span class="pre">KeycloakTokenManager</span></a></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.base.FiwareHeaderSecureDynamic.token_manager" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="filip.models.base.FiwareHeaderSecureDynamic.Authorization">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Authorization</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#filip.models.base.FiwareHeaderSecureDynamic.Authorization" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1050,6 +1084,17 @@ Context Brokers to support hierarchical scopes:
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.models.base.FiwareLDHeader.set_context">
 <span class="sig-name descname"><span class="pre">set_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/base.html#FiwareLDHeader.set_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.base.FiwareLDHeader.set_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.models.base.KeycloakTokenManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.models.base.</span></span><span class="sig-name descname"><span class="pre">KeycloakTokenManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">realm_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/base.html#KeycloakTokenManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.base.KeycloakTokenManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="filip.models.base.KeycloakTokenManager.get_access_token">
+<span class="sig-name descname"><span class="pre">get_access_token</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/models/base.html#KeycloakTokenManager.get_access_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.base.KeycloakTokenManager.get_access_token" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
