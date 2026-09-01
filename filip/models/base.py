@@ -2,9 +2,10 @@
 Shared data models
 """
 
+import time
 from aenum import Enum
 from pydantic import ConfigDict, BaseModel, Field, field_validator, computed_field
-
+from keycloak import KeycloakOpenID
 from filip.utils.validators import validate_fiware_service_path, validate_fiware_service
 
 core_context = "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.6.jsonld"
@@ -126,7 +127,7 @@ class FiwareHeaderSecure(FiwareHeader):
     authorization: str = Field(
         alias="authorization",
         default="",
-        max_length=3000,
+        max_length=8192,
         description="authorization key",
         pattern=r".*",
     )
@@ -188,3 +189,58 @@ class FiwareLDHeader(BaseModel):
 
     def set_context(self, context: str):
         self.link_header = f'<{context}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+
+
+class KeycloakTokenManager:
+    def __init__(
+        self,
+        client_id: str,
+        client_secret: str,
+        realm_name: str,
+        server_url: str,
+        username: str = None,
+        password: str = None,
+    ):
+        """
+        This class manages the Keycloak token retrieval and caching.
+        It can be combined with the FiwareHeaderSecureDynamic to provide
+        dynamic token update.
+        """
+        self.client: KeycloakOpenID = KeycloakOpenID(
+            server_url=server_url,
+            client_id=client_id,
+            realm_name=realm_name,
+            client_secret_key=client_secret,
+        )
+        if username and password:
+            self.grant_type = "password"
+            self.username = username
+            self.password = password
+        else:
+            self.grant_type = "client_credentials"
+            self.username = None
+            self.password = None
+        self._token_data = None
+        self._expiry_time = 0
+
+    def get_access_token(self):
+        if not self._token_data or time.time() >= (self._expiry_time - 10):
+            self._token_data = self.client.token(
+                grant_type=self.grant_type,
+                username=self.username,
+                password=self.password,
+            )
+            self._expiry_time = time.time() + self._token_data["expires_in"]
+        return self._token_data["access_token"]
+
+
+class FiwareHeaderSecureDynamic(FiwareHeader):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    # Keep the private attribute
+    token_manager: KeycloakTokenManager = Field(exclude=True)
+
+    @computed_field
+    @property
+    def Authorization(self) -> str:
+        return f"Bearer {self.token_manager.get_access_token()}"
