@@ -126,6 +126,7 @@
         <span class="n">session</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fiware_header</span><span class="p">:</span> <span class="n">FiwareLDHeader</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">create_tenant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">pagination_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -134,6 +135,13 @@
 <span class="sd">            url: Url of context broker server</span>
 <span class="sd">            session (requests.Session):</span>
 <span class="sd">            fiware_header (FiwareHeader): fiware service and fiware service path</span>
+<span class="sd">            create_tenant (bool): whether to create tenant when the client is instantiated</span>
+<span class="sd">            pagination_limit (int): number of max. items to retrieve.</span>
+<span class="sd">                                   ! NOTE: This value depends on the specific platform.</span>
+<span class="sd">                                   For example, Orion-LD: 1000, Stellio: 100</span>
+<span class="sd">                                   If you are not sure, it is better to set a lower value,</span>
+<span class="sd">                                   which in worst case only reduce the efficiency of data</span>
+<span class="sd">                                   retrieving.</span>
 <span class="sd">            **kwargs (Optional): Optional arguments that ``request`` takes.</span>
 <span class="sd">        """</span>
         <span class="c1"># set service url</span>
@@ -154,6 +162,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"Content-Type"</span><span class="p">:</span> <span class="s2">"application/json"</span><span class="p">})</span>
         <span class="c1"># default downlink content JSON-LD</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"Accept"</span><span class="p">:</span> <span class="s2">"application/ld+json"</span><span class="p">})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pagination_limit</span> <span class="o">=</span> <span class="n">pagination_limit</span>
 
         <span class="k">if</span> <span class="n">create_tenant</span> <span class="ow">and</span> <span class="n">init_header</span><span class="o">.</span><span class="n">ngsild_tenant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__make_tenant</span><span class="p">()</span>
@@ -192,7 +202,9 @@
 
         <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">limit</span> <span class="o">=</span> <span class="n">inf</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">"limit"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span> <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="k">else</span> <span class="n">limit</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">"limit"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pagination_limit</span> <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pagination_limit</span> <span class="k">else</span> <span class="n">limit</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="s2">"count"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"count"</span><span class="p">:</span> <span class="s2">"true"</span><span class="p">})</span>
 
@@ -220,7 +232,7 @@
 
                 <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">limit</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
                     <span class="n">params</span><span class="p">[</span><span class="s2">"offset"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
-                    <span class="n">params</span><span class="p">[</span><span class="s2">"limit"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="p">(</span><span class="n">limit</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)))</span>
+                    <span class="n">params</span><span class="p">[</span><span class="s2">"limit"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pagination_limit</span><span class="p">,</span> <span class="p">(</span><span class="n">limit</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)))</span>
                     <span class="n">res</span> <span class="o">=</span> <span class="n">do_request</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
                         <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
