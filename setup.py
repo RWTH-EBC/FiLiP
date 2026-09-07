@@ -18,7 +18,7 @@ INSTALL_REQUIRES = [
     "pydantic>=2.6.0,<2.9.0",
     "pydantic-settings>=2.0.0,<2.3.0",
     "stringcase>=1.2.0",
-    "regex~=2023.10.3",
+    "regex~=2024.11.6",
     "requests~=2.33.0",
     "rapidfuzz~=3.4.0",
     "geojson-pydantic~=1.0.2",
@@ -26,6 +26,7 @@ INSTALL_REQUIRES = [
     "PyLD~=2.0.4",
     "pyjexl~=0.3.0",
     "packaging~=24.1",
+    "python-keycloak~=7.1.1",
 ]
 
 
@@ -80,7 +81,7 @@ setuptools.setup(
     extras_require={
         "development": ["pre-commit~=4.0.1"],
         "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
-        "tutorials": ["plotly==5.24.1", "matplotlib~=3.9.4", "python-keycloak~=7.1.1"],
+        "tutorials": ["plotly==5.24.1", "matplotlib~=3.9.4"],
     },
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.10",
