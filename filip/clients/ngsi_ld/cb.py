@@ -48,6 +48,7 @@ class ContextBrokerLDClient(BaseHttpClient):
         session: requests.Session = None,
         fiware_header: FiwareLDHeader = None,
         create_tenant: bool = True,
+        pagination_limit: int = 1000,
         **kwargs,
     ):
         """
@@ -56,6 +57,13 @@ class ContextBrokerLDClient(BaseHttpClient):
             url: Url of context broker server
             session (requests.Session):
             fiware_header (FiwareHeader): fiware service and fiware service path
+            create_tenant (bool): whether to create tenant when the client is instantiated
+            pagination_limit (int): number of max. items to retrieve.
+                                   ! NOTE: This value depends on the specific platform.
+                                   For example, Orion-LD: 1000, Stellio: 100
+                                   If you are not sure, it is better to set a lower value,
+                                   which in worst case only reduce the efficiency of data
+                                   retrieving.
             **kwargs (Optional): Optional arguments that ``request`` takes.
         """
         # set service url
@@ -76,6 +84,8 @@ class ContextBrokerLDClient(BaseHttpClient):
         self.headers.update({"Content-Type": "application/json"})
         # default downlink content JSON-LD
         self.headers.update({"Accept": "application/ld+json"})
+
+        self.pagination_limit = pagination_limit
 
         if create_tenant and init_header.ngsild_tenant is not None:
             self.__make_tenant()
@@ -114,7 +124,9 @@ class ContextBrokerLDClient(BaseHttpClient):
 
         if limit is None:
             limit = inf
-        params["limit"] = 1000 if limit > 1000 else limit
+        params["limit"] = (
+            self.pagination_limit if limit > self.pagination_limit else limit
+        )
         if "count" not in params:
             params.update({"count": "true"})
 
@@ -142,7 +154,7 @@ class ContextBrokerLDClient(BaseHttpClient):
 
                 while len(items) < limit and len(items) < count:
                     params["offset"] = len(items)
-                    params["limit"] = min(1000, (limit - len(items)))
+                    params["limit"] = min(self.pagination_limit, (limit - len(items)))
                     res = do_request(params)
                     if res.ok:
                         items.extend(res.json())
