@@ -648,6 +648,45 @@ defined based on the identifiers syntax restriction:
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.utils.validators.KafkaSaslMechanism">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">KafkaSaslMechanism</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value=&lt;no_arg&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#KafkaSaslMechanism"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.KafkaSaslMechanism" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>SASL mechanisms that Orion supports for Kafka notifications</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.KafkaSaslMechanism.PLAIN">
+<span class="sig-name descname"><span class="pre">PLAIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PLAIN'</span></em><a class="headerlink" href="#filip.utils.validators.KafkaSaslMechanism.PLAIN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.KafkaSaslMechanism.SCRAM_SHA_256">
+<span class="sig-name descname"><span class="pre">SCRAM_SHA_256</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SCRAM-SHA-256'</span></em><a class="headerlink" href="#filip.utils.validators.KafkaSaslMechanism.SCRAM_SHA_256" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.KafkaSaslMechanism.SCRAM_SHA_512">
+<span class="sig-name descname"><span class="pre">SCRAM_SHA_512</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SCRAM-SHA-512'</span></em><a class="headerlink" href="#filip.utils.validators.KafkaSaslMechanism.SCRAM_SHA_512" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="filip.utils.validators.KafkaSecurityProtocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">KafkaSecurityProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value=&lt;no_arg&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#KafkaSecurityProtocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.KafkaSecurityProtocol" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Security protocols that Orion supports for Kafka notifications</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.KafkaSecurityProtocol.SASL_PLAINTEXT">
+<span class="sig-name descname"><span class="pre">SASL_PLAINTEXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SASL_PLAINTEXT'</span></em><a class="headerlink" href="#filip.utils.validators.KafkaSecurityProtocol.SASL_PLAINTEXT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="filip.utils.validators.KafkaSecurityProtocol.SASL_SSL">
+<span class="sig-name descname"><span class="pre">SASL_SSL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SASL_SSL'</span></em><a class="headerlink" href="#filip.utils.validators.KafkaSecurityProtocol.SASL_SSL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="filip.utils.validators.ignore_none_input">
 <span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">ignore_none_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#ignore_none_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.ignore_none_input" title="Permalink to this definition"></a></dt>
@@ -742,6 +781,49 @@ protocol.</p>
 <dt class="sig sig-object py" id="filip.utils.validators.validate_jexl_expression">
 <span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_jexl_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_jexl_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_jexl_expression" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_kafka_broker_url">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_kafka_broker_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Url</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_kafka_broker_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_kafka_broker_url" title="Permalink to this definition"></a></dt>
+<dd><p>Function that checks whether a url is a valid endpoint of a single kafka
+broker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> – the url for the target broker</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>validated url</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_kafka_topic">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_kafka_topic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_kafka_topic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_kafka_topic" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_kafka_topic_template">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_kafka_topic_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_kafka_topic_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_kafka_topic_template" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="filip.utils.validators.validate_kafka_url">
+<span class="sig-prename descclassname"><span class="pre">filip.utils.validators.</span></span><span class="sig-name descname"><span class="pre">validate_kafka_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Url</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/filip/utils/validators.html#validate_kafka_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.utils.validators.validate_kafka_url" title="Permalink to this definition"></a></dt>
+<dd><p>Function that checks whether a url is a valid kafka endpoint</p>
+<p>A subscription may address a whole kafka cluster. In that case the url
+contains the endpoints of multiple brokers as a comma separated list,
+where only the leading one carries the scheme, e.g.
+<code class="docutils literal notranslate"><span class="pre">kafka://broker1:9092,broker2:9092</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> – the url for the target endpoint</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>validated url</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="filip.utils.validators.validate_mqtt_topic">

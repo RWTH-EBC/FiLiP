@@ -94,22 +94,27 @@
     <span class="n">Json</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttrsFormat</span><span class="p">,</span> <span class="n">EntityPattern</span><span class="p">,</span> <span class="n">Http</span><span class="p">,</span> <span class="n">Status</span><span class="p">,</span> <span class="n">Expression</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_mqtt_url</span><span class="p">,</span> <span class="n">validate_mqtt_topic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.utils.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_mqtt_url</span><span class="p">,</span>
+    <span class="n">validate_mqtt_topic</span><span class="p">,</span>
+    <span class="n">validate_kafka_url</span><span class="p">,</span>
+    <span class="n">validate_kafka_topic</span><span class="p">,</span>
+    <span class="n">validate_kafka_topic_template</span><span class="p">,</span>
+    <span class="n">KafkaSaslMechanism</span><span class="p">,</span>
+    <span class="n">KafkaSecurityProtocol</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextEntity</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">filip.models.ngsi_v2.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">EntityPattern</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">DataType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">filip.custom_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMqttUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.custom_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMqttUrl</span><span class="p">,</span> <span class="n">AnyKafkaUrl</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="c1"># The pydantic models still have a .json() function, but this method is deprecated.</span>
+<span class="c1"># This affects the custom notification models, i.e. HttpCustom, MqttCustom and</span>
+<span class="c1"># KafkaCustom, which all define a "json" field.</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
     <span class="s2">"ignore"</span><span class="p">,</span>
     <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
-    <span class="n">message</span><span class="o">=</span><span class="s1">'Field name "json" shadows an attribute in parent "Http"'</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
-    <span class="s2">"ignore"</span><span class="p">,</span>
-    <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
-    <span class="n">message</span><span class="o">=</span><span class="s1">'Field name "json" shadows an attribute in parent "Mqtt"'</span><span class="p">,</span>
+    <span class="n">message</span><span class="o">=</span><span class="sa">r</span><span class="s1">'Field name "json" in "\w+" shadows an attribute in parent'</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -329,6 +334,146 @@
         <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
+<div class="viewcode-block" id="Kafka"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Kafka">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Model for notifications sent via Kafka</span>
+<span class="sd">    https://fiware-orion.readthedocs.io/en/master/user/kafka_notifications.html</span>
+<span class="sd">    """</span>
+
+    <span class="n">url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AnyKafkaUrl</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"to specify the Kafka broker endpoint to use. URL must "</span>
+        <span class="s2">"start with kafka:// and never contains a path (i.e. it "</span>
+        <span class="s2">"only includes host and port). To address a whole cluster, the "</span>
+        <span class="s2">"endpoints of multiple brokers can be given as a comma separated "</span>
+        <span class="s2">"list, e.g. kafka://broker1:9092,broker2:9092"</span>
+    <span class="p">)</span>
+    <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"to specify the Kafka topic to use"</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">249</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_topic</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">"topic"</span><span class="p">)(</span><span class="n">validate_kafka_topic</span><span class="p">)</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"to specify the Kafka message key to use. If omitted or "</span>
+        <span class="s2">"set to null, the notification is sent with a null key and the "</span>
+        <span class="s2">"destination partition is assigned automatically according to the "</span>
+        <span class="s2">"producer configuration."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">user</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"user name used for Kafka SASL authentication. Must be "</span>
+        <span class="s2">"used together with passwd."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">passwd</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"passphrase used for Kafka SASL authentication. Must be "</span>
+        <span class="s2">"used together with user. It is always obfuscated when retrieving "</span>
+        <span class="s2">"subscription information."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">saslMechanism</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KafkaSaslMechanism</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"SASL mechanism to use when authentication is enabled. "</span>
+        <span class="s2">"Mandatory if user and passwd are set."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">securityProtocol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KafkaSecurityProtocol</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Kafka security protocol to use when authentication is "</span>
+        <span class="s2">"enabled. If omitted, SASL_SSL is used by default when "</span>
+        <span class="s2">"authentication is enabled, i.e. when user and passwd are set."</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Kafka.check_url"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Kafka.check_url">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"url"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_url</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if url has a valid structure</span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: url to validate</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            validated url</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">validate_kafka_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Kafka.validate_authentication"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Kafka.validate_authentication">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_authentication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check that the fields required for SASL authentication are consistent</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            validated model</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">passwd</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"'user' and 'passwd' must be used together in kafka notifications."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">saslMechanism</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"'saslMechanism' is mandatory if 'user' and 'passwd' are set."</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<div class="viewcode-block" id="KafkaCustom"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.KafkaCustom">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KafkaCustom</span><span class="p">(</span><span class="n">Kafka</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Model for custom notification patterns sent via Kafka</span>
+<span class="sd">    https://fiware-orion.readthedocs.io/en/master/user/kafka_notifications.html</span>
+<span class="sd">    """</span>
+
+    <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"to specify the Kafka topic to use. Macro replacement is "</span>
+        <span class="s2">"also performed for this field, i.e. a topic based on an attribute. "</span>
+        <span class="s2">"Therefore the maximum topic length of 249 characters can only be "</span>
+        <span class="s2">"checked by the context broker at notification time."</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">valid_topic</span> <span class="o">=</span> <span class="n">field_validator</span><span class="p">(</span><span class="s2">"topic"</span><span class="p">)(</span><span class="n">validate_kafka_topic_template</span><span class="p">)</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"to specify the Kafka message key to use. Macro "</span>
+        <span class="s2">"replacement is also performed for this field. If omitted or set to "</span>
+        <span class="s2">"null, the notification is sent with a null key."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">headers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Json</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"a key-map of headers that are included in notification "</span>
+        <span class="s2">"messages. Next to the headers that Orion sends by default, i.e. "</span>
+        <span class="s2">"Fiware-Service, Fiware-ServicePath, Fiware-Correlator and "</span>
+        <span class="s2">"Ngsiv2-AttrsFormat, custom headers can be defined here. Note that "</span>
+        <span class="s2">"attempts to overwrite Fiware-Correlator and Ngsiv2-AttrsFormat are "</span>
+        <span class="s2">"ignored by the context broker."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">payload</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"the payload to be used in notifications. If omitted, the "</span>
+        <span class="s1">'default payload (see "Notification Messages" sections) '</span>
+        <span class="s2">"is used."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">json</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"get a json as notification. If omitted, the default"</span>
+        <span class="s1">'payload (see "Notification Messages" sections) is used.'</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ngsi</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NgsiPayload</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"get an NGSI-v2 normalized entity as notification.If omitted, "</span>
+        <span class="s1">'the default payload (see "Notification Messages" sections) is used.'</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="KafkaCustom.validate_notification_payloads"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.KafkaCustom.validate_notification_payloads">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_notification_payloads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ngsi</span><span class="p">]</span>
+        <span class="n">filled_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filled_fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Only one of payload, json or ngsi fields accepted at the "</span>
+                <span class="s2">"same time in kafkaCustom."</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
 <div class="viewcode-block" id="Notification"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Notification</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    If the notification attributes are left empty, all attributes will be</span>
@@ -346,25 +491,37 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">"It is used to convey parameters for notifications "</span>
         <span class="s2">"delivered through the HTTP protocol. Cannot be used "</span>
-        <span class="s1">'together with "httpCustom, mqtt, mqttCustom"'</span><span class="p">,</span>
+        <span class="s1">'together with "httpCustom, mqtt, mqttCustom, kafka, kafkaCustom"'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">httpCustom</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpCustom</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">"It is used to convey parameters for notifications "</span>
         <span class="s2">"delivered through the HTTP protocol. Cannot be used "</span>
-        <span class="s1">'together with "http"'</span><span class="p">,</span>
+        <span class="s1">'together with "http, mqtt, mqttCustom, kafka, kafkaCustom"'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">mqtt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mqtt</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">"It is used to convey parameters for notifications "</span>
         <span class="s2">"delivered through the MQTT protocol. Cannot be used "</span>
-        <span class="s1">'together with "http, httpCustom, mqttCustom"'</span><span class="p">,</span>
+        <span class="s1">'together with "http, httpCustom, mqttCustom, kafka, kafkaCustom"'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">mqttCustom</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MqttCustom</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">"It is used to convey parameters for notifications "</span>
         <span class="s2">"delivered through the MQTT protocol. Cannot be used "</span>
-        <span class="s1">'together with "http, httpCustom, mqtt"'</span><span class="p">,</span>
+        <span class="s1">'together with "http, httpCustom, mqtt, kafka, kafkaCustom"'</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">kafka</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Kafka</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"It is used to convey parameters for notifications "</span>
+        <span class="s2">"delivered through the Kafka protocol. Cannot be used "</span>
+        <span class="s1">'together with "http, httpCustom, mqtt, mqttCustom, kafkaCustom"'</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">kafkaCustom</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KafkaCustom</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"It is used to convey parameters for notifications "</span>
+        <span class="s2">"delivered through the Kafka protocol. Cannot be used "</span>
+        <span class="s1">'together with "http, httpCustom, mqtt, mqttCustom, kafka"'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">attrs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -441,12 +598,6 @@
         <span class="s2">"https://fiware-orion.readthedocs.io/en/master/orion-api.html#covered-subscriptions"</span><span class="p">,</span>
     <span class="p">)</span>
 
-<div class="viewcode-block" id="Notification.validate_http"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_http">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">validate_http</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpCustom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-
 <div class="viewcode-block" id="Notification.validate_attr"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_attr">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exceptAttrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -455,37 +606,30 @@
 
 <div class="viewcode-block" id="Notification.validate_endpoints"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Notification.validate_endpoints">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="p">(</span>
-                    <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"httpCustom"</span><span class="p">,</span> <span class="s2">"mqtt"</span><span class="p">,</span> <span class="s2">"mqttCustom"</span><span class="p">]</span>
-                <span class="p">)</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check that the notification is delivered via a single endpoint, i.e.</span>
+<span class="sd">        that at most one of the transport protocol specific fields is used</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            validated model</span>
+<span class="sd">        """</span>
+        <span class="n">used_endpoints</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">endpoint</span>
+            <span class="k">for</span> <span class="n">endpoint</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="s2">"http"</span><span class="p">,</span>
+                <span class="s2">"httpCustom"</span><span class="p">,</span>
+                <span class="s2">"mqtt"</span><span class="p">,</span>
+                <span class="s2">"mqttCustom"</span><span class="p">,</span>
+                <span class="s2">"kafka"</span><span class="p">,</span>
+                <span class="s2">"kafkaCustom"</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpCustom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="p">(</span>
-                    <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"http"</span><span class="p">,</span> <span class="s2">"mqtt"</span><span class="p">,</span> <span class="s2">"mqttCustom"</span><span class="p">]</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mqtt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="p">(</span>
-                    <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"http"</span><span class="p">,</span> <span class="s2">"httpCustom"</span><span class="p">,</span> <span class="s2">"mqttCustom"</span><span class="p">]</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="p">(</span>
-                    <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"http"</span><span class="p">,</span> <span class="s2">"httpCustom"</span><span class="p">,</span> <span class="s2">"mqtt"</span><span class="p">]</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">used_endpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Only one notification endpoint is allowed, but the "</span>
+                <span class="sa">f</span><span class="s2">"following are used at the same time: "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">used_endpoints</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 

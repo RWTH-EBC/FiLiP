@@ -84,10 +84,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aenum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyHttpUrl</span><span class="p">,</span> <span class="n">validate_call</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticCustomError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">filip.custom_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMqttUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">filip.custom_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMqttUrl</span><span class="p">,</span> <span class="n">AnyKafkaUrl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyjexl.jexl</span><span class="w"> </span><span class="kn">import</span> <span class="n">JEXL</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyjexl.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyjexl.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParseError</span>
@@ -128,6 +128,29 @@
     <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="KafkaSaslMechanism"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.KafkaSaslMechanism">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KafkaSaslMechanism</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    SASL mechanisms that Orion supports for Kafka notifications</span>
+<span class="sd">    """</span>
+
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">"value __doc__"</span>
+
+    <span class="n">PLAIN</span> <span class="o">=</span> <span class="s2">"PLAIN"</span><span class="p">,</span> <span class="s2">"Credentials are sent as plain text"</span>
+    <span class="n">SCRAM_SHA_256</span> <span class="o">=</span> <span class="s2">"SCRAM-SHA-256"</span><span class="p">,</span> <span class="s2">"Salted challenge response using SHA-256"</span>
+    <span class="n">SCRAM_SHA_512</span> <span class="o">=</span> <span class="s2">"SCRAM-SHA-512"</span><span class="p">,</span> <span class="s2">"Salted challenge response using SHA-512"</span></div>
+
+
+<div class="viewcode-block" id="KafkaSecurityProtocol"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.KafkaSecurityProtocol">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KafkaSecurityProtocol</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Security protocols that Orion supports for Kafka notifications</span>
+<span class="sd">    """</span>
+
+    <span class="n">_init_</span> <span class="o">=</span> <span class="s2">"value __doc__"</span>
+
+    <span class="n">SASL_PLAINTEXT</span> <span class="o">=</span> <span class="s2">"SASL_PLAINTEXT"</span><span class="p">,</span> <span class="s2">"SASL authentication over an unencrypted channel"</span>
+    <span class="n">SASL_SSL</span> <span class="o">=</span> <span class="s2">"SASL_SSL"</span><span class="p">,</span> <span class="s2">"SASL authentication over an SSL encrypted channel"</span></div>
+
+
 <div class="viewcode-block" id="validate_http_url"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_http_url">[docs]</a><span class="nd">@validate_call</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_http_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyHttpUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
@@ -159,6 +182,51 @@
 <span class="sd">       validated url</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="n">url</span></div>
+
+
+<div class="viewcode-block" id="validate_kafka_broker_url"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_kafka_broker_url">[docs]</a><span class="nd">@validate_call</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_kafka_broker_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">AnyKafkaUrl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Function that checks whether a url is a valid endpoint of a single kafka</span>
+<span class="sd">    broker</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: the url for the target broker</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">       validated url</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">if</span> <span class="n">url</span> <span class="k">else</span> <span class="n">url</span></div>
+
+
+<div class="viewcode-block" id="validate_kafka_url"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_kafka_url">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_kafka_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AnyKafkaUrl</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Function that checks whether a url is a valid kafka endpoint</span>
+
+<span class="sd">    A subscription may address a whole kafka cluster. In that case the url</span>
+<span class="sd">    contains the endpoints of multiple brokers as a comma separated list,</span>
+<span class="sd">    where only the leading one carries the scheme, e.g.</span>
+<span class="sd">    ``kafka://broker1:9092,broker2:9092``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: the url for the target endpoint</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">       validated url</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">url</span>
+
+    <span class="n">brokers</span> <span class="o">=</span> <span class="p">[</span><span class="n">broker</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">broker</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)]</span>
+    <span class="c1"># all brokers belong to the same cluster, hence they share the scheme of</span>
+    <span class="c1"># the leading one</span>
+    <span class="n">validated</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">validate_kafka_broker_url</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">broker</span> <span class="k">if</span> <span class="s2">"://"</span> <span class="ow">in</span> <span class="n">broker</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"kafka://</span><span class="si">{</span><span class="n">broker</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">"kafka://"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">broker</span> <span class="ow">in</span> <span class="n">brokers</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"kafka://</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">validated</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span></div>
 
 
 <div class="viewcode-block" id="validate_escape_character_free"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_escape_character_free">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">validate_escape_character_free</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -245,6 +313,46 @@
 <div class="viewcode-block" id="validate_mqtt_topic"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_mqtt_topic">[docs]</a><span class="nd">@ignore_none_input</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_mqtt_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"^((?![\'</span><span class="se">\"</span><span class="s2">#+,])[\x00-\x7F])*$"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate_kafka_topic"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_kafka_topic">[docs]</a><span class="nd">@ignore_none_input</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_kafka_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Function that checks whether a topic is a valid kafka topic name</span>
+
+<span class="sd">    Kafka restricts topic names to the characters ``a-z``, ``A-Z``, ``0-9``,</span>
+<span class="sd">    ``.``, ``_`` and ``-``. Additionally, a topic must not be named ``.`` or</span>
+<span class="sd">    ``..``. The maximum length of 249 characters is enforced by the model</span>
+<span class="sd">    fields.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        topic: the topic to validate</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">       validated topic</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"^(?!\.{1,2}$)[a-zA-Z0-9._\-]+$"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate_kafka_topic_template"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_kafka_topic_template">[docs]</a><span class="nd">@ignore_none_input</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_kafka_topic_template</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Function that checks whether a topic is a valid kafka topic name template</span>
+
+<span class="sd">    In custom notifications, macro replacement based on the syntax</span>
+<span class="sd">    ``${&lt;JEXL expression&gt;}`` is performed for the topic. Hence, next to the</span>
+<span class="sd">    characters allowed in a plain kafka topic name, macros are accepted here.</span>
+<span class="sd">    Note that the resulting topic name is only known at notification time,</span>
+<span class="sd">    therefore neither its length nor the characters contributed by the macros</span>
+<span class="sd">    can be checked upfront.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        topic: the topic template to validate</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">       validated topic template</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">match_regex</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"^(?!\.{1,2}$)(?:[a-zA-Z0-9._\-]|\$\{[^</span><span class="si">{}</span><span class="s2">]+\})+$"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_fiware_datatype_standard"><a class="viewcode-back" href="../../../code/filip.utils.html#filip.utils.validators.validate_fiware_datatype_standard">[docs]</a><span class="nd">@ignore_none_input</span>
