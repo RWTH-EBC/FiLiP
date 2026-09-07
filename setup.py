@@ -26,6 +26,7 @@ INSTALL_REQUIRES = [
     "PyLD~=2.0.4",
     "pyjexl~=0.3.0",
     "packaging~=24.1",
+    "python-keycloak~=7.1.1",
 ]
 
 
@@ -80,7 +81,7 @@ setuptools.setup(
     extras_require={
         "development": ["pre-commit~=4.0.1"],
         "semantics": ["igraph~=0.11.2", "rdflib>=6.0.0,<=6.1.1"],
-        "tutorials": ["plotly==5.24.1", "matplotlib~=3.9.4", "python-keycloak~=7.1.1"],
+        "tutorials": ["plotly==5.24.1", "matplotlib~=3.9.4"],
     },
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.10",
