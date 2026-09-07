@@ -1,5 +1,6 @@
 ### v0.7.x
-- add: parameter `pagination_limit` for LD cb client ([#508](https://github.com/RWTH-EBC/FiLiP/issues/508))
+- add: support Kafka notifications, i.e. ``kafka`` and ``kafkaCustom`` in NGSIv2 subscriptions ([#511](https://github.com/RWTH-EBC/FiLiP/issues/511))
+- add: parameter `pagination_limit` for LD cb client ([#519](https://github.com/RWTH-EBC/FiLiP/pull/519))
 - add: dynamic fiware header for authentification ([#507](https://github.com/RWTH-EBC/FiLiP/pull/507))
 - add: tutorials for using N5GEH cluster ([#507](https://github.com/RWTH-EBC/FiLiP/pull/507))
 - update: deprecate support for python 3.9 ([#504](https://github.com/RWTH-EBC/FiLiP/pull/504))
