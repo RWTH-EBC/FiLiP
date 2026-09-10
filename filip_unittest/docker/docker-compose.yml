@@ -22,7 +22,7 @@ x-logging-high: &logging-high # Used by: cratedb, iot-agent-json
 services:
 
   orion:
-    image: fiware/orion:3.10.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
+    image: fiware/orion:4.2.0 # Sometimes the latest builds fail. Hence, we recommend using fixed, stable versions
     hostname: orion
     container_name: "orion"
     restart: always
@@ -30,6 +30,7 @@ services:
        - "1026:1026"
     networks:
        - filip
+    command: -dbURI mongodb://mongodb_v8
     depends_on:
        - mongo-db
     environment:
@@ -39,7 +40,7 @@ services:
       - ORION_STAT_SEM_WAIT=FALSE
       - ORION_STAT_TIMING=FALSE
       - ORION_STAT_NOTIF_QUEUE=TRUE
-      - ORION_MONGO_HOST=mongo-db
+      - ORION_MONGO_HOST=mongodb_v8
       # - ORION_MONGO_REPLICA_SET=rs0
       - ORION_MONGO_WRITE_CONCERN=1
       - ORION_NOTIF_MODE=threadpool
@@ -58,6 +59,17 @@ services:
         - filip
     volumes:
       - mongo-db:/data/db
+    logging: *logging-low
+
+  mongodb_v8:
+    image: mongo:8.0
+    hostname: mongodb-v8
+    container_name: "mongodb_v8"
+    restart: always
+    networks:
+      - filip
+    volumes:
+      - mongodb_data_v8:/data/db
     logging: *logging-low
 
   iot-agent-json:
@@ -209,6 +221,8 @@ services:
       - ORIONLD_CONN_MEMORY=128
 
 volumes:
+  mongodb_data_v8:
+    name: mongodb_data_v8
   mongo-db:
     name: mongodb
   crate:
