@@ -7,7 +7,7 @@ import logging
 import itertools
 import warnings
 from enum import Enum
-from typing import Any, Dict, Optional, List, Union
+from typing import Any, Dict, Optional, List, Union, Literal
 import pytz
 from pydantic import (
     field_validator,
@@ -217,13 +217,17 @@ class ServiceGroup(BaseModel):
         "property-of-a-property is created instead.",
     )
     entity_type: Optional[str] = Field(
-        default=None,
         description="name of the Entity type to assign to the group. "
         "Allowed characters "
         "are the ones in the plain ASCII set, except the following "
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+    )
+    transport: Optional[Union[TransportProtocol, str]] = Field(
+        default=None,
+        description="Name of the device transport protocol, for the IoT Agents "
+        "with multiple transport protocols.",
     )
     valid_entity_type = field_validator("entity_type")(
         validate_fiware_datatype_standard
@@ -239,6 +243,16 @@ class ServiceGroup(BaseModel):
         description="Context Broker connection information. This options can "
         "be used to override the global ones for specific types of "
         "devices.",
+    )
+    endpoint: Optional[str] = Field(
+        default=None,
+        description="Endpoint where the group of device is going to receive commands, if any.",
+    )
+    cmdMode: Literal["advancedNotification", "notification", "legacy"] | None = Field(
+        default=None,
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification."
+        " Legacy is based on registers. notification based on simplified schema of subscriptions."
+        " Legacy by default. ",
     )
 
     @field_validator("cbHost")
@@ -419,6 +433,12 @@ class Device(DeviceSettings):
     )
     commands: List[DeviceCommand] = Field(
         default=[], description="List of commands of the device"
+    )
+    cmdMode: Literal["advancedNotification", "notification", "legacy"] | None = Field(
+        default=None,
+        description="Command mode that will use iotagent with CB: legacy, notification and advancedNotification. "
+        "Legacy is based on registers. notification based on simplified schema of subscriptions. "
+        "Legacy by default.",
     )
     attributes: List[DeviceAttribute] = Field(
         default=[], description="List of active attributes of the device"
