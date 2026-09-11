@@ -1511,6 +1511,8 @@ class ContextBrokerClient(BaseHttpClient):
                     "lastFailureReason": True,
                     "mqtt": {"passwd"},
                     "mqttCustom": {"passwd"},
+                    "kafka": {"passwd"},
+                    "kafkaCustom": {"passwd"},
                 }
             },
         )
@@ -1528,6 +1530,8 @@ class ContextBrokerClient(BaseHttpClient):
                             "lastFailureReason": True,
                             "mqtt": {"passwd"},
                             "mqttCustom": {"passwd"},
+                            "kafka": {"passwd"},
+                            "kafkaCustom": {"passwd"},
                         }
                     },
                 ),

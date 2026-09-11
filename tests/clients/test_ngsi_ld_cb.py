@@ -129,41 +129,53 @@ class TestContextBroker(unittest.TestCase):
             )
             self.assertEqual(url_correct, url_filip)
 
-    def test_get_entities_pagination(self):
-        """
-        Test pagination of get entities
-        """
+    def _test_get_entities_pagination(self, client):
         init_numb = 2000
         entities_a = [
             ContextLDEntity(id=f"urn:ngsi-ld:test:{str(i)}", type=f"filip:object:TypeA")
             for i in range(0, init_numb)
         ]
 
-        self.client.entity_batch_operation(
+        client.entity_batch_operation(
             action_type=ActionTypeLD.CREATE, entities=entities_a
         )
 
-        entity_list = self.client.get_entity_list(limit=1)
+        entity_list = client.get_entity_list(limit=1)
         self.assertEqual(len(entity_list), 1)
 
-        entity_list = self.client.get_entity_list(limit=400)
+        entity_list = client.get_entity_list(limit=400)
         self.assertEqual(len(entity_list), 400)
 
-        entity_list = self.client.get_entity_list(limit=800)
+        entity_list = client.get_entity_list(limit=800)
         self.assertEqual(len(entity_list), 800)
 
-        entity_list = self.client.get_entity_list(limit=1000)
+        entity_list = client.get_entity_list(limit=1000)
         self.assertEqual(len(entity_list), 1000)
 
         # currently, there is a limit of 1000 entities per delete request
-        self.client.entity_batch_operation(
+        client.entity_batch_operation(
             action_type=ActionTypeLD.DELETE, entities=entities_a[0:800]
         )
-        self.client.entity_batch_operation(
+        client.entity_batch_operation(
             action_type=ActionTypeLD.DELETE, entities=entities_a[800:1600]
         )
-        entity_list = self.client.get_entity_list(limit=1000)
+        entity_list = client.get_entity_list(limit=1000)
         self.assertEqual(len(entity_list), init_numb - 1600)
+
+    def test_get_entities_pagination(self):
+        """
+        Test pagination of get entities
+        """
+        self._test_get_entities_pagination(client=self.client)
+
+    def test_pagination_limit(self):
+        cb_ld_client_100limit = ContextBrokerLDClient(
+            fiware_header=self.fiware_header,
+            url=settings.LD_CB_URL,
+            create_tenant=True,
+            pagination_limit=100,
+        )
+        self._test_get_entities_pagination(client=cb_ld_client_100limit)
 
     def test_get_entites(self):
         """

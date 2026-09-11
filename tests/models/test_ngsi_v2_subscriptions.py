@@ -12,6 +12,8 @@ from filip.models.ngsi_v2.subscriptions import (
     HttpCustom,
     Mqtt,
     MqttCustom,
+    Kafka,
+    KafkaCustom,
     Notification,
     Subscription,
     NgsiPayload,
@@ -19,6 +21,7 @@ from filip.models.ngsi_v2.subscriptions import (
     Condition,
 )
 from filip.models.base import FiwareHeader
+from filip.utils.validators import KafkaSaslMechanism, KafkaSecurityProtocol
 from filip.utils.cleanup import clear_all, clean_test
 from tests.config import settings
 
@@ -40,6 +43,8 @@ class TestSubscriptions(unittest.TestCase):
         self.http_url = "https://test.de:80"
         self.mqtt_url = "mqtt://test.de:1883"
         self.mqtt_topic = "/filip/testing"
+        self.kafka_url = "kafka://test.de:9092"
+        self.kafka_topic = "filip.testing"
         self.notification = {
             "http": {"url": "http://localhost:1234"},
             "attrs": ["temperature", "humidity"],
@@ -121,6 +126,119 @@ class TestSubscriptions(unittest.TestCase):
         with self.assertRaises(ValueError):
             notification.attrs = []
 
+    def test_kafka_notification_models(self):
+        """
+        Test kafka notification models
+        Check: https://fiware-orion.readthedocs.io/en/master/user/kafka_notifications.html
+        """
+        # Test url field sub field validation
+        with self.assertRaises(ValueError):
+            Kafka(url="brokenScheme://test.de:9092", topic=self.kafka_topic)
+        with self.assertRaises(ValueError):
+            Kafka(url="mqtt://test.de:1883", topic=self.kafka_topic)
+        # A whole cluster is addressed by a comma separated list of brokers,
+        # where only the leading one carries the scheme
+        self.assertEqual(
+            "kafka://broker1:9092,broker2:9092",
+            Kafka(url="kafka://broker1:9092,broker2:9092", topic=self.kafka_topic).url,
+        )
+        with self.assertRaises(ValueError):
+            Kafka(url="kafka://broker1:9092,broker2:brokenPort", topic=self.kafka_topic)
+
+        # Test topic field validation. Kafka restricts topic names to the
+        # characters a-z, A-Z, 0-9, '.', '_' and '-'
+        # Raises error for reserved names (., ..)
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic="filip/testing")
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic=".")
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic="..")
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic="")
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic="a" * 250)
+        # Macro replacement of the topic is only performed in custom
+        # notifications, hence macros are not accepted in plain kafka ones
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic="filip.${id}")
+        self.assertEqual(
+            "filip.${id}",
+            KafkaCustom(url=self.kafka_url, topic="filip.${id}").topic,
+        )
+        with self.assertRaises(ValueError):
+            KafkaCustom(url=self.kafka_url, topic="filip/${id}")
+
+        # Test validation of the SASL authentication fields. user and passwd
+        # must be used together and require a saslMechanism
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic=self.kafka_topic, user="filip")
+        with self.assertRaises(ValueError):
+            Kafka(url=self.kafka_url, topic=self.kafka_topic, passwd="filip")
+        with self.assertRaises(ValueError):
+            Kafka(
+                url=self.kafka_url,
+                topic=self.kafka_topic,
+                user="filip",
+                passwd="filip",
+            )
+        with self.assertRaises(ValueError):
+            Kafka(
+                url=self.kafka_url,
+                topic=self.kafka_topic,
+                user="filip",
+                passwd="filip",
+                saslMechanism="brokenMechanism",
+            )
+        with self.assertRaises(ValueError):
+            Kafka(
+                url=self.kafka_url,
+                topic=self.kafka_topic,
+                user="filip",
+                passwd="filip",
+                saslMechanism=KafkaSaslMechanism.PLAIN,
+                securityProtocol="brokenProtocol",
+            )
+        kafka = Kafka(
+            url=self.kafka_url,
+            topic=self.kafka_topic,
+            key="${id}",
+            user="filip",
+            passwd="filip",
+            saslMechanism=KafkaSaslMechanism.SCRAM_SHA_512,
+            securityProtocol=KafkaSecurityProtocol.SASL_SSL,
+        )
+        self.assertEqual("SCRAM-SHA-512", kafka.saslMechanism.value)
+        self.assertEqual("SASL_SSL", kafka.securityProtocol.value)
+
+        # Test validator for conflicting payload fields
+        with self.assertRaises(ValueError):
+            KafkaCustom(url=self.kafka_url, topic=self.kafka_topic, json={}, ngsi={})
+        with self.assertRaises(ValueError):
+            KafkaCustom(url=self.kafka_url, topic=self.kafka_topic, payload="", json={})
+        with self.assertRaises(ValueError):
+            KafkaCustom(
+                url=self.kafka_url,
+                topic=self.kafka_topic,
+                ngsi=NgsiPayload(),
+                payload="",
+            )
+        kafkaCustom = KafkaCustom(url=self.kafka_url, topic=self.kafka_topic)
+
+        # Test validator for conflicting endpoints
+        notification = Notification.model_validate(self.notification)
+        with self.assertRaises(ValueError):
+            notification.kafka = kafka
+        notification = Notification.model_validate(self.notification)
+        with self.assertRaises(ValueError):
+            notification.kafkaCustom = kafkaCustom
+        notification = Notification(kafka=kafka)
+        with self.assertRaises(ValueError):
+            notification.kafkaCustom = kafkaCustom
+        notification = Notification(kafka=kafka)
+        with self.assertRaises(ValueError):
+            notification.mqtt = Mqtt(url=self.mqtt_url, topic=self.mqtt_topic)
+
     def test_substitution_models(self):
         """
         Test substibution in notification models
@@ -176,6 +294,30 @@ class TestSubscriptions(unittest.TestCase):
         notification_mqttCustom.mqttCustom.json = _json
         notification_mqttCustom.mqttCustom.json = None
         notification_mqttCustom.mqttCustom.ngsi = ngsi_payload
+
+        # In case of kafkaCustom. Note that macro replacement is performed in
+        # topic, key, headers, payload, json and ngsi, but not in url
+        notification_kafkaCustom_data = {
+            "kafkaCustom": {
+                "url": "kafka://localhost:9092",
+                "topic": "some.topic.${id}",
+                "key": "${id}",
+            },
+            "attrs": ["temperature", "humidity"],
+        }
+        notification_kafkaCustom = Notification.model_validate(
+            notification_kafkaCustom_data
+        )
+        # Headers (both header name and value can be templatized)
+        notification_kafkaCustom.kafkaCustom.headers = {
+            "Fiware-Service": "${Service}",
+            "Fiware-ServicePath": "${ServicePath}",
+        }
+        notification_kafkaCustom.kafkaCustom.payload = payload
+        notification_kafkaCustom.kafkaCustom.payload = None
+        notification_kafkaCustom.kafkaCustom.json = _json
+        notification_kafkaCustom.kafkaCustom.json = None
+        notification_kafkaCustom.kafkaCustom.ngsi = ngsi_payload
 
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
