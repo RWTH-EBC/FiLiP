@@ -28,9 +28,9 @@
 
         
         <h2>Score</h2>
-        7.66 / 10
+        7.67 / 10
             
-            (previous score: 7.66 / 10)
+            (previous score: 7.67 / 10)
             
         
 
@@ -4505,7 +4505,7 @@
             </tr>
             
             <tr>
-                <td>245</td>
+                <td>266</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4515,7 +4515,7 @@
             </tr>
             
             <tr>
-                <td>386</td>
+                <td>407</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4525,7 +4525,7 @@
             </tr>
             
             <tr>
-                <td>475</td>
+                <td>496</td>
                 <td>0</td>
                 <td>convention</td>
                 <td><code>line-too-long</code></td>
@@ -4535,7 +4535,7 @@
             </tr>
             
             <tr>
-                <td>524</td>
+                <td>545</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4545,7 +4545,7 @@
             </tr>
             
             <tr>
-                <td>559</td>
+                <td>580</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4555,7 +4555,7 @@
             </tr>
             
             <tr>
-                <td>561</td>
+                <td>582</td>
                 <td>12</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -4565,7 +4565,7 @@
             </tr>
             
             <tr>
-                <td>628</td>
+                <td>649</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4575,7 +4575,7 @@
             </tr>
             
             <tr>
-                <td>628</td>
+                <td>649</td>
                 <td>25</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -4585,7 +4585,7 @@
             </tr>
             
             <tr>
-                <td>629</td>
+                <td>650</td>
                 <td>8</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -4595,7 +4595,7 @@
             </tr>
             
             <tr>
-                <td>637</td>
+                <td>658</td>
                 <td>4</td>
                 <td>convention</td>
                 <td><code>missing-function-docstring</code></td>
@@ -4605,7 +4605,7 @@
             </tr>
             
             <tr>
-                <td>637</td>
+                <td>658</td>
                 <td>36</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -4615,7 +4615,7 @@
             </tr>
             
             <tr>
-                <td>640</td>
+                <td>661</td>
                 <td>8</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -8054,7 +8054,10 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )</pre></td>
+    )
+
+
+# NGSIv2 entity models</pre></td>
             </tr>
             
             <tr>
@@ -8079,9 +8082,10 @@
                 temporary_session.close()
                 self.session = original_session
 
+    # MANAGEMENT API
     def get_version(self) -&gt; Dict:
         &#34;&#34;&#34;
-        Gets version of Orion-LD context broker
+        Gets version of IoT Agent
         Returns:
             Dictionary with response
         &#34;&#34;&#34;
@@ -8131,7 +8135,7 @@
         description=&#34;Id of an entity in an NGSI context broker. Allowed &#34;
         &#34;characters are the ones in the plain ASCII set, except &#34;
         &#34;the following ones: control characters, &#34;
-        &#34;whitespace, &amp;, ?, / and #.&#34;</pre></td>
+        &#34;whitespace, &amp;, ?, / and #.&#34;,</pre></td>
             </tr>
             
             <tr>
@@ -8178,9 +8182,7 @@
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
-
-</pre></td>
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
             </tr>
             
             <tr>
@@ -8202,7 +8204,17 @@
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False</pre></td>
+                return False
+
+    def update_registration(self, registration: Registration):
+        &#34;&#34;&#34;
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -8216,6 +8228,8 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
+
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -8460,9 +8474,7 @@ class IdType(str, Enum):
         &#34;By default, the entities are represented in normalized &#34;
         &#34;mode. However, using the attrsFormat modifier, a &#34;
         &#34;simplified representation mode can be requested.&#34;
-    )
-
-</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -8633,12 +8645,12 @@ from geojson_pydantic import (
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[470:476]
-                        Point,
-                        MultiPoint,
-                        LineString,
-                        MultiLineString,
-                        Polygon,
-                        MultiPolygon,</pre></td>
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon,</pre></td>
             </tr>
             
             <tr>
@@ -8668,7 +8680,7 @@ from geojson_pydantic import (
                 <td></td>
                 <td><pre>Similar lines in 2 files
 ==filip.models.ngsi_v2.registrations:[131:137]
-==filip.models.ngsi_v2.subscriptions:[690:696]
+==filip.models.ngsi_v2.subscriptions:[711:717]
         &#34;attribute is set to expired (no matter if the client &#34;
         &#34;updates it to active/inactive). Also, for subscriptions &#34;
         &#34;experiencing problems with notifications, the status is &#34;
@@ -8751,6 +8763,7 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1689:1695]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -8809,7 +8822,8 @@ from geojson_pydantic import (
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try:</pre></td>
+        try:
+</pre></td>
             </tr>
             
             <tr>
@@ -8946,8 +8960,10 @@ from pydantic import (
 ==filip.clients.ngsi_v2.cb:[1272:1277]
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
+
         try:</pre></td>
             </tr>
             
@@ -9111,16 +9127,6 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
                 <td><pre>Cyclic import (filip.models.base -&gt; filip.utils.validators)</pre></td>
             </tr>
             
@@ -9141,16 +9147,6 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
-            </tr>
-            
-            <tr>
-                <td>1</td>
-                <td>0</td>
-                <td>refactor</td>
-                <td><code>cyclic-import</code></td>
-                <td>R0401</td>
-                <td></td>
                 <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
@@ -9161,7 +9157,17 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
             </tr>
             
             <tr>
@@ -9181,7 +9187,17 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota)</pre></td>
+                <td><pre>Cyclic import (filip.clients.mqtt.encoder -&gt; filip.clients.mqtt.encoder.json)</pre></td>
+            </tr>
+            
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>refactor</td>
+                <td><code>cyclic-import</code></td>
+                <td>R0401</td>
+                <td></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.iota -&gt; filip.utils.filter)</pre></td>
             </tr>
             
             <tr>

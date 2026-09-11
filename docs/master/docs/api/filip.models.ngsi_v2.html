@@ -500,21 +500,14 @@ of the data provided.
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Http.url" title="filip.models.ngsi_v2.base.Http.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span> <span class="pre">(pydantic_core._pydantic_core.Url)</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.base.Http.url" title="filip.models.ngsi_v2.base.Http.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span> <span class="pre">(pydantic.networks.AnyHttpUrl)</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.base.Http.url">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Url</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.base.Http.url" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AnyHttpUrl</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#filip.models.ngsi_v2.base.Http.url" title="Permalink to this definition"></a></dt>
 <dd><p>URL referencing the service to be invoked when a notification is generated. An NGSIv2 compliant server must support the http URL schema. Other schemas could also be supported.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Constraints<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>allowed_schemes</strong> = [‘http’, ‘https’]</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1919,7 +1912,7 @@ based on our best practice, following rules are checked</p>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings.apikey" title="filip.models.ngsi_v2.iot.DeviceSettings.apikey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apikey</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings.endpoint" title="filip.models.ngsi_v2.iot.DeviceSettings.endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">endpoint</span> <span class="pre">(pydantic_core._pydantic_core.Url</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings.endpoint" title="filip.models.ngsi_v2.iot.DeviceSettings.endpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">endpoint</span> <span class="pre">(pydantic.networks.AnyHttpUrl</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings.explicitAttrs" title="filip.models.ngsi_v2.iot.DeviceSettings.explicitAttrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explicitAttrs</span> <span class="pre">(bool</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage" title="filip.models.ngsi_v2.iot.DeviceSettings.expressionLanguage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expressionLanguage</span> <span class="pre">(filip.models.ngsi_v2.iot.ExpressionLanguage</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.DeviceSettings.protocol" title="filip.models.ngsi_v2.iot.DeviceSettings.protocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">protocol</span> <span class="pre">(filip.models.ngsi_v2.iot.PayloadProtocol</span> <span class="pre">|</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
@@ -2189,7 +2182,7 @@ based on our best practice, following rules are checked</p>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.apikey" title="filip.models.ngsi_v2.iot.ServiceGroup.apikey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apikey</span> <span class="pre">(str)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.attributes" title="filip.models.ngsi_v2.iot.ServiceGroup.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span> <span class="pre">(List[filip.models.ngsi_v2.iot.DeviceAttribute]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.autoprovision" title="filip.models.ngsi_v2.iot.ServiceGroup.autoprovision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autoprovision</span> <span class="pre">(bool</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
-<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.cbHost" title="filip.models.ngsi_v2.iot.ServiceGroup.cbHost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cbHost</span> <span class="pre">(pydantic_core._pydantic_core.Url</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.cbHost" title="filip.models.ngsi_v2.iot.ServiceGroup.cbHost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cbHost</span> <span class="pre">(pydantic.networks.AnyHttpUrl</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.commands" title="filip.models.ngsi_v2.iot.ServiceGroup.commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">commands</span> <span class="pre">(List[filip.models.ngsi_v2.iot.DeviceCommand]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.defaultEntityNameConjunction" title="filip.models.ngsi_v2.iot.ServiceGroup.defaultEntityNameConjunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaultEntityNameConjunction</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.iot.ServiceGroup.entity_type" title="filip.models.ngsi_v2.iot.ServiceGroup.entity_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entity_type</span> <span class="pre">(str</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
@@ -3124,6 +3117,7 @@ alterationTypes: for more information about this field, see
 <dt class="field-even">Validators<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.check_url" title="filip.models.ngsi_v2.subscriptions.Mqtt.check_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_url</span></code></a> » <a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.url" title="filip.models.ngsi_v2.subscriptions.Mqtt.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.coerce_url_to_str" title="filip.models.ngsi_v2.subscriptions.Mqtt.coerce_url_to_str"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coerce_url_to_str</span></code></a> » <a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.url" title="filip.models.ngsi_v2.subscriptions.Mqtt.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span></code></a></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrapper</span></code> » <a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.topic" title="filip.models.ngsi_v2.subscriptions.Mqtt.topic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">topic</span></code></a></p></li>
 </ul>
 </dd>
@@ -3169,6 +3163,7 @@ alterationTypes: for more information about this field, see
 <dt class="field-odd">Validated by<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.check_url" title="filip.models.ngsi_v2.subscriptions.Mqtt.check_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_url</span></code></a></p></li>
+<li><p><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.coerce_url_to_str" title="filip.models.ngsi_v2.subscriptions.Mqtt.coerce_url_to_str"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coerce_url_to_str</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -3188,6 +3183,25 @@ alterationTypes: for more information about this field, see
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>validated url</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method pydantic_validator">
+<dt class="sig sig-object py" id="filip.models.ngsi_v2.subscriptions.Mqtt.coerce_url_to_str">
+<em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coerce_url_to_str</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><a class="reference internal" href="../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.url" title="filip.models.ngsi_v2.subscriptions.Mqtt.url"><em class="xref py py-obj"><span class="pre">url</span></em></a><a class="reference internal" href="../_modules/filip/models/ngsi_v2/subscriptions.html#Mqtt.coerce_url_to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#filip.models.ngsi_v2.subscriptions.Mqtt.coerce_url_to_str" title="Permalink to this definition"></a></dt>
+<dd><p>Coerce URL-like objects (e.g. <code class="docutils literal notranslate"><span class="pre">pydantic.AnyUrl</span></code> instances) to plain
+strings before the <code class="docutils literal notranslate"><span class="pre">Union[AnyMqttUrl,</span> <span class="pre">str]</span></code> validation runs.
+Pydantic-core’s URL validator only accepts native strings or <code class="docutils literal notranslate"><span class="pre">Url</span></code>
+instances built with matching constraints, so passing e.g. an
+<code class="docutils literal notranslate"><span class="pre">AnyUrl</span></code> (built without the “mqtt” scheme constraint) raises a
+ValidationError even if its value is a valid mqtt:// URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – url to coerce</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or original value</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4012,6 +4026,8 @@ applied for each entity instance [entity] or across them [global].</p>
 <dt class="field-odd">Config<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>populate_by_name</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_by_alias</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_by_name</strong>: <em>bool = True</em></p></li>
 </ul>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
@@ -4082,6 +4098,8 @@ applied for each entity instance [entity] or across them [global].</p>
 <dt class="field-odd">Config<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>populate_by_name</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_by_alias</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_by_name</strong>: <em>bool = True</em></p></li>
 </ul>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
@@ -4127,6 +4145,8 @@ tables visit this website:
 <li><p><strong>extra</strong>: <em>str = ignore</em></p></li>
 <li><p><strong>populate_by_name</strong>: <em>bool = True</em></p></li>
 <li><p><strong>frozen</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_by_alias</strong>: <em>bool = True</em></p></li>
+<li><p><strong>validate_by_name</strong>: <em>bool = True</em></p></li>
 </ul>
 </dd>
 <dt class="field-even">Fields<span class="colon">:</span></dt>
@@ -4233,7 +4253,7 @@ tables visit this website:
 <dl class="py method">
 <dt class="sig sig-object py" id="filip.models.ngsi_v2.units.Unit.model_post_init">
 <span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#filip.models.ngsi_v2.units.Unit.model_post_init" title="Permalink to this definition"></a></dt>
-<dd><p>This function is meant to behave like a BaseModel method to initialise private attributes.</p>
+<dd><p>This function is meant to behave like a BaseModel method to initialize private attributes.</p>
 <p>It takes context as an argument since that’s what pydantic-core passes when calling it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

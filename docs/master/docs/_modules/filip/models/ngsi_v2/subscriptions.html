@@ -283,6 +283,27 @@
     <span class="n">user</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"username if required"</span><span class="p">)</span>
     <span class="n">passwd</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"password if required"</span><span class="p">)</span>
 
+<div class="viewcode-block" id="Mqtt.coerce_url_to_str"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.coerce_url_to_str">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coerce_url_to_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Coerce URL-like objects (e.g. ``pydantic.AnyUrl`` instances) to plain</span>
+<span class="sd">        strings before the ``Union[AnyMqttUrl, str]`` validation runs.</span>
+<span class="sd">        Pydantic-core's URL validator only accepts native strings or ``Url``</span>
+<span class="sd">        instances built with matching constraints, so passing e.g. an</span>
+<span class="sd">        ``AnyUrl`` (built without the "mqtt" scheme constraint) raises a</span>
+<span class="sd">        ValidationError even if its value is a valid mqtt:// URL.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value: url to coerce</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str or original value</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
 <div class="viewcode-block" id="Mqtt.check_url"><a class="viewcode-back" href="../../../../code/filip.models.ngsi_v2.html#filip.models.ngsi_v2.subscriptions.Mqtt.check_url">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"url"</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_url</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>

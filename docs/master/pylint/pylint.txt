@@ -555,24 +555,24 @@ filip/models/ngsi_v2/units.py:365:12: R1705: Unnecessary "else" after "return", 
 filip/models/ngsi_v2/units.py:16:0: C0411: standard import "from functools import lru_cache" should be placed before "import pandas as pd" (wrong-import-order)
 filip/models/ngsi_v2/units.py:18:0: C0411: standard import "from typing import Any, Dict, List, Optional, Union" should be placed before "import pandas as pd" (wrong-import-order)
 ************* Module filip.models.ngsi_v2.subscriptions
-filip/models/ngsi_v2/subscriptions.py:475:0: C0301: Line too long (168/100) (line-too-long)
+filip/models/ngsi_v2/subscriptions.py:496:0: C0301: Line too long (168/100) (line-too-long)
 filip/models/ngsi_v2/subscriptions.py:8:0: E0401: Unable to import 'aenum' (import-error)
 filip/models/ngsi_v2/subscriptions.py:9:0: E0401: Unable to import 'pydantic' (import-error)
 filip/models/ngsi_v2/subscriptions.py:88:4: C0116: Missing function or method docstring (missing-function-docstring)
 filip/models/ngsi_v2/subscriptions.py:89:12: C0103: Variable name "v" doesn't conform to snake_case naming style (invalid-name)
 filip/models/ngsi_v2/subscriptions.py:113:0: C0115: Missing class docstring (missing-class-docstring)
 filip/models/ngsi_v2/subscriptions.py:169:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/subscriptions.py:245:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/subscriptions.py:386:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/subscriptions.py:524:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/subscriptions.py:559:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/subscriptions.py:561:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
-filip/models/ngsi_v2/subscriptions.py:628:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/subscriptions.py:628:25: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
-filip/models/ngsi_v2/subscriptions.py:629:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
-filip/models/ngsi_v2/subscriptions.py:637:4: C0116: Missing function or method docstring (missing-function-docstring)
-filip/models/ngsi_v2/subscriptions.py:637:36: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
-filip/models/ngsi_v2/subscriptions.py:640:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/subscriptions.py:266:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:407:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:545:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:580:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:582:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+filip/models/ngsi_v2/subscriptions.py:649:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:649:25: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/subscriptions.py:650:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/models/ngsi_v2/subscriptions.py:658:4: C0116: Missing function or method docstring (missing-function-docstring)
+filip/models/ngsi_v2/subscriptions.py:658:36: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/models/ngsi_v2/subscriptions.py:661:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
 filip/models/ngsi_v2/subscriptions.py:19:0: C0411: first party import "from filip.utils.validators import validate_mqtt_url, validate_mqtt_topic, validate_kafka_url, validate_kafka_topic, validate_kafka_topic_template, KafkaSaslMechanism, KafkaSecurityProtocol" should be placed before "from .base import AttrsFormat, EntityPattern, Http, Status, Expression" (wrong-import-order)
 filip/models/ngsi_v2/subscriptions.py:28:0: C0411: first party import "from filip.models.ngsi_v2.context import ContextEntity" should be placed before "from .base import AttrsFormat, EntityPattern, Http, Status, Expression" (wrong-import-order)
 filip/models/ngsi_v2/subscriptions.py:29:0: C0411: first party import "from filip.models.ngsi_v2.base import EntityPattern, Expression, DataType" should be placed before "from .base import AttrsFormat, EntityPattern, Http, Status, Expression" (wrong-import-order)
@@ -1143,21 +1143,13 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        """
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        """ (duplicate-code)
+                return False (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
+
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1294,9 +1286,7 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    )
-
- (duplicate-code)
+    ) (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[7:14]
 ==filip.models.ngsi_v2.base:[7:14]
@@ -1363,16 +1353,25 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-    if "#" in iri:
-        index = iri.find("#")
-        return iri[:index]
-    else:
-        # for example if uri looks like:
-        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-        index = iri.rfind("/")
-        return iri[:index]
+        if "#" in iri:
+            index = iri.find("#")
+            return iri[:index]
+        else:
+            # for example if uri looks like:
+            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+            index = iri.rfind("/")
+            return iri[:index]
 
- (duplicate-code)
+    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
+        """Get the entity with the given iri
+        Fast efficient methode
+
+        Args:
+            iri (str)
+
+        Returns:
+            Entity or None if iri does not belong to an Entity
+        """ (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[159:166]
 ==filip.models.ngsi_v2.base:[368:376]
@@ -1399,11 +1398,14 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
+
+ (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.registrations:[131:137]
-==filip.models.ngsi_v2.subscriptions:[690:696]
+==filip.models.ngsi_v2.subscriptions:[711:717]
         "attribute is set to expired (no matter if the client "
         "updates it to active/inactive). Also, for subscriptions "
         "experiencing problems with notifications, the status is "
@@ -1626,10 +1628,10 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
                 return res.json()
             res.raise_for_status() (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
+filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
-filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
+filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
@@ -1638,5 +1640,5 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.semant
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 
 -----------------------------------
-Your code has been rated at 7.66/10
+Your code has been rated at 7.67/10
 
