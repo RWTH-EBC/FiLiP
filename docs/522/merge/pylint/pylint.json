@@ -10799,7 +10799,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[158:178]\n==filip.clients.ngsi_v2.cb:[153:174]\n                    if res.ok:\n                        items.extend(res.json())\n                    else:\n                        res.raise_for_status()\n                self.logger.debug(\"Received: %s\", items)\n                return items\n            res.raise_for_status()\n        finally:\n            if temporary_session is not None:\n                temporary_session.close()\n                self.session = original_session\n\n    def get_version(self) -> Dict:\n        \"\"\"\n        Gets version of Orion-LD context broker\n        Returns:\n            Dictionary with response\n        \"\"\"\n        url = urljoin(self.base_url, \"version\")\n        try:",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[158:178]\n==filip.clients.ngsi_v2.cb:[153:174]\n                    if res.ok:\n                        items.extend(res.json())\n                    else:\n                        res.raise_for_status()\n                self.logger.debug(\"Received: %s\", items)\n                return items\n            res.raise_for_status()\n        finally:\n            if temporary_session is not None:\n                temporary_session.close()\n                self.session = original_session\n\n    # MANAGEMENT API\n    def get_version(self) -> Dict:\n        \"\"\"\n        Gets version of IoT Agent\n        Returns:\n            Dictionary with response\n        \"\"\"\n        url = urljoin(self.base_url, \"version\")\n        try:",
             "message-id": "R0801"
         },
         {
@@ -10810,7 +10810,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[403:415]\n==filip.models.ngsi_v2.context:[166:177]\n        ...,\n        title=\"Entity Type\",\n        description=\"Id of an entity in an NGSI context broker. \"\n        \"Allowed characters are the ones in the plain ASCII set, \"\n        \"except the following ones: control characters, \"\n        \"whitespace, &, ?, / and #.\",\n        json_schema_extra={\"example\": \"Room\"},\n        max_length=256,\n        min_length=1,\n        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe\n        frozen=True,\n    )",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[403:415]\n==filip.models.ngsi_v2.context:[166:177]\n        ...,\n        title=\"Entity Type\",\n        description=\"Id of an entity in an NGSI context broker. \"\n        \"Allowed characters are the ones in the plain ASCII set, \"\n        \"except the following ones: control characters, \"\n        \"whitespace, &, ?, / and #.\",\n        json_schema_extra={\"example\": \"Room\"},\n        max_length=256,\n        min_length=1,\n        frozen=True,\n    )",
             "message-id": "R0801"
         },
         {
@@ -10821,7 +10821,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[384:394]\n==filip.models.ngsi_v2.context:[149:159]\n    model_config = ConfigDict(\n        extra=\"allow\", validate_default=True, validate_assignment=True\n    )\n    id: str = Field(\n        ...,\n        title=\"Entity Id\",\n        description=\"Id of an entity in an NGSI context broker. Allowed \"\n        \"characters are the ones in the plain ASCII set, except \"\n        \"the following ones: control characters, \"\n        \"whitespace, &, ?, / and #.\",",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[384:394]\n==filip.models.ngsi_v2.context:[149:159]\n    model_config = ConfigDict(\n        extra=\"allow\", validate_default=True, validate_assignment=True\n    )\n    id: str = Field(\n        ...,\n        title=\"Entity Id\",\n        description=\"Id of an entity in an NGSI context broker. Allowed \"\n        \"characters are the ones in the plain ASCII set, except \"\n        \"the following ones: control characters, \"\n        \"whitespace, &, ?, / and #.\"",
             "message-id": "R0801"
         },
         {
@@ -10843,7 +10843,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[304:316]\n==filip.models.ngsi_v2.iot:[143:157]\n    type: Union[DataType, str] = Field(\n        default=DataType.TEXT,\n        description=\"The attribute type represents the NGSI value type of the \"\n        \"attribute value. Note that FIWARE NGSI has its own type \"\n        \"system for attribute values, so NGSI value types are not \"\n        \"the same as JSON types. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n    )\n    valid_type = field_validator(\"type\")(validate_fiware_datatype_string_protect)\n\n",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[304:316]\n==filip.models.ngsi_v2.iot:[143:157]\n    type: Union[DataType, str] = Field(\n        default=DataType.TEXT,\n        description=\"The attribute type represents the NGSI value type of the \"\n        \"attribute value. Note that FIWARE NGSI has its own type \"\n        \"system for attribute values, so NGSI value types are not \"\n        \"the same as JSON types. Allowed characters \"\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n    )\n    valid_type = field_validator(\"type\")(validate_fiware_datatype_string_protect)",
             "message-id": "R0801"
         },
         {
@@ -10865,7 +10865,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.semantics.ontology_parser.vocabulary_builder:[14:25]\n==filip.semantics.vocabulary.vocabulary:[93:106]\nclass IdType(str, Enum):\n    \"\"\"Type of object that is referenced by an id/iri\"\"\"\n\n    class_ = \"Class\"\n    object_property = \"Object Property\"\n    data_property = \"Data Property\"\n    datatype = \"Datatype\"\n    relation = \"Relation\"\n    combined_relation = \"Combined Relation\"\n    individual = \"Individual\"\n    source = \"Source\"\n\n",
+            "message": "Similar lines in 2 files\n==filip.semantics.ontology_parser.vocabulary_builder:[14:25]\n==filip.semantics.vocabulary.vocabulary:[93:106]\nclass IdType(str, Enum):\n    class_ = \"Class\"\n    object_property = \"Object Property\"\n    data_property = \"Data Property\"\n    datatype = \"Datatype\"\n    relation = \"Relation\"\n    combined_relation = \"Combined Relation\"\n    individual = \"Individual\"\n    source = \"Source\"\n\n",
             "message-id": "R0801"
         },
         {
@@ -10975,7 +10975,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[880:887]\n==filip.models.ngsi_v2.subscriptions:[103:112]\n        description=\"is an array with the notification data itself which \"\n        \"includes the entity and all concerned attributes. Each \"\n        \"element in the array corresponds to a different entity. \"\n        \"By default, the entities are represented in normalized \"\n        \"mode. However, using the attrsFormat modifier, a \"\n        \"simplified representation mode can be requested.\"\n    )",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_ld.context:[880:887]\n==filip.models.ngsi_v2.subscriptions:[103:112]\n        description=\"is an array with the notification data itself which \"\n        \"includes the entity and all concerned attributes. Each \"\n        \"element in the array corresponds to a different entity. \"\n        \"By default, the entities are represented in normalized \"\n        \"mode. However, using the attrsFormat modifier, a \"\n        \"simplified representation mode can be requested.\"\n    )\n\n",
             "message-id": "R0801"
         },
         {
@@ -11052,7 +11052,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.semantics.ontology_parser.rdfparser:[77:87]\n==filip.semantics.vocabulary.vocabulary:[551:570]\n    if \"#\" in iri:\n        index = iri.find(\"#\")\n        return iri[:index]\n    else:\n        # for example if uri looks like:\n        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH\n        index = iri.rfind(\"/\")\n        return iri[:index]\n\n",
+            "message": "Similar lines in 2 files\n==filip.semantics.ontology_parser.rdfparser:[77:87]\n==filip.semantics.vocabulary.vocabulary:[551:570]\n        if \"#\" in iri:\n            index = iri.find(\"#\")\n            return iri[:index]\n        else:\n            # for example if uri looks like:\n            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH\n            index = iri.rfind(\"/\")\n            return iri[:index]\n\n    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:\n        \"\"\"Get the entity with the given iri\n        Fast efficient methode\n\n        Args:\n            iri (str)\n\n        Returns:\n            Entity or None if iri does not belong to an Entity\n        \"\"\"",
             "message-id": "R0801"
         },
         {
@@ -11085,7 +11085,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[370:379]\n==filip.models.ngsi_v2.iot:[165:171]\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n    )\n    valid_name = field_validator(\"name\")(validate_fiware_attribute_name_regex)",
+            "message": "Similar lines in 2 files\n==filip.models.ngsi_v2.base:[370:379]\n==filip.models.ngsi_v2.iot:[165:171]\n        \"are the ones in the plain ASCII set, except the following \"\n        \"ones: control characters, whitespace, &, ?, / and #.\",\n        max_length=256,\n        min_length=1,\n        # Make it FIWARE-Safe\n    )\n    valid_name = field_validator(\"name\")(validate_fiware_attribute_name_regex)\n\n",
             "message-id": "R0801"
         },
         {
@@ -11140,7 +11140,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[634:641]\n==filip.clients.ngsi_v2.cb:[1689:1695]\n        )\n        headers = self.headers.copy()\n\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[634:641]\n==filip.clients.ngsi_v2.cb:[1689:1695]\n        )\n        headers = self.headers.copy()\n        try:\n            res = self.delete(url=url, headers=headers)\n            if res.ok:\n                self.logger.info(",
             "message-id": "R0801"
         },
         {
@@ -11173,7 +11173,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[132:140]\n==filip.clients.ngsi_v2.cb:[125:132]\n        original_session = self.session\n        temporary_session = None\n        if self.session is None:\n            temporary_session = requests.Session()\n            self.session = temporary_session\n\n        try:\n",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[132:140]\n==filip.clients.ngsi_v2.cb:[125:132]\n        original_session = self.session\n        temporary_session = None\n        if self.session is None:\n            temporary_session = requests.Session()\n            self.session = temporary_session\n\n        try:",
             "message-id": "R0801"
         },
         {
@@ -11217,7 +11217,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.mqtt.encoder.json:[23:30]\n==filip.clients.mqtt.encoder.ulralight:[29:38]\n        return apikey, device_id, payload\n\n    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:\n        if msg_type == IoTAMQTTMessageType.SINGLE:\n            return payload\n        elif msg_type == IoTAMQTTMessageType.MULTI:\n            payload = super()._parse_timestamp(payload=payload)",
+            "message": "Similar lines in 2 files\n==filip.clients.mqtt.encoder.json:[23:30]\n==filip.clients.mqtt.encoder.ulralight:[29:38]\n        return apikey, device_id, payload\n\n    def encode_msg(\n        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType\n    ) -> str:\n        if msg_type == IoTAMQTTMessageType.SINGLE:\n            return payload\n        elif msg_type == IoTAMQTTMessageType.MULTI:\n            payload = super()._parse_timestamp(payload=payload)",
             "message-id": "R0801"
         },
         {
@@ -11261,7 +11261,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[603:610]\n==filip.clients.ngsi_v2.cb:[1272:1277]\n        headers = self.headers.copy()\n        params = {}\n\n        if entity_type:\n            params.update({\"type\": entity_type})\n\n        try:",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[603:610]\n==filip.clients.ngsi_v2.cb:[1272:1277]\n        headers = self.headers.copy()\n        params = {}\n        if entity_type:\n            params.update({\"type\": entity_type})\n        try:",
             "message-id": "R0801"
         },
         {
@@ -11272,7 +11272,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "duplicate-code",
-            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[602:609]\n==filip.clients.ngsi_v2.cb:[539:544]\n        url = urljoin(self.base_url, f\"{self._url_version}/entities/{entity_id}\")\n        headers = self.headers.copy()\n        params = {}\n\n        if entity_type:\n            params.update({\"type\": entity_type})\n",
+            "message": "Similar lines in 2 files\n==filip.clients.ngsi_ld.cb:[602:609]\n==filip.clients.ngsi_v2.cb:[539:544]\n        url = urljoin(self.base_url, f\"{self._url_version}/entities/{entity_id}\")\n        headers = self.headers.copy()\n        params = {}\n        if entity_type:\n            params.update({\"type\": entity_type})",
             "message-id": "R0801"
         },
         {
@@ -11371,7 +11371,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.models.base -> filip.utils.validators)",
+            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb)",
             "message-id": "R0401"
         },
         {
@@ -11382,7 +11382,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client)",
+            "message": "Cyclic import (filip.models.base -> filip.utils.validators)",
             "message-id": "R0401"
         },
         {
@@ -11404,7 +11404,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb)",
+            "message": "Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client)",
             "message-id": "R0401"
         },
         {
@@ -11426,7 +11426,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight)",
+            "message": "Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json)",
             "message-id": "R0401"
         },
         {
@@ -11437,7 +11437,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json)",
+            "message": "Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight)",
             "message-id": "R0401"
         },
         {
@@ -11459,7 +11459,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary)",
+            "message": "Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary)",
             "message-id": "R0401"
         },
         {
@@ -11481,7 +11481,7 @@
             "column": 0,
             "path": "filip/semantics/vocabulary/vocabulary.py",
             "symbol": "cyclic-import",
-            "message": "Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary)",
+            "message": "Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary)",
             "message-id": "R0401"
         }
     ],
@@ -12114,66 +12114,66 @@
         },
         "dependencies": {
             "filip.config": [
-                "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_ld.cb",
-                "filip.semantics.semantics_models",
-                "filip.clients.ngsi_v2.client",
+                "filip.clients.ngsi_v2.iota",
                 "filip",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.client"
             ],
             "filip.clients.ngsi_v2": [
                 "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_manager",
-                "filip.clients.ngsi_v2.client",
-                "filip.utils.filter",
-                "filip.utils.cleanup",
                 "filip",
-                "filip.clients.ngsi_v2.cb"
+                "filip.utils.filter",
+                "filip.clients.ngsi_v2.cb",
+                "filip.utils.cleanup",
+                "filip.semantics.semantics_manager",
+                "filip.clients.ngsi_v2.client"
             ],
             "typing_extensions": [
                 "filip.models.ngsi_ld.context",
-                "filip.models.ngsi_v2.units",
+                "filip.custom_types",
                 "filip.models.ngsi_v2.base",
-                "filip.custom_types"
+                "filip.models.ngsi_v2.units"
             ],
             "filip.models.base": [
-                "filip.models.ngsi_v2.units",
-                "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_ld.cb",
-                "filip.models.ngsi_v2.iot",
-                "filip.utils.validators",
-                "filip.semantics.semantics_models",
+                "filip.clients.base_http_client",
+                "filip.models.ngsi_v2.context",
                 "filip.semantics.semantics_manager",
                 "filip.models",
-                "filip.semantics.vocabulary.vocabulary",
-                "filip.semantics.ontology_parser.rdfparser",
-                "filip.clients.ngsi_v2.client",
                 "filip.semantics.ontology_parser.vocabulary_builder",
-                "filip.models.ngsi_v2.context",
-                "filip.clients.base_http_client",
-                "filip.models.ngsi_v2.base",
+                "filip.clients.ngsi_ld.cb",
+                "filip.utils.validators",
+                "filip.clients.ngsi_v2.iota",
+                "filip.models.ngsi_v2.units",
+                "filip.clients.ngsi_v2.quantumleap",
+                "filip.semantics.vocabulary.vocabulary",
+                "filip.models.ngsi_v2.iot",
                 "filip.clients.ngsi_v2.cb",
-                "filip.semantics.vocabulary.source"
+                "filip.semantics.semantics_models",
+                "filip.semantics.vocabulary.source",
+                "filip.models.ngsi_v2.base",
+                "filip.semantics.ontology_parser.rdfparser",
+                "filip.clients.ngsi_v2.client"
             ],
             "filip.utils": [
                 "filip.clients.mqtt.encoder.base_encoder",
                 "filip.clients.base_http_client"
             ],
             "filip.clients.base_http_client": [
-                "filip.clients.ngsi_v2.quantumleap",
                 "filip.clients.ngsi_ld.cb",
                 "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_v2.client",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.quantumleap",
+                "filip.clients.ngsi_v2.cb",
+                "filip.clients.ngsi_v2.client"
             ],
             "filip": [
                 "filip.clients.ngsi_v2.quantumleap"
             ],
             "filip.models.ngsi_v2.subscriptions": [
+                "filip.clients.ngsi_v2.quantumleap",
                 "filip.utils.filter",
-                "filip.clients.ngsi_v2.cb",
-                "filip.clients.ngsi_v2.quantumleap"
+                "filip.clients.ngsi_v2.cb"
             ],
             "filip.models.ngsi_ld.context": [
                 "filip.utils.cleanup",
@@ -12184,17 +12184,17 @@
                 "filip.clients.ngsi_v2.quantumleap"
             ],
             "filip.clients.exceptions": [
-                "filip.clients.ngsi_v2.cb",
                 "filip.clients.ngsi_v2.quantumleap",
+                "filip.clients.ngsi_v2.cb",
                 "filip.clients.ngsi_v2.iota"
             ],
             "filip.clients.ngsi_v2.cb": [
-                "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_v2"
+                "filip.clients.ngsi_v2",
+                "filip.clients.ngsi_v2.iota"
             ],
             "filip.clients.ngsi_v2.iota": [
-                "filip.clients.ngsi_v2.cb",
-                "filip.clients.ngsi_v2"
+                "filip.clients.ngsi_v2",
+                "filip.clients.ngsi_v2.cb"
             ],
             "filip.clients.ngsi_v2.quantumleap": [
                 "filip.clients.ngsi_v2"
@@ -12206,38 +12206,38 @@
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.utils.simple_ql": [
-                "filip.clients.ngsi_v2.cb",
                 "filip.semantics.semantics_manager",
-                "filip.models.ngsi_v2.base"
+                "filip.models.ngsi_v2.base",
+                "filip.clients.ngsi_v2.cb"
             ],
             "filip.models.ngsi_v2.context": [
                 "filip.utils.model_generation",
-                "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_ld.cb",
-                "filip.semantics.semantics_manager",
+                "filip.clients.ngsi_v2.iota",
+                "filip.clients.ngsi_v2.cb",
                 "filip.semantics.semantics_models",
                 "filip.models.ngsi_v2.subscriptions",
-                "filip.clients.ngsi_v2.cb",
+                "filip.semantics.semantics_manager",
                 "filip.models.ngsi_v2"
             ],
             "filip.models.ngsi_v2.base": [
-                "filip.models.ngsi_v2.iot",
+                "filip.models.ngsi_v2.context",
                 "filip.clients.ngsi_ld.cb",
                 "filip.models.ngsi_v2.registrations",
-                "filip.models.ngsi_v2.context",
+                "filip.clients.ngsi_v2.cb",
                 "filip.models.ngsi_v2.subscriptions",
-                "filip.clients.ngsi_v2.cb"
+                "filip.models.ngsi_v2.iot"
             ],
             "filip.models.ngsi_v2.registrations": [
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.models.ngsi_v2.iot": [
-                "filip.utils.iot",
+                "filip.clients.mqtt.client",
                 "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_manager",
-                "filip.semantics.semantics_models",
+                "filip.utils.iot",
                 "filip.utils.filter",
-                "filip.clients.mqtt.client"
+                "filip.semantics.semantics_models",
+                "filip.semantics.semantics_manager"
             ],
             "filip.utils.filter": [
                 "filip.utils.iot",
@@ -12245,13 +12245,13 @@
             ],
             "filip.clients.mqtt.encoder": [
                 "filip.clients.mqtt.encoder.ulralight",
-                "filip.clients.mqtt.client",
-                "filip.clients.mqtt.encoder.json"
+                "filip.clients.mqtt.encoder.json",
+                "filip.clients.mqtt.client"
             ],
             "filip.models.mqtt": [
                 "filip.clients.mqtt.encoder.ulralight",
-                "filip.clients.mqtt.client",
                 "filip.clients.mqtt.encoder.json",
+                "filip.clients.mqtt.client",
                 "filip.clients.mqtt.encoder.base_encoder"
             ],
             "filip.clients.mqtt.client": [
@@ -12270,28 +12270,28 @@
                 "filip.clients.ngsi_ld.cb"
             ],
             "filip.models": [
-                "filip.utils.filter",
                 "filip.utils.cleanup",
                 "filip.semantics.semantics_manager",
+                "filip.utils.filter",
                 "filip.semantics.semantics_models"
             ],
             "filip.utils.validators": [
-                "filip.models.ngsi_v2.iot",
-                "filip.semantics.semantics_models",
-                "filip.models.base",
-                "filip.utils",
-                "filip.utils.data",
                 "filip.models.ngsi_v2.context",
-                "filip.models.ngsi_v2.base",
+                "filip.models.base",
+                "filip.utils.data",
+                "filip.models.ngsi_ld.context",
+                "filip.semantics.semantics_models",
+                "filip.utils",
                 "filip.models.ngsi_v2.subscriptions",
-                "filip.models.ngsi_ld.context"
+                "filip.models.ngsi_v2.base",
+                "filip.models.ngsi_v2.iot"
             ],
             "filip.utils.datetime": [
                 "filip.utils"
             ],
             "filip.custom_types": [
-                "filip.utils.validators",
-                "filip.models.ngsi_v2.subscriptions"
+                "filip.models.ngsi_v2.subscriptions",
+                "filip.utils.validators"
             ],
             "filip.clients.ngsi_ld.cb": [
                 "filip.utils.cleanup"
@@ -12320,16 +12320,16 @@
                 "filip.semantics.semantics_models"
             ],
             "filip.semantics.vocabulary": [
-                "filip.semantics.semantics_manager",
-                "filip.semantics.vocabulary_configurator",
-                "filip.semantics.vocabulary.combined_relations",
-                "filip.semantics.vocabulary.vocabulary",
-                "filip.semantics.ontology_parser.rdfparser",
                 "filip.semantics.vocabulary.relation",
                 "filip.semantics.ontology_parser.vocabulary_builder",
-                "filip.semantics.vocabulary.entities",
+                "filip.semantics.vocabulary.combined_relations",
+                "filip.semantics.vocabulary_configurator",
+                "filip.semantics.vocabulary.vocabulary",
                 "filip.semantics.vocabulary.source",
-                "filip.semantics.ontology_parser.post_processer"
+                "filip.semantics.ontology_parser.post_processer",
+                "filip.semantics.vocabulary.entities",
+                "filip.semantics.semantics_manager",
+                "filip.semantics.ontology_parser.rdfparser"
             ],
             "filip.semantics.semantics_models": [
                 "filip.semantics.semantics_manager"
@@ -12346,8 +12346,8 @@
             ],
             "filip.semantics.vocabulary.source": [
                 "filip.semantics.vocabulary",
-                "filip.semantics.vocabulary.entities",
-                "filip.semantics.vocabulary.relation"
+                "filip.semantics.vocabulary.relation",
+                "filip.semantics.vocabulary.entities"
             ],
             "filip.semantics.vocabulary.relation": [
                 "filip.semantics.vocabulary"
@@ -13016,66 +13016,66 @@
         },
         "dependencies": {
             "filip.config": [
-                "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_ld.cb",
-                "filip.semantics.semantics_models",
-                "filip.clients.ngsi_v2.client",
+                "filip.clients.ngsi_v2.iota",
                 "filip",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.cb",
+                "filip.semantics.semantics_models",
+                "filip.clients.ngsi_v2.client"
             ],
             "filip.clients.ngsi_v2": [
                 "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_manager",
-                "filip.utils.filter",
-                "filip.utils.cleanup",
-                "filip.clients.ngsi_v2.client",
                 "filip",
-                "filip.clients.ngsi_v2.cb"
+                "filip.utils.filter",
+                "filip.clients.ngsi_v2.cb",
+                "filip.utils.cleanup",
+                "filip.semantics.semantics_manager",
+                "filip.clients.ngsi_v2.client"
             ],
             "typing_extensions": [
                 "filip.models.ngsi_ld.context",
-                "filip.models.ngsi_v2.units",
+                "filip.custom_types",
                 "filip.models.ngsi_v2.base",
-                "filip.custom_types"
+                "filip.models.ngsi_v2.units"
             ],
             "filip.models.base": [
-                "filip.models.ngsi_v2.units",
-                "filip.clients.ngsi_v2.quantumleap",
-                "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_ld.cb",
-                "filip.semantics.semantics_models",
-                "filip.models.ngsi_v2.iot",
-                "filip.semantics.vocabulary.vocabulary",
-                "filip.semantics.semantics_manager",
-                "filip.models",
-                "filip.utils.validators",
-                "filip.semantics.ontology_parser.rdfparser",
-                "filip.clients.ngsi_v2.client",
-                "filip.semantics.ontology_parser.vocabulary_builder",
-                "filip.models.ngsi_v2.context",
                 "filip.clients.base_http_client",
+                "filip.models.ngsi_v2.context",
+                "filip.models",
+                "filip.semantics.ontology_parser.vocabulary_builder",
+                "filip.utils.validators",
+                "filip.clients.ngsi_ld.cb",
+                "filip.clients.ngsi_v2.iota",
+                "filip.models.ngsi_v2.units",
                 "filip.models.ngsi_v2.base",
+                "filip.clients.ngsi_v2.quantumleap",
+                "filip.semantics.vocabulary.vocabulary",
+                "filip.models.ngsi_v2.iot",
                 "filip.clients.ngsi_v2.cb",
-                "filip.semantics.vocabulary.source"
+                "filip.semantics.semantics_models",
+                "filip.semantics.vocabulary.source",
+                "filip.semantics.semantics_manager",
+                "filip.semantics.ontology_parser.rdfparser",
+                "filip.clients.ngsi_v2.client"
             ],
             "filip.utils": [
                 "filip.clients.mqtt.encoder.base_encoder",
                 "filip.clients.base_http_client"
             ],
             "filip.clients.base_http_client": [
-                "filip.clients.ngsi_v2.quantumleap",
                 "filip.clients.ngsi_ld.cb",
                 "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_v2.client",
-                "filip.clients.ngsi_v2.cb"
+                "filip.clients.ngsi_v2.quantumleap",
+                "filip.clients.ngsi_v2.cb",
+                "filip.clients.ngsi_v2.client"
             ],
             "filip": [
                 "filip.clients.ngsi_v2.quantumleap"
             ],
             "filip.models.ngsi_v2.subscriptions": [
+                "filip.clients.ngsi_v2.quantumleap",
                 "filip.utils.filter",
-                "filip.clients.ngsi_v2.cb",
-                "filip.clients.ngsi_v2.quantumleap"
+                "filip.clients.ngsi_v2.cb"
             ],
             "filip.models.ngsi_ld.context": [
                 "filip.utils.cleanup",
@@ -13086,17 +13086,17 @@
                 "filip.clients.ngsi_v2.quantumleap"
             ],
             "filip.clients.exceptions": [
+                "filip.clients.ngsi_v2.quantumleap",
                 "filip.clients.ngsi_v2.cb",
-                "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_v2.quantumleap"
+                "filip.clients.ngsi_v2.iota"
             ],
             "filip.clients.ngsi_v2.cb": [
-                "filip.clients.ngsi_v2.iota",
-                "filip.clients.ngsi_v2"
+                "filip.clients.ngsi_v2",
+                "filip.clients.ngsi_v2.iota"
             ],
             "filip.clients.ngsi_v2.iota": [
-                "filip.clients.ngsi_v2.cb",
-                "filip.clients.ngsi_v2"
+                "filip.clients.ngsi_v2",
+                "filip.clients.ngsi_v2.cb"
             ],
             "filip.clients.ngsi_v2.quantumleap": [
                 "filip.clients.ngsi_v2"
@@ -13108,38 +13108,38 @@
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.utils.simple_ql": [
-                "filip.clients.ngsi_v2.cb",
+                "filip.models.ngsi_v2.base",
                 "filip.semantics.semantics_manager",
-                "filip.models.ngsi_v2.base"
+                "filip.clients.ngsi_v2.cb"
             ],
             "filip.models.ngsi_v2.context": [
                 "filip.utils.model_generation",
-                "filip.clients.ngsi_v2.iota",
                 "filip.clients.ngsi_ld.cb",
-                "filip.semantics.semantics_manager",
+                "filip.clients.ngsi_v2.iota",
+                "filip.clients.ngsi_v2.cb",
                 "filip.semantics.semantics_models",
                 "filip.models.ngsi_v2.subscriptions",
-                "filip.clients.ngsi_v2.cb",
+                "filip.semantics.semantics_manager",
                 "filip.models.ngsi_v2"
             ],
             "filip.models.ngsi_v2.base": [
-                "filip.models.ngsi_v2.iot",
+                "filip.models.ngsi_v2.context",
                 "filip.clients.ngsi_ld.cb",
                 "filip.models.ngsi_v2.registrations",
-                "filip.models.ngsi_v2.context",
+                "filip.clients.ngsi_v2.cb",
                 "filip.models.ngsi_v2.subscriptions",
-                "filip.clients.ngsi_v2.cb"
+                "filip.models.ngsi_v2.iot"
             ],
             "filip.models.ngsi_v2.registrations": [
                 "filip.clients.ngsi_v2.cb"
             ],
             "filip.models.ngsi_v2.iot": [
-                "filip.utils.iot",
+                "filip.clients.mqtt.client",
                 "filip.clients.ngsi_v2.iota",
-                "filip.semantics.semantics_manager",
-                "filip.semantics.semantics_models",
+                "filip.utils.iot",
                 "filip.utils.filter",
-                "filip.clients.mqtt.client"
+                "filip.semantics.semantics_models",
+                "filip.semantics.semantics_manager"
             ],
             "filip.utils.filter": [
                 "filip.utils.iot",
@@ -13147,13 +13147,13 @@
             ],
             "filip.clients.mqtt.encoder": [
                 "filip.clients.mqtt.encoder.ulralight",
-                "filip.clients.mqtt.client",
-                "filip.clients.mqtt.encoder.json"
+                "filip.clients.mqtt.encoder.json",
+                "filip.clients.mqtt.client"
             ],
             "filip.models.mqtt": [
                 "filip.clients.mqtt.encoder.ulralight",
-                "filip.clients.mqtt.client",
                 "filip.clients.mqtt.encoder.json",
+                "filip.clients.mqtt.client",
                 "filip.clients.mqtt.encoder.base_encoder"
             ],
             "filip.clients.mqtt.client": [
@@ -13172,21 +13172,21 @@
                 "filip.clients.ngsi_ld.cb"
             ],
             "filip.models": [
-                "filip.utils.filter",
                 "filip.utils.cleanup",
                 "filip.semantics.semantics_manager",
+                "filip.utils.filter",
                 "filip.semantics.semantics_models"
             ],
             "filip.utils.validators": [
-                "filip.models.ngsi_v2.iot",
-                "filip.semantics.semantics_models",
-                "filip.models.base",
-                "filip.utils",
-                "filip.utils.data",
                 "filip.models.ngsi_v2.context",
-                "filip.models.ngsi_v2.base",
+                "filip.models.base",
+                "filip.utils.data",
+                "filip.models.ngsi_ld.context",
+                "filip.semantics.semantics_models",
+                "filip.utils",
                 "filip.models.ngsi_v2.subscriptions",
-                "filip.models.ngsi_ld.context"
+                "filip.models.ngsi_v2.base",
+                "filip.models.ngsi_v2.iot"
             ],
             "filip.utils.datetime": [
                 "filip.utils"
@@ -13222,16 +13222,16 @@
                 "filip.semantics.semantics_models"
             ],
             "filip.semantics.vocabulary": [
-                "filip.semantics.semantics_manager",
-                "filip.semantics.vocabulary_configurator",
-                "filip.semantics.vocabulary.vocabulary",
-                "filip.semantics.vocabulary.combined_relations",
-                "filip.semantics.ontology_parser.rdfparser",
                 "filip.semantics.vocabulary.relation",
                 "filip.semantics.ontology_parser.vocabulary_builder",
-                "filip.semantics.vocabulary.entities",
+                "filip.semantics.vocabulary.combined_relations",
+                "filip.semantics.vocabulary_configurator",
+                "filip.semantics.vocabulary.vocabulary",
                 "filip.semantics.vocabulary.source",
-                "filip.semantics.ontology_parser.post_processer"
+                "filip.semantics.ontology_parser.post_processer",
+                "filip.semantics.vocabulary.entities",
+                "filip.semantics.semantics_manager",
+                "filip.semantics.ontology_parser.rdfparser"
             ],
             "filip.semantics.semantics_models": [
                 "filip.semantics.semantics_manager"
@@ -13248,8 +13248,8 @@
             ],
             "filip.semantics.vocabulary.source": [
                 "filip.semantics.vocabulary",
-                "filip.semantics.vocabulary.entities",
-                "filip.semantics.vocabulary.relation"
+                "filip.semantics.vocabulary.relation",
+                "filip.semantics.vocabulary.entities"
             ],
             "filip.semantics.vocabulary.relation": [
                 "filip.semantics.vocabulary"

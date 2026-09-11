@@ -1046,10 +1046,7 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
         "If attrs is not used, the order is arbitrary. "
         "Example:"
         "[ 'Ford', 'black', 78.3 ]",
-    )
-
-
-# NGSIv2 entity models (duplicate-code)
+    ) (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[158:178]
 ==filip.clients.ngsi_v2.cb:[153:174]
@@ -1065,10 +1062,9 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
                 temporary_session.close()
                 self.session = original_session
 
-    # MANAGEMENT API
     def get_version(self) -> Dict:
         """
-        Gets version of IoT Agent
+        Gets version of Orion-LD context broker
         Returns:
             Dictionary with response
         """
@@ -1086,7 +1082,6 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
         json_schema_extra={"example": "Room"},
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.standard.value,  # Make it FIWARE-Safe
         frozen=True,
     ) (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
@@ -1101,7 +1096,7 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
         description="Id of an entity in an NGSI context broker. Allowed "
         "characters are the ones in the plain ASCII set, except "
         "the following ones: control characters, "
-        "whitespace, &, ?, / and #.", (duplicate-code)
+        "whitespace, &, ?, / and #." (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.iot:[143:154]
 ==filip.models.ngsi_v2.subscriptions:[53:64]
@@ -1148,8 +1143,6 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
-    """Type of object that is referenced by an id/iri"""
-
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1216,6 +1209,7 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) > 0:
+                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1354,25 +1348,16 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
-        if "#" in iri:
-            index = iri.find("#")
-            return iri[:index]
-        else:
-            # for example if uri looks like:
-            # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
-            index = iri.rfind("/")
-            return iri[:index]
+    if "#" in iri:
+        index = iri.find("#")
+        return iri[:index]
+    else:
+        # for example if uri looks like:
+        # http://webprotege.stanford.edu/RDwpQ8vbi7HaApq8VoqJUXH
+        index = iri.rfind("/")
+        return iri[:index]
 
-    def get_entity_by_iri(self, iri: str) -> Union[None, Entity]:
-        """Get the entity with the given iri
-        Fast efficient methode
-
-        Args:
-            iri (str)
-
-        Returns:
-            Entity or None if iri does not belong to an Entity
-        """ (duplicate-code)
+ (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[159:166]
 ==filip.models.ngsi_v2.base:[368:376]
@@ -1382,16 +1367,17 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
 ==filip.models.ngsi_v2.base:[470:476]
-                        Point,
-                        MultiPoint,
-                        LineString,
-                        MultiLineString,
-                        Polygon,
-                        MultiPolygon, (duplicate-code)
+    Point,
+    MultiPoint,
+    LineString,
+    MultiLineString,
+    Polygon,
+    MultiPolygon, (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.base:[370:379]
 ==filip.models.ngsi_v2.iot:[165:171]
@@ -1450,7 +1436,6 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[1689:1695]
         )
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1482,8 +1467,7 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try:
- (duplicate-code)
+        try: (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[172:178]
 ==filip.clients.ngsi_v2.quantumleap:[70:76]
@@ -1550,10 +1534,8 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[1272:1277]
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
             params.update({"type": entity_type})
-
         try: (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[602:609]
@@ -1561,10 +1543,8 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
-            params.update({"type": entity_type})
- (duplicate-code)
+            params.update({"type": entity_type}) (duplicate-code)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[572:577]
 ==filip.clients.ngsi_v2.cb:[2006:2011]
@@ -1629,16 +1609,16 @@ filip/semantics/vocabulary/vocabulary.py:1:0: R0801: Similar lines in 2 files
             if res.ok:
                 return res.json()
             res.raise_for_status() (duplicate-code)
+filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.models.base -> filip.utils.validators) (cyclic-import)
-filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip -> filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.quantumleap) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.client) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.cb) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.json) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.mqtt.encoder -> filip.clients.mqtt.encoder.ulralight) (cyclic-import)
-filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota) (cyclic-import)
-filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
+filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.clients.ngsi_v2 -> filip.clients.ngsi_v2.iota -> filip.utils.filter) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.semantics.ontology_parser.post_processer -> filip.semantics.vocabulary_configurator) (cyclic-import)
+filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 filip/semantics/vocabulary/vocabulary.py:1:0: R0401: Cyclic import (filip.semantics.vocabulary -> filip.semantics.vocabulary.relation -> filip.semantics.vocabulary.vocabulary) (cyclic-import)
 
 -----------------------------------
