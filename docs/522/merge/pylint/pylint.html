@@ -8206,7 +8206,17 @@
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False</pre></td>
+                return False
+
+    def update_registration(self, registration: Registration):
+        &#34;&#34;&#34;
+        Only the fields included in the request are updated in the registration.
+
+        Args:
+            registration: Registration to update
+        Returns:
+
+        &#34;&#34;&#34;</pre></td>
             </tr>
             
             <tr>
@@ -8253,7 +8263,6 @@ class IdType(str, Enum):
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )</pre></td>
             </tr>
@@ -8334,7 +8343,6 @@ class IdType(str, Enum):
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) &gt; 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -8430,6 +8438,23 @@ class IdType(str, Enum):
 
         return True
 
+    def is_logically_equivalent_to(
+        self,
+        datatype: &#34;Datatype&#34;,
+        vocabulary: &#34;Vocabulary&#34;,
+        old_vocabulary: &#34;Vocabulary&#34;,
+    ) -&gt; bool:
+        &#34;&#34;&#34;Test if this datatype is logically equivalent to the given datatype
+
+        Args:
+            datatype (Datatype): Datatype to compare against
+            vocabulary (Vocabulary): Not used, but needed to keep signature the
+                same as other entities
+            old_vocabulary (Vocabulary): Not used, but needed to keep signature
+                the same as other entities
+        Returns:
+            bool
+        &#34;&#34;&#34;
 </pre></td>
             </tr>
             
@@ -8449,9 +8474,7 @@ class IdType(str, Enum):
         &#34;By default, the entities are represented in normalized &#34;
         &#34;mode. However, using the attrsFormat modifier, a &#34;
         &#34;simplified representation mode can be requested.&#34;
-    )
-
-</pre></td>
+    )</pre></td>
             </tr>
             
             <tr>
@@ -8609,6 +8632,7 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     )</pre></td>
             </tr>
             
@@ -8644,11 +8668,8 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)
-
-</pre></td>
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
             </tr>
             
             <tr>
@@ -8743,6 +8764,7 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1689:1695]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -8801,7 +8823,8 @@ from geojson_pydantic import (
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try:</pre></td>
+        try:
+</pre></td>
             </tr>
             
             <tr>
@@ -8868,9 +8891,7 @@ from pydantic import (
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(
-        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
-    ) -&gt; str:
+    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -&gt; str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
@@ -8940,8 +8961,10 @@ from pydantic import (
 ==filip.clients.ngsi_v2.cb:[1272:1277]
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
+
         try:</pre></td>
             </tr>
             
@@ -9117,7 +9140,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
             </tr>
             
             <tr>
@@ -9137,7 +9160,7 @@ from pydantic import (
                 <td><code>cyclic-import</code></td>
                 <td>R0401</td>
                 <td></td>
-                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.client)</pre></td>
+                <td><pre>Cyclic import (filip.clients.ngsi_v2 -&gt; filip.clients.ngsi_v2.cb)</pre></td>
             </tr>
             
             <tr>
