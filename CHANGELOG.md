@@ -1,3 +1,6 @@
+### v0.7.x
+- update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
+
 ### v0.7.6
 - add: support Kafka notifications, i.e. ``kafka`` and ``kafkaCustom`` in NGSIv2 subscriptions ([#511](https://github.com/RWTH-EBC/FiLiP/issues/511))
 - add: parameter `pagination_limit` for LD cb client ([#519](https://github.com/RWTH-EBC/FiLiP/pull/519))

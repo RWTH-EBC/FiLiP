@@ -205,6 +205,27 @@ class Mqtt(BaseModel):
     user: Optional[str] = Field(default=None, description="username if required")
     passwd: Optional[str] = Field(default=None, description="password if required")
 
+    @field_validator("url", mode="before")
+    @classmethod
+    def coerce_url_to_str(cls, value):
+        """
+        Coerce URL-like objects (e.g. ``pydantic.AnyUrl`` instances) to plain
+        strings before the ``Union[AnyMqttUrl, str]`` validation runs.
+        Pydantic-core's URL validator only accepts native strings or ``Url``
+        instances built with matching constraints, so passing e.g. an
+        ``AnyUrl`` (built without the "mqtt" scheme constraint) raises a
+        ValidationError even if its value is a valid mqtt:// URL.
+
+        Args:
+            value: url to coerce
+
+        Returns:
+            str or original value
+        """
+        if value is not None and not isinstance(value, str):
+            value = str(value)
+        return value
+
     @field_validator("url")
     @classmethod
     def check_url(cls, value):
