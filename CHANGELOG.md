@@ -1,4 +1,7 @@
 ### v0.7.x
+- update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
+
+### v0.7.6
 - add: dynamic fiware header for authentification ([#507](https://github.com/RWTH-EBC/FiLiP/pull/507))
 - add: tutorials for using N5GEH cluster ([#507](https://github.com/RWTH-EBC/FiLiP/pull/507))
 - update: deprecate support for python 3.9 ([#504](https://github.com/RWTH-EBC/FiLiP/pull/504))
