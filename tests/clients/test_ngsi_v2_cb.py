@@ -1100,15 +1100,34 @@ class TestContextBroker(unittest.TestCase):
         new_value = 50
 
         time.sleep(2)
-        self.client.update_attribute_value(
-            entity_id=entity.id,
-            attr_name="temperature",
-            value=new_value,
-            entity_type=entity.type,
-            forcedUpdate=True,
-        )
-        # test if the subscriptions arrives and the content aligns with updates
         max_retry = 15
+
+        # ensure that the msg is successfully sent
+        for _ in range(max_retry):
+            sub = self.client.get_subscription(
+                subscription_id=sub_id
+            )  # check whether it is triggered
+            if (
+                int(sub.notification.timesSent) < 1
+                or not sub.notification.lastSuccessCode
+            ):
+                self.client.update_attribute_value(
+                    entity_id=entity.id,
+                    attr_name="temperature",
+                    value=new_value,
+                    entity_type=entity.type,
+                    forcedUpdate=True,
+                )
+
+            if _ == max_retry - 1:
+                logger.warning(
+                    f"Notification has problem: "
+                    f"\ncode: {sub.notification.lastSuccessCode}"
+                    f"\nfailure: {sub.notification.lastFailure}"
+                    f"\nreason: {sub.notification.lastFailureReason}"
+                )
+
+        # test if the subscriptions arrives and the content aligns with updates
         for _ in range(max_retry):
             if mqtt_agent.sub_message:
                 break
