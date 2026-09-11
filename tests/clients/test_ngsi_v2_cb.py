@@ -1107,10 +1107,7 @@ class TestContextBroker(unittest.TestCase):
             sub = self.client.get_subscription(
                 subscription_id=sub_id
             )  # check whether it is triggered
-            if (
-                int(sub.notification.timesSent) < 1
-                or not sub.notification.lastSuccessCode
-            ):
+            if not sub.notification.timesSent or not sub.notification.lastSuccessCode:
                 self.client.update_attribute_value(
                     entity_id=entity.id,
                     attr_name="temperature",
