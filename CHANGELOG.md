@@ -1,5 +1,9 @@
-### v0.7.x
+### v0.8.0
 - update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
+> - from
+>   - "pydantic>=2.6.0,<2.9.0", "pydantic-settings>=2.0.0,<2.3.0",
+> - to
+>   - "pydantic>=2.12.0,<2.14.0", "pydantic-settings>=2.7.0,<2.12.0"
 
 ### v0.7.6
 - add: support Kafka notifications, i.e. ``kafka`` and ``kafkaCustom`` in NGSIv2 subscriptions ([#511](https://github.com/RWTH-EBC/FiLiP/issues/511))
