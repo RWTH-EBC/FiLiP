@@ -6,6 +6,7 @@
 - fix: exception handling in checking broker version ([#503](https://github.com/RWTH-EBC/FiLiP/pull/503))
 - fix: update regex version for py3.13 compatibility ([#512](https://github.com/RWTH-EBC/FiLiP/pull/512))
 - fix: datatime validation in metadata ([#513](https://github.com/RWTH-EBC/FiLiP/pull/513))
+- chore: update datamodel-code-generator dependency ([#526](https://github.com/RWTH-EBC/FiLiP/pull/526))
 
 ### v0.7.5
 - fix: allow dynamic header composition in v2 http client ([#493](https://github.com/RWTH-EBC/FiLiP/pull/493))
