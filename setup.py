@@ -11,7 +11,7 @@ LONG_DESCRIPTION = readme_path.read_text(encoding="utf-8")
 
 INSTALL_REQUIRES = [
     "aenum~=3.1.15",
-    "datamodel_code_generator[http]~=0.25.0",
+    "datamodel_code_generator[http]>=0.62.0",
     "paho-mqtt~=2.0.0",
     "pandas>=2.1.4,<2.4.0",
     "pandas_datapackage_reader~=0.18.0",
