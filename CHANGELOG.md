@@ -1,3 +1,6 @@
+### v0.8.x
+- update: datamodel-code-generator dependency ([#526](https://github.com/RWTH-EBC/FiLiP/pull/526))
+
 ### v0.8.0
 - update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
 > - from
