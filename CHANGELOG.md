@@ -1,3 +1,6 @@
+### v0.8.1
+- add: recursive handling for 413 error in batch operations ([#529](https://github.com/RWTH-EBC/FiLiP/pull/529))
+
 ### v0.8.0
 - update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
 > - from
