@@ -1983,6 +1983,12 @@ class ContextBrokerClient(BaseHttpClient):
             override_metadata:
                 Bool, replace the existing metadata with the one provided in
                 the request
+
+        If the request is rejected with a 413 (Request Entity Too Large)
+        response, e.g. by an API Gateway with a payload size limit, the
+        entities list is split in half and the operation is retried
+        recursively on each part until the payload is accepted.
+
         Returns:
 
         """
@@ -2016,6 +2022,34 @@ class ContextBrokerClient(BaseHttpClient):
             else:
                 res.raise_for_status()
         except requests.RequestException as err:
+            if (
+                err.response is not None
+                and err.response.status_code == 413
+                and len(entities) > 1
+            ):
+                self.logger.warning(
+                    "Update operation '%s' failed with 413 (payload too large). "
+                    "Retrying with split batches of %d and %d entities.",
+                    action_type,
+                    len(entities) // 2,
+                    len(entities) - len(entities) // 2,
+                )
+                mid = len(entities) // 2
+                self.update(
+                    entities=entities[:mid],
+                    action_type=action_type,
+                    update_format=update_format,
+                    forcedUpdate=forcedUpdate,
+                    override_metadata=override_metadata,
+                )
+                self.update(
+                    entities=entities[mid:],
+                    action_type=action_type,
+                    update_format=update_format,
+                    forcedUpdate=forcedUpdate,
+                    override_metadata=override_metadata,
+                )
+                return
             msg = f"Update operation '{action_type}' failed!"
             raise BaseHttpClientException(message=msg, response=err.response) from err
 
