@@ -1,3 +1,6 @@
+### v0.8.1
+- fix: validate attribute type with fiware std regex ([#528](https://github.com/RWTH-EBC/FiLiP/pull/528))
+
 ### v0.8.0
 - update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
 > - from
