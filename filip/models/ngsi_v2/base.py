@@ -313,7 +313,7 @@ class BaseAttribute(BaseModel):
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
     metadata: Optional[
         Union[
             Dict[str, Metadata],
@@ -398,7 +398,7 @@ class BaseValueAttribute(BaseModel):
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
     value: Optional[Any] = Field(
         default=None, title="Attribute value", description="the actual data"
     )
