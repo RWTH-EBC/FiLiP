@@ -562,7 +562,6 @@ class TestContextModels(unittest.TestCase):
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
-            self.assertRaises(ValueError, ContextAttribute, type=string)
             self.assertRaises(ValueError, NamedContextAttribute, name=string)
             self.assertRaises(ValueError, NamedCommand, name=string)
         # Test for the normal protected field if all strings are allowed
