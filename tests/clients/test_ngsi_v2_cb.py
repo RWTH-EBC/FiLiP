@@ -9,6 +9,8 @@ import time
 import unittest
 import uuid
 from datetime import datetime, timedelta
+from typing import List
+from unittest.mock import patch
 from urllib.parse import urljoin
 
 import paho.mqtt.client as mqtt
@@ -2493,3 +2495,120 @@ class TestContextBroker(unittest.TestCase):
             cb_url=settings.CB_URL,
             iota_url=settings.IOTA_JSON_URL,
         )
+
+
+class TestContextBrokerUpdatePagination(unittest.TestCase):
+    """
+    Unit tests for the automatic 413 (Request Entity Too Large) handling
+    of ContextBrokerClient.update(). These tests mock the HTTP layer and
+    therefore do not require a running Context Broker.
+    """
+
+    def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
+        self.client = ContextBrokerClient(url="http://localhost:1026")
+
+    def tearDown(self) -> None:
+        """
+        Cleanup
+        """
+        self.client.close()
+
+    @staticmethod
+    def _make_response(status_code: int) -> requests.models.Response:
+        """
+        Create a mock requests response with the given status code
+        """
+        response = requests.models.Response()
+        response.status_code = status_code
+        response._content = b'{"error": "MockError"}'
+        response.headers["Content-Type"] = "application/json"
+        return response
+
+    def _make_entities(self, count: int) -> List[ContextEntity]:
+        """
+        Create a list of test entities
+        """
+        return [
+            ContextEntity(
+                id=f"test:entity:{i}",
+                type="TestType",
+                a=ContextAttribute(type="Number", value=i),
+            )
+            for i in range(count)
+        ]
+
+    def test_update_splits_batch_on_413(self):
+        """
+        A 413 response must lead to the entity list being split in half
+        and retried until all entities are sent successfully
+        """
+        entities = self._make_entities(8)
+        expected_ids = {entity.id for entity in entities}
+
+        responses = [
+            self._make_response(413),  # full batch of 8 entities
+            self._make_response(200),  # first half of 4 entities
+            self._make_response(200),  # second half of 4 entities
+        ]
+        with patch.object(self.client, "post", side_effect=responses) as mock_post:
+            self.client.update(entities=entities, action_type=ActionType.APPEND)
+
+        self.assertEqual(mock_post.call_count, 3)
+        first_call_ids = [
+            entity["id"]
+            for entity in mock_post.call_args_list[0].kwargs["json"]["entities"]
+        ]
+        self.assertEqual(first_call_ids, [entity.id for entity in entities])
+
+        # Verify exact split sizes and ordering
+        call_1_ids = [
+            e["id"] for e in mock_post.call_args_list[1].kwargs["json"]["entities"]
+        ]
+        call_2_ids = [
+            e["id"] for e in mock_post.call_args_list[2].kwargs["json"]["entities"]
+        ]
+
+        expected_all_ids = [e.id for e in entities]
+        self.assertEqual(call_1_ids, expected_all_ids[:4])
+        self.assertEqual(call_2_ids, expected_all_ids[4:])
+
+    def test_update_single_entity_413_raises(self):
+        """
+        If a single entity alone causes a 413 there is nothing to split,
+        the exception must be raised
+        """
+        entities = self._make_entities(1)
+        with patch.object(
+            self.client, "post", return_value=self._make_response(413)
+        ) as mock_post:
+            with self.assertRaises(BaseHttpClientException):
+                self.client.update(entities=entities, action_type=ActionType.APPEND)
+        self.assertEqual(mock_post.call_count, 1)
+
+    def test_update_no_retry_on_other_errors(self):
+        """
+        Non-413 errors must not trigger a retry
+        """
+        entities = self._make_entities(4)
+        with patch.object(
+            self.client, "post", return_value=self._make_response(400)
+        ) as mock_post:
+            with self.assertRaises(BaseHttpClientException):
+                self.client.update(entities=entities, action_type=ActionType.APPEND)
+        self.assertEqual(mock_post.call_count, 1)
+
+    def test_update_success_single_request(self):
+        """
+        If the first request succeeds, no additional requests may be made
+        """
+        entities = self._make_entities(4)
+        with patch.object(
+            self.client, "post", return_value=self._make_response(200)
+        ) as mock_post:
+            self.client.update(entities=entities, action_type=ActionType.APPEND)
+        self.assertEqual(mock_post.call_count, 1)
