@@ -10,7 +10,7 @@ For further details of the language please refer to:
 https://telefonicaid.github.io/fiware-orion/api/v2/stable/
 """
 
-import regex as re
+import re
 from aenum import Enum
 from typing import Union, List, Tuple, Any
 
@@ -137,6 +137,8 @@ class QueryStatement(Tuple):
     """
     Simple query statement
     """
+    _FIELD = r"\w(?:\w|[^\w&,?/,\#,\*\s]\w)*"
+    _VALUE = r"[\w.,:'-]+"
 
     def __new__(cls, left: str, op: Union[str, Operator], right: Any):
         q = tuple.__new__(QueryStatement, (left, op, right))
@@ -184,33 +186,6 @@ class QueryStatement(Tuple):
             right = self[2]
         return "".join([self[0], self[1], right])
 
-    @classmethod
-    def parse_str(cls, string: str):
-        """
-        Generates QueryStatement form string
-
-        Args:
-            string:
-
-        Returns:
-            QueryStatement
-        """
-        for op in Operator.list():
-            if re.fullmatch(
-                rf"^\w(?:(?:\w|[^&,?,/,#,\*,\s]\w)?)*{op}[\w.,:'-]+$", string
-            ):
-                args = string.split(op)
-                if len(args) == 2:
-                    if args[1].isnumeric():
-                        try:
-                            right = int(args[1])
-                        except ValueError:
-                            right = float(args[1])
-                        return QueryStatement(args[0], op, right)
-                    return QueryStatement(args[0], op, args[1])
-                raise ValueError
-        raise ValueError("Invalid query statement string!")
-
     def __str__(self):
         """Return str(self)."""
         return self.to_str()
@@ -218,6 +193,33 @@ class QueryStatement(Tuple):
     def __repr__(self):
         """Return repr(self)."""
         return self.to_str().__repr__()
+
+    @classmethod
+    def parse_str(cls, string: str):
+        """
+        Generates QueryStatement from string
+
+        Args:
+            string: e.g. "temperature>=44.5"
+
+        Returns:
+            QueryStatement
+        """
+        value: Union[str, int, float]
+        for op in Operator.list():
+            pattern = rf"^{cls._FIELD}{re.escape(op)}{cls._VALUE}$"
+            if re.fullmatch(pattern, string):
+                args = string.split(op)
+                if len(args) == 2:
+                    if args[1].isnumeric():
+                        try:
+                            value = int(args[1])
+                        except ValueError:
+                            value = float(args[1])
+                        return QueryStatement(args[0], op, value)
+                    return QueryStatement(args[0], op, args[1])
+                raise ValueError
+        raise ValueError("Invalid query statement string!")
 
 
 class QueryString:
