@@ -7696,7 +7696,10 @@
         &#34;If attrs is not used, the order is arbitrary. &#34;
         &#34;Example:&#34;
         &#34;[ &#39;Ford&#39;, &#39;black&#39;, 78.3 ]&#34;,
-    )</pre></td>
+    )
+
+
+# NGSIv2 entity models</pre></td>
             </tr>
             
             <tr>
@@ -7721,9 +7724,10 @@
                 temporary_session.close()
                 self.session = original_session
 
+    # MANAGEMENT API
     def get_version(self) -&gt; Dict:
         &#34;&#34;&#34;
-        Gets version of Orion-LD context broker
+        Gets version of IoT Agent
         Returns:
             Dictionary with response
         &#34;&#34;&#34;
@@ -7773,17 +7777,7 @@
             return destination_entity.id == destination_id
         except requests.RequestException as err:
             if err.response.status_code == 404:
-                return False
-
-    def update_registration(self, registration: Registration):
-        &#34;&#34;&#34;
-        Only the fields included in the request are updated in the registration.
-
-        Args:
-            registration: Registration to update
-        Returns:
-
-        &#34;&#34;&#34;</pre></td>
+                return False</pre></td>
             </tr>
             
             <tr>
@@ -7807,9 +7801,7 @@
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)
-
-</pre></td>
+    valid_type = field_validator(&#34;type&#34;)(validate_fiware_datatype_string_protect)</pre></td>
             </tr>
             
             <tr>
@@ -7868,6 +7860,8 @@
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    &#34;&#34;&#34;Type of object that is referenced by an id/iri&#34;&#34;&#34;
+
     class_ = &#34;Class&#34;
     object_property = &#34;Object Property&#34;
     data_property = &#34;Data Property&#34;
@@ -7941,7 +7935,6 @@ class IdType(str, Enum):
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     )</pre></td>
             </tr>
@@ -7980,7 +7973,6 @@ class IdType(str, Enum):
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) &gt; 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -8076,23 +8068,6 @@ class IdType(str, Enum):
 
         return True
 
-    def is_logically_equivalent_to(
-        self,
-        datatype: &#34;Datatype&#34;,
-        vocabulary: &#34;Vocabulary&#34;,
-        old_vocabulary: &#34;Vocabulary&#34;,
-    ) -&gt; bool:
-        &#34;&#34;&#34;Test if this datatype is logically equivalent to the given datatype
-
-        Args:
-            datatype (Datatype): Datatype to compare against
-            vocabulary (Vocabulary): Not used, but needed to keep signature the
-                same as other entities
-            old_vocabulary (Vocabulary): Not used, but needed to keep signature
-                the same as other entities
-        Returns:
-            bool
-        &#34;&#34;&#34;
 </pre></td>
             </tr>
             
@@ -8337,6 +8312,7 @@ from geojson_pydantic import (
 ==filip.clients.ngsi_v2.cb:[1689:1695]
         )
         headers = self.headers.copy()
+
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -8395,7 +8371,8 @@ from geojson_pydantic import (
             temporary_session = requests.Session()
             self.session = temporary_session
 
-        try:</pre></td>
+        try:
+</pre></td>
             </tr>
             
             <tr>
@@ -8467,11 +8444,8 @@ from geojson_pydantic import (
         &#34;ones: control characters, whitespace, &amp;, ?, / and #.&#34;,
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     )
-    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)
-
-</pre></td>
+    valid_name = field_validator(&#34;name&#34;)(validate_fiware_attribute_name_regex)</pre></td>
             </tr>
             
             <tr>
@@ -8521,7 +8495,9 @@ from filip.semantics.vocabulary import (
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -&gt; str:
+    def encode_msg(
+        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
+    ) -&gt; str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
@@ -8591,8 +8567,10 @@ from filip.semantics.vocabulary import (
 ==filip.clients.ngsi_v2.cb:[1272:1277]
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
             params.update({&#34;type&#34;: entity_type})
+
         try:</pre></td>
             </tr>
             
@@ -8609,10 +8587,8 @@ from filip.semantics.vocabulary import (
         url = urljoin(self.base_url, f&#34;{self._url_version}/entities/{entity_id}&#34;)
         headers = self.headers.copy()
         params = {}
-
         if entity_type:
-            params.update({&#34;type&#34;: entity_type})
-</pre></td>
+            params.update({&#34;type&#34;: entity_type})</pre></td>
             </tr>
             
             <tr>
@@ -10405,16 +10381,6 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>13</td>
-                <td>0</td>
-                <td>error</td>
-                <td><code>import-error</code></td>
-                <td>E0401</td>
-                <td></td>
-                <td><pre>Unable to import &#39;regex&#39;</pre></td>
-            </tr>
-            
-            <tr>
                 <td>14</td>
                 <td>0</td>
                 <td>error</td>
@@ -10431,11 +10397,11 @@ from pydantic import (
                 <td><code>wrong-import-order</code></td>
                 <td>C0411</td>
                 <td></td>
-                <td><pre>standard import &#34;from typing import Union, List, Tuple, Any&#34; should be placed before &#34;import regex as re&#34;</pre></td>
+                <td><pre>standard import &#34;from typing import Union, List, Tuple, Any&#34; should be placed before &#34;from aenum import Enum&#34;</pre></td>
             </tr>
             
             <tr>
-                <td>142</td>
+                <td>149</td>
                 <td>8</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10445,7 +10411,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>143</td>
+                <td>150</td>
                 <td>8</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10455,7 +10421,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>160</td>
+                <td>167</td>
                 <td>8</td>
                 <td>refactor</td>
                 <td><code>no-else-return</code></td>
@@ -10465,7 +10431,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>198</td>
+                <td>214</td>
                 <td>12</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10475,7 +10441,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>229</td>
+                <td>236</td>
                 <td>14</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10485,7 +10451,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>235</td>
+                <td>242</td>
                 <td>31</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10495,7 +10461,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>259</td>
+                <td>266</td>
                 <td>21</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10505,7 +10471,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>274</td>
+                <td>281</td>
                 <td>21</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10515,7 +10481,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>284</td>
+                <td>291</td>
                 <td>12</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10525,7 +10491,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>292</td>
+                <td>299</td>
                 <td>22</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10535,7 +10501,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>321</td>
+                <td>328</td>
                 <td>8</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -10545,7 +10511,7 @@ from pydantic import (
             </tr>
             
             <tr>
-                <td>323</td>
+                <td>330</td>
                 <td>12</td>
                 <td>convention</td>
                 <td><code>invalid-name</code></td>
@@ -11727,7 +11693,7 @@ from pydantic import (
             
             <tr>
                 <td>error</td>
-                <td>165</td>
+                <td>164</td>
             </tr>
             
             <tr>
@@ -11757,7 +11723,7 @@ from pydantic import (
             
             <tr>
                 <td>import-error</td>
-                <td>96</td>
+                <td>95</td>
             </tr>
             
             <tr>
@@ -12172,7 +12138,7 @@ from pydantic import (
             
             <tr>
                 <td>filip.utils.simple_ql</td>
-                <td>15</td>
+                <td>14</td>
             </tr>
             
             <tr>
@@ -12417,7 +12383,7 @@ from pydantic import (
             
             <tr>
                 <td>filip/utils/simple_ql.py</td>
-                <td>15</td>
+                <td>14</td>
             </tr>
             
             <tr>

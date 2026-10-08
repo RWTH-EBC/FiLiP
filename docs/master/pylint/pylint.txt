@@ -81,21 +81,20 @@ filip/config.py:11:0: C0411: standard import "import os" should be placed before
 filip/custom_types.py:5:0: E0401: Unable to import 'pydantic' (import-error)
 filip/custom_types.py:7:0: E0401: Unable to import 'pydantic_core' (import-error)
 ************* Module filip.utils.simple_ql
-filip/utils/simple_ql.py:13:0: E0401: Unable to import 'regex' (import-error)
 filip/utils/simple_ql.py:14:0: E0401: Unable to import 'aenum' (import-error)
-filip/utils/simple_ql.py:142:8: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:143:8: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:160:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
-filip/utils/simple_ql.py:198:12: C0103: Variable name "op" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:229:14: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:235:31: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:259:21: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:274:21: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:284:12: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:292:22: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:321:8: C0103: Variable name "qs" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:323:12: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
-filip/utils/simple_ql.py:15:0: C0411: standard import "from typing import Union, List, Tuple, Any" should be placed before "import regex as re" (wrong-import-order)
+filip/utils/simple_ql.py:149:8: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:150:8: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:167:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+filip/utils/simple_ql.py:214:12: C0103: Variable name "op" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:236:14: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:242:31: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:266:21: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:281:21: C0103: Argument name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:291:12: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:299:22: C0103: Argument name "v" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:328:8: C0103: Variable name "qs" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:330:12: C0103: Variable name "q" doesn't conform to snake_case naming style (invalid-name)
+filip/utils/simple_ql.py:15:0: C0411: standard import "from typing import Union, List, Tuple, Any" should be placed before "from aenum import Enum" (wrong-import-order)
 ************* Module filip.utils.datetime
 filip/utils/datetime.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module filip.utils.validators
@@ -1147,6 +1146,8 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.vocabulary_builder:[14:25]
 ==filip.semantics.vocabulary.vocabulary:[93:106]
 class IdType(str, Enum):
+    """Type of object that is referenced by an id/iri"""
+
     class_ = "Class"
     object_property = "Object Property"
     data_property = "Data Property"
@@ -1193,6 +1194,7 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # pattern=FiwareRegex.string_protect.value,
         # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
@@ -1213,7 +1215,6 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.semantics_models:[107:116]
 ==filip.semantics.vocabulary.entities:[638:648]
             if len(self.allowed_chars) > 0:
-                # if allowed chars is empty all chars are allowed
                 for char in value:
                     if char not in self.allowed_chars:
                         return False
@@ -1363,9 +1364,7 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
         "By default, the entities are represented in normalized "
         "mode. However, using the attrsFormat modifier, a "
         "simplified representation mode can be requested."
-    )
-
- (duplicate-code)
+    ) (duplicate-code)
 filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.semantics.ontology_parser.rdfparser:[77:87]
 ==filip.semantics.vocabulary.vocabulary:[551:570]
@@ -1419,7 +1418,6 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_v2.cb:[1689:1695]
         )
         headers = self.headers.copy()
-
         try:
             res = self.delete(url=url, headers=headers)
             if res.ok:
@@ -1470,7 +1468,6 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
-        # Make it FIWARE-Safe
     ) (duplicate-code)
 filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_ld.context:[8:14]
@@ -1488,8 +1485,11 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
         "ones: control characters, whitespace, &, ?, / and #.",
         max_length=256,
         min_length=1,
+        # Make it FIWARE-Safe
     )
-    valid_name = field_validator("name")(validate_fiware_attribute_name_regex) (duplicate-code)
+    valid_name = field_validator("name")(validate_fiware_attribute_name_regex)
+
+ (duplicate-code)
 filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.models.ngsi_v2.registrations:[131:137]
 ==filip.models.ngsi_v2.subscriptions:[711:717]
@@ -1512,9 +1512,7 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.mqtt.encoder.ulralight:[29:38]
         return apikey, device_id, payload
 
-    def encode_msg(
-        self, device_id: str, payload: Any, msg_type: IoTAMQTTMessageType
-    ) -> str:
+    def encode_msg(self, device_id, payload: Any, msg_type: IoTAMQTTMessageType) -> str:
         if msg_type == IoTAMQTTMessageType.SINGLE:
             return payload
         elif msg_type == IoTAMQTTMessageType.MULTI:
@@ -1559,8 +1557,10 @@ filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
         url = urljoin(self.base_url, f"{self._url_version}/entities/{entity_id}")
         headers = self.headers.copy()
         params = {}
+
         if entity_type:
-            params.update({"type": entity_type}) (duplicate-code)
+            params.update({"type": entity_type})
+ (duplicate-code)
 filip/semantics/vocabulary/relation.py:1:0: R0801: Similar lines in 2 files
 ==filip.clients.ngsi_ld.cb:[572:577]
 ==filip.clients.ngsi_v2.cb:[2006:2011]
