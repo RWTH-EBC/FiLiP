@@ -1,3 +1,6 @@
+### v0.8.1
+- fix: ``regex`` dependency issue for python 3.14 on Windows. Use `re` module instead. ([#531](https://github.com/RWTH-EBC/FiLiP/pull/531/))
+
 ### v0.8.0
 - update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
 > - from
