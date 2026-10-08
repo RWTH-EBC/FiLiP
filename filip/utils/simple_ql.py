@@ -137,7 +137,12 @@ class QueryStatement(Tuple):
     """
     Simple query statement
     """
+    # attribute name: starts with a word character, followed by word
+    # characters or pairs of an allowed special character and a word
+    # character. Equivalent to the previously used nested-quantifier
+    # pattern, but deterministic and therefore matched in linear time.
     _FIELD = r"\w(?:\w|[^\w&,?/,\#,\*\s]\w)*"
+    # comparison value: characters allowed on the right-hand side
     _VALUE = r"[\w.,:'-]+"
 
     def __new__(cls, left: str, op: Union[str, Operator], right: Any):

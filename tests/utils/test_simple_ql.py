@@ -45,7 +45,11 @@ class TestContextBroker(unittest.TestCase):
         self.assertEqual(set_from_test_string, set_from_string)
 
     def test_parse_roundtrip(self):
-        """Values that are not plain digits must stay strings"""
+        """
+        Test that only plain-digit values are converted to numbers. Values
+        like "1e5", "Infinity" or "1_000" must remain strings so that
+        parsing and string conversion are inverse operations.
+        """
         for statement in [
             "attr==1e5",
             "attr==Infinity",
@@ -57,6 +61,10 @@ class TestContextBroker(unittest.TestCase):
             self.assertEqual(str(QueryStatement.parse_str(statement)), statement)
 
     def test_parse_invalid_statements(self):
+        """
+        Test that malformed statements are rejected with a ValueError
+        instead of being parsed into a wrong query.
+        """
         for statement in [
             "attr",
             "==20",
@@ -70,9 +78,18 @@ class TestContextBroker(unittest.TestCase):
                 QueryStatement.parse_str(statement)
 
     def test_parse_special_field_names(self):
+        """
+        Test that attribute names may contain special characters as long as
+        each of them is followed by a word character.
+        """
         statement = QueryStatement.parse_str("attr:x>=1")
         self.assertEqual(tuple(statement), ("attr:x", ">=", 1))
 
     def test_parse_long_invalid_input(self):
+        """
+        Test that parsing an invalid statement terminates quickly regardless
+        of the input length. This guards against catastrophic backtracking
+        in the regular expression of QueryStatement.parse_str.
+        """
         with self.assertRaises(ValueError):
             QueryStatement.parse_str("a" * 5000 + "!")
