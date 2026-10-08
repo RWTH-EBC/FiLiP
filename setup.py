@@ -18,7 +18,6 @@ INSTALL_REQUIRES = [
     "pydantic>=2.12.0,<2.14.0",
     "pydantic-settings>=2.7.0,<2.12.0",
     "stringcase>=1.2.0",
-    "regex~=2024.11.6",
     "requests~=2.33.0",
     "rapidfuzz~=3.4.0",
     "geojson-pydantic~=1.0.2",
