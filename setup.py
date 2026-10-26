@@ -10,22 +10,22 @@ readme_path = Path(__file__).parent.joinpath("README.md")
 LONG_DESCRIPTION = readme_path.read_text(encoding="utf-8")
 
 INSTALL_REQUIRES = [
-    "aenum~=3.1.15",
+    "aenum>=3.1.15",
     "datamodel_code_generator[http]~=0.25.0",
-    "paho-mqtt~=2.0.0",
+    "paho-mqtt>=2.0.0",
     "pandas>=2.3.3,<2.4.0",
     "pandas_datapackage_reader~=0.18.0",
     "pydantic>=2.12.0,<2.14.0",
     "pydantic-settings>=2.7.0,<2.12.0",
     "stringcase>=1.2.0",
-    "requests~=2.33.0",
-    "rapidfuzz~=3.4.0",
+    "requests>=2.32.0",
+    "rapidfuzz>=3.4.0",
     "geojson-pydantic~=1.0.2",
-    "wget~=3.2",
-    "PyLD~=2.0.4",
-    "pyjexl~=0.3.0",
-    "packaging~=24.1",
-    "python-keycloak~=7.1.1",
+    "wget>=3.2",
+    "PyLD>=2.0.4",
+    "pyjexl>=0.3.0",
+    "packaging>=24.1",
+    "python-keycloak>=7.1.1,<7.2.0",
 ]
 
 
