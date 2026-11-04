@@ -2061,6 +2061,12 @@
 <span class="sd">            override_metadata:</span>
 <span class="sd">                Bool, replace the existing metadata with the one provided in</span>
 <span class="sd">                the request</span>
+
+<span class="sd">        If the request is rejected with a 413 (Request Entity Too Large)</span>
+<span class="sd">        response, e.g. by an API Gateway with a payload size limit, the</span>
+<span class="sd">        entities list is split in half and the operation is retried</span>
+<span class="sd">        recursively on each part until the payload is accepted.</span>
+
 <span class="sd">        Returns:</span>
 
 <span class="sd">        """</span>
@@ -2094,6 +2100,34 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">413</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">"Update operation '</span><span class="si">%s</span><span class="s2">' failed with 413 (payload too large). "</span>
+                    <span class="s2">"Retrying with split batches of </span><span class="si">%d</span><span class="s2"> and </span><span class="si">%d</span><span class="s2"> entities."</span><span class="p">,</span>
+                    <span class="n">action_type</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">mid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span>
+                    <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
+                    <span class="n">update_format</span><span class="o">=</span><span class="n">update_format</span><span class="p">,</span>
+                    <span class="n">forcedUpdate</span><span class="o">=</span><span class="n">forcedUpdate</span><span class="p">,</span>
+                    <span class="n">override_metadata</span><span class="o">=</span><span class="n">override_metadata</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">[</span><span class="n">mid</span><span class="p">:],</span>
+                    <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
+                    <span class="n">update_format</span><span class="o">=</span><span class="n">update_format</span><span class="p">,</span>
+                    <span class="n">forcedUpdate</span><span class="o">=</span><span class="n">forcedUpdate</span><span class="p">,</span>
+                    <span class="n">override_metadata</span><span class="o">=</span><span class="n">override_metadata</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Update operation '</span><span class="si">{</span><span class="n">action_type</span><span class="si">}</span><span class="s2">' failed!"</span>
             <span class="k">raise</span> <span class="n">BaseHttpClientException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span></div>
 

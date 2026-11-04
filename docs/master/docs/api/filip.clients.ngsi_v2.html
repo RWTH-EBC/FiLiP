@@ -790,6 +790,10 @@ the request</p></li>
 </ul>
 </dd>
 </dl>
+<p>If the request is rejected with a 413 (Request Entity Too Large)
+response, e.g. by an API Gateway with a payload size limit, the
+entities list is split in half and the operation is retried
+recursively on each part until the payload is accepted.</p>
 <p>Returns:</p>
 </dd></dl>
 
