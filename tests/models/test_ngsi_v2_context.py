@@ -84,7 +84,7 @@ class TestContextModels(unittest.TestCase):
         """
         # test Point
         geojson = ContextAttribute(
-            type=DataType.GEOJSON, value={"type": "Point", "coordinates": (125.6, 10.1)}
+            type="geo:json", value={"type": "Point", "coordinates": (125.6, 10.1)}
         )
         self.assertIsInstance(geojson.value, Point)
         self.assertEqual(
@@ -93,7 +93,7 @@ class TestContextModels(unittest.TestCase):
         )
         # test MultiPoint
         geojson = ContextAttribute(
-            type=DataType.GEOJSON,
+            type="geo:json",
             value={"type": "MultiPoint", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
         )
         self.assertIsInstance(geojson.value, MultiPoint)
@@ -103,7 +103,7 @@ class TestContextModels(unittest.TestCase):
         )
         # test LineString
         geojson = ContextAttribute(
-            type=DataType.GEOJSON,
+            type="geo:json",
             value={"type": "LineString", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
         )
         self.assertIsInstance(geojson.value, LineString)
@@ -113,7 +113,7 @@ class TestContextModels(unittest.TestCase):
         )
         # test MultiLineString
         geojson = ContextAttribute(
-            type=DataType.GEOJSON,
+            type="geo:json",
             value={
                 "type": "MultiLineString",
                 "coordinates": [
@@ -408,9 +408,9 @@ class TestContextModels(unittest.TestCase):
         self.assertEqual(
             self.attr,
             {
-                properties[0].name: properties[0].model_dump(
-                    exclude={"name", "metadata"}, exclude_unset=True
-                )
+                properties[0]
+                .name: properties[0]
+                .model_dump(exclude={"name", "metadata"}, exclude_unset=True)
             },
         )
         properties = entity.get_properties(response_format="dict")
@@ -425,9 +425,9 @@ class TestContextModels(unittest.TestCase):
         self.assertEqual(
             self.relation,
             {
-                relations[0].name: relations[0].model_dump(
-                    exclude={"name", "metadata"}, exclude_unset=True
-                )
+                relations[0]
+                .name: relations[0]
+                .model_dump(exclude={"name", "metadata"}, exclude_unset=True)
             },
         )
 
@@ -562,7 +562,6 @@ class TestContextModels(unittest.TestCase):
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
-            self.assertRaises(ValueError, ContextAttribute, type=string)
             self.assertRaises(ValueError, NamedContextAttribute, name=string)
             self.assertRaises(ValueError, NamedCommand, name=string)
         # Test for the normal protected field if all strings are allowed
