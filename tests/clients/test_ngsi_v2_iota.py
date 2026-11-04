@@ -8,6 +8,7 @@ import logging
 import requests
 import json
 
+from urllib.parse import urljoin
 from uuid import uuid4
 
 from filip.models.base import FiwareHeader, DataType
@@ -795,7 +796,10 @@ class TestAgent(unittest.TestCase):
             """
             headers = {"Content-Type": "application/json"}
             headers.update(self.fiware_header.model_dump(by_alias=True))
-            url = f"{settings.IOTA_URL}/iot/devices"
+            # NOTE: use urljoin, because str(settings.IOTA_URL) may contain
+            # a trailing slash which would result in a double slash and a
+            # 404 response from the IoT Agent
+            url = urljoin(str(settings.IOTA_URL), "iot/devices")
 
             # The IoT Agent provisioning API expects a JSON body with a 'devices' key
             payload = json.dumps({"devices": [json.loads(data)]})
@@ -810,17 +814,18 @@ class TestAgent(unittest.TestCase):
             """
             headers = {"Content-Type": "application/json"}
             headers.update(self.fiware_header.model_dump(by_alias=True))
-            url = f"{settings.IOTA_URL}/iot/devices/{device_id}"
+            url = urljoin(str(settings.IOTA_URL), f"iot/devices/{device_id}")
 
             response = requests.request("DELETE", url, headers=headers)
             return response
 
         # 1. Define and send an invalid device to the IoT Agent.
         # duplicated attributes
+        # NOTE: protocol must match the JSON IoT Agent this test class uses
         device_invalid = {
             "device_id": "test:invalid_device:001",
             "entity_type": "test",
-            "protocol": "IoTA-UL",
+            "protocol": "IoTA-JSON",
             "transport": "MQTT",
             "entity_name": "urn:ngsi-ld:Thing:invalid",
             "attributes": [
@@ -842,7 +847,7 @@ class TestAgent(unittest.TestCase):
                 device_id=f"test:valid_device:{i}",
                 entity_name=f"urn:ngsi-ld:Thing:valid{i}",
                 entity_type="Thing",
-                protocol="IoTA-UL",
+                protocol="IoTA-JSON",
                 transport="MQTT",
             )
             for i in range(5)
