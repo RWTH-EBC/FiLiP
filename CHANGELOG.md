@@ -1,4 +1,5 @@
 ### Unreleased
+- add: recursive handling for 413 error in batch operations ([#529](https://github.com/RWTH-EBC/FiLiP/pull/529))
 - update: from ``PyLD~=2.0.4`` to ``PyLD~=3.3.0`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
 - update: from ``packaging~=24.1`` to ``packaging~=26.3`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
 - update: from ``aenum~=3.1.15`` to ``aenum~=3.1.17`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
