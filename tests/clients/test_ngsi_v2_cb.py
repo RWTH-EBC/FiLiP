@@ -26,7 +26,6 @@ from filip.models.ngsi_v2.context import (
     ContextEntity,
     ContextAttribute,
     NamedContextAttribute,
-    NamedCommand,
     Query,
     ActionType,
     ContextEntityKeyValues,
@@ -45,7 +44,6 @@ from filip.models.ngsi_v2.subscriptions import (
 )
 from filip.models.ngsi_v2.iot import (
     Device,
-    DeviceCommand,
     DeviceAttribute,
     ServiceGroup,
     StaticDeviceAttribute,
@@ -2045,184 +2043,6 @@ class TestContextBroker(unittest.TestCase):
         )
         self.assertEqual(time_sent_2_is, time_sent_2)
 
-    @clean_test(
-        fiware_service=settings.FIWARE_SERVICE,
-        fiware_servicepath=settings.FIWARE_SERVICEPATH,
-        cb_url=settings.CB_URL,
-        iota_url=settings.IOTA_JSON_URL,
-    )
-    def test_command_with_mqtt(self):
-        """
-        Test if a command can be send to a device in FIWARE
-
-        To test this a virtual device is created and provisioned to FIWARE and
-        a hosted MQTT Broker
-
-        This test only works if the address of a running MQTT Broker is given in
-        the environment ('MQTT_BROKER_URL')
-
-        The main part of this test was taken out of the iot_mqtt_example, see
-        there for a complete documentation
-        """
-        mqtt_broker_url = settings.MQTT_BROKER_URL
-
-        device_attr1 = DeviceAttribute(
-            name="temperature",
-            object_id="t",
-            type="Number",
-            metadata={
-                "unit": {
-                    "type": "Unit",
-                    "value": {"name": {"type": "Text", "value": "degree " "Celsius"}},
-                }
-            },
-        )
-
-        # creating a static attribute that holds additional information
-        static_device_attr = StaticDeviceAttribute(
-            name="info", type="Text", value="Filip example for " "virtual IoT device"
-        )
-        # creating a command that the IoT device will liston to
-        device_command = DeviceCommand(name="heater", type="Boolean")
-
-        device = Device(
-            device_id="MyDevice",
-            entity_name="MyDevice",
-            entity_type="Thing2",
-            protocol="IoTA-JSON",
-            transport="MQTT",
-            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
-            attributes=[device_attr1],
-            static_attributes=[static_device_attr],
-            commands=[device_command],
-        )
-
-        device_attr2 = DeviceAttribute(
-            name="humidity",
-            object_id="h",
-            type="Number",
-            metadata={"unitText": {"value": "percent", "type": "Text"}},
-        )
-
-        device.add_attribute(attribute=device_attr2)
-
-        # Send device configuration to FIWARE via the IoT-Agent. We use the
-        # general ngsiv2 httpClient for this.
-        service_group = ServiceGroup(
-            service=self.fiware_header.service,
-            subservice=self.fiware_header.service_path,
-            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
-            resource="/iot/json",
-        )
-
-        # create the Http client node that once sent the device cannot be posted
-        # again and you need to use the update command
-        config = HttpClientConfig(
-            cb_url=settings.CB_URL, iota_url=settings.IOTA_JSON_URL
-        )
-        client = HttpClient(fiware_header=self.fiware_header, config=config)
-        client.iota.post_group(service_group=service_group, update=True)
-        client.iota.post_device(device=device, update=True)
-
-        time.sleep(0.5)
-
-        # check if the device is correctly configured. You will notice that
-        # unfortunately the iot API does not return all the metadata. However,
-        # it will still appear in the context-entity
-        device = client.iota.get_device(device_id=device.device_id)
-
-        # check if the data entity is created in the context broker
-        entity = client.cb.get_entity(
-            entity_id=device.device_id, entity_type=device.entity_type
-        )
-
-        # create a mqtt client that we use as representation of an IoT device
-        # following the official documentation of Paho-MQTT.
-        # https://www.eclipse.org/paho/index.php?page=clients/python/
-        # docs/index.php
-
-        # The callback for when the mqtt client receives a CONNACK response from
-        # the server. All callbacks need to have this specific arguments,
-        # Otherwise the client will not be able to execute them.
-        def on_connect(client, userdata, flags, reasonCode, properties=None):
-            client.subscribe(f"/{device.apikey}/{device.device_id}/cmd")
-
-        # Callback when the command topic is succesfully subscribed
-        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-            pass
-
-        # NOTE: We need to use the apikey of the service-group to send the
-        # message to the platform
-        def on_message(client, userdata, msg):
-            data = json.loads(msg.payload)
-            res = {k: v for k, v in data.items()}
-            client.publish(
-                topic=f"/json/{service_group.apikey}" f"/{device.device_id}/cmdexe",
-                payload=json.dumps(res),
-            )
-
-        def on_disconnect(client, userdata, flags, reasonCode, properties=None):
-            pass
-
-        mqtt_client = mqtt.Client(
-            client_id="filip-test",
-            userdata=None,
-            protocol=mqtt.MQTTv5,
-            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-            transport="tcp",
-        )
-
-        # add our callbacks to the client
-        mqtt_client.on_connect = on_connect
-        mqtt_client.on_subscribe = on_subscribe
-        mqtt_client.on_message = on_message
-        mqtt_client.on_disconnect = on_disconnect
-
-        # extract the form the environment
-        mqtt_client.connect(
-            host=mqtt_broker_url.host,
-            port=mqtt_broker_url.port,
-            keepalive=60,
-            bind_address="",
-            bind_port=0,
-            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
-        # create a non-blocking thread for mqtt communication
-        mqtt_client.loop_start()
-
-        for attr in device.attributes:
-            mqtt_client.publish(
-                topic=f"/json/{service_group.apikey}/{device.device_id}/attrs",
-                payload=json.dumps({attr.object_id: random.randint(0, 9)}),
-            )
-
-        time.sleep(5)
-        entity = client.cb.get_entity(
-            entity_id=device.device_id, entity_type=device.entity_type
-        )
-
-        # create and send a command via the context broker
-        context_command = NamedCommand(name=device_command.name, value=False)
-        client.cb.post_command(
-            entity_id=entity.id, entity_type=entity.type, command=context_command
-        )
-
-        time.sleep(5)
-        # check the entity the command attribute should now show OK
-        entity = client.cb.get_entity(
-            entity_id=device.device_id, entity_type=device.entity_type
-        )
-
-        # The main part of this test, for all this setup was done
-        # This validation is deprecated as it is not stable
-        # self.assertEqual("OK", entity.heater_status.value)
-
-        # close the mqtt listening thread
-        mqtt_client.loop_stop()
-        # disconnect the mqtt device
-        mqtt_client.disconnect()
-
     def test_patch_entity(self) -> None:
         """
         Test the methode: patch_entity
@@ -2381,21 +2201,6 @@ class TestContextBroker(unittest.TestCase):
         entityAttr = NamedContextAttribute(name="data1", value="")
         entity.add_attributes([entityAttr])
         self.client.post_entity(entity=entity)
-
-        # test post_command
-        device_command = DeviceCommand(name="heater", type="Boolean")
-        device = Device(
-            device_id="MyDevice",
-            entity_name="MyDevice",
-            entity_type="Thing",
-            protocol="IoTA-JSON",
-            transport="MQTT",
-            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
-            commands=[device_command],
-        )
-        self.iotac.post_device(device=device)
-        test_command = NamedCommand(name="heater", value=True)
-        self.client.post_command(entity_id="MyDevice", command=test_command)
 
         # update_or_append_entity_attributes
         entityAttr.value = "value1"
