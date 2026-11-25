@@ -4,39 +4,38 @@ Test module for context broker models
 
 import datetime
 import unittest
-from typing import List
-from pydantic_core import PydanticCustomError
+
 from geojson_pydantic import (
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon,
     Feature,
     FeatureCollection,
+    LineString,
+    MultiLineString,
+    MultiPoint,
+    MultiPolygon,
+    Point,
+    Polygon,
 )
+from pydantic_core import PydanticCustomError
 
-from filip.models.base import DataType
-from filip.clients.ngsi_v2 import IoTAClient, ContextBrokerClient
-from filip.models.ngsi_v2.iot import Device, TransportProtocol, DeviceCommand
+from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
 from filip.models import FiwareHeader
-from filip.utils.cleanup import clear_all
-from tests.config import settings
-
+from filip.models.base import DataType
 from filip.models.ngsi_v2.base import Metadata, NamedMetadata
 from filip.models.ngsi_v2.context import (
     ActionType,
     Command,
     ContextAttribute,
     ContextEntity,
-    Update,
-    NamedContextAttribute,
     ContextEntityKeyValues,
     NamedCommand,
+    NamedContextAttribute,
     PropertyFormat,
+    Update,
 )
+from filip.models.ngsi_v2.iot import Device, DeviceCommand, TransportProtocol
+from filip.utils.cleanup import clear_all
 from filip.utils.model_generation import create_context_entity_model
+from tests.config import settings
 
 
 class TestContextModels(unittest.TestCase):
@@ -64,20 +63,20 @@ class TestContextModels(unittest.TestCase):
         Returns:
             None
         """
-        attr = ContextAttribute(**{"value": 20, "type": "Text"})
+        attr = ContextAttribute(value=20, type="Text")
         self.assertIsInstance(attr.value, str)
         self.assertEqual(attr.value, "20")
-        attr = ContextAttribute(**{"value": 20, "type": "Number"})
+        attr = ContextAttribute(value=20, type="Number")
         self.assertIsInstance(attr.value, float)
         self.assertEqual(str(attr.value), str(20.0))
-        attr = ContextAttribute(**{"value": [20, 20], "type": "Float"})
+        attr = ContextAttribute(value=[20, 20], type="Float")
         self.assertIsInstance(attr.value, list)
-        attr = ContextAttribute(**{"value": [20.0, 20.0], "type": "Integer"})
+        attr = ContextAttribute(value=[20.0, 20.0], type="Integer")
         self.assertIsInstance(attr.value, list)
-        attr = ContextAttribute(**{"value": [20, 20], "type": "Array"})
+        attr = ContextAttribute(value=[20, 20], type="Array")
         self.assertIsInstance(attr.value, list)
         with self.assertRaises(ValueError) as context:
-            ContextAttribute(**{"value": "2<0", "type": "Text"})
+            ContextAttribute(value="2<0", type="Text")
 
     def test_geojson_attribute(self):
         """
@@ -85,7 +84,7 @@ class TestContextModels(unittest.TestCase):
         """
         # test Point
         geojson = ContextAttribute(
-            type=DataType.GEOJSON, value={"type": "Point", "coordinates": (125.6, 10.1)}
+            type="geo:json", value={"type": "Point", "coordinates": (125.6, 10.1)}
         )
         self.assertIsInstance(geojson.value, Point)
         self.assertEqual(
@@ -94,7 +93,7 @@ class TestContextModels(unittest.TestCase):
         )
         # test MultiPoint
         geojson = ContextAttribute(
-            type=DataType.GEOJSON,
+            type="geo:json",
             value={"type": "MultiPoint", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
         )
         self.assertIsInstance(geojson.value, MultiPoint)
@@ -104,7 +103,7 @@ class TestContextModels(unittest.TestCase):
         )
         # test LineString
         geojson = ContextAttribute(
-            type=DataType.GEOJSON,
+            type="geo:json",
             value={"type": "LineString", "coordinates": [(125.6, 10.1), (125.6, 10.2)]},
         )
         self.assertIsInstance(geojson.value, LineString)
@@ -114,7 +113,7 @@ class TestContextModels(unittest.TestCase):
         )
         # test MultiLineString
         geojson = ContextAttribute(
-            type=DataType.GEOJSON,
+            type="geo:json",
             value={
                 "type": "MultiLineString",
                 "coordinates": [
@@ -222,23 +221,21 @@ class TestContextModels(unittest.TestCase):
         )
         # test Feature
         feature = Feature(
-            **{
-                "type": "Feature",
-                "bbox": [-10.0, -10.0, 10.0, 10.0],
-                "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [
-                        [
-                            (-10.0, -10.0),
-                            (10.0, -10.0),
-                            (10.0, 10.0),
-                            (-10.0, -10.0),
-                        ]
-                    ],
-                },
-                "properties": {"name": "MyPolygon"},
-                "id": 1,
-            }
+            type="Feature",
+            bbox=[-10.0, -10.0, 10.0, 10.0],
+            geometry={
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        (-10.0, -10.0),
+                        (10.0, -10.0),
+                        (10.0, 10.0),
+                        (-10.0, -10.0),
+                    ]
+                ],
+            },
+            properties={"name": "MyPolygon"},
+            id=1,
         )
         geojson = ContextAttribute(
             type=DataType.GEOJSON,
@@ -392,7 +389,7 @@ class TestContextModels(unittest.TestCase):
         md4 = NamedMetadata(
             name="changedTime",
             type="DateTime",
-            value=datetime.datetime.now(tz=datetime.UTC),
+            value=datetime.datetime.now(tz=datetime.timezone.utc),
         )
         attr4 = ContextAttribute(**attr1.model_dump(exclude={"metadata"}), metadata=md4)
 
@@ -485,21 +482,17 @@ class TestContextModels(unittest.TestCase):
         for char in attribute_value_not_allowed:
             with self.assertRaises(ValueError) as context:
                 ContextEntity(
-                    **{
-                        "id": "Room",
-                        "type": "Room",
-                        "temperature": {"value": "2" + char + "0", "type": "Text"},
-                    }
+                    id="Room",
+                    type="Room",
+                    temperature={"value": "2" + char + "0", "type": "Text"},
                 )
         # utf-8 characters are allowed in attribute values
         attribute_value_allowed = ["ä", "ö", "ü", "ß", "é", "è"]
         for char in attribute_value_allowed:
             entity = ContextEntity(
-                **{
-                    "id": "Room",
-                    "type": "Room",
-                    "temperature": {"value": "2" + char + "0", "type": "Text"},
-                }
+                id="Room",
+                type="Room",
+                temperature={"value": "2" + char + "0", "type": "Text"},
             )
             self.assertEqual(entity.temperature.value, "2" + char + "0")
 
@@ -539,11 +532,11 @@ class TestContextModels(unittest.TestCase):
         Returns:
             None
         """
-        valid_strings: List[str] = ["name", "test123", "3_:strange-Name!"]
-        invalid_strings: List[str] = ["my name", "Test?", "#False", "/notvalid"]
+        valid_strings: list[str] = ["name", "test123", "3_:strange-Name!"]
+        invalid_strings: list[str] = ["my name", "Test?", "#False", "/notvalid"]
         with self.assertRaises(ValueError):
             NamedContextAttribute(name="type")
-        special_strings: List[str] = ["id", "type", "geo:json"]
+        special_strings: list[str] = ["id", "type", "geo:json"]
         # Test if all needed fields, detect all invalid strings
         for string in invalid_strings:
             self.assertRaises(ValueError, Metadata, type=string)
@@ -569,7 +562,6 @@ class TestContextModels(unittest.TestCase):
 
         # Test for the special-string protected field if all strings are blocked
         for string in special_strings:
-            self.assertRaises(ValueError, ContextAttribute, type=string)
             self.assertRaises(ValueError, NamedContextAttribute, name=string)
             self.assertRaises(ValueError, NamedCommand, name=string)
         # Test for the normal protected field if all strings are allowed
@@ -583,11 +575,9 @@ class TestContextModels(unittest.TestCase):
         Test the delete_attributes methode
         also tests the get_attribute_name method
         """
-        attr = ContextAttribute(**{"value": 20, "type": "Text"})
-        named_attr = NamedContextAttribute(
-            **{"name": "test2", "value": 20, "type": "Text"}
-        )
-        attr3 = ContextAttribute(**{"value": 20, "type": "Text"})
+        attr = ContextAttribute(value=20, type="Text")
+        named_attr = NamedContextAttribute(name="test2", value=20, type="Text")
+        attr3 = ContextAttribute(value=20, type="Text")
 
         entity = ContextEntity(id="12", type="Test")
 

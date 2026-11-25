@@ -152,7 +152,7 @@ class LazyDeviceAttribute(BaseNameAttribute):
         max_length=256,
         min_length=1,
     )
-    valid_type = field_validator("type")(validate_fiware_datatype_string_protect)
+    valid_type = field_validator("type")(validate_fiware_datatype_standard)
 
 
 class DeviceCommand(BaseModel):

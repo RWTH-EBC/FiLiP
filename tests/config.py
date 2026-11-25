@@ -101,25 +101,21 @@ class TestSettings(BaseSettings):
     )
 
     @model_validator(mode="after")
-    def generate_multi_tenancy_setup(cls, values):
+    def generate_multi_tenancy_setup(self):
         """
         Tests if the fields for multi tenancy in fiware are consistent.
         If CI_JOB_ID is present it will always overwrite the service path.
-        Args:
-            values: class variables
 
         Returns:
-
+            TestSettings: the validated settings instance
         """
-        if values.model_dump().get("CI_JOB_ID", None):
-            values.FIWARE_SERVICEPATH = f"/{values.CI_JOB_ID}"
+        if self.CI_JOB_ID:
+            self.FIWARE_SERVICEPATH = f"/{self.CI_JOB_ID}"
 
         # validate header
-        FiwareHeader(
-            service=values.FIWARE_SERVICE, service_path=values.FIWARE_SERVICEPATH
-        )
+        FiwareHeader(service=self.FIWARE_SERVICE, service_path=self.FIWARE_SERVICEPATH)
 
-        return values
+        return self
 
     model_config = SettingsConfigDict(
         env_file=find_dotenv(".env"),

@@ -148,10 +148,6 @@ class TestContextv2IoTModels(unittest.TestCase):
                     name=string, type="name", entity_name="name", entity_type="name"
                 )
             with self.assertRaises(ValueError):
-                IoTABaseAttribute(
-                    name="name", type=string, entity_name="name", entity_type="name"
-                )
-            with self.assertRaises(ValueError):
                 DeviceCommand(name=string, type="name")
 
         # Test for the normal protected field if all strings are allowed

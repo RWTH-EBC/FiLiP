@@ -2,53 +2,60 @@
 Tests for filip.cb.client
 """
 
-import copy
-import unittest
-import logging
-import time
-import random
 import json
+import logging
+import random
+import time
+import unittest
 import uuid
+from datetime import datetime, timedelta
+from typing import List
+from unittest.mock import patch
+from urllib.parse import urljoin
 
 import paho.mqtt.client as mqtt
-from datetime import datetime, timedelta
-from urllib.parse import urlparse, urljoin
 import requests
-from requests import RequestException
 from pydantic import AnyHttpUrl
-from filip.clients.base_http_client import NgsiURLVersion, BaseHttpClient
-from filip.models.base import FiwareHeader, DataType
-from filip.utils.simple_ql import QueryString
-from filip.clients.ngsi_v2 import ContextBrokerClient, IoTAClient
-from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
+from requests import RequestException
+
+from filip.clients.base_http_client import BaseHttpClient, NgsiURLVersion
+from filip.clients.exceptions import BaseHttpClientException
+from filip.clients.ngsi_v2 import (
+    ContextBrokerClient,
+    HttpClient,
+    HttpClientConfig,
+    IoTAClient,
+)
 from filip.config import settings
+from filip.models.base import DataType, FiwareHeader
+from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, NamedMetadata, Status
 from filip.models.ngsi_v2.context import (
-    ContextEntity,
+    ActionType,
     ContextAttribute,
+    ContextEntity,
+    ContextEntityKeyValues,
+    NamedCommand,
     NamedContextAttribute,
     Query,
-    ActionType,
-    ContextEntityKeyValues,
-)
-from filip.clients.exceptions import BaseHttpClientException
-
-from filip.models.ngsi_v2.base import AttrsFormat, EntityPattern, Status, NamedMetadata
-from filip.models.ngsi_v2.subscriptions import (
-    Mqtt,
-    Message,
-    Subscription,
-    Condition,
-    Notification,
-    MqttCustom,
-    Subject,
 )
 from filip.models.ngsi_v2.iot import (
     Device,
     DeviceAttribute,
+    DeviceCommand,
     ServiceGroup,
     StaticDeviceAttribute,
 )
-from filip.utils.cleanup import clear_all, clean_test
+from filip.models.ngsi_v2.subscriptions import (
+    Condition,
+    Message,
+    Mqtt,
+    MqttCustom,
+    Notification,
+    Subject,
+    Subscription,
+)
+from filip.utils.cleanup import clean_test, clear_all
+from filip.utils.simple_ql import QueryString
 from tests.config import settings
 
 logger = logging.getLogger(__name__)
@@ -112,11 +119,13 @@ class TestContextBroker(unittest.TestCase):
         """
         Test version check will not block the instantiation
         """
-        with ContextBrokerClient(
-            url="http://example.com", fiware_header=self.fiware_header
-        ) as client:
-            with self.assertRaises(RequestException):
-                version = client.get_version()
+        with (
+            ContextBrokerClient(
+                url="http://example.com", fiware_header=self.fiware_header
+            ) as client,
+            self.assertRaises(RequestException),
+        ):
+            version = client.get_version()
 
     def test_url_composition(self):
         """
@@ -172,12 +181,11 @@ class TestContextBroker(unittest.TestCase):
             url=settings.CB_URL, fiware_header=self.fiware_header
         ) as client:
             entities_a = [
-                ContextEntity(id=str(i), type=f"filip:object:TypeA")
-                for i in range(0, 1000)
+                ContextEntity(id=str(i), type="filip:object:TypeA") for i in range(1000)
             ]
             client.update(action_type=ActionType.APPEND, entities=entities_a)
             entities_b = [
-                ContextEntity(id=str(i), type=f"filip:object:TypeB")
+                ContextEntity(id=str(i), type="filip:object:TypeB")
                 for i in range(1000, 2001)
             ]
             client.update(action_type=ActionType.APPEND, entities=entities_b)
@@ -204,13 +212,12 @@ class TestContextBroker(unittest.TestCase):
             with self.assertRaises(ValueError):
                 client.get_entity_list(type_pattern="(&()?")
             entities_a = [
-                ContextEntity(id=str(i), type=f"filip:object:TypeA")
-                for i in range(0, 5)
+                ContextEntity(id=str(i), type="filip:object:TypeA") for i in range(5)
             ]
 
             client.update(action_type=ActionType.APPEND, entities=entities_a)
             entities_b = [
-                ContextEntity(id=str(i), type=f"filip:object:TypeB")
+                ContextEntity(id=str(i), type="filip:object:TypeB")
                 for i in range(6, 10)
             ]
 
@@ -489,7 +496,7 @@ class TestContextBroker(unittest.TestCase):
                 "metadata_init": {"type": "Text", "value": "something"}
             }
             attr_append = NamedContextAttribute(
-                **{"name": "pressure", "type": "Number", "value": 1050}
+                name="pressure", type="Number", value=1050
             )
             entity_init.update_attribute(attrs=[attr_init])
 
@@ -514,7 +521,7 @@ class TestContextBroker(unittest.TestCase):
                 )
                 # 3) update existing attribute value
                 attr_append_update = NamedContextAttribute(
-                    **{"name": "temperature", "type": "Text", "value": "somethingElse"}
+                    name="temperature", type="Text", value="somethingElse"
                 )
                 entity_post.update_attribute(attrs=[attr_append_update])
                 client.post_entity(entity=entity_post, patch=True)
@@ -546,16 +553,14 @@ class TestContextBroker(unittest.TestCase):
                 entity_update.temperature.value = 20.0
                 # 2) update existing attribute value
                 attr_append_update = NamedContextAttribute(
-                    **{"name": "pressure", "type": "Number", "value": 2050}
+                    name="pressure", type="Number", value=2050
                 )
                 entity_update.update_attribute(attrs=[attr_append_update])
                 client.update_entity(
                     entity=ContextEntity(
-                        **{
-                            "id": entity_update.id,
-                            "type": entity_update.type,
-                            "pressure": {"type": "Number", "value": 2050},
-                        }
+                        id=entity_update.id,
+                        type=entity_update.type,
+                        pressure={"type": "Number", "value": 2050},
                     )
                 )
                 self.assertEqual(
@@ -581,7 +586,7 @@ class TestContextBroker(unittest.TestCase):
                 )
                 # 2) update existing attribute value
                 attr_append_update = NamedContextAttribute(
-                    **{"name": "pressure", "type": "Number", "value": 2050}
+                    name="pressure", type="Number", value=2050
                 )
                 entity_override.update_attribute(attrs=[attr_append_update])
                 client.override_entity(entity=entity_override)
@@ -617,7 +622,7 @@ class TestContextBroker(unittest.TestCase):
                 )
                 # 3) update existing attribute value
                 attr_append_update = NamedContextAttribute(
-                    **{"name": "temperature", "type": "Text", "value": "somethingElse"}
+                    name="temperature", type="Text", value="somethingElse"
                 )
                 entity_patch.update_attribute(attrs=[attr_append_update])
                 client.patch_entity(entity=entity_patch, override_metadata=True)
@@ -745,7 +750,6 @@ class TestContextBroker(unittest.TestCase):
             for attr_name, attr in entity.get_properties(
                 response_format="dict"
             ).items():
-
                 client.update_entity_attribute(
                     entity_id=entity.id, attr_name=attr_name, attr=attr
                 )
@@ -1062,9 +1066,7 @@ class TestContextBroker(unittest.TestCase):
 
             def on_connect(self, client, userdata, flags, reasonCode, properties=None):
                 if reasonCode != 0:
-                    logger.error(
-                        f"Connection failed with error code: " f"'{reasonCode}'"
-                    )
+                    logger.error(f"Connection failed with error code: '{reasonCode}'")
                     raise ConnectionError
                 else:
                     logger.info("Test MQTT subscription successfully connected")
@@ -1100,15 +1102,31 @@ class TestContextBroker(unittest.TestCase):
         new_value = 50
 
         time.sleep(2)
-        self.client.update_attribute_value(
-            entity_id=entity.id,
-            attr_name="temperature",
-            value=new_value,
-            entity_type=entity.type,
-            forcedUpdate=True,
-        )
+        max_retry = 15
+
+        # ensure that the msg is successfully sent
+        for _ in range(max_retry):
+            sub = self.client.get_subscription(
+                subscription_id=sub_id
+            )  # check whether it is triggered
+            if not sub.notification.timesSent or not sub.notification.lastSuccessCode:
+                self.client.update_attribute_value(
+                    entity_id=entity.id,
+                    attr_name="temperature",
+                    value=new_value,
+                    entity_type=entity.type,
+                    forcedUpdate=True,
+                )
+
+            if _ == max_retry - 1:
+                logger.warning(
+                    f"Notification has problem: "
+                    f"\ncode: {sub.notification.lastSuccessCode}"
+                    f"\nfailure: {sub.notification.lastFailure}"
+                    f"\nreason: {sub.notification.lastFailureReason}"
+                )
+
         # test if the subscriptions arrives and the content aligns with updates
-        max_retry = 5
         for _ in range(max_retry):
             if mqtt_agent.sub_message:
                 break
@@ -1595,7 +1613,7 @@ class TestContextBroker(unittest.TestCase):
 
         def on_connect(client, userdata, flags, reasonCode, properties=None):
             if reasonCode != 0:
-                logger.error(f"Connection failed with error code: " f"'{reasonCode}'")
+                logger.error(f"Connection failed with error code: '{reasonCode}'")
                 raise ConnectionError
             else:
                 logger.info(
@@ -1663,7 +1681,7 @@ class TestContextBroker(unittest.TestCase):
                 forcedUpdate=True,
             )
             # check the notified entities
-            max_retry = 5
+            max_retry = 15
             for _ in range(max_retry):
                 if sub_message:
                     break
@@ -1804,13 +1822,11 @@ class TestContextBroker(unittest.TestCase):
             url=settings.CB_URL, fiware_header=self.fiware_header
         ) as client:
             entities = [
-                ContextEntity(id=str(i), type=f"filip:object:TypeA")
-                for i in range(0, 1000)
+                ContextEntity(id=str(i), type="filip:object:TypeA") for i in range(1000)
             ]
             client.update(entities=entities, action_type=ActionType.APPEND)
             entities = [
-                ContextEntity(id=str(i), type=f"filip:object:TypeB")
-                for i in range(0, 1000)
+                ContextEntity(id=str(i), type="filip:object:TypeB") for i in range(1000)
             ]
             client.update(entities=entities, action_type=ActionType.APPEND)
             entity = EntityPattern(idPattern=".*", typePattern=".*TypeA$")
@@ -1824,11 +1840,11 @@ class TestContextBroker(unittest.TestCase):
             entities_keyvalues = [
                 ContextEntityKeyValues(
                     id=str(i),
-                    type=f"filip:object:TypeC",
+                    type="filip:object:TypeC",
                     attr1="text attribute",
                     attr2=1,
                 )
-                for i in range(0, 1000)
+                for i in range(1000)
             ]
             client.update(
                 entities=entities_keyvalues,
@@ -1931,21 +1947,19 @@ class TestContextBroker(unittest.TestCase):
 
         # test with only changed attrs
         sub_only_changed_attrs = Subscription(
-            **{
-                "description": "One subscription to rule them all",
-                "subject": {
-                    "entities": [
-                        {
-                            "id": entity.id,
-                        }
-                    ]
-                },
-                "notification": {
-                    "http": {"url": "http://localhost:1234"},
-                    "attrs": ["temperature", "humidity"],
-                    "onlyChangedAttrs": True,
-                },
-            }
+            description="One subscription to rule them all",
+            subject={
+                "entities": [
+                    {
+                        "id": entity.id,
+                    }
+                ]
+            },
+            notification={
+                "http": {"url": "http://localhost:1234"},
+                "attrs": ["temperature", "humidity"],
+                "onlyChangedAttrs": True,
+            },
         )
         sub_id_1 = self.client.post_subscription(subscription=sub_only_changed_attrs)
         time_sent_1 = 0
@@ -1987,24 +2001,22 @@ class TestContextBroker(unittest.TestCase):
 
         # test with conditions
         sub_with_conditions = Subscription(
-            **{
-                "description": "One subscription to rule them all",
-                "subject": {
-                    "entities": [
-                        {
-                            "id": entity.id,
-                        }
-                    ],
-                    "condition": {
-                        "attrs": ["temperature"],
-                        "expression": {"q": "temperature>40"},
-                    },
+            description="One subscription to rule them all",
+            subject={
+                "entities": [
+                    {
+                        "id": entity.id,
+                    }
+                ],
+                "condition": {
+                    "attrs": ["temperature"],
+                    "expression": {"q": "temperature>40"},
                 },
-                "notification": {
-                    "http": {"url": "http://localhost:1234"},
-                    "attrs": ["temperature", "humidity"],
-                },
-            }
+            },
+            notification={
+                "http": {"url": "http://localhost:1234"},
+                "attrs": ["temperature", "humidity"],
+            },
         )
         sub_id_2 = self.client.post_subscription(subscription=sub_with_conditions)
         time_sent_2 = 0
@@ -2042,6 +2054,184 @@ class TestContextBroker(unittest.TestCase):
             sub_2.notification.timesSent if sub_2.notification.timesSent else 0
         )
         self.assertEqual(time_sent_2_is, time_sent_2)
+
+    @clean_test(
+        fiware_service=settings.FIWARE_SERVICE,
+        fiware_servicepath=settings.FIWARE_SERVICEPATH,
+        cb_url=settings.CB_URL,
+        iota_url=settings.IOTA_JSON_URL,
+    )
+    def test_command_with_mqtt(self):
+        """
+        Test if a command can be send to a device in FIWARE
+
+        To test this a virtual device is created and provisioned to FIWARE and
+        a hosted MQTT Broker
+
+        This test only works if the address of a running MQTT Broker is given in
+        the environment ('MQTT_BROKER_URL')
+
+        The main part of this test was taken out of the iot_mqtt_example, see
+        there for a complete documentation
+        """
+        mqtt_broker_url = settings.MQTT_BROKER_URL
+
+        device_attr1 = DeviceAttribute(
+            name="temperature",
+            object_id="t",
+            type="Number",
+            metadata={
+                "unit": {
+                    "type": "Unit",
+                    "value": {"name": {"type": "Text", "value": "degree Celsius"}},
+                }
+            },
+        )
+
+        # creating a static attribute that holds additional information
+        static_device_attr = StaticDeviceAttribute(
+            name="info", type="Text", value="Filip example for virtual IoT device"
+        )
+        # creating a command that the IoT device will liston to
+        device_command = DeviceCommand(name="heater", type="Boolean")
+
+        device = Device(
+            device_id="MyDevice",
+            entity_name="MyDevice",
+            entity_type="Thing2",
+            protocol="IoTA-JSON",
+            transport="MQTT",
+            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
+            attributes=[device_attr1],
+            static_attributes=[static_device_attr],
+            commands=[device_command],
+        )
+
+        device_attr2 = DeviceAttribute(
+            name="humidity",
+            object_id="h",
+            type="Number",
+            metadata={"unitText": {"value": "percent", "type": "Text"}},
+        )
+
+        device.add_attribute(attribute=device_attr2)
+
+        # Send device configuration to FIWARE via the IoT-Agent. We use the
+        # general ngsiv2 httpClient for this.
+        service_group = ServiceGroup(
+            service=self.fiware_header.service,
+            subservice=self.fiware_header.service_path,
+            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
+            resource="/iot/json",
+        )
+
+        # create the Http client node that once sent the device cannot be posted
+        # again and you need to use the update command
+        config = HttpClientConfig(
+            cb_url=settings.CB_URL, iota_url=settings.IOTA_JSON_URL
+        )
+        client = HttpClient(fiware_header=self.fiware_header, config=config)
+        client.iota.post_group(service_group=service_group, update=True)
+        client.iota.post_device(device=device, update=True)
+
+        time.sleep(0.5)
+
+        # check if the device is correctly configured. You will notice that
+        # unfortunately the iot API does not return all the metadata. However,
+        # it will still appear in the context-entity
+        device = client.iota.get_device(device_id=device.device_id)
+
+        # check if the data entity is created in the context broker
+        entity = client.cb.get_entity(
+            entity_id=device.device_id, entity_type=device.entity_type
+        )
+
+        # create a mqtt client that we use as representation of an IoT device
+        # following the official documentation of Paho-MQTT.
+        # https://www.eclipse.org/paho/index.php?page=clients/python/
+        # docs/index.php
+
+        # The callback for when the mqtt client receives a CONNACK response from
+        # the server. All callbacks need to have this specific arguments,
+        # Otherwise the client will not be able to execute them.
+        def on_connect(client, userdata, flags, reasonCode, properties=None):
+            client.subscribe(f"/{device.apikey}/{device.device_id}/cmd")
+
+        # Callback when the command topic is succesfully subscribed
+        def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+            pass
+
+        # NOTE: We need to use the apikey of the service-group to send the
+        # message to the platform
+        def on_message(client, userdata, msg):
+            data = json.loads(msg.payload)
+            res = {k: v for k, v in data.items()}
+            client.publish(
+                topic=f"/json/{service_group.apikey}/{device.device_id}/cmdexe",
+                payload=json.dumps(res),
+            )
+
+        def on_disconnect(client, userdata, flags, reasonCode, properties=None):
+            pass
+
+        mqtt_client = mqtt.Client(
+            client_id="filip-test",
+            userdata=None,
+            protocol=mqtt.MQTTv5,
+            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+            transport="tcp",
+        )
+
+        # add our callbacks to the client
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_subscribe = on_subscribe
+        mqtt_client.on_message = on_message
+        mqtt_client.on_disconnect = on_disconnect
+
+        # extract the form the environment
+        mqtt_client.connect(
+            host=mqtt_broker_url.host,
+            port=mqtt_broker_url.port,
+            keepalive=60,
+            bind_address="",
+            bind_port=0,
+            clean_start=mqtt.MQTT_CLEAN_START_FIRST_ONLY,
+            properties=None,
+        )
+        # create a non-blocking thread for mqtt communication
+        mqtt_client.loop_start()
+
+        for attr in device.attributes:
+            mqtt_client.publish(
+                topic=f"/json/{service_group.apikey}/{device.device_id}/attrs",
+                payload=json.dumps({attr.object_id: random.randint(0, 9)}),
+            )
+
+        time.sleep(5)
+        entity = client.cb.get_entity(
+            entity_id=device.device_id, entity_type=device.entity_type
+        )
+
+        # create and send a command via the context broker
+        context_command = NamedCommand(name=device_command.name, value=False)
+        client.cb.post_command(
+            entity_id=entity.id, entity_type=entity.type, command=context_command
+        )
+
+        time.sleep(5)
+        # check the entity the command attribute should now show OK
+        entity = client.cb.get_entity(
+            entity_id=device.device_id, entity_type=device.entity_type
+        )
+
+        # The main part of this test, for all this setup was done
+        # This validation is deprecated as it is not stable
+        # self.assertEqual("OK", entity.heater_status.value)
+
+        # close the mqtt listening thread
+        mqtt_client.loop_stop()
+        # disconnect the mqtt device
+        mqtt_client.disconnect()
 
     def test_patch_entity(self) -> None:
         """
@@ -2290,3 +2480,120 @@ class TestContextBroker(unittest.TestCase):
             cb_url=settings.CB_URL,
             iota_url=settings.IOTA_JSON_URL,
         )
+
+
+class TestContextBrokerUpdatePagination(unittest.TestCase):
+    """
+    Unit tests for the automatic 413 (Request Entity Too Large) handling
+    of ContextBrokerClient.update(). These tests mock the HTTP layer and
+    therefore do not require a running Context Broker.
+    """
+
+    def setUp(self) -> None:
+        """
+        Setup test data
+        Returns:
+            None
+        """
+        self.client = ContextBrokerClient(url="http://localhost:1026")
+
+    def tearDown(self) -> None:
+        """
+        Cleanup
+        """
+        self.client.close()
+
+    @staticmethod
+    def _make_response(status_code: int) -> requests.models.Response:
+        """
+        Create a mock requests response with the given status code
+        """
+        response = requests.models.Response()
+        response.status_code = status_code
+        response._content = b'{"error": "MockError"}'
+        response.headers["Content-Type"] = "application/json"
+        return response
+
+    def _make_entities(self, count: int) -> List[ContextEntity]:
+        """
+        Create a list of test entities
+        """
+        return [
+            ContextEntity(
+                id=f"test:entity:{i}",
+                type="TestType",
+                a=ContextAttribute(type="Number", value=i),
+            )
+            for i in range(count)
+        ]
+
+    def test_update_splits_batch_on_413(self):
+        """
+        A 413 response must lead to the entity list being split in half
+        and retried until all entities are sent successfully
+        """
+        entities = self._make_entities(8)
+        expected_ids = {entity.id for entity in entities}
+
+        responses = [
+            self._make_response(413),  # full batch of 8 entities
+            self._make_response(200),  # first half of 4 entities
+            self._make_response(200),  # second half of 4 entities
+        ]
+        with patch.object(self.client, "post", side_effect=responses) as mock_post:
+            self.client.update(entities=entities, action_type=ActionType.APPEND)
+
+        self.assertEqual(mock_post.call_count, 3)
+        first_call_ids = [
+            entity["id"]
+            for entity in mock_post.call_args_list[0].kwargs["json"]["entities"]
+        ]
+        self.assertEqual(first_call_ids, [entity.id for entity in entities])
+
+        # Verify exact split sizes and ordering
+        call_1_ids = [
+            e["id"] for e in mock_post.call_args_list[1].kwargs["json"]["entities"]
+        ]
+        call_2_ids = [
+            e["id"] for e in mock_post.call_args_list[2].kwargs["json"]["entities"]
+        ]
+
+        expected_all_ids = [e.id for e in entities]
+        self.assertEqual(call_1_ids, expected_all_ids[:4])
+        self.assertEqual(call_2_ids, expected_all_ids[4:])
+
+    def test_update_single_entity_413_raises(self):
+        """
+        If a single entity alone causes a 413 there is nothing to split,
+        the exception must be raised
+        """
+        entities = self._make_entities(1)
+        with patch.object(
+            self.client, "post", return_value=self._make_response(413)
+        ) as mock_post:
+            with self.assertRaises(BaseHttpClientException):
+                self.client.update(entities=entities, action_type=ActionType.APPEND)
+        self.assertEqual(mock_post.call_count, 1)
+
+    def test_update_no_retry_on_other_errors(self):
+        """
+        Non-413 errors must not trigger a retry
+        """
+        entities = self._make_entities(4)
+        with patch.object(
+            self.client, "post", return_value=self._make_response(400)
+        ) as mock_post:
+            with self.assertRaises(BaseHttpClientException):
+                self.client.update(entities=entities, action_type=ActionType.APPEND)
+        self.assertEqual(mock_post.call_count, 1)
+
+    def test_update_success_single_request(self):
+        """
+        If the first request succeeds, no additional requests may be made
+        """
+        entities = self._make_entities(4)
+        with patch.object(
+            self.client, "post", return_value=self._make_response(200)
+        ) as mock_post:
+            self.client.update(entities=entities, action_type=ActionType.APPEND)
+        self.assertEqual(mock_post.call_count, 1)

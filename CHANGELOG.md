@@ -1,4 +1,28 @@
-### v0.7.x
+
+### Unreleased
+- fix: validate attribute type with fiware std regex ([#528](https://github.com/RWTH-EBC/FiLiP/pull/528))
+- add: recursive handling for 413 error in batch operations ([#529](https://github.com/RWTH-EBC/FiLiP/pull/529))
+- update: datamodel-code-generator dependency ([#526](https://github.com/RWTH-EBC/FiLiP/pull/526))
+- update: from ``PyLD~=2.0.4`` to ``PyLD~=3.3.0`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
+- update: from ``packaging~=24.1`` to ``packaging~=26.3`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
+- update: from ``aenum~=3.1.15`` to ``aenum~=3.1.17`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
+- update: from ``paho-mqtt~=2.0.0`` to ``paho-mqtt~=2.1.0`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
+- update: from ``requests~=2.33.0`` to ``requests~=2.34.2`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
+- update: from ``rapidfuzz~=3.4.0`` to ``rapidfuzz~=3.14.5`` in dependency ([#534](https://github.com/RWTH-EBC/FiLiP/pull/534))
+
+### v0.8.1
+- fix: ``regex`` dependency issue for python 3.14 on Windows. Use `re` module instead. ([#531](https://github.com/RWTH-EBC/FiLiP/pull/531/))
+
+### v0.8.0
+- update: add support for python 3.14 ([#522](https://github.com/RWTH-EBC/FiLiP/pull/522/))
+> - from
+>   - "pydantic>=2.6.0,<2.9.0", "pydantic-settings>=2.0.0,<2.3.0",
+> - to
+>   - "pydantic>=2.12.0,<2.14.0", "pydantic-settings>=2.7.0,<2.12.0"
+
+### v0.7.6
+- add: support Kafka notifications, i.e. ``kafka`` and ``kafkaCustom`` in NGSIv2 subscriptions ([#511](https://github.com/RWTH-EBC/FiLiP/issues/511))
+- add: parameter `pagination_limit` for LD cb client ([#519](https://github.com/RWTH-EBC/FiLiP/pull/519))
 - add: dynamic fiware header for authentification ([#507](https://github.com/RWTH-EBC/FiLiP/pull/507))
 - add: tutorials for using N5GEH cluster ([#507](https://github.com/RWTH-EBC/FiLiP/pull/507))
 - update: deprecate support for python 3.9 ([#504](https://github.com/RWTH-EBC/FiLiP/pull/504))
