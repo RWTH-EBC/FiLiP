@@ -2392,21 +2392,6 @@ class TestContextBroker(unittest.TestCase):
         entity.add_attributes([entityAttr])
         self.client.post_entity(entity=entity)
 
-        # test post_command
-        device_command = DeviceCommand(name="heater", type="Boolean")
-        device = Device(
-            device_id="MyDevice",
-            entity_name="MyDevice",
-            entity_type="Thing",
-            protocol="IoTA-JSON",
-            transport="MQTT",
-            apikey=settings.FIWARE_SERVICEPATH.strip("/"),
-            commands=[device_command],
-        )
-        self.iotac.post_device(device=device)
-        test_command = NamedCommand(name="heater", value=True)
-        self.client.post_command(entity_id="MyDevice", command=test_command)
-
         # update_or_append_entity_attributes
         entityAttr.value = "value1"
         attr_data2 = NamedContextAttribute(name="data2", value="value2")

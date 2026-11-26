@@ -30,6 +30,7 @@ from filip.utils.validators import (
     validate_fiware_attribute_value_regex,
     validate_fiware_attribute_name_regex,
 )
+import warnings
 
 
 class GetEntitiesOptions(str, Enum):
@@ -803,11 +804,31 @@ class Update(BaseModel):
 
 class Command(BaseModel):
     """
+    DEPRECATED: Legacy IoT-Agent command model.
+
+    IoT Agent commands are deprecated and should no longer
+    be used for actuator/downlink communication.
+
+    Use Context Broker notifications instead, e.g. MQTT
+    notifications via an NGSIv2 subscription.
+
+    See:
+    examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py
+
     Class for sending commands to IoT Devices.
-    Note that the command must be registered via an IoT-Agent. Internally
-    FIWARE uses its registration mechanism in order to connect the command
-    with an IoT-Device
     """
+
+    def model_post_init(self, __context) -> None:
+        warnings.warn(
+            (
+                f"{type(self).__name__} is deprecated. "
+                "Use notification-based actuator communication "
+                "instead, for example MQTT notifications via "
+                "an NGSIv2 subscription."
+            ),
+            FutureWarning,
+            stacklevel=2,
+        )
 
     type: DataType = Field(
         default=DataType.COMMAND,
@@ -838,6 +859,18 @@ class Command(BaseModel):
 
 class NamedCommand(Command):
     """
+    DEPRECATED: Legacy named IoT-Agent command model.
+
+    IoT Agent commands are deprecated and should no longer be used for
+    actuator/downlink communication.
+
+    Use Context Broker notifications instead, e.g. MQTT notifications
+    via an NGSIv2 subscription.
+
+    See:
+    examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py
+
+
     Class for sending command to IoT-Device.
     Extend :class: Command with command Name
     """

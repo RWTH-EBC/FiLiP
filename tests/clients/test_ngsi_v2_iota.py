@@ -134,7 +134,6 @@ class TestAgent(unittest.TestCase):
             attr = DeviceAttribute(
                 name="temperature", object_id="t", type="Number", entity_name="test"
             )
-            attr_command = DeviceCommand(name="open")
             attr_lazy = LazyDeviceAttribute(
                 name="pressure", object_id="p", type="Text", entity_name="pressure"
             )
@@ -142,7 +141,6 @@ class TestAgent(unittest.TestCase):
                 name="hasRoom", type="Relationship", value="my_partner_id"
             )
             device.add_attribute(attr)
-            device.add_attribute(attr_command)
             device.add_attribute(attr_lazy)
             device.add_attribute(attr_static)
 
@@ -296,7 +294,6 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(
             StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
         )
-        device.add_command(DeviceCommand(name="Com1"))
 
         # use update_device to post
         self.client.update_device(device=device, add=True)
@@ -308,23 +305,18 @@ class TestAgent(unittest.TestCase):
         # test if attributes exists correctly
         live_entity = cb_client.get_entity(entity_id=device.entity_name)
         live_entity.get_attribute("Att1")
-        live_entity.get_attribute("Com1")
-        live_entity.get_attribute("Com1_info")
-        live_entity.get_attribute("Com1_status")
         self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
 
         # change device attributes and update
         device.get_attribute("Stat1").value = "new_test"
         device.delete_attribute(device.get_attribute("Stat2"))
         device.delete_attribute(device.get_attribute("Att1"))
-        device.delete_attribute(device.get_attribute("Com1"))
         device.add_attribute(
             DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
         )
         device.add_attribute(
             StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
         )
-        device.add_command(DeviceCommand(name="Com2"))
 
         self.client.update_device(device=device)
 
@@ -336,12 +328,9 @@ class TestAgent(unittest.TestCase):
         with self.assertRaises(KeyError):
             live_device.get_attribute("Att1")
         with self.assertRaises(KeyError):
-            live_device.get_attribute("Com1_info")
-        with self.assertRaises(KeyError):
             live_device.get_attribute("Stat2")
         self.assertEqual(live_device.get_attribute("Stat1").value, "new_test")
         live_device.get_attribute("Stat3")
-        live_device.get_command("Com2")
         live_device.get_attribute("Att2")
 
         cb_client.close()
@@ -364,7 +353,6 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(
             StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
         )
-        device.add_command(DeviceCommand(name="Com1"))
 
         # use patch_device to post
         self.client.patch_device(device=device)
@@ -376,23 +364,18 @@ class TestAgent(unittest.TestCase):
         # test if attributes exists correctly
         live_entity = cb_client.get_entity(entity_id=device.entity_name)
         live_entity.get_attribute("Att1")
-        live_entity.get_attribute("Com1")
-        live_entity.get_attribute("Com1_info")
-        live_entity.get_attribute("Com1_status")
         self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
 
         # change device attributes and update
         device.get_attribute("Stat1").value = "new_test"
         device.delete_attribute(device.get_attribute("Stat2"))
         device.delete_attribute(device.get_attribute("Att1"))
-        device.delete_attribute(device.get_attribute("Com1"))
         device.add_attribute(
             DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
         )
         device.add_attribute(
             StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
         )
-        device.add_command(DeviceCommand(name="Com2"))
 
         self.client.patch_device(device=device, cb_url=settings.CB_URL)
 
@@ -402,12 +385,9 @@ class TestAgent(unittest.TestCase):
         with self.assertRaises(KeyError):
             live_entity.get_attribute("Att1")
         with self.assertRaises(KeyError):
-            live_entity.get_attribute("Com1_info")
-        with self.assertRaises(KeyError):
             live_entity.get_attribute("Stat2")
         self.assertEqual(live_entity.get_attribute("Stat1").value, "new_test")
         live_entity.get_attribute("Stat3")
-        live_entity.get_attribute("Com2_info")
         live_entity.get_attribute("Att2")
 
         # test update where device information were changed
@@ -554,25 +534,25 @@ class TestAgent(unittest.TestCase):
         iota_url=settings.IOTA_JSON_URL,
         cb_url=settings.CB_URL,
     )
-    def test_clear_iot_agent(self):
-        """
-        Test for clearing iot agent AFTER clearing context broker
-        while having a device with a command
-
-        Returns:
-            None
-        """
-        cb_client = ContextBrokerClient(
-            url=settings.CB_URL, fiware_header=self.fiware_header
-        )
-        device = Device(**self.device)
-        device.add_command(DeviceCommand(name="dummy_cmd"))
-        self.client.post_device(device=device)
-        clear_context_broker(settings.CB_URL, self.fiware_header)
-        self.assertEqual(len(cb_client.get_registration_list()), 1)
-
-        clear_iot_agent(settings.IOTA_JSON_URL, self.fiware_header)
-        self.assertCountEqual(cb_client.get_registration_list(), [])
+    # def test_clear_iot_agent(self):
+    #     """
+    #     Test for clearing iot agent AFTER clearing context broker
+    #     while having a device with a command
+    #
+    #     Returns:
+    #         None
+    #     """
+    #     cb_client = ContextBrokerClient(
+    #         url=settings.CB_URL, fiware_header=self.fiware_header
+    #     )
+    #     device = Device(**self.device)
+    #     device.add_command(DeviceCommand(name="dummy_cmd"))
+    #     self.client.post_device(device=device)
+    #     clear_context_broker(settings.CB_URL, self.fiware_header)
+    #     self.assertEqual(len(cb_client.get_registration_list()), 1)
+    #
+    #     clear_iot_agent(settings.IOTA_JSON_URL, self.fiware_header)
+    #     self.assertCountEqual(cb_client.get_registration_list(), [])
 
     def test_get_version_success(self):
         try:
@@ -934,7 +914,6 @@ class TestAgent(unittest.TestCase):
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
             )
-            device.add_command(DeviceCommand(name="Com1"))
 
             # use update_device to post
             self.client.update_device(device=device, add=True)
@@ -946,16 +925,12 @@ class TestAgent(unittest.TestCase):
             # test if attributes exists correctly
             live_entity = cb_client.get_entity(entity_id=device.entity_name)
             live_entity.get_attribute("Att1")
-            live_entity.get_attribute("Com1")
-            live_entity.get_attribute("Com1_info")
-            live_entity.get_attribute("Com1_status")
             self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
 
             # change device attributes and update
             device.get_attribute("Stat1").value = "new_test"
             device.delete_attribute(device.get_attribute("Stat2"))
             device.delete_attribute(device.get_attribute("Att1"))
-            device.delete_attribute(device.get_attribute("Com1"))
             device.add_attribute(
                 DeviceAttribute(
                     name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE
@@ -964,7 +939,6 @@ class TestAgent(unittest.TestCase):
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
             )
-            device.add_command(DeviceCommand(name="Com2"))
 
             response = self.client.update_devices(devices=[device], add=True)
             print("Successful update_devices() response:", response)
@@ -977,12 +951,9 @@ class TestAgent(unittest.TestCase):
             with self.assertRaises(KeyError):
                 live_device.get_attribute("Att1")
             with self.assertRaises(KeyError):
-                live_device.get_attribute("Com1_info")
-            with self.assertRaises(KeyError):
                 live_device.get_attribute("Stat2")
             self.assertEqual(live_device.get_attribute("Stat1").value, "new_test")
             live_device.get_attribute("Stat3")
-            live_device.get_command("Com2")
             live_device.get_attribute("Att2")
 
             cb_client.close()
@@ -1004,7 +975,6 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(
             StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
         )
-        device.add_command(DeviceCommand(name="Com1"))
 
         # use update_device to post
         self.client.update_device(device=device, add=True)
@@ -1016,23 +986,18 @@ class TestAgent(unittest.TestCase):
         # test if attributes exists correctly
         live_entity = cb_client.get_entity(entity_id=device.entity_name)
         live_entity.get_attribute("Att1")
-        live_entity.get_attribute("Com1")
-        live_entity.get_attribute("Com1_info")
-        live_entity.get_attribute("Com1_status")
         self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
 
         # change device attributes and update
         device.get_attribute("Stat1").value = "new_test"
         device.delete_attribute(device.get_attribute("Stat2"))
         device.delete_attribute(device.get_attribute("Att1"))
-        device.delete_attribute(device.get_attribute("Com1"))
         device.add_attribute(
             DeviceAttribute(name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE)
         )
         device.add_attribute(
             StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
         )
-        device.add_command(DeviceCommand(name="Com2"))
 
         with self.assertRaises(BaseHttpClientException) as cm:
             self.client_wrong_port.update_devices(devices=[device], add=True)
@@ -1084,7 +1049,6 @@ class TestAgent(unittest.TestCase):
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
             )
-            device.add_command(DeviceCommand(name="Com1"))
 
             # use patch_device to post
             self.client.patch_device(device=device)
@@ -1096,16 +1060,12 @@ class TestAgent(unittest.TestCase):
             # test if attributes exists correctly
             live_entity = cb_client.get_entity(entity_id=device.entity_name)
             live_entity.get_attribute("Att1")
-            live_entity.get_attribute("Com1")
-            live_entity.get_attribute("Com1_info")
-            live_entity.get_attribute("Com1_status")
             self.assertEqual(live_entity.get_attribute("Stat1").value, "test")
 
             # change device attributes and update
             device.get_attribute("Stat1").value = "new_test"
             device.delete_attribute(device.get_attribute("Stat2"))
             device.delete_attribute(device.get_attribute("Att1"))
-            device.delete_attribute(device.get_attribute("Com1"))
             device.add_attribute(
                 DeviceAttribute(
                     name="Att2", object_id="o1", type=DataType.STRUCTUREDVALUE
@@ -1114,7 +1074,6 @@ class TestAgent(unittest.TestCase):
             device.add_attribute(
                 StaticDeviceAttribute(name="Stat3", value="test3", type=DataType.TEXT)
             )
-            device.add_command(DeviceCommand(name="Com2"))
 
             self.client.patch_device(device=device, cb_url=settings.CB_URL)
 
@@ -1124,12 +1083,9 @@ class TestAgent(unittest.TestCase):
             with self.assertRaises(KeyError):
                 live_entity.get_attribute("Att1")
             with self.assertRaises(KeyError):
-                live_entity.get_attribute("Com1_info")
-            with self.assertRaises(KeyError):
                 live_entity.get_attribute("Stat2")
             self.assertEqual(live_entity.get_attribute("Stat1").value, "new_test")
             live_entity.get_attribute("Stat3")
-            live_entity.get_attribute("Com2_info")
             live_entity.get_attribute("Att2")
 
             # test update where device information were changed
@@ -1170,7 +1126,6 @@ class TestAgent(unittest.TestCase):
         device.add_attribute(
             StaticDeviceAttribute(name="Stat2", value="test", type=DataType.TEXT)
         )
-        device.add_command(DeviceCommand(name="Com1"))
 
         # use patch_device to post
         with self.assertRaises(BaseHttpClientException) as cm:

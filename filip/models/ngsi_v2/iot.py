@@ -157,8 +157,30 @@ class LazyDeviceAttribute(BaseNameAttribute):
 
 class DeviceCommand(BaseModel):
     """
-    Model for commands
+    DEPRECATED: Legacy IoT-Agent device command model.
+
+    IoT Agent device commands are deprecated.
+
+    Use Context Broker notifications instead, e.g. MQTT
+    notifications via an NGSIv2 subscription.
+
+    See:
+    examples/ngsi_v2/e14_ngsi_v2_notification_based_command.py
+
+    Model for IoT-Agent commands.
     """
+
+    def model_post_init(self, __context) -> None:
+        warnings.warn(
+            (
+                "DeviceCommand is deprecated. "
+                "Use notification-based actuator communication "
+                "instead, for example MQTT notifications via "
+                "an NGSIv2 subscription."
+            ),
+            FutureWarning,
+            stacklevel=2,
+        )
 
     name: str = Field(
         description="ID of the attribute in the target entity in the "
@@ -258,9 +280,11 @@ class ServiceGroup(BaseModel):
     )
     commands: Optional[List[DeviceCommand]] = Field(
         default=[],
-        description="list of common commands attributes of the device. For each "
-        "attribute, its name and type must be provided, additional "
-        "metadata is optional",
+        description=(
+            "DEPRECATED: Legacy IoT-Agent commands. "
+            "Use NGSIv2 Context Broker notifications for "
+            "actuator/downlink communication instead."
+        ),
     )
     attributes: Optional[List[DeviceAttribute]] = Field(
         default=[],
@@ -418,7 +442,12 @@ class Device(DeviceSettings):
         default=[], description="List of lazy attributes of the device"
     )
     commands: List[DeviceCommand] = Field(
-        default=[], description="List of commands of the device"
+        default=[],
+        description=(
+            "DEPRECATED: Legacy IoT-Agent device commands. "
+            "Use NGSIv2 Context Broker notifications for "
+            "actuator/downlink communication instead."
+        ),
     )
     attributes: List[DeviceAttribute] = Field(
         default=[], description="List of active attributes of the device"

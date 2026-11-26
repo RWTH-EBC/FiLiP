@@ -4,13 +4,10 @@ import datetime
 import unittest
 from random import randrange, Random
 from paho.mqtt.client import MQTT_CLEAN_START_FIRST_ONLY, MQTTv5
-from filip.custom_types import AnyMqttUrl
 from filip.models import FiwareHeader
-from filip.models.ngsi_v2.context import NamedCommand
 from filip.models.ngsi_v2.iot import (
     Device,
     DeviceAttribute,
-    DeviceCommand,
     ServiceGroup,
     PayloadProtocol,
     TransportProtocol,
@@ -41,7 +38,6 @@ class TestMQTTClient(unittest.TestCase):
 
         # create a device configuration
         device_attr = DeviceAttribute(name="temperature", object_id="t", type="Number")
-        device_command = DeviceCommand(name="heater", type="Boolean")
 
         self.device_json = Device(
             device_id="my_json_device",
@@ -51,7 +47,6 @@ class TestMQTTClient(unittest.TestCase):
             transport="MQTT",
             apikey=self.service_group_json.apikey,
             attributes=[device_attr],
-            commands=[device_command],
         )
 
         self.device_ul = Device(
@@ -62,7 +57,6 @@ class TestMQTTClient(unittest.TestCase):
             transport="MQTT",
             apikey=self.service_group_ul.apikey,
             attributes=[device_attr],
-            commands=[device_command],
         )
 
         self.mqttc = IoTAMQTTClient()
@@ -254,85 +248,6 @@ class TestMQTTClient(unittest.TestCase):
         cb_url=settings.CB_URL,
         iota_url=settings.IOTA_JSON_URL,
     )
-    def test_add_command_callback_json(self):
-        """
-        Test for receiving commands for a specific device
-        Returns:
-            None
-        """
-        for group in self.mqttc.service_groups:
-            self.mqttc.delete_service_group(group.apikey)
-
-        for device in self.mqttc.devices:
-            self.mqttc.delete_device(device.device_id)
-
-        def on_command(client, obj, msg):
-            apikey, device_id, payload = client.get_encoder(
-                PayloadProtocol.IOTA_JSON
-            ).decode_message(msg=msg)
-
-            # acknowledge a command. Here command are usually single
-            # messages. The first key is equal to the commands name.
-            client.publish(
-                device_id=device_id, command_name=next(iter(payload)), payload=payload
-            )
-
-        self.mqttc.add_service_group(self.service_group_json)
-        self.mqttc.add_device(self.device_json)
-        self.mqttc.add_command_callback(
-            device_id=self.device_json.device_id, callback=on_command
-        )
-
-        from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
-
-        httpc_config = HttpClientConfig(
-            cb_url=settings.CB_URL, iota_url=settings.IOTA_JSON_URL
-        )
-        httpc = HttpClient(fiware_header=self.fiware_header, config=httpc_config)
-        httpc.iota.post_group(service_group=self.service_group_json, update=True)
-        httpc.iota.post_device(device=self.device_json, update=True)
-
-        mqtt_broker_url: AnyMqttUrl = settings.MQTT_BROKER_URL
-
-        self.mqttc.connect(
-            host=mqtt_broker_url.host,
-            port=mqtt_broker_url.port,
-            keepalive=60,
-            bind_address="",
-            bind_port=0,
-            clean_start=MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
-        self.mqttc.subscribe()
-
-        entity = httpc.cb.get_entity(
-            entity_id=self.device_json.device_id,
-            entity_type=self.device_json.entity_type,
-        )
-        context_command = NamedCommand(
-            name=self.device_json.commands[0].name, value=False
-        )
-        self.mqttc.loop_start()
-
-        httpc.cb.post_command(
-            entity_id=entity.id, entity_type=entity.type, command=context_command
-        )
-
-        time.sleep(5)
-        # close the mqtt listening thread
-        self.mqttc.loop_stop()
-        # disconnect the mqtt device
-        self.mqttc.disconnect()
-
-        entity = httpc.cb.get_entity(
-            entity_id=self.device_json.device_id,
-            entity_type=self.device_json.entity_type,
-        )
-
-        # The main part of this test, for all this setup was done
-        # This validation is deprecated as it is not stable
-        # self.assertEqual("OK", entity.heater_status.value)
-
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
@@ -437,85 +352,6 @@ class TestMQTTClient(unittest.TestCase):
         cb_url=settings.CB_URL,
         iota_url=settings.IOTA_UL_URL,
     )
-    def test_add_command_callback_ultralight(self):
-        """
-        Test for receiving commands for a specific device
-        Returns:
-            None
-        """
-        for group in self.mqttc.service_groups:
-            self.mqttc.delete_service_group(group.apikey)
-
-        for device in self.mqttc.devices:
-            self.mqttc.delete_device(device.device_id)
-
-        def on_command(client, obj, msg):
-            apikey, device_id, payload = client.get_encoder(
-                PayloadProtocol.IOTA_UL
-            ).decode_message(msg=msg)
-
-            # acknowledge a command. Here command are usually single
-            # messages. The first key is equal to the commands name.
-            client.publish(
-                device_id=device_id,
-                command_name=next(iter(payload)),
-                payload={"heater": True},
-            )
-
-        self.mqttc.add_service_group(self.service_group_ul)
-        self.mqttc.add_device(self.device_ul)
-        self.mqttc.add_command_callback(
-            device_id=self.device_ul.device_id, callback=on_command
-        )
-
-        from filip.clients.ngsi_v2 import HttpClient, HttpClientConfig
-
-        httpc_config = HttpClientConfig(
-            cb_url=settings.CB_URL, iota_url=settings.IOTA_UL_URL
-        )
-        httpc = HttpClient(fiware_header=self.fiware_header, config=httpc_config)
-        httpc.iota.post_group(service_group=self.service_group_ul)
-        httpc.iota.post_device(device=self.device_ul, update=True)
-
-        mqtt_broker_url = settings.MQTT_BROKER_URL
-
-        self.mqttc.connect(
-            host=mqtt_broker_url.host,
-            port=mqtt_broker_url.port,
-            keepalive=60,
-            bind_address="",
-            bind_port=0,
-            clean_start=MQTT_CLEAN_START_FIRST_ONLY,
-            properties=None,
-        )
-        self.mqttc.subscribe()
-
-        entity = httpc.cb.get_entity(
-            entity_id=self.device_ul.device_id, entity_type=self.device_ul.entity_type
-        )
-        context_command = NamedCommand(
-            name=self.device_ul.commands[0].name, value=False
-        )
-        self.mqttc.loop_start()
-
-        httpc.cb.post_command(
-            entity_id=entity.id, entity_type=entity.type, command=context_command
-        )
-
-        time.sleep(5)
-        # close the mqtt listening thread
-        self.mqttc.loop_stop()
-        # disconnect the mqtt device
-        self.mqttc.disconnect()
-
-        entity = httpc.cb.get_entity(
-            entity_id=self.device_ul.device_id, entity_type=self.device_ul.entity_type
-        )
-
-        # The main part of this test, for all this setup was done
-        # This validation is deprecated as it is not stable
-        # self.assertEqual("OK", entity.heater_status.value)
-
     @clean_test(
         fiware_service=settings.FIWARE_SERVICE,
         fiware_servicepath=settings.FIWARE_SERVICEPATH,
